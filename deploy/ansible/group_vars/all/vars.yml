@@ -1,0 +1,55 @@
+---
+# Non-secret configuration shared by every environment.
+# Secrets live in vault.yml, encrypted with ansible-vault.
+
+deploy_user: deploy
+deploy_group: www-data
+
+release_path: "{{ deploy_root }}/releases/{{ release_timestamp }}"
+current_path: "{{ deploy_root }}/current"
+shared_path: "{{ deploy_root }}/shared"
+
+# Directories that survive a release and are symlinked into each one.
+shared_dirs:
+  - storage/app
+  - storage/app/public
+  - storage/framework/cache
+  - storage/framework/sessions
+  - storage/framework/views
+  - storage/logs
+
+shared_files:
+  - .env
+
+php_packages:
+  - "php{{ php_version }}-fpm"
+  - "php{{ php_version }}-cli"
+  - "php{{ php_version }}-mysql"
+  - "php{{ php_version }}-redis"
+  - "php{{ php_version }}-mbstring"
+  - "php{{ php_version }}-xml"
+  - "php{{ php_version }}-curl"
+  - "php{{ php_version }}-zip"
+  - "php{{ php_version }}-gd"
+  - "php{{ php_version }}-bcmath"
+  - "php{{ php_version }}-intl"
+  - "php{{ php_version }}-opcache"
+
+# Queue workers, mirroring the topology in docs/18-queues-workers.md.
+horizon_supervisors:
+  - { queue: "realtime", processes: 4, timeout: 15, tries: 3 }
+  - { queue: "mail", processes: 3, timeout: 30, tries: 5 }
+  - { queue: "tools", processes: 6, timeout: 120, tries: 2 }
+  - { queue: "media", processes: 2, timeout: 600, tries: 3 }
+  - { queue: "default", processes: 3, timeout: 60, tries: 3 }
+  - { queue: "analytics", processes: 2, timeout: 300, tries: 3 }
+  - { queue: "maintenance", processes: 1, timeout: 900, tries: 1 }
+
+backup_retention_days: 30
+backup_bucket: metacreator-backups
+
+ufw_allowed_ports:
+  - { port: 22, proto: tcp, comment: "SSH" }
+  - { port: 80, proto: tcp, comment: "HTTP" }
+  - { port: 443, proto: tcp, comment: "HTTPS" }
+  - { port: 443, proto: udp, comment: "HTTP/3 (QUIC)" }

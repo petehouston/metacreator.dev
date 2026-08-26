@@ -1,0 +1,11 @@
+---
+- name: restart php-fpm
+  ansible.builtin.systemd:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+
+- name: restart horizon
+  ansible.builtin.systemd:
+    name: metacreator-horizon
+    state: restarted
+    daemon_reload: true

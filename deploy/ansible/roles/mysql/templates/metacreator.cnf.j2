@@ -1,0 +1,25 @@
+[mysqld]
+bind-address = 127.0.0.1
+
+character-set-server = utf8mb4
+collation-server = utf8mb4_0900_ai_ci
+
+# Strict mode turns silent data truncation into an error, which is what we want:
+# quietly storing a wrong value is far more expensive to find later.
+sql_mode = STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
+
+# Roughly 60% of an 8 GB droplet, leaving room for PHP, Node and Redis.
+innodb_buffer_pool_size = 4G
+innodb_log_file_size = 512M
+innodb_flush_log_at_trx_commit = 1
+innodb_flush_method = O_DIRECT
+innodb_file_per_table = 1
+
+max_connections = 200
+thread_cache_size = 32
+table_open_cache = 4000
+
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 1
+log_queries_not_using_indexes = 0

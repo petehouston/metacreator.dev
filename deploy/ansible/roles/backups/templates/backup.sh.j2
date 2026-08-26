@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Nightly database backup → DigitalOcean Spaces.
+#
+# `set -euo pipefail` matters here more than most places: a partial dump that gets
+# uploaded and rotates out a good one is worse than no backup at all.
+set -euo pipefail
+
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+DUMP="/tmp/metacreator-${STAMP}.sql.gz"
+BUCKET="s3://{{ backup_bucket }}/{{ env_name }}"
+
+cleanup() { rm -f "${DUMP}"; }
+trap cleanup EXIT
+
+# --single-transaction gives a consistent snapshot without locking InnoDB tables,
+# so the site stays fully writable during the backup.
+mysqldump \
+  --single-transaction \
+  --quick \
+  --routines \
+  --triggers \
+  --events \
+  --set-gtid-purged=OFF \
+  --user=root \
+  --password="{{ vault_db_root_password }}" \
+  metacreator | gzip -9 > "${DUMP}"
+
+# An empty or truncated dump is a silent disaster; refuse to upload one.
+SIZE=$(stat -c%s "${DUMP}")
+if [ "${SIZE}" -lt 10240 ]; then
+  echo "FATAL: dump is only ${SIZE} bytes — refusing to upload." >&2
+  exit 1
+fi
+
+s3cmd put "${DUMP}" "${BUCKET}/metacreator-${STAMP}.sql.gz"
+
+# Rotate anything past the retention window.
+s3cmd ls "${BUCKET}/" | while read -r _ _ _ path; do
+  file_date=$(basename "${path}" | grep -oP '\d{8}' | head -1 || true)
+  [ -z "${file_date}" ] && continue
+
+  age_days=$(( ( $(date -u +%s) - $(date -u -d "${file_date}" +%s) ) / 86400 ))
+  if [ "${age_days}" -gt {{ backup_retention_days }} ]; then
+    s3cmd del "${path}"
+  fi
+done
+
+echo "$(date -u +%FT%TZ) backup complete: ${SIZE} bytes"

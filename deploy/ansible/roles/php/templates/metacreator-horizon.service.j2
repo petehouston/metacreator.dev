@@ -1,0 +1,26 @@
+[Unit]
+Description=MetaCreator queue workers (Horizon)
+After=network.target redis-server.service mysql.service
+
+[Service]
+Type=simple
+User={{ deploy_user }}
+Group={{ deploy_group }}
+WorkingDirectory={{ current_path }}/apps/api
+ExecStart=/usr/bin/php{{ php_version }} artisan horizon
+# SIGTERM lets Horizon finish in-flight jobs before exiting.
+KillSignal=SIGTERM
+TimeoutStopSec=120
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryMax=2G
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=metacreator-horizon
+
+[Install]
+WantedBy=multi-user.target

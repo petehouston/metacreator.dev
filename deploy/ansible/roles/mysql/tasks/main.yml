@@ -1,0 +1,37 @@
+---
+- name: Install MySQL
+  ansible.builtin.apt:
+    name: [mysql-server, python3-pymysql]
+    state: present
+
+- name: Tune MySQL
+  ansible.builtin.template:
+    src: metacreator.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/metacreator.cnf
+    mode: "0644"
+  notify: restart mysql
+
+- name: Create the application database
+  community.mysql.mysql_db:
+    name: metacreator
+    encoding: utf8mb4
+    collation: utf8mb4_0900_ai_ci
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create the application user
+  community.mysql.mysql_user:
+    name: metacreator
+    password: "{{ vault_db_password }}"
+    # Localhost only: the database is never exposed beyond this host.
+    host: localhost
+    priv: "metacreator.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Remove anonymous users
+  community.mysql.mysql_user:
+    name: ""
+    host_all: true
+    state: absent
+    login_unix_socket: /var/run/mysqld/mysqld.sock

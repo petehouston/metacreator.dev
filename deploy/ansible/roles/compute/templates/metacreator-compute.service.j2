@@ -1,0 +1,34 @@
+[Unit]
+Description=MetaCreator Go compute service
+After=network.target
+
+[Service]
+Type=simple
+User={{ deploy_user }}
+Group={{ deploy_group }}
+WorkingDirectory={{ current_path }}
+Environment=COMPUTE_ADDR=127.0.0.1:8090
+Environment=COMPUTE_SHARED_SECRET={{ vault_compute_shared_secret }}
+ExecStart={{ current_path }}/bin/compute
+Restart=always
+RestartSec=5
+
+# This service processes untrusted input (user images, user URLs), so it gets the
+# tightest sandbox of anything on the host.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+MemoryMax=1G
+CPUQuota=200%
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=metacreator-compute
+
+[Install]
+WantedBy=multi-user.target

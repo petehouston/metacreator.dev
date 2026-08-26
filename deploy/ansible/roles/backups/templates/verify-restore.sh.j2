@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Weekly restore verification.
+#
+# Restores the most recent dump into a scratch database and asserts that the core
+# tables have plausible row counts. A backup nobody has restored is a hope.
+set -euo pipefail
+
+SCRATCH="metacreator_restore_test"
+BUCKET="s3://{{ backup_bucket }}/{{ env_name }}"
+LATEST=$(s3cmd ls "${BUCKET}/" | sort | tail -1 | awk '{print $4}')
+
+if [ -z "${LATEST}" ]; then
+  echo "FATAL: no backups found in ${BUCKET}" >&2
+  exit 1
+fi
+
+TMP="/tmp/restore-test.sql.gz"
+trap 'rm -f "${TMP}"; mysql -uroot -p"{{ vault_db_root_password }}" -e "DROP DATABASE IF EXISTS ${SCRATCH}"' EXIT
+
+s3cmd get --force "${LATEST}" "${TMP}"
+
+mysql -uroot -p"{{ vault_db_root_password }}" -e "DROP DATABASE IF EXISTS ${SCRATCH}; CREATE DATABASE ${SCRATCH}"
+gunzip -c "${TMP}" | mysql -uroot -p"{{ vault_db_root_password }}" "${SCRATCH}"
+
+for table in users tools plans settings; do
+  count=$(mysql -uroot -p"{{ vault_db_root_password }}" -N -B -e "SELECT COUNT(*) FROM ${table}" "${SCRATCH}")
+
+  if [ "${count}" -lt 1 ]; then
+    echo "FATAL: ${table} restored with ${count} rows" >&2
+    exit 1
+  fi
+
+  echo "ok: ${table} = ${count} rows"
+done
+
+echo "$(date -u +%FT%TZ) restore verification passed for ${LATEST}"

@@ -1,0 +1,12 @@
+---
+- name: reload php-fpm
+  become_user: root
+  ansible.builtin.systemd:
+    name: "php{{ php_version }}-fpm"
+    state: reloaded
+
+- name: restart horizon
+  become_user: root
+  ansible.builtin.systemd:
+    name: metacreator-horizon
+    state: restarted

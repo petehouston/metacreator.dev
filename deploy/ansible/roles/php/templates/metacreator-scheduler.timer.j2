@@ -1,0 +1,11 @@
+[Unit]
+Description=Run MetaCreator scheduled tasks every minute
+
+[Timer]
+OnCalendar=*:0/1
+# Without this, a restart can fire a burst of catch-up runs at once.
+Persistent=false
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

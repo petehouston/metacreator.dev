@@ -1,0 +1,36 @@
+---
+- name: Install the s3 client
+  ansible.builtin.apt:
+    name: s3cmd
+    state: present
+
+- name: Install the backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: /usr/local/bin/metacreator-backup
+    mode: "0750"
+    owner: root
+
+- name: Install the restore-verification script
+  # An untested backup is not a backup. This restores the latest dump into a scratch
+  # database weekly and asserts the row counts are sane.
+  ansible.builtin.template:
+    src: verify-restore.sh.j2
+    dest: /usr/local/bin/metacreator-verify-restore
+    mode: "0750"
+    owner: root
+
+- name: Schedule the nightly backup
+  ansible.builtin.cron:
+    name: "metacreator database backup"
+    hour: "4"
+    minute: "0"
+    job: "/usr/local/bin/metacreator-backup >> /var/log/metacreator-backup.log 2>&1"
+
+- name: Schedule the weekly restore verification
+  ansible.builtin.cron:
+    name: "metacreator restore verification"
+    weekday: "0"
+    hour: "5"
+    minute: "30"
+    job: "/usr/local/bin/metacreator-verify-restore >> /var/log/metacreator-backup.log 2>&1"

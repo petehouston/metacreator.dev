@@ -1,0 +1,37 @@
+---
+# First-time host setup. Run rarely, and safe to re-run — every role is idempotent.
+#
+#   make provision ENV=production
+
+- name: Provision MetaCreator host
+  hosts: all
+  become: true
+
+  vars_files:
+    - group_vars/all/vault.yml
+
+  roles:
+    - role: common
+    - role: security
+    - role: php
+    - role: node
+    - role: mysql
+      when: inventory_hostname in groups['db']
+    - role: redis
+    - role: caddy
+    - role: backups
+    - role: monitoring
+
+  post_tasks:
+    - name: Create the deploy directory structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_group }}"
+        mode: "0775"
+      loop:
+        - "{{ deploy_root }}"
+        - "{{ deploy_root }}/releases"
+        - "{{ shared_path }}"
+        - "{{ shared_path }}/storage"

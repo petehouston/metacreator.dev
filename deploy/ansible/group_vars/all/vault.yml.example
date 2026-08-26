@@ -1,0 +1,38 @@
+---
+# Copy to vault.yml and encrypt:  ansible-vault encrypt group_vars/all/vault.yml
+#
+# The vault password comes from the operator's password manager or the CI secret
+# store — never from a file in this repository.
+#
+# Rotation:
+#   vault_app_key        — regenerate with `php artisan key:generate --show`.
+#                          NOTE: rotating it invalidates every session and every
+#                          encrypted `settings` row. Re-encrypt those first.
+#   vault_stripe_*       — rotate in the Stripe dashboard, deploy, then revoke the old key.
+#   vault_mailgun_secret — rotate in Mailgun; sending keys can overlap safely.
+#   vault_db_password    — change in MySQL and deploy in the same window.
+
+vault_app_key: "base64:REPLACE_ME"
+vault_db_password: "REPLACE_ME"
+vault_db_root_password: "REPLACE_ME"
+vault_redis_password: "REPLACE_ME"
+
+vault_stripe_key: "pk_live_REPLACE_ME"
+vault_stripe_secret: "sk_live_REPLACE_ME"
+vault_stripe_webhook_secret: "whsec_REPLACE_ME"
+
+vault_mailgun_domain: "mg.metacreator.dev"
+vault_mailgun_secret: "REPLACE_ME"
+
+vault_google_client_id: "REPLACE_ME"
+vault_google_client_secret: "REPLACE_ME"
+
+vault_spaces_key: "REPLACE_ME"
+vault_spaces_secret: "REPLACE_ME"
+vault_spaces_bucket: "metacreator-media"
+vault_spaces_region: "fra1"
+vault_spaces_endpoint: "https://fra1.digitaloceanspaces.com"
+
+vault_compute_shared_secret: "REPLACE_ME"
+vault_revalidate_secret: "REPLACE_ME"
+vault_sentry_dsn: ""

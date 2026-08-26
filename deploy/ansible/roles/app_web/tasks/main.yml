@@ -1,0 +1,43 @@
+---
+# Builds the Next.js app on the host.
+#
+# Building here rather than shipping an artifact keeps the pipeline simple and means
+# NEXT_PUBLIC_* values always match the environment they are deployed into — those
+# are inlined at build time, so a shared artifact across environments would be wrong.
+
+- name: Link the web environment file
+  ansible.builtin.file:
+    src: "{{ shared_path }}/.env.web"
+    dest: "{{ release_path }}/apps/web/.env.production.local"
+    state: link
+    force: true
+
+- name: Install JavaScript dependencies
+  ansible.builtin.command:
+    cmd: npm ci --omit=dev --no-audit --no-fund
+    chdir: "{{ release_path }}/apps/web"
+  changed_when: true
+
+- name: Build the frontend
+  ansible.builtin.command:
+    cmd: npm run build
+    chdir: "{{ release_path }}/apps/web"
+  environment:
+    NODE_ENV: production
+    NEXT_TELEMETRY_DISABLED: "1"
+  changed_when: true
+
+- name: Install the systemd unit
+  become_user: root
+  ansible.builtin.template:
+    src: metacreator-web.service.j2
+    dest: /etc/systemd/system/metacreator-web.service
+    mode: "0644"
+  notify: restart web
+
+- name: Enable the web service
+  become_user: root
+  ansible.builtin.systemd:
+    name: metacreator-web
+    enabled: true
+    daemon_reload: true

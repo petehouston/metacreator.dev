@@ -1,0 +1,58 @@
+---
+- name: Add the PHP repository
+  ansible.builtin.apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+
+- name: Install PHP and extensions
+  ansible.builtin.apt:
+    name: "{{ php_packages }}"
+    state: present
+    update_cache: true
+
+- name: Install Composer
+  ansible.builtin.get_url:
+    url: https://getcomposer.org/download/latest-stable/composer.phar
+    dest: /usr/local/bin/composer
+    mode: "0755"
+
+- name: Configure PHP for production
+  ansible.builtin.template:
+    src: 99-metacreator.ini.j2
+    dest: "/etc/php/{{ php_version }}/fpm/conf.d/99-metacreator.ini"
+    mode: "0644"
+  notify: restart php-fpm
+
+- name: Configure the PHP-FPM pool
+  ansible.builtin.template:
+    src: pool.conf.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/metacreator.conf"
+    mode: "0644"
+  notify: restart php-fpm
+
+- name: Install the Horizon systemd unit
+  ansible.builtin.template:
+    src: metacreator-horizon.service.j2
+    dest: /etc/systemd/system/metacreator-horizon.service
+    mode: "0644"
+  notify: restart horizon
+
+- name: Install the scheduler timer
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - { src: metacreator-scheduler.service.j2, dest: metacreator-scheduler.service }
+    - { src: metacreator-scheduler.timer.j2, dest: metacreator-scheduler.timer }
+
+- name: Enable services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    daemon_reload: true
+  loop:
+    - "php{{ php_version }}-fpm"
+    - metacreator-horizon
+    # The scheduler runs on exactly one host; a second would double-send email.
+    - "{{ 'metacreator-scheduler.timer' if is_primary | default(false) else omit }}"

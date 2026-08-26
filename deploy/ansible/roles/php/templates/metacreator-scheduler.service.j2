@@ -1,0 +1,8 @@
+[Unit]
+Description=MetaCreator scheduled tasks
+
+[Service]
+Type=oneshot
+User={{ deploy_user }}
+WorkingDirectory={{ current_path }}/apps/api
+ExecStart=/usr/bin/php{{ php_version }} artisan schedule:run

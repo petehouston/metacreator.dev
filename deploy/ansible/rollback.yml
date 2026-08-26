@@ -1,0 +1,73 @@
+---
+# Roll back to the previous release, or to a named one.
+#
+#   make rollback ENV=production
+#   make rollback ENV=production TO=20260824142300
+#
+# A rollback only swaps a symlink and restarts services. It does NOT reverse
+# migrations — that is why every migration must be backwards compatible
+# (see the expand/contract rule in docs/04-data-model.md).
+
+- name: Roll back MetaCreator
+  hosts: app
+  become: true
+  become_user: "{{ deploy_user }}"
+
+  tasks:
+    - name: List available releases, newest first
+      ansible.builtin.command: ls -1dt {{ deploy_root }}/releases/*/
+      register: releases
+      changed_when: false
+
+    - name: Resolve the target release
+      ansible.builtin.set_fact:
+        target_release: >-
+          {{ (deploy_root ~ '/releases/' ~ rollback_to)
+             if rollback_to is defined
+             else (releases.stdout_lines[1] | default('') | regex_replace('/$', '')) }}
+
+    - name: Fail when there is nothing to roll back to
+      ansible.builtin.assert:
+        that: target_release | length > 0
+        fail_msg: "No previous release found. Nothing to roll back to."
+
+    - name: Confirm the target release exists
+      ansible.builtin.stat:
+        path: "{{ target_release }}"
+      register: target_stat
+
+    - name: Fail when the named release is missing
+      ansible.builtin.assert:
+        that: target_stat.stat.isdir is defined and target_stat.stat.isdir
+        fail_msg: "Release {{ target_release }} does not exist on this host."
+
+    - name: Point `current` at the target release
+      ansible.builtin.file:
+        src: "{{ target_release }}"
+        dest: "{{ current_path }}"
+        state: link
+        force: true
+
+    - name: Restart application services
+      become_user: root
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - "php{{ php_version }}-fpm"
+        - metacreator-web
+        - metacreator-horizon
+        - metacreator-compute
+
+    - name: Verify health after rollback
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8080/health/ready"
+        status_code: 200
+      retries: 6
+      delay: 5
+      register: health
+      until: health.status == 200
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: "Rolled back to {{ target_release | basename }}"

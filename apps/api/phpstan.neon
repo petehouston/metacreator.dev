@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+
+    # Level 8 adds null-safety on top of level 7's type coverage. It is the level
+    # that catches the class of bug which actually reaches production, and the
+    # codebase passes it with no ignored errors and no baseline — deliberately, so
+    # that a suppression can never quietly hide a real finding.
+    level: 8
+
+    excludePaths:
+        # A custom cast's get()/set() signatures are inherently mixed-typed.
+        - app/Support/Casts/AsPreservedJson.php

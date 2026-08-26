@@ -1,0 +1,7 @@
+---
+- name: restart compute
+  become_user: root
+  ansible.builtin.systemd:
+    name: metacreator-compute
+    state: restarted
+    daemon_reload: true

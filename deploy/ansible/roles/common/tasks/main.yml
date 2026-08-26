@@ -1,0 +1,89 @@
+---
+- name: Set the hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Set the timezone to UTC
+  # Everything in the application stores and reasons in UTC; a host on local time is
+  # a source of subtle, hard-to-reproduce scheduling bugs.
+  community.general.timezone:
+    name: UTC
+
+- name: Update the apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - git
+      - unzip
+      - htop
+      - jq
+      - rsync
+      - ca-certificates
+      - gnupg
+      - acl          # required for become_user to work with unprivileged users
+      - python3-pip
+      - unattended-upgrades
+    state: present
+
+- name: Enable unattended security upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    mode: "0644"
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+
+- name: Create the deploy user
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    groups: "{{ deploy_group }}"
+    append: true
+    shell: /bin/bash
+    create_home: true
+
+- name: Check for a swap file
+  ansible.builtin.stat:
+    path: /swapfile
+  register: swapfile
+
+- name: Create a 2G swap file
+  # Composer and `next build` both spike memory. Without swap, an 8 GB droplet can
+  # OOM mid-deploy, which is a far worse failure than being briefly slow.
+  when: not swapfile.stat.exists
+  block:
+    - name: Allocate the swap file
+      ansible.builtin.command: fallocate -l 2G /swapfile
+      changed_when: true
+
+    - name: Secure the swap file
+      ansible.builtin.file:
+        path: /swapfile
+        mode: "0600"
+
+    - name: Format the swap file
+      ansible.builtin.command: mkswap /swapfile
+      changed_when: true
+
+    - name: Enable swap
+      ansible.builtin.command: swapon /swapfile
+      changed_when: true
+
+    - name: Persist swap across reboots
+      ansible.posix.mount:
+        name: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        state: present
+
+- name: Prefer RAM over swap
+  ansible.posix.sysctl:
+    name: vm.swappiness
+    value: "10"
+    state: present

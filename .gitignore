@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+.next/
+out/
+dist/
+build/
+apps/compute/tmp/
+apps/compute/bin/
+
+# Environment
+.env
+.env.*
+!.env.example
+!apps/*/.env.example
+
+# Laravel
+apps/api/storage/*.key
+apps/api/storage/app/public/*
+apps/api/storage/framework/cache/*
+apps/api/storage/framework/sessions/*
+apps/api/storage/framework/views/*
+apps/api/storage/logs/*
+apps/api/public/storage
+apps/api/bootstrap/cache/*.php
+!**/.gitignore
+
+# Testing
+coverage/
+.phpunit.result.cache
+playwright-report/
+test-results/
+.nyc_output/
+
+# Tooling
+.phpstan.cache/
+*.log
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+
+# Ansible
+deploy/ansible/*.retry
+deploy/ansible/.vault-pass

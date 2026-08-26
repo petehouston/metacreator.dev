@@ -1,0 +1,79 @@
+---
+# The everyday deploy. Idempotent, and zero-downtime whenever the release carries
+# no migrations. See docs/20-deployment.md for the full sequence.
+#
+#   make deploy ENV=production REF=v1.4.0
+
+- name: Deploy MetaCreator
+  hosts: app
+  become: true
+  become_user: "{{ deploy_user }}"
+  serial: 1  # one host at a time, so a bad release never takes out the fleet
+
+  vars:
+    release_timestamp: "{{ ansible_date_time.epoch | int | strftime('%Y%m%d%H%M%S') }}"
+
+  vars_files:
+    - group_vars/all/vault.yml
+
+  pre_tasks:
+    - name: Preflight — verify disk headroom
+      ansible.builtin.shell: |
+        set -o pipefail
+        df --output=pcent {{ deploy_root }} | tail -1 | tr -dc '0-9'
+      args:
+        executable: /bin/bash
+      register: disk_used
+      changed_when: false
+
+    - name: Preflight — fail when the disk is nearly full
+      ansible.builtin.assert:
+        that: disk_used.stdout | int < 85
+        fail_msg: >-
+          Disk is {{ disk_used.stdout }}% full. A deploy needs room for a new release
+          plus a database backup. Prune old releases first.
+
+    - name: Preflight — confirm the git ref exists
+      ansible.builtin.command: git ls-remote --exit-code {{ git_repo }} {{ git_ref }}
+      delegate_to: localhost
+      become: false
+      changed_when: false
+
+  roles:
+    - role: app_api
+    - role: app_web
+    - role: compute
+
+  post_tasks:
+    - name: Verify the API is healthy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8080/health/ready"
+        status_code: 200
+        timeout: 10
+      register: api_health
+      retries: 6
+      delay: 5
+      until: api_health.status == 200
+
+    - name: Verify the web app is healthy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:3000/api/health"
+        status_code: 200
+        timeout: 10
+      retries: 6
+      delay: 5
+      register: web_health
+      until: web_health.status == 200
+
+    - name: Prune old releases
+      ansible.builtin.shell: |
+        set -o pipefail
+        cd {{ deploy_root }}/releases
+        ls -1dt */ | tail -n +{{ keep_releases + 1 }} | xargs -r rm -rf
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Report the deployed release
+      ansible.builtin.debug:
+        msg: "Deployed {{ git_ref }} as release {{ release_timestamp }}"

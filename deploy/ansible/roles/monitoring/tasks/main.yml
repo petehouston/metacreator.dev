@@ -1,0 +1,44 @@
+---
+- name: Install node_exporter
+  ansible.builtin.apt:
+    name: prometheus-node-exporter
+    state: present
+
+- name: Bind node_exporter to localhost only
+  # Metrics must never be publicly reachable; they leak a great deal about the host.
+  ansible.builtin.lineinfile:
+    path: /etc/default/prometheus-node-exporter
+    regexp: "^ARGS="
+    line: 'ARGS="--web.listen-address=127.0.0.1:9100"'
+  notify: restart node_exporter
+
+- name: Enable node_exporter
+  ansible.builtin.systemd:
+    name: prometheus-node-exporter
+    state: started
+    enabled: true
+
+- name: Install a log rotation policy
+  ansible.builtin.copy:
+    dest: /etc/logrotate.d/metacreator
+    mode: "0644"
+    content: |
+      {{ deploy_root }}/shared/storage/logs/*.log /var/log/caddy/*.log /var/log/php/*.log {
+          daily
+          rotate 14
+          compress
+          delaycompress
+          missingok
+          notifempty
+          create 0640 {{ deploy_user }} {{ deploy_group }}
+          sharedscripts
+      }
+
+- name: Add a disk-space alert
+  ansible.builtin.cron:
+    name: "metacreator disk space check"
+    hour: "*"
+    minute: "17"
+    job: >-
+      df --output=pcent {{ deploy_root }} | tail -1 | tr -dc '0-9' |
+      awk '$1 > 85 { print "DISK WARNING: " $1 "% used on {{ inventory_hostname }}" }'

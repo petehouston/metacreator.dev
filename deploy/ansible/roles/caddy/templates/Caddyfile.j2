@@ -1,0 +1,82 @@
+# Caddy handles TLS automatically, so there is no certbot cron to forget about.
+{
+	email ops@{{ app_domain }}
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		X-Frame-Options "DENY"
+		-Server
+	}
+}
+
+# Apex redirect: one canonical hostname, so link equity is never split between
+# www and non-www.
+www.{{ app_domain }} {
+	redir https://{{ app_domain }}{uri} permanent
+}
+
+{{ app_domain }} {
+	import security_headers
+
+	header {
+		# The CSP from docs/21-security.md. Inline snippets from the admin's
+		# tracking settings must carry the nonce Caddy injects.
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.{{ app_domain }} https://*.digitaloceanspaces.com https://i.ytimg.com; font-src 'self'; connect-src 'self' https://{{ api_domain }} https://*.sentry.io; frame-src https://js.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+	}
+
+	encode zstd br gzip
+
+	# Next's build output is content-hashed, so it can be cached forever.
+	@static path /_next/static/* /fonts/* /images/*
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy 127.0.0.1:3000 {
+		health_uri /api/health
+		health_interval 30s
+		health_timeout 5s
+	}
+
+	log {
+		output file /var/log/caddy/web.log {
+			roll_size 100mb
+			roll_keep 10
+		}
+	}
+}
+
+{{ api_domain }} {
+	import security_headers
+
+	encode zstd br gzip
+
+	# A coarse edge limit. The real per-actor limits live in the application, which
+	# knows who the actor is; this only blunts crude floods.
+	rate_limit {
+		zone api {
+			key {remote_host}
+			events 300
+			window 1m
+		}
+	}
+
+	reverse_proxy 127.0.0.1:8080 {
+		health_uri /up
+		health_interval 30s
+		health_timeout 5s
+	}
+
+	log {
+		output file /var/log/caddy/api.log {
+			roll_size 100mb
+			roll_keep 10
+		}
+	}
+}

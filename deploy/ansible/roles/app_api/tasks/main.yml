@@ -1,0 +1,127 @@
+---
+# Builds and activates a Laravel release.
+#
+# Ordering matters throughout: the symlink swap is the single atomic moment the
+# release goes live, and everything before it must be complete and verified.
+
+- name: Fetch the release
+  ansible.builtin.git:
+    repo: "{{ git_repo }}"
+    dest: "{{ release_path }}"
+    version: "{{ git_ref }}"
+    depth: 1
+    accept_hostkey: false
+  register: checkout
+
+- name: Record the deployed commit for Sentry release tagging
+  ansible.builtin.copy:
+    content: "{{ checkout.after }}"
+    dest: "{{ release_path }}/REVISION"
+    mode: "0644"
+
+- name: Link shared directories into the release
+  ansible.builtin.file:
+    src: "{{ shared_path }}/{{ item }}"
+    dest: "{{ release_path }}/apps/api/{{ item }}"
+    state: link
+    force: true
+  loop: "{{ shared_dirs }}"
+
+- name: Link the environment file
+  ansible.builtin.file:
+    src: "{{ shared_path }}/.env"
+    dest: "{{ release_path }}/apps/api/.env"
+    state: link
+    force: true
+
+- name: Install PHP dependencies
+  ansible.builtin.command:
+    cmd: composer install --no-dev --optimize-autoloader --classmap-authoritative --no-interaction --prefer-dist
+    chdir: "{{ release_path }}/apps/api"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: "0"
+  changed_when: true
+
+- name: Detect pending migrations
+  ansible.builtin.command:
+    cmd: php artisan migrate:status --pending
+    chdir: "{{ release_path }}/apps/api"
+  register: pending_migrations
+  failed_when: false
+  changed_when: false
+  when: is_primary | default(false)
+
+- name: Note whether this deploy needs maintenance mode
+  ansible.builtin.set_fact:
+    # Only migrations force downtime. Most deploys carry none, and skipping
+    # maintenance mode is what makes them zero-downtime.
+    needs_maintenance: "{{ (pending_migrations.stdout | default('')) is search('Pending') }}"
+
+- name: Enter maintenance mode
+  ansible.builtin.command:
+    cmd: php artisan down --render=errors::503 --retry=30 --secret={{ vault_maintenance_secret | default('preview') }}
+    chdir: "{{ current_path }}/apps/api"
+  when: needs_maintenance | default(false)
+  changed_when: true
+  failed_when: false
+
+- name: Run migrations
+  ansible.builtin.command:
+    cmd: php artisan migrate --force --isolated
+    chdir: "{{ release_path }}/apps/api"
+  when: is_primary | default(false)
+  changed_when: true
+
+- name: Seed reference data
+  # ProductionSeeder is idempotent by design: roles, permissions, plans and the tool
+  # catalog are reference data that must match the code on every deploy.
+  ansible.builtin.command:
+    cmd: php artisan db:seed --class=Database\\Seeders\\ProductionSeeder --force
+    chdir: "{{ release_path }}/apps/api"
+  when: is_primary | default(false)
+  changed_when: true
+
+- name: Warm framework caches
+  ansible.builtin.command:
+    cmd: "php artisan {{ item }}"
+    chdir: "{{ release_path }}/apps/api"
+  loop:
+    - config:cache
+    - route:cache
+    - view:cache
+    - event:cache
+  changed_when: true
+
+- name: Activate the release
+  # The atomic moment. `force: true` performs an atomic rename, so no request ever
+  # sees a missing or half-written symlink.
+  ansible.builtin.file:
+    src: "{{ release_path }}"
+    dest: "{{ current_path }}"
+    state: link
+    force: true
+  notify:
+    - reload php-fpm
+    - restart horizon
+
+- name: Leave maintenance mode
+  ansible.builtin.command:
+    cmd: php artisan up
+    chdir: "{{ current_path }}/apps/api"
+  when: needs_maintenance | default(false)
+  changed_when: true
+
+- name: Restart queue workers gracefully
+  # `horizon:terminate` lets in-flight jobs finish before workers pick up the new
+  # code. Killing them outright would abandon partially-processed work.
+  ansible.builtin.command:
+    cmd: php artisan horizon:terminate
+    chdir: "{{ current_path }}/apps/api"
+  changed_when: true
+
+- name: Prime the ISR cache for the highest-traffic URLs
+  ansible.builtin.command:
+    cmd: php artisan cache:warm
+    chdir: "{{ current_path }}/apps/api"
+  changed_when: true
+  failed_when: false

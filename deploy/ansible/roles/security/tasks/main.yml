@@ -1,0 +1,69 @@
+---
+- name: Install security packages
+  ansible.builtin.apt:
+    name: [ufw, fail2ban, auditd]
+    state: present
+
+- name: Deny all inbound traffic by default
+  community.general.ufw:
+    direction: incoming
+    policy: deny
+
+- name: Allow all outbound traffic
+  community.general.ufw:
+    direction: outgoing
+    policy: allow
+
+- name: Open the required ports
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  loop: "{{ ufw_allowed_ports }}"
+
+- name: Enable the firewall
+  community.general.ufw:
+    state: enabled
+    logging: low
+
+- name: Harden the SSH daemon
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    validate: "sshd -t -f %s"
+  loop:
+    - { key: PermitRootLogin, value: "no" }
+    - { key: PasswordAuthentication, value: "no" }
+    - { key: PubkeyAuthentication, value: "yes" }
+    - { key: X11Forwarding, value: "no" }
+    - { key: MaxAuthTries, value: "3" }
+    - { key: ClientAliveInterval, value: "300" }
+    - { key: AllowAgentForwarding, value: "no" }
+  notify: restart sshd
+
+- name: Configure fail2ban for SSH
+  ansible.builtin.copy:
+    dest: /etc/fail2ban/jail.local
+    mode: "0644"
+    content: |
+      [DEFAULT]
+      bantime  = 1h
+      findtime = 10m
+      maxretry = 5
+      backend  = systemd
+
+      [sshd]
+      enabled = true
+
+      [caddy-status]
+      enabled = false
+  notify: restart fail2ban
+
+- name: Enable and start security services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: [fail2ban, auditd]

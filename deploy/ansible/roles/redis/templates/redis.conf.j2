@@ -1,0 +1,21 @@
+bind 127.0.0.1 ::1
+protected-mode yes
+port 6379
+requirepass {{ vault_redis_password }}
+
+# Redis holds only regenerable state — cache, sessions, queues, locks (docs/02).
+# Losing it must never lose user data, so persistence is a convenience, not a
+# guarantee, and AOF is kept for queue durability across a restart.
+appendonly yes
+appendfsync everysec
+
+maxmemory 1gb
+maxmemory-policy allkeys-lru
+
+# Renamed rather than removed, so an operator can still use them deliberately.
+rename-command FLUSHALL ""
+rename-command FLUSHDB ""
+rename-command CONFIG "CONFIG_{{ vault_redis_password[:8] }}"
+
+timeout 300
+tcp-keepalive 300

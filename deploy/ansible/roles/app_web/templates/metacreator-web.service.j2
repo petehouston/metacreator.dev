@@ -1,0 +1,32 @@
+[Unit]
+Description=MetaCreator Next.js frontend
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ deploy_user }}
+Group={{ deploy_group }}
+WorkingDirectory={{ current_path }}/apps/web
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+EnvironmentFile={{ shared_path }}/.env.web
+ExecStart=/usr/bin/node node_modules/.bin/next start --port 3000 --hostname 127.0.0.1
+Restart=always
+RestartSec=5
+
+# Hardening: the frontend needs the filesystem read-only apart from its own cache.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ deploy_root }}/releases
+MemoryMax=1G
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=metacreator-web
+
+[Install]
+WantedBy=multi-user.target

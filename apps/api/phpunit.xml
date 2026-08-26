@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <!-- Runner behaviour: one suite per docs/22-testing.md, kept separate so it
+             can be run alone while iterating on a single tool. -->
+        <testsuite name="Tools">
+            <directory>tests/Tools</directory>
+        </testsuite>
+        <!-- Structural rules from docs/02-architecture.md, asserted rather than
+             merely written down. -->
+        <testsuite name="Architecture">
+            <directory>tests/Architecture</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <!-- The test environment is set in tests/bootstrap.php, not here: PHPUnit's
+         <env> cannot displace the variables the Docker containers export. See the
+         comment in that file. -->
+</phpunit>
