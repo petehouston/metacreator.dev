@@ -14,3 +14,18 @@ Schedule::command('blog:publish-scheduled')
     ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Today's numbers, refreshed often enough that an admin trusts them, and cheaply
+// enough that they cost nothing: the rollup is a recompute of one day, not a scan
+// of all history.
+Schedule::command('analytics:rollup --days=1')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Just after midnight, close out yesterday — including the runs that landed in the
+// last quarter hour, which the 23:45 pass could not have seen.
+Schedule::command('analytics:rollup --days=2')
+    ->dailyAt('00:10')
+    ->withoutOverlapping()
+    ->runInBackground();

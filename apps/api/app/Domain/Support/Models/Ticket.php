@@ -19,6 +19,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property TicketPriority $priority
  * @property CarbonImmutable|null $due_at
  * @property CarbonImmutable|null $resolved_at
+ * @property CarbonImmutable|null $first_response_at
+ * @property CarbonImmutable|null $last_activity_at
+ * @property CarbonImmutable|null $created_at
  */
 final class Ticket extends Model
 {

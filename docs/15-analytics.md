@@ -14,11 +14,20 @@ Rolled up nightly into:
 | Table | Grain |
 | --- | --- |
 | `tool_run_daily_stats` | tool × day × tier × access_reason → runs, uniques, success rate, p50/p95 duration, cache hit rate, error breakdown |
-| `tool_funnel_daily` | tool × day → views, starts, completions, paywall hits, upgrades attributed |
+| `tool_funnel_daily` | tool × day → views, starts, completions, paywall hits, account walls, quota walls, upgrades |
 | `billing_daily_stats` | day → MRR, ARR, active by plan, churn, conversions |
 | `content_daily_stats` | post × day → views, read-through, tool clicks, newsletter signups |
 
 Retention: raw runs 90 days, rollups forever. Rollups are what dashboards query — never live tables.
+`analytics:rollup` recomputes rather than appends, so running it twice for a day is a no-op and a
+backfill after a restore is safe. Scheduled every fifteen minutes for today, and again at 00:10 for
+the day that just closed.
+
+The funnel counters are written at request time by `FunnelRecorder`, not rolled up from an event
+table: a tool view is high volume and worthless individually, so it is folded into a per-tool-per-day
+row by a queued, atomic upsert. The three walls are separate columns because they are three
+different product problems — "should be cheaper", "should not need an account", "the limit is too
+tight" — and a single `blocked` counter answers none of them.
 
 ## Admin dashboards
 

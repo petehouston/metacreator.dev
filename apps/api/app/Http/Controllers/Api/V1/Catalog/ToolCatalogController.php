@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Catalog;
 
+use App\Domain\Analytics\Services\FunnelRecorder;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolCategory;
@@ -21,7 +22,10 @@ use Illuminate\Http\Request;
  */
 final class ToolCatalogController extends Controller
 {
-    public function __construct(private readonly ToolAccessService $access) {}
+    public function __construct(
+        private readonly ToolAccessService $access,
+        private readonly FunnelRecorder $funnel,
+    ) {}
 
     /** @return ApiCollection<ToolResource> */
     public function index(Request $request): ApiCollection
@@ -66,6 +70,9 @@ final class ToolCatalogController extends Controller
             ])
             ->where('slug', $slug)
             ->firstOrFail();
+
+        // The top of the funnel. Queued, so a view costs the visitor nothing.
+        $this->funnel->view($tool->id);
 
         $decision = $this->access->decide($tool, $request->user());
 

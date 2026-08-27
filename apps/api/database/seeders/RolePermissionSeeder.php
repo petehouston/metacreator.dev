@@ -4,45 +4,24 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Domain\Access\PermissionCatalog;
+use App\Domain\Access\Actions\SyncRolesAndPermissions;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 
 /**
  * Reference data: this runs in production, not just locally.
  *
- * Idempotent, and it *removes* permissions that were dropped from the catalog, so
- * the database can never drift from {@see PermissionCatalog}.
+ * The work lives in {@see SyncRolesAndPermissions} so that tests — which need the
+ * same roles and have no console to write a summary to — can reach it without
+ * going through a seeder.
  */
 final class RolePermissionSeeder extends Seeder
 {
-    public function run(): void
+    public function run(SyncRolesAndPermissions $sync): void
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $result = $sync->handle();
 
-        $declared = PermissionCatalog::all();
-
-        foreach ($declared as $name) {
-            Permission::findOrCreate($name, 'web');
-        }
-
-        // Anything no longer declared is stale — drop it rather than leaving a
-        // permission nothing checks but a role still grants.
-        Permission::query()->whereNotIn('name', $declared)->delete();
-
-        foreach (array_keys(PermissionCatalog::ROLES) as $roleName) {
-            $role = Role::findOrCreate($roleName, 'web');
-            $role->syncPermissions(PermissionCatalog::permissionsFor($roleName));
-        }
-
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-
-        $this->command->info(sprintf(
-            'Synced %d permissions across %d roles.',
-            count($declared),
-            count(PermissionCatalog::ROLES),
-        ));
+        $this->command->info(
+            "Synced {$result['permissions']} permissions across {$result['roles']} roles."
+        );
     }
 }

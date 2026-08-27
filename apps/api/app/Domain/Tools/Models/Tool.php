@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, mixed>|null $config
  * @property array<int, string>|null $platforms
  * @property CarbonImmutable|null $featured_at
+ * @property CarbonImmutable|null $published_at
  * @property CarbonImmutable|null $updated_at
  */
 final class Tool extends Model

@@ -26,7 +26,15 @@ final class RelatedPostService
         return Post::query()
             ->public()
             ->whereKeyNot($post->getKey())
-            ->with(['category:id,slug,name,accent_color', 'author:id,name,avatar_path'])
+            // `featuredMedia` has to be eager-loaded here, not just declared on the
+            // resource: PostResource exposes the image behind `whenLoaded`, so an
+            // unloaded relation silently drops the key and the "keep reading" cards
+            // render with an empty grey box where the thumbnail should be.
+            ->with([
+                'category:id,slug,name,accent_color',
+                'author:id,name,avatar_path',
+                'featuredMedia',
+            ])
             ->select('posts.*')
             // Shared tags dominate; same-category is the tie-breaker; `published_at`
             // below settles the rest. Weighting keeps it to a single ORDER BY.

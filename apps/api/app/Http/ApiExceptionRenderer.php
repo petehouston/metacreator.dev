@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use ReflectionMethod;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -47,7 +48,10 @@ final class ApiExceptionRenderer
             $e instanceof AuthenticationException => [
                 401, 'auth.unauthenticated', 'You need to sign in to do that.', [],
             ],
-            $e instanceof AuthorizationException => [
+            // Listed before HttpExceptionInterface, which it also implements: an
+            // admin route rejecting an actor must say `auth.forbidden` like every
+            // other denial, not a generic `http.error` the client cannot branch on.
+            $e instanceof AuthorizationException, $e instanceof UnauthorizedException => [
                 403, 'auth.forbidden', 'You do not have permission to do that.', [],
             ],
             $e instanceof ModelNotFoundException, $e instanceof NotFoundHttpException => [

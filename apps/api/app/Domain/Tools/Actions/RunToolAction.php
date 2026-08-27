@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Tools\Actions;
 
+use App\Domain\Analytics\Services\FunnelRecorder;
 use App\Domain\Tools\Contracts\Cacheable;
 use App\Domain\Tools\Contracts\Queueable;
 use App\Domain\Tools\Contracts\ToolRunner;
@@ -43,6 +44,7 @@ final readonly class RunToolAction
         private ToolAccessService $access,
         private QuotaService $quota,
         private InputValidator $validator,
+        private FunnelRecorder $funnel,
     ) {}
 
     /**
@@ -63,6 +65,10 @@ final readonly class RunToolAction
         $decision = $this->access->decide($tool, $user);
 
         if (! $decision->allowed) {
+            // Count the wall before throwing. A denial that leaves no trace is why
+            // "which premium tools do free users want?" was unanswerable (docs/15).
+            $this->funnel->wall($tool->id, $decision->errorCode ?? 'tool.blocked');
+
             throw new ToolAccessDenied($decision);
         }
 
@@ -93,11 +99,23 @@ final readonly class RunToolAction
         $cached = $this->lookupCache($tool, $runner, $input);
 
         if ($cached !== null) {
+            // A cache hit is still a start: counting only the runs that reached a
+            // runner would make completions exceed starts on well-cached tools.
+            $this->funnel->start($tool->id);
+
             return $this->finish($context, $input, $cached, cacheHit: true, referrerSource: $referrerSource);
         }
 
         // 4. Reserve budget before executing so concurrent requests cannot both pass.
-        $this->quota->consume($context);
+        try {
+            $this->quota->consume($context);
+        } catch (QuotaExceeded $e) {
+            $this->funnel->wall($tool->id, 'tool.quota_exceeded');
+
+            throw $e;
+        }
+
+        $this->funnel->start($tool->id);
 
         if ($runner instanceof Queueable) {
             return $this->dispatchAsync($context, $input, $referrerSource);
@@ -222,6 +240,7 @@ final readonly class RunToolAction
         // Telemetry is written on the analytics queue: measuring the product must
         // never be something the user waits for.
         RecordToolRun::dispatch($run->attributesToArray())->onQueue('analytics');
+        $this->funnel->completion($context->tool->id);
 
         $run->setRelation('tool', $context->tool);
         $run->result = $result;

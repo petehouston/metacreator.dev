@@ -136,3 +136,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('notifications/read-all', [NotificationController::class, 'readAll'])
         ->name('notifications.read-all');
 });
+
+// ── Admin ────────────────────────────────────────────────────────────────────
+//
+// One file per surface. Every route inside declares the permission it needs, and
+// an architecture test fails the build if one does not.
+
+Route::prefix('admin')->middleware('auth:sanctum')->group(base_path('routes/admin.php'));

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Media\Models;
 
+use App\Domain\Users\Models\User;
 use App\Support\Concerns\HasUlidKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -48,6 +50,19 @@ final class Media extends Model
             'usage_count' => 'integer',
             'is_decorative' => 'boolean',
         ];
+    }
+
+    /**
+     * Who put this file here.
+     *
+     * Nullable by design: staff accounts get deleted, and a media library that
+     * cascades away its own contents when an editor leaves is a data-loss bug.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 
     /** @return HasMany<MediaVariant, $this> */

@@ -39,6 +39,7 @@ what actually exists today — read it before planning work.
 | **Billing** | Stripe-backed 7-day / monthly / yearly plans, invoices, dunning, self-serve billing portal |
 | **Support** | Ticketing with threads, attachments, statuses and SLA timers |
 | **RBAC** | Roles (Admin, Editor, Support, Accountant) composed from ~120 granular permissions |
+| **Admin** | A permission-gated staff dashboard: product analytics from nightly rollups, funnel and paywall reporting, users, roles, tools, grants, the blog editor, media, billing, the support queue, settings and an audit log |
 | **Growth** | GA4 / GTM / Meta Pixel + custom head/body scripts, newsletter provider adapters, sitemaps, JSON-LD everywhere |
 
 ## Architecture at a glance
@@ -104,7 +105,8 @@ migrations and seeds a demo dataset (admin user, tool catalog, sample posts).
 | MySQL | `localhost:3307` (`metacreator` / `secret`) |
 | Redis | `localhost:6380` |
 
-Seeded admin: `admin@metacreator.dev` / `password`.
+Seeded admin: `admin@metacreator.dev` / `password` — sign in and open
+[localhost:3000/admin](http://localhost:3000/admin).
 
 Details and troubleshooting: [`docs/19-local-development.md`](docs/19-local-development.md).
 

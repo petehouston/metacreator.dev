@@ -5,7 +5,7 @@ this handbook describes the intended design; this one is the only place that cla
 exists. Keep it honest — a specification that reads as a status report is how a team ends up
 surprised.
 
-Last updated: 2026-08-26.
+Last updated: 2026-08-27.
 
 ## Legend
 
@@ -23,7 +23,10 @@ Last updated: 2026-08-26.
 | Migrations & schema (all domains) | ✅ | Tables exist for every documented feature, including ones with no code yet |
 | RBAC permission catalog & seeded roles | ✅ | [06](06-auth-rbac.md); asserted by architecture tests |
 | API envelope, error catalog, exception renderer | ✅ | Domain exceptions self-render by capability |
-| Design tokens & core UI kit | ✅ | [17](17-design-system.md) |
+| Design tokens & core UI kit | ✅ | [17](17-design-system.md) — "Signal" palette: cobalt / emerald / coral |
+| Dashboard app shell | ✅ | `app/(app)` route group: fixed collapsible rail, topbar, ⌘K palette, mobile drawer |
+| Admin app shell | ✅ | `app/(admin)` route group: permission-filtered nav, ⌘K with user lookup, queue badges |
+| Queue topology (Horizon supervisors) | ✅ | `config/horizon.php` now matches [18](18-queues-workers.md). Before this, only `default` was consumed — `analytics`, `tools` and `mail` jobs were dispatched and never run |
 | CI: Pest, PHPStan, Pint, ESLint, tsc | ✅ | All green |
 
 ## Tools
@@ -35,7 +38,8 @@ Last updated: 2026-08-26.
 | Generated `ToolForm` and result renderers | ✅ | |
 | Tool runners | 🟡 | **8 of the 78** catalogued in [07](07-tool-catalog.md). The engine is proven end to end; the rest are mechanical |
 | Run recording & telemetry | ✅ | |
-| Run history (`/dashboard/runs`) | ✅ | Windowed by the plan's `history_days` entitlement |
+| Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter and a per-run drawer |
+| In-app catalog (`/dashboard/tools`) | ✅ | Search, tier/platform/category filters, per-user access shown on each card |
 
 ## Accounts
 
@@ -50,6 +54,9 @@ Last updated: 2026-08-26.
 | Google OAuth | ⬜ | **Blocked**: `laravel/socialite` pins Guzzle ^7, the framework pulls Guzzle 8. See [03](03-tech-stack.md) |
 | Profile, avatar, timezone | ✅ | Email is immutable, enforced in the model and the request |
 | Device/session list with revocation | ✅ | |
+| Settings split (profile / security / notifications) | ✅ | Tabbed, each tab its own route |
+| Plan & billing screen (`/dashboard/billing`) | 🟡 | Plan, limits and usage are live from `EntitlementsService`. No invoice history or card management — there is no Stripe integration to read them from |
+| Help & support screen (`/dashboard/support`) | 🟡 | FAQ plus email/contact routes. Not ticketing — see below |
 | Account deletion flow | ⬜ | Columns exist (`deletion_requested_at`) |
 
 ## Notifications
@@ -78,7 +85,31 @@ Last updated: 2026-08-26.
 | SEO: metadata, OG/Twitter, JSON-LD, sitemap | ✅ | `BlogPosting` + `BreadcrumbList`, `FAQPage` only when an FAQ block is present |
 | Scheduled publishing | ✅ | `blog:publish-scheduled`, every minute |
 | `features.blog_enabled` kill switch | ✅ | Middleware 404s the route group; sitemap drops the URLs |
-| Admin editor, list screens, bulk actions, revisions | ⬜ | `post_revisions` table exists and is unused |
+| Admin editor, list screens, bulk actions, revisions | ✅ | [25](25-admin.md). Block editor for all 14 implemented types, status tabs with counts, per-row-authorized bulk actions, optimistic concurrency, revisions on every content save |
+
+## Admin
+
+Full detail in [25](25-admin.md).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Admin API, permission-gated per route | ✅ | 56 routes; a test asserts every one declares a permission *and* that a customer is refused by all of them |
+| Overview dashboard | ✅ | Eight headline metrics with period-over-period deltas and sparklines, run volume, funnel, access-reason split, top tools, top errors |
+| Tool analytics | ✅ | Every panel in [15](15-analytics.md): runs, paywall hits, failure rate, p95, cache hit rate, access-reason split, comped runs |
+| Funnel & content analytics | ✅ | |
+| Nightly rollups (`analytics:rollup`) | ✅ | Recompute, not append. Every 15 min for today, 00:10 for yesterday |
+| `tool_funnel_daily` + `FunnelRecorder` | ✅ | The table [15](15-analytics.md) specified and nothing created. Paywall hits had **no source at all** before this |
+| Users: search, detail, suspend, delete | ✅ | Email immutable here too; last super admin cannot be demoted |
+| Roles & granular permission editor | ✅ | Composes any permission set from the catalog without a deploy |
+| Tools: tier, status, visibility, featuring | ✅ | `key`, `slug`, `version` and `input_schema` deliberately not editable |
+| Tool grants | ✅ | Attributed, expirable, audited, and the user is notified |
+| Media library | ✅ | Grid, upload, alt text with a "no alt text" warning, soft delete |
+| Billing: plans, subscriptions, invoices | 🟡 | Plans are writable; Stripe records are read-only and empty until the integration exists |
+| Support queue | ✅ | Overdue-first ordering, reply/internal-note toggle, triage, SLA timeline |
+| Contact inbox | ✅ | Triage for the public form |
+| Newsletter subscribers | ✅ | List, sync-failure banner, streamed CSV export |
+| Settings | ✅ | Three permissions over one table, checked per key; secrets never sent to the browser |
+| Audit log | ✅ | Actor, subject, diff. No endpoint edits or deletes an entry |
 
 ## Not yet started
 
@@ -86,12 +117,48 @@ Each has a full specification and its schema, models and permissions already in 
 
 | Area | Spec |
 | --- | --- |
-| Blog admin: editor, list screens, bulk actions | [09](09-blog-cms.md) |
-| Media library | [10](10-media-library.md) |
-| Stripe billing, plans, invoices, webhooks | [11](11-billing.md) |
-| Support ticketing | [12](12-support-tickets.md) |
-| Newsletter provider adapters | [14](14-newsletter-marketing.md) |
-| Admin dashboard & analytics rollups | [15](15-analytics.md) |
+| Stripe integration: checkout, portal, webhooks | [11](11-billing.md) |
+| Customer-facing ticket creation | [12](12-support-tickets.md) |
+| Newsletter provider adapters (MailChimp, Sendy, …) | [14](14-newsletter-marketing.md) |
+| Google OAuth | [03](03-tech-stack.md) — blocked on a Guzzle major-version conflict |
+
+The admin side of billing, support and the newsletter **is** built — plans, subscriptions, invoices,
+the ticket queue and the subscriber list all have working screens ([25](25-admin.md)). What is
+missing is the machinery that fills them: nothing writes a Stripe subscription yet, customers cannot
+open a ticket from the dashboard, and no provider adapter syncs the list outward.
+
+## Known gaps worth knowing about
+
+- **Synchronous tool runs record telemetry, not results.** `RecordToolRun` persists the run row;
+  only `RunToolJob` (asynchronous runs) writes a `result_ref` through `ArtifactStore`. So history
+  lists every run, and the run drawer can only re-render the output of the ones that ran in the
+  background. If "unlimited history" is meant to include the *results* on paid plans, the
+  synchronous path needs to store them too — that is a storage and privacy decision, not an
+  oversight in the UI.
+- **`POST /api/v1/contact` does not exist.** The public contact form posts to it and reports a
+  failure — so the admin's Contact inbox reads a table nothing writes to yet. The dashboard's Help
+  screen deliberately links to email and to that form rather than claiming a ticket will be opened.
+
+- **Two silent bugs were found by driving the admin in a browser**, both now covered by tests. Worth
+  knowing because the shapes recur:
+
+  - `SavePostRequest` validated `blocks.blocks.*.type` and nothing else, and Laravel's `validated()`
+    returns only the keys a rule names — so every block reached the action as `{type: "paragraph"}`
+    and the writing was deleted on save, with a 200 and nothing in the logs. Partial validation of a
+    nested structure plus `validated()` is a content-loss bug waiting to happen.
+  - The admin taxonomy endpoints reused the public resources, which omit numeric primary keys by
+    design ([05](05-api.md)). But `posts.category_id` and the tag pivot are numeric, so every option
+    in the category picker saved as null. `AdminTaxonomyResource` carries the id.
+
+- **`ui/field.tsx`'s `Select` forwarded children through `{...props}`.** That loses React's
+  static-children optimisation, so every multi-option select in the app — customer dashboard
+  included — logged a key warning from a wrapper the call site could not see. It now passes children
+  through `Children.toArray`.
+
+- **The overview's "run → account" rate can exceed 100%.** It is accounts created per 100 unique
+  visitors *who ran a tool*, and someone can register without ever running one. On a seeded
+  development database it reads absurdly high. The formula is right; the denominator is narrow on
+  purpose, because the product's first meaningful action is a run.
 
 ## Known environment notes
 

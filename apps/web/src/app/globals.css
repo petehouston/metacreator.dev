@@ -1,0 +1,579 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   MetaCreator.Dev design tokens — "Signal"
+   --------------------------------------------------------------------------
+   Two layers, deliberately:
+
+   1. RAMPS  (--brand-*, --signal-*, --ember-*, --ink-*, --paper-*) — raw colour.
+      Never used in a component.
+   2. ROLES  (--color-*)                                            — semantic.
+      This is all components touch.
+
+   Keeping them separate is what lets us restyle the whole product by editing
+   this file, and it is what makes the light/dark switch a token swap rather
+   than a hunt through JSX. See docs/17-design-system.md.
+
+   The signature: a confident social blue, an emerald that only ever means
+   "live / this is the value", and a coral that carries the human, warm notes.
+   Grounds are cool neutrals — never pure white, never pure black. The marketing
+   surface sits on a painted canvas (mesh + grid + grain); the signed-in app
+   sits on a flat, quiet ground, because a workspace should not compete with
+   the work.
+   ========================================================================== */
+
+@theme {
+  /* ── Brand: cobalt. The blue every network trained people to trust, pushed a
+        few degrees toward violet so it is ours rather than anyone else's. */
+  --color-brand-50: oklch(0.97 0.016 258);
+  --color-brand-100: oklch(0.94 0.036 258);
+  --color-brand-200: oklch(0.88 0.072 258);
+  --color-brand-300: oklch(0.79 0.125 259);
+  --color-brand-400: oklch(0.70 0.165 260);
+  --color-brand-500: oklch(0.62 0.192 261);
+  --color-brand-600: oklch(0.55 0.205 262);
+  --color-brand-700: oklch(0.47 0.183 263);
+  --color-brand-800: oklch(0.39 0.148 264);
+  --color-brand-900: oklch(0.31 0.112 265);
+  --color-brand-950: oklch(0.23 0.082 266);
+
+  /* ── Signal: emerald. Reserved for "this is live / this is the value".
+        Never decorative. The 600–800 end exists so it can also be *text* on
+        paper, where the bright end has nowhere near enough contrast. */
+  --color-signal-200: oklch(0.94 0.070 165);
+  --color-signal-300: oklch(0.89 0.115 164);
+  --color-signal-400: oklch(0.82 0.150 163);
+  --color-signal-500: oklch(0.74 0.155 164);
+  --color-signal-600: oklch(0.66 0.145 165);
+  --color-signal-700: oklch(0.56 0.122 166);
+  --color-signal-800: oklch(0.46 0.100 167);
+
+  /* ── Ember: coral. The third voice — author bylines, "most popular", reading
+        times, streaks. Warm and human where the blue is institutional. */
+  --color-ember-300: oklch(0.86 0.078 20);
+  --color-ember-400: oklch(0.77 0.135 20);
+  --color-ember-500: oklch(0.69 0.180 22);
+  --color-ember-600: oklch(0.61 0.192 24);
+
+  /* ── Paper: the light-mode ground. Cool and very slightly blue, so it reads
+        as screen-native rather than as scanned stock. */
+  --color-paper-0: oklch(1 0 0);
+  --color-paper-25: oklch(0.992 0.002 258);
+  --color-paper-50: oklch(0.982 0.004 258);
+  --color-paper-100: oklch(0.968 0.006 258);
+  --color-paper-200: oklch(0.930 0.009 258);
+  --color-paper-300: oklch(0.878 0.012 258);
+
+  /* ── Ink: the dark-mode ground and every dark text value. Tinted toward the
+        brand hue, which is what stops dark mode from looking like a hole. */
+  --color-ink-400: oklch(0.70 0.022 258);
+  --color-ink-500: oklch(0.58 0.026 258);
+  --color-ink-600: oklch(0.47 0.028 258);
+  --color-ink-700: oklch(0.37 0.030 258);
+  --color-ink-800: oklch(0.28 0.030 258);
+  --color-ink-850: oklch(0.250 0.030 258);
+  --color-ink-900: oklch(0.215 0.028 258);
+  --color-ink-950: oklch(0.180 0.026 258);
+  --color-ink-1000: oklch(0.148 0.024 258);
+
+  /* ── Type scale. Line heights are part of the token: a size without its
+        leading is only half a decision. */
+  --text-display-xl: 4.5rem;
+  --text-display-xl--line-height: 0.98;
+  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-xl--font-weight: 700;
+
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1.02;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-lg--font-weight: 700;
+
+  --text-heading-1: 2.5rem;
+  --text-heading-1--line-height: 1.12;
+  --text-heading-1--letter-spacing: -0.025em;
+  --text-heading-1--font-weight: 700;
+
+  --text-heading-2: 1.875rem;
+  --text-heading-2--line-height: 1.22;
+  --text-heading-2--letter-spacing: -0.02em;
+  --text-heading-2--font-weight: 650;
+
+  --text-heading-3: 1.375rem;
+  --text-heading-3--line-height: 1.3;
+  --text-heading-3--letter-spacing: -0.012em;
+  --text-heading-3--font-weight: 600;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.7;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.02em;
+
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Squarer than the default. The mark is two rounded squares; the interface
+     should rhyme with it rather than melt into pills. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.125rem;
+
+  /* ── Motion. `standard` is the workhorse; the curve is a fast-out, settle-in. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ── Semantic roles: light (default) ─────────────────────────────────────── */
+:root {
+  --color-background: var(--color-paper-25);
+  /* Surfaces are translucent on purpose: the canvas behind them tints every
+     card slightly differently depending on where it sits on the page, which is
+     what makes a long page of cards stop looking like a spreadsheet. */
+  --color-surface: oklch(1 0 0 / 0.74);
+  --color-surface-solid: var(--color-paper-0);
+  --color-surface-raised: oklch(1 0 0 / 0.88);
+  --color-surface-sunken: oklch(0.945 0.006 258 / 0.72);
+  --color-surface-inverse: var(--color-ink-950);
+
+  --color-border: oklch(0.885 0.007 258 / 0.9);
+  --color-border-strong: oklch(0.805 0.011 258 / 1);
+  --color-border-subtle: oklch(0.930 0.006 258 / 0.85);
+
+  --color-foreground: oklch(0.20 0.024 258);
+  --color-foreground-muted: oklch(0.45 0.022 258);
+  --color-foreground-subtle: oklch(0.58 0.020 258);
+  --color-foreground-inverse: var(--color-paper-0);
+
+  --color-primary: var(--color-brand-600);
+  --color-primary-hover: var(--color-brand-700);
+  --color-primary-foreground: oklch(0.99 0.002 258);
+  --color-primary-subtle: oklch(0.945 0.032 258 / 0.85);
+
+  --color-accent: var(--color-signal-700);
+  --color-accent-foreground: oklch(0.16 0.02 258);
+  --color-accent-surface: oklch(0.92 0.085 165 / 0.55);
+
+  --color-ember: var(--color-ember-600);
+
+  --color-success: var(--color-signal-800);
+  --color-warning: oklch(0.62 0.145 68);
+  --color-danger: oklch(0.55 0.205 25);
+  --color-info: var(--color-brand-600);
+
+  --color-ring: var(--color-brand-500);
+
+  /* The canvas: what `body::before` paints. Declared as roles so the dark
+     block below only has to restate the ones that actually change. */
+  --canvas-base: var(--color-paper-25);
+  --canvas-wash-1: oklch(0.62 0.192 261 / 0.20);
+  --canvas-wash-2: oklch(0.82 0.150 163 / 0.20);
+  --canvas-wash-3: oklch(0.77 0.135 20 / 0.16);
+  --canvas-wash-4: oklch(0.70 0.165 260 / 0.14);
+  --canvas-line: oklch(0.55 0.02 258 / 0.07);
+  --canvas-grain: 0.028;
+
+  /* The app ground: flat, quiet, opaque. The workspace does not get weather. */
+  --app-ground: oklch(0.972 0.005 258);
+  --app-rail: oklch(1 0 0 / 0.78);
+  --app-surface: var(--color-paper-0);
+
+  --shadow-card: 0 1px 2px oklch(0.20 0.024 258 / 0.05), 0 4px 14px oklch(0.20 0.024 258 / 0.05);
+  --shadow-raised: 0 2px 4px oklch(0.20 0.024 258 / 0.06), 0 14px 36px oklch(0.20 0.024 258 / 0.10);
+  --shadow-popover: 0 12px 32px oklch(0.20 0.024 258 / 0.14);
+  --shadow-glow: 0 0 0 1px oklch(0.62 0.192 261 / 0.22), 0 10px 40px oklch(0.62 0.192 261 / 0.18);
+
+  color-scheme: light;
+}
+
+/* ── Semantic roles: dark.
+      Depth here comes from surface *lightness*, not shadow — a shadow on a
+      near-black background is invisible, so raised surfaces get lighter instead.
+      The ground is deep slate-navy rather than black; the canvas washes are what
+      keep a long scroll from flattening out. */
+.dark {
+  --color-background: var(--color-ink-1000);
+  --color-surface: oklch(0.215 0.028 258 / 0.62);
+  --color-surface-solid: var(--color-ink-950);
+  --color-surface-raised: oklch(0.250 0.030 258 / 0.75);
+  --color-surface-sunken: oklch(0.180 0.026 258 / 0.65);
+  --color-surface-inverse: var(--color-paper-50);
+
+  --color-border: oklch(0.36 0.028 258 / 0.85);
+  --color-border-strong: oklch(0.48 0.032 258 / 0.9);
+  --color-border-subtle: oklch(0.30 0.026 258 / 0.7);
+
+  --color-foreground: oklch(0.96 0.008 258);
+  --color-foreground-muted: oklch(0.755 0.020 258);
+  --color-foreground-subtle: oklch(0.615 0.022 258);
+  --color-foreground-inverse: var(--color-ink-1000);
+
+  --color-primary: var(--color-brand-400);
+  --color-primary-hover: var(--color-brand-300);
+  --color-primary-foreground: oklch(0.15 0.028 262);
+  --color-primary-subtle: oklch(0.34 0.115 262 / 0.42);
+
+  --color-accent: var(--color-signal-400);
+  --color-accent-foreground: oklch(0.14 0.02 258);
+  --color-accent-surface: oklch(0.46 0.100 167 / 0.30);
+
+  --color-ember: var(--color-ember-400);
+
+  --color-success: var(--color-signal-400);
+  --color-warning: oklch(0.81 0.140 68);
+  --color-danger: oklch(0.71 0.180 25);
+  --color-info: var(--color-brand-300);
+
+  --color-ring: var(--color-brand-400);
+
+  --canvas-base: var(--color-ink-1000);
+  --canvas-wash-1: oklch(0.55 0.205 262 / 0.40);
+  --canvas-wash-2: oklch(0.66 0.145 165 / 0.16);
+  --canvas-wash-3: oklch(0.61 0.192 24 / 0.16);
+  --canvas-wash-4: oklch(0.62 0.192 261 / 0.16);
+  --canvas-line: oklch(0.85 0.02 258 / 0.05);
+  --canvas-grain: 0.045;
+
+  --app-ground: oklch(0.163 0.025 258);
+  --app-rail: oklch(0.195 0.027 258 / 0.85);
+  --app-surface: oklch(0.205 0.028 258);
+
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.45);
+  --shadow-raised: 0 4px 28px oklch(0 0 0 / 0.55);
+  --shadow-popover: 0 12px 32px oklch(0 0 0 / 0.55);
+  --shadow-glow: 0 0 0 1px oklch(0.62 0.192 261 / 0.45), 0 10px 48px oklch(0.62 0.192 261 / 0.28);
+
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Anchors land below the sticky header rather than underneath it. */
+    scroll-padding-top: 5rem;
+    background-color: var(--canvas-base);
+  }
+
+  /* Grain sits lowest, directly on the ground colour, so the washes above it
+     stay transparent and the noise reads *through* them. Without it the large
+     soft gradients band visibly on 8-bit displays. */
+  html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    opacity: var(--canvas-grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* The ground stays on `html`; `body` is transparent so the fixed canvas layer
+     below can sit behind the whole document without a stacking context fight. */
+  body {
+    background-color: transparent;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+  }
+
+  /* ── The canvas ────────────────────────────────────────────────────────────
+     One fixed layer, painted once, behind every *marketing* page:
+
+       · four soft washes, placed off-centre so the composition is asymmetric
+       · a fine engineering grid, faded out toward the bottom of the viewport
+       · a whisper of grain, which is what stops large flat gradients banding
+
+     Fixed rather than scrolled: the page slides over the light instead of
+     dragging it along, which is the effect that reads as "depth" rather than
+     as "a big background image". */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(48rem 34rem at 8% -6%, var(--canvas-wash-1), transparent 66%),
+      radial-gradient(40rem 30rem at 96% 12%, var(--canvas-wash-2), transparent 62%),
+      radial-gradient(46rem 34rem at 20% 92%, var(--canvas-wash-3), transparent 64%),
+      radial-gradient(52rem 40rem at 82% 78%, var(--canvas-wash-4), transparent 66%);
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 1;
+    background-image:
+      linear-gradient(to right, var(--canvas-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--canvas-line) 1px, transparent 1px);
+    background-size: 4.5rem 4.5rem;
+    background-position: center top;
+    mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 20%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 20%, transparent 78%);
+  }
+
+  /* ── The app ground ────────────────────────────────────────────────────────
+     The signed-in surface opts out of the weather. `data-surface="app"` on
+     <html> swaps the ground for a flat one and hides both canvas layers: a
+     workspace people sit inside for an hour should be quiet, and translucent
+     cards over a moving mesh is exactly the wrong texture for dense data. */
+  html[data-surface="app"] {
+    background-color: var(--app-ground);
+    scroll-padding-top: 1rem;
+  }
+
+  html[data-surface="app"]::before,
+  html[data-surface="app"] body::before,
+  html[data-surface="app"] body::after {
+    display: none;
+  }
+
+  /* One visible focus style everywhere. Never `outline: none` without a
+     replacement — keyboard users lose the plot instantly. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Numbers in results must line up in columns. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-500);
+    color: white;
+  }
+}
+
+@layer utilities {
+  /* ── Grain. A single inline SVG turbulence, no network request. Sits above
+        the canvas washes and below the content. */
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--canvas-grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* The aurora behind a hero or a CTA slab. Denser than the page canvas —
+     this is the local weather, not the climate. */
+  .bg-aurora {
+    background-image:
+      radial-gradient(38rem 22rem at 18% -20%, var(--canvas-wash-1), transparent 64%),
+      radial-gradient(32rem 20rem at 88% 0%, var(--canvas-wash-2), transparent 60%);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--canvas-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--canvas-line) 1px, transparent 1px);
+    background-size: 3rem 3rem;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* ── The signature panel. Frosted, faintly tinted, with a hairline of light
+        along its top edge — the one shape the marketing site is built from. */
+  .panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    position: relative;
+  }
+
+  /* ── The app card. The panel's opaque twin, for dense signed-in surfaces:
+        no blur (it costs a composite layer per card in a long list) and a real
+        background, so tabular data reads at a glance. */
+  .app-card {
+    background-color: var(--app-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    position: relative;
+  }
+
+  .app-card-interactive {
+    transition:
+      border-color 160ms var(--ease-standard),
+      background-color 160ms var(--ease-standard),
+      box-shadow 160ms var(--ease-standard);
+  }
+
+  .app-card-interactive:hover {
+    border-color: color-mix(in oklab, var(--color-primary) 42%, transparent);
+    box-shadow: var(--shadow-card);
+  }
+
+  .panel-lift {
+    transition:
+      transform 200ms var(--ease-standard),
+      border-color 200ms var(--ease-standard),
+      box-shadow 200ms var(--ease-standard);
+  }
+
+  .panel-lift:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
+    box-shadow: var(--shadow-raised);
+  }
+
+  /* ── Bracket rule. The section-header motif: a short tick, then the label.
+        Cheap, distinctive, and it scales to every page for free. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-foreground-subtle);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.25rem;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  }
+
+  /* ── Gradient type. Used once per page at most — it is a signature, and a
+        signature repeated is a pattern. */
+  .text-gradient {
+    background: linear-gradient(
+      104deg,
+      var(--color-foreground) 8%,
+      var(--color-brand-400) 52%,
+      var(--color-signal-500) 96%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* A hand-drawn-feeling underline for the one phrase that carries the promise. */
+  .marker-underline {
+    background-image: linear-gradient(
+      transparent 62%,
+      var(--color-accent-surface) 62%,
+      var(--color-accent-surface) 92%,
+      transparent 92%
+    );
+  }
+
+  /* Long-form content measure. 68ch is where line length stops being comfortable. */
+  .prose-measure {
+    max-width: 68ch;
+  }
+
+  /* ── The ticker. A single strip of mono type sliding under the hero, doubled
+        in the markup so the loop is seamless. Paused for anyone who asked for
+        reduced motion — the content is decorative, so stopping it loses nothing. */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee-slide 44s linear infinite;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  }
+
+  @keyframes marquee-slide {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      /* Exactly half, because the track is the same list printed twice. */
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* Horizontal hairline that fades at both ends — used between page sections
+     instead of a full-width border, which always looks like a table. */
+  .rule-fade {
+    height: 1px;
+    border: 0;
+    background: linear-gradient(90deg, transparent, var(--color-border-strong), transparent);
+  }
+
+  /* Slim scrollbars inside app panes, so a scrolling sidebar does not gain a
+     14px grey gutter that nothing else on the page has. */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: 999px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Overlays and popovers in the app shell: a short rise, not a slide. */
+  @keyframes app-pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .animate-pop-in {
+    animation: app-pop-in 140ms var(--ease-standard);
+  }
+
+  @keyframes app-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: app-fade-in 160ms var(--ease-standard);
+  }
+}
+
+/* Reduced motion is honoured as an instant state change, never as a faster
+   animation — the point is the absence of movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

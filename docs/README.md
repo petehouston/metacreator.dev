@@ -36,6 +36,7 @@ sitting; start here and follow the links.
 | 10 | [Media library](10-media-library.md) | Uploads, variants, storage, metadata and SEO fields |
 | 14 | [Newsletter & marketing](14-newsletter-marketing.md) | Provider adapters, capture placements, double opt-in |
 | 15 | [Analytics & tracking](15-analytics.md) | Internal tool telemetry, GA4/GTM/Pixel, custom scripts |
+| 25 | [Admin dashboard](25-admin.md) | The staff surface: screens, permissions, rollups, guardrails |
 | 16 | [SEO](16-seo.md) | Metadata model, structured data, sitemaps, canonical rules |
 
 ## 4. Commerce & support

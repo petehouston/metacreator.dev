@@ -1,0 +1,162 @@
+import "server-only";
+
+import type {
+  Entitlements,
+  Paginated,
+  PostCategory,
+  PostDetail,
+  PostSummary,
+  PostTag,
+  ToolCategory,
+  ToolDetail,
+  ToolSummary,
+} from "./types";
+
+/**
+ * Server-side API client.
+ *
+ * Server Components must call the API over the internal Docker/host network, while
+ * the browser must use the public URL — getting this backwards is the single most
+ * common way to break the local stack, so it is resolved in one place.
+ */
+const INTERNAL_URL = process.env.API_INTERNAL_URL ?? "http://localhost:8080";
+
+export class ApiRequestError extends Error {
+  constructor(
+    readonly status: number,
+    readonly code: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiRequestError";
+  }
+}
+
+interface RequestOptions {
+  /** Cache tags, so a CMS publish can revalidate exactly the affected pages. */
+  tags?: string[];
+  /** Seconds. Omit for the route's default; 0 disables caching for this request. */
+  revalidate?: number | false;
+  searchParams?: Record<string, string | number | boolean | undefined>;
+  headers?: HeadersInit;
+}
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const url = new URL(`/api/v1${path}`, INTERNAL_URL);
+
+  for (const [key, value] of Object.entries(options.searchParams ?? {})) {
+    if (value !== undefined && value !== "") {
+      url.searchParams.set(key, String(value));
+    }
+  }
+
+  const response = await fetch(url, {
+    headers: { Accept: "application/json", ...options.headers },
+    next: {
+      tags: options.tags,
+      ...(options.revalidate !== undefined ? { revalidate: options.revalidate } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    // The API always returns the same error envelope; fall back only if the
+    // response is not JSON at all (a proxy error page, for instance).
+    const payload = await response.json().catch(() => null);
+
+    throw new ApiRequestError(
+      response.status,
+      payload?.error?.code ?? "http.error",
+      payload?.error?.message ?? `Request to ${path} failed (${response.status}).`,
+    );
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export const api = {
+  tools: {
+    list: (params: {
+      q?: string;
+      category?: string;
+      platform?: string;
+      tier?: string;
+      page?: number;
+      per_page?: number;
+    } = {}) =>
+      request<Paginated<ToolSummary>>("/catalog/tools", {
+        searchParams: {
+          q: params.q,
+          "filter[category]": params.category,
+          "filter[platform]": params.platform,
+          "filter[tier]": params.tier,
+          page: params.page,
+          per_page: params.per_page,
+        },
+        tags: ["tools"],
+        revalidate: 300,
+      }),
+
+    get: (slug: string) =>
+      request<{ data: ToolDetail }>(`/catalog/tools/${slug}`, {
+        tags: ["tools", `tool:${slug}`],
+        revalidate: 300,
+      }).then((r) => r.data),
+
+    categories: () =>
+      request<{ data: ToolCategory[] }>("/catalog/categories", {
+        tags: ["tools", "tool-categories"],
+        revalidate: 3600,
+      }).then((r) => r.data),
+  },
+
+  blog: {
+    list: (params: {
+      q?: string;
+      category?: string;
+      tag?: string;
+      featured?: boolean;
+      page?: number;
+      per_page?: number;
+    } = {}) =>
+      request<Paginated<PostSummary>>("/blog/posts", {
+        searchParams: {
+          q: params.q,
+          "filter[category]": params.category,
+          "filter[tag]": params.tag,
+          "filter[featured]": params.featured ? 1 : undefined,
+          page: params.page,
+          per_page: params.per_page,
+        },
+        tags: ["posts"],
+        revalidate: 300,
+      }),
+
+    get: (slug: string) =>
+      request<{ data: PostDetail }>(`/blog/posts/${slug}`, {
+        // Tagged per-post so publishing one article revalidates only its own page
+        // plus the listings, rather than the whole blog.
+        tags: ["posts", `post:${slug}`],
+        revalidate: 300,
+      }).then((r) => r.data),
+
+    categories: () =>
+      request<{ data: PostCategory[] }>("/blog/categories", {
+        tags: ["posts", "post-categories"],
+        revalidate: 3600,
+      }).then((r) => r.data),
+
+    tags: () =>
+      request<{ data: PostTag[] }>("/blog/tags", {
+        tags: ["posts", "post-tags"],
+        revalidate: 3600,
+      }).then((r) => r.data),
+  },
+
+  account: {
+    entitlements: (cookie: string) =>
+      request<{ data: Entitlements }>("/account/entitlements", {
+        headers: { Cookie: cookie },
+        revalidate: 0,
+      }).then((r) => r.data),
+  },
+};
