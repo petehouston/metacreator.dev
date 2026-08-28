@@ -29,6 +29,14 @@ export function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+/** Bytes, rounded to whatever unit reads shortest. */
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
 export function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const units: [Intl.RelativeTimeFormatUnit, number][] = [

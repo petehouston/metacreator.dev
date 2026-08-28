@@ -196,8 +196,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <UserMenu />
           </header>
 
-          <main id="admin-main" className="flex-1 px-4 py-6 lg:px-8 lg:py-8">
-            <div className="mx-auto w-full max-w-[90rem]">{children}</div>
+          <main id="admin-main" className="w-full flex-1 px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
+            {children}
           </main>
         </div>
       </div>

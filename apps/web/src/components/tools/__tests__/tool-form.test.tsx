@@ -25,6 +25,8 @@ const schema: JsonSchema = {
     },
     detailed: { type: "boolean", title: "Detailed breakdown", default: false },
     notes: { type: "string", title: "Notes", maxLength: 5000 },
+    link: { type: "string", title: "Video link", maxLength: 500, "x-control": "text" },
+    starts_on: { type: "string", title: "Starts on", format: "date" },
   },
 };
 
@@ -69,6 +71,20 @@ describe("ToolForm", () => {
     renderForm();
 
     expect(screen.getByLabelText(/notes/i).tagName).toBe("TEXTAREA");
+  });
+
+  it("keeps a long-but-single-line field on one line", () => {
+    renderForm();
+
+    // A YouTube link needs a generous maxLength and is still one line. Without
+    // the hint the length rule alone would give it an eight-row box.
+    expect(screen.getByLabelText(/video link/i).tagName).toBe("INPUT");
+  });
+
+  it("gives a date field a date picker rather than a bare text box", () => {
+    renderForm();
+
+    expect(screen.getByLabelText(/starts on/i)).toHaveAttribute("type", "date");
   });
 
   it("applies schema defaults", () => {

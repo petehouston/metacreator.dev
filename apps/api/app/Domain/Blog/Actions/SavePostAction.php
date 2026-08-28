@@ -73,6 +73,17 @@ final class SavePostAction
                 $post->tags()->sync((array) $attributes['tags']);
             }
 
+            if (array_key_exists('category_ids', $attributes)) {
+                // The primary category is never also a secondary one: it would show
+                // up twice in every list built from the union of the two.
+                $post->categories()->sync(
+                    array_values(array_diff(
+                        array_map(intval(...), (array) $attributes['category_ids']),
+                        [(int) $post->category_id],
+                    )),
+                );
+            }
+
             if (array_key_exists('seo', $attributes) && is_array($attributes['seo'])) {
                 $this->saveSeo($post, $attributes['seo']);
             }

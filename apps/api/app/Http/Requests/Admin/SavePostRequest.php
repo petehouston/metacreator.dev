@@ -36,6 +36,8 @@ final class SavePostRequest extends FormRequest
             'scheduled_for' => ['sometimes', 'nullable', 'date', 'after:now'],
 
             'category_id' => ['sometimes', 'nullable', 'integer', 'exists:post_categories,id'],
+            'category_ids' => ['sometimes', 'array', 'max:10'],
+            'category_ids.*' => ['integer', 'exists:post_categories,id'],
             'featured_media_id' => ['sometimes', 'nullable', 'integer', 'exists:media,id'],
             'tags' => ['sometimes', 'array', 'max:20'],
             'tags.*' => ['integer', 'exists:tags,id'],

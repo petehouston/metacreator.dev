@@ -11,6 +11,7 @@ import { ToolRunner } from "@/components/tools/tool-runner";
 import { Badge, TierBadge } from "@/components/ui/badge";
 import { platforms, siteConfig } from "@/config/site";
 import { api, ApiRequestError } from "@/lib/api";
+import { faqEntries } from "@/lib/faq";
 import { discoverTools } from "@/lib/tool-discovery";
 import { formatNumber } from "@/lib/utils";
 import type { ToolDetail } from "@/lib/types";
@@ -42,28 +43,52 @@ export async function generateMetadata({
   const { slug } = await params;
   const tool = await loadTool(slug);
 
-  if (!tool) return { title: "Tool not found" };
+  // notFound() rather than a "Tool not found" title: metadata resolves before the
+  // response is committed, so this is the last point at which a real 404 status can
+  // still be sent. A page that says "not found" over a 200 is a soft 404, and it
+  // gets indexed.
+  if (!tool) notFound();
 
-  const title = tool.seo?.title ?? `${tool.name} — Free Online Tool`;
-  const description = tool.seo?.description ?? tool.tagline ?? siteConfig.description;
+  const seo = tool.seo;
+
+  const title = seo?.title || `${tool.name} — Free Online Tool`;
+  const description = seo?.description || tool.tagline || siteConfig.description;
   const url = `${siteConfig.url}/tools/${tool.slug}`;
+
+  const socialTitle = seo?.og_title || title;
+  const socialDescription = seo?.og_description || description;
+
+  // The tool's own card image when one is set, otherwise the site default — never
+  // nothing: a share with no image is a grey box in every timeline it lands in.
+  const image = seo?.og_image_url || `${siteConfig.url}/opengraph-image`;
+
+  const robots = seo?.robots ?? "index,follow";
 
   return {
     title,
     description,
-    alternates: { canonical: tool.seo?.canonical_url ?? `/tools/${tool.slug}` },
-    robots: tool.seo?.robots?.includes("noindex") ? { index: false, follow: true } : undefined,
+    keywords: seo?.focus_keyword ? [seo.focus_keyword] : undefined,
+    alternates: { canonical: seo?.canonical_url || `/tools/${tool.slug}` },
+    // Spelled out rather than left undefined so `index,nofollow` and
+    // `noindex,follow` are both honoured, not just the noindex half.
+    robots: {
+      index: !robots.includes("noindex"),
+      follow: !robots.includes("nofollow"),
+    },
     openGraph: {
       type: "website",
       url,
-      title: tool.seo?.og_title ?? title,
-      description: tool.seo?.og_description ?? description,
+      title: socialTitle,
+      description: socialDescription,
       siteName: siteConfig.name,
+      locale: "en_US",
+      images: [{ url: image, width: 1200, height: 630, alt: tool.name }],
     },
     twitter: {
-      card: "summary_large_image",
-      title: tool.seo?.og_title ?? title,
-      description: tool.seo?.og_description ?? description,
+      card: seo?.twitter_card === "summary" ? "summary" : "summary_large_image",
+      title: socialTitle,
+      description: socialDescription,
+      images: [image],
     },
   };
 }
@@ -79,6 +104,7 @@ export default async function ToolPage({ params }: PageProps<"/tools/[slug]">) {
     .filter(Boolean);
 
   const accent = tool.category?.accent_color ?? undefined;
+  const faq = faqEntries(tool.faq);
 
   return (
     <article className="w-full">
@@ -170,7 +196,7 @@ export default async function ToolPage({ params }: PageProps<"/tools/[slug]">) {
               </section>
             )}
 
-            {tool.faq.length > 0 && (
+            {faq.length > 0 && (
               <section aria-labelledby="faq" className="prose-measure">
                 <p className="eyebrow">Questions</p>
                 <h2 id="faq" className="mt-3 text-heading-2">
@@ -178,17 +204,17 @@ export default async function ToolPage({ params }: PageProps<"/tools/[slug]">) {
                 </h2>
 
                 <div className="mt-5 flex flex-col gap-3">
-                  {tool.faq.map((item) => (
-                    <details key={item.q} className="panel group p-5">
+                  {faq.map((item) => (
+                    <details key={item.question} className="panel group p-5">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium marker:hidden">
-                        {item.q}
+                        {item.question}
                         <ChevronRight
                           aria-hidden="true"
                           className="size-4 shrink-0 text-[var(--color-foreground-subtle)] transition-transform group-open:rotate-90"
                         />
                       </summary>
                       <p className="mt-3 text-sm leading-relaxed text-[var(--color-foreground-muted)]">
-                        {item.a}
+                        {item.answer}
                       </p>
                     </details>
                   ))}
@@ -424,11 +450,19 @@ function ToolStructuredData({ tool }: { tool: ToolDetail }) {
 
   const graph: Record<string, unknown>[] = [
     {
-      "@type": "SoftwareApplication",
+      // An admin can say this is a `WebApplication` instead; anything else in the
+      // box would be an invalid type, so the default stands unless it is one of
+      // the two that make sense for a tool page.
+      "@type": tool.seo?.schema_type === "WebApplication"
+        ? "WebApplication"
+        : "SoftwareApplication",
       "@id": `${url}#app`,
-      name: tool.name,
-      description: tool.tagline ?? tool.description,
+      name: tool.seo?.title ?? tool.name,
+      description: tool.seo?.description ?? tool.tagline ?? tool.description,
       url,
+      // Matching the OG image keeps the rich result and the social card telling the
+      // same story about the same page.
+      image: tool.seo?.og_image_url ?? `${siteConfig.url}/opengraph-image`,
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Any (web-based)",
       offers: {
@@ -449,13 +483,15 @@ function ToolStructuredData({ tool }: { tool: ToolDetail }) {
     },
   ];
 
-  if (tool.faq.length > 0) {
+  const faq = faqEntries(tool.faq);
+
+  if (faq.length > 0) {
     graph.push({
       "@type": "FAQPage",
-      mainEntity: tool.faq.map((item) => ({
+      mainEntity: faq.map((item) => ({
         "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
       })),
     });
   }

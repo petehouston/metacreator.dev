@@ -67,7 +67,7 @@ const PLANS = [
 
 const COMPARISON = [
   { feature: "Free tools", free: true, pass: true, pro: true },
-  { feature: "Account-only tools", free: "With a free account", pass: true, pro: true },
+  { feature: "Account-only tools", free: "With an account", pass: true, pro: true },
   { feature: "Premium tools", free: false, pass: true, pro: true },
   { feature: "Runs per day", free: "50", pass: "300", pro: "1,000" },
   { feature: "Run history", free: "7 days", pass: "During the pass", pro: "Unlimited" },

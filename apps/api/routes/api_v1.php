@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Auth\SessionController;
 use App\Http\Controllers\Api\V1\Blog\BlogController;
 use App\Http\Controllers\Api\V1\Catalog\ToolCatalogController;
+use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\Tools\RunToolController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ── Public ───────────────────────────────────────────────────────────────────
+
+// Public settings only — the frontend needs a few of them (blog presentation,
+// branding) to render, and they change without a deploy.
+Route::get('settings', SettingsController::class)->name('settings.public');
 
 Route::prefix('catalog')->group(function (): void {
     Route::get('tools', [ToolCatalogController::class, 'index'])->name('catalog.tools.index');

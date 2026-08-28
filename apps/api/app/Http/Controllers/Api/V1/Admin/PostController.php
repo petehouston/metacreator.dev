@@ -75,7 +75,7 @@ final class PostController extends Controller
     {
         $this->authorizeRow($request, $post, 'view');
 
-        $post->load(['author:id,ulid,display_name,name', 'category', 'tags', 'seo', 'featuredMedia']);
+        $post->load(['author:id,ulid,display_name,name', 'category', 'categories', 'tags', 'seo', 'featuredMedia']);
 
         return new JsonResource([
             'post' => (new AdminPostResource($post))->toArray($request),

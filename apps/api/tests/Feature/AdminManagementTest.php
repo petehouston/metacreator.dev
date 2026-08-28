@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Domain\Billing\Models\Plan;
+use App\Domain\Billing\Models\Subscription;
 use App\Domain\Blog\Enums\PostStatus;
 use App\Domain\Blog\Models\Post;
 use App\Domain\Blog\Models\PostCategory;
 use App\Domain\Blog\Models\Tag;
+use App\Domain\Media\Models\Media;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolGrant;
@@ -421,6 +424,49 @@ it('assigns a category and tags a picker actually offered', function () {
         ->and($post->fresh()->tags->pluck('id')->all())->toBe([$tag->id]);
 });
 
+/**
+ * Every editor is its own page now, so each one has to be able to resolve its
+ * subject from the URL alone.
+ *
+ * A row that can only be reached by clicking it in a list is a row that cannot be
+ * linked to, refreshed, or reopened after a mistake — which is exactly what these
+ * three endpoints exist to prevent.
+ */
+it('resolves a single label from its slug', function (string $endpoint, string $expected) {
+    $editor = staff('editor');
+
+    PostCategory::query()->create(['slug' => 'growth', 'name' => 'Growth']);
+    Tag::query()->create(['slug' => 'seo', 'name' => 'SEO']);
+
+    $this->actingAs($editor)
+        ->getJson($endpoint)
+        ->assertOk()
+        ->assertJsonPath('data.name', $expected);
+})->with([
+    'post category' => ['/api/v1/admin/post-categories/growth', 'Growth'],
+    'tag' => ['/api/v1/admin/tags/seo', 'SEO'],
+]);
+
+it('resolves a single file from its public id', function () {
+    $editor = staff('editor');
+
+    $media = Media::query()->create([
+        'disk' => 'public',
+        'path' => 'media/2026/01/example.png',
+        'filename' => 'example.png',
+        'mime_type' => 'image/png',
+        'size' => 2048,
+        'checksum' => hash('sha256', 'example'),
+        'alt_text' => 'A worked example',
+    ]);
+
+    $this->actingAs($editor)
+        ->getJson("/api/v1/admin/media/{$media->public_id}")
+        ->assertOk()
+        ->assertJsonPath('data.filename', 'example.png')
+        ->assertJsonPath('data.alt_text', 'A worked example');
+});
+
 it('does not take the writing with the label when a category is deleted', function () {
     $editor = staff('editor');
     $category = PostCategory::query()->create(['slug' => 'temp', 'name' => 'Temporary']);
@@ -431,4 +477,113 @@ it('does not take the writing with the label when a category is deleted', functi
 
     expect($post->fresh())->not->toBeNull()
         ->and($post->fresh()->category_id)->toBeNull();
+});
+
+// ── Plans ────────────────────────────────────────────────────────────────────
+
+it('creates a plan and lets it be turned off without deleting it', function () {
+    $actor = staff('super-admin');
+
+    $this->actingAs($actor)
+        ->postJson('/api/v1/admin/plans', [
+            'key' => 'team_monthly',
+            'name' => 'Team Monthly',
+            'billing_mode' => 'subscription',
+            'interval' => 'month',
+            'amount' => 4900,
+            'features' => ['Five seats', 'Shared media library'],
+            'gateway_ids' => ['stripe' => 'price_team', 'paypal' => 'P-TEAM'],
+        ])
+        ->assertCreated();
+
+    $plan = Plan::query()->where('key', 'team_monthly')->sole();
+
+    expect($plan->gateway_ids)->toEqualCanonicalizing(['stripe' => 'price_team', 'paypal' => 'P-TEAM']);
+
+    $this->actingAs($actor)
+        ->patchJson("/api/v1/admin/plans/{$plan->id}", ['is_active' => false])
+        ->assertOk();
+
+    expect($plan->refresh()->is_active)->toBeFalse();
+});
+
+it('refuses to re-price a plan that has live subscribers', function () {
+    $actor = staff('super-admin');
+    $plan = Plan::query()->create([
+        'key' => 'legacy_monthly',
+        'name' => 'Legacy Monthly',
+        'billing_mode' => 'subscription',
+        'interval' => 'month',
+        'amount' => 1900,
+        'currency' => 'USD',
+        'is_active' => true,
+    ]);
+
+    Subscription::query()->create([
+        'user_id' => User::factory()->create()->id,
+        'plan_id' => $plan->id,
+        'stripe_id' => 'sub_legacy',
+        'stripe_status' => 'active',
+    ]);
+
+    // Renaming is still fine — it is the price nobody may move under a customer.
+    $this->actingAs($actor)
+        ->patchJson("/api/v1/admin/plans/{$plan->id}", ['name' => 'Legacy Monthly (closed)'])
+        ->assertOk();
+
+    $this->actingAs($actor)
+        ->patchJson("/api/v1/admin/plans/{$plan->id}", ['amount' => 2900])
+        ->assertStatus(422);
+
+    expect($plan->refresh()->amount)->toBe(1900);
+
+    // And it cannot be deleted out from under the subscription either.
+    $this->actingAs($actor)
+        ->deleteJson("/api/v1/admin/plans/{$plan->id}")
+        ->assertStatus(422);
+
+    expect(Plan::query()->whereKey($plan->id)->exists())->toBeTrue();
+});
+
+it('deletes a plan nobody has ever bought', function () {
+    $actor = staff('super-admin');
+    $plan = Plan::query()->create([
+        'key' => 'never_sold',
+        'name' => 'Never Sold',
+        'billing_mode' => 'subscription',
+        'interval' => 'month',
+        'amount' => 100,
+        'currency' => 'USD',
+    ]);
+
+    $this->actingAs($actor)
+        ->deleteJson("/api/v1/admin/plans/{$plan->id}")
+        ->assertNoContent();
+
+    expect(Plan::query()->whereKey($plan->id)->exists())->toBeFalse();
+});
+
+// ── Post taxonomy ────────────────────────────────────────────────────────────
+
+it('keeps the primary category out of the secondary list', function () {
+    $actor = staff('super-admin');
+    $post = postFixture($actor);
+
+    $home = PostCategory::query()->create(['slug' => 'growth', 'name' => 'Growth']);
+    $also = PostCategory::query()->create(['slug' => 'seo', 'name' => 'SEO']);
+
+    $this->actingAs($actor)
+        ->patchJson("/api/v1/admin/posts/{$post->public_id}", [
+            'title' => $post->title,
+            'category_id' => $home->id,
+            // The primary is sent in both, the way a checkbox list naturally would.
+            'category_ids' => [$home->id, $also->id],
+            'version' => $post->version,
+        ])
+        ->assertOk();
+
+    $post->refresh();
+
+    expect($post->category_id)->toBe($home->id)
+        ->and($post->categories()->pluck('post_categories.id')->all())->toBe([$also->id]);
 });

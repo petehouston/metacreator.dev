@@ -73,7 +73,12 @@ final class ToolDetailResource extends JsonResource
                 'name' => $this->successor?->name,
             ]),
 
-            'seo' => $this->whenLoaded('seo', fn () => new SeoResource($this->seo)),
+            'seo' => $this->whenLoaded(
+                'seo',
+                fn (): ?array => $this->seo === null
+                    ? null
+                    : (new SeoResource($this->seo))->toArray($request),
+            ),
 
             'stats' => [
                 'runs' => $this->run_count,

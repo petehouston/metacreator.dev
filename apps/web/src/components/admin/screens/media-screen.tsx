@@ -1,21 +1,20 @@
 "use client";
 
-import { AlertTriangle, FileAudio, FileText, Film, ImageIcon, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, FileAudio, FileText, Film, ImageIcon, Upload } from "lucide-react";
+import Link from "next/link";
 import * as React from "react";
 
 import { AdminPageHeader, AdminPanel, StatusPill } from "@/components/admin/admin-page";
 import { Can } from "@/components/admin/can";
-import { ConfirmDialog, Drawer, useToast } from "@/components/admin/feedback";
+import { useToast } from "@/components/admin/feedback";
 import { LoadError } from "@/components/admin/load-error";
 import { Pagination } from "@/components/admin/data-table";
 import { FilterSelect, SearchInput } from "@/components/admin/toolbar";
 import { Button } from "@/components/ui/button";
-import { Checkbox, Field, Input, Textarea } from "@/components/ui/field";
 import { adminApi } from "@/lib/admin/api";
-import type { AdminMedia } from "@/lib/admin/types";
 import { usePagedFilters } from "@/lib/admin/use-paged-filters";
 import { useAdminResource } from "@/lib/admin/use-admin-resource";
-import { formatDate } from "@/lib/utils";
+import { formatBytes } from "@/lib/utils";
 
 const KIND_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   image: ImageIcon,
@@ -32,16 +31,16 @@ const KIND_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
  * onto the tile is whether the image has alt text — an image library without it
  * produces an inaccessible site one upload at a time, and it is invisible unless
  * something makes it visible.
+ *
+ * A tile links to `/admin/media/<id>`, where the file is described and, if it comes
+ * to it, removed.
  */
 export function MediaScreen() {
   const { notify, reportError } = useToast();
 
   const [{ query, kind }, setFilters, page, setPage] = usePagedFilters({ query: "", kind: "" });
 
-  const [editing, setEditing] = React.useState<AdminMedia | null>(null);
-  const [deleting, setDeleting] = React.useState<AdminMedia | null>(null);
   const [uploading, setUploading] = React.useState(false);
-  const [pending, setPending] = React.useState(false);
 
   const fileInput = React.useRef<HTMLInputElement>(null);
 
@@ -88,22 +87,6 @@ export function MediaScreen() {
         `${uploaded} ${uploaded === 1 ? "file" : "files"} uploaded. Add alt text before using them.`,
       );
       reload();
-    }
-  }
-
-  async function remove() {
-    if (!deleting) return;
-
-    setPending(true);
-    const result = await adminApi.media.remove(deleting.id);
-    setPending(false);
-
-    if (result.ok) {
-      notify(`${deleting.filename} removed from the library.`);
-      setDeleting(null);
-      reload();
-    } else {
-      reportError(result.error);
     }
   }
 
@@ -215,10 +198,9 @@ export function MediaScreen() {
 
               return (
                 <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => setEditing(item)}
-                    className="app-card app-card-interactive group w-full overflow-hidden text-left"
+                  <Link
+                    href={`/admin/media/${item.id}`}
+                    className="app-card app-card-interactive group block w-full overflow-hidden text-left"
                   >
                     <span className="relative flex aspect-square items-center justify-center overflow-hidden bg-[var(--color-surface-sunken)]">
                       {item.kind === "image" && item.url ? (
@@ -252,7 +234,7 @@ export function MediaScreen() {
                         {item.width && item.height ? ` · ${item.width}×${item.height}` : ""}
                       </span>
                     </span>
-                  </button>
+                  </Link>
                 </li>
               );
             })}
@@ -269,207 +251,6 @@ export function MediaScreen() {
           />
         )}
       </AdminPanel>
-
-      {editing && (
-        <MediaEditor
-          media={editing}
-          onClose={() => setEditing(null)}
-          onDelete={() => {
-            setDeleting(editing);
-            setEditing(null);
-          }}
-          onSaved={() => {
-            setEditing(null);
-            reload();
-          }}
-        />
-      )}
-
-      <ConfirmDialog
-        open={deleting !== null}
-        title={`Remove ${deleting?.filename}?`}
-        description={
-          <>
-            <p>
-              It disappears from the library and from any picker. The file itself stays
-              on disk, because a post published last year may still reference it — a
-              broken image in an article is worse than a byte of storage.
-            </p>
-            {(deleting?.usage_count ?? 0) > 0 && (
-              <p className="mt-2 font-medium text-[var(--color-warning)]">
-                This file is used in {deleting?.usage_count} places.
-              </p>
-            )}
-          </>
-        }
-        confirmLabel="Remove from library"
-        destructive
-        pending={pending}
-        onConfirm={() => void remove()}
-        onCancel={() => setDeleting(null)}
-      />
     </>
   );
-}
-
-function MediaEditor({
-  media,
-  onClose,
-  onSaved,
-  onDelete,
-}: {
-  media: AdminMedia;
-  onClose: () => void;
-  onSaved: () => void;
-  onDelete: () => void;
-}) {
-  const { notify, reportError } = useToast();
-
-  const [form, setForm] = React.useState({
-    title: media.title ?? "",
-    alt_text: media.alt_text ?? "",
-    caption: media.caption ?? "",
-    credit: media.credit ?? "",
-    is_decorative: media.is_decorative,
-  });
-
-  const [saving, setSaving] = React.useState(false);
-
-  async function save() {
-    setSaving(true);
-    const result = await adminApi.media.update(media.id, form);
-    setSaving(false);
-
-    if (result.ok) {
-      notify("Saved.");
-      onSaved();
-    } else {
-      reportError(result.error);
-    }
-  }
-
-  return (
-    <Drawer
-      open
-      title={media.filename}
-      description={`${formatBytes(media.size)} · ${media.mime_type}`}
-      onClose={onClose}
-      footer={
-        <>
-          <Can permission={["media.delete", "media.delete.own"]}>
-            <Button variant="ghost" size="sm" onClick={onDelete} className="mr-auto">
-              <Trash2 className="size-4" aria-hidden="true" />
-              Remove
-            </Button>
-          </Can>
-          <Button variant="secondary" size="sm" onClick={onClose} disabled={saving}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={() => void save()} loading={saving}>
-            Save
-          </Button>
-        </>
-      }
-    >
-      {media.kind === "image" && media.url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={media.url}
-          alt={media.alt_text ?? ""}
-          className="mb-4 max-h-64 w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] object-contain"
-        />
-      )}
-
-      <div className="flex flex-col gap-4">
-        <Field id="media-title" label="Title" hint="What editors see when picking this file.">
-          {(props) => (
-            <Input
-              {...props}
-              value={form.title}
-              onChange={(event) => setForm({ ...form, title: event.target.value })}
-            />
-          )}
-        </Field>
-
-        <Field
-          id="media-alt"
-          label="Alt text"
-          hint="Describe what the image shows, for someone who cannot see it. Not the filename, and not “image of”."
-          required={media.kind === "image" && !form.is_decorative}
-        >
-          {(props) => (
-            <Textarea
-              {...props}
-              value={form.alt_text}
-              disabled={form.is_decorative}
-              onChange={(event) => setForm({ ...form, alt_text: event.target.value })}
-              className="min-h-20 text-sm"
-            />
-          )}
-        </Field>
-
-        <Checkbox
-          label="Decorative"
-          hint="A divider, a texture, a flourish. Screen readers skip it — which is right when the image carries no information, and wrong otherwise."
-          checked={form.is_decorative}
-          onChange={(event) => setForm({ ...form, is_decorative: event.target.checked })}
-        />
-
-        <Field id="media-caption" label="Caption" hint="Shown under the image, when used in an article.">
-          {(props) => (
-            <Textarea
-              {...props}
-              value={form.caption}
-              onChange={(event) => setForm({ ...form, caption: event.target.value })}
-              className="min-h-16 text-sm"
-            />
-          )}
-        </Field>
-
-        <Field id="media-credit" label="Credit" hint="Photographer, source, licence.">
-          {(props) => (
-            <Input
-              {...props}
-              value={form.credit}
-              onChange={(event) => setForm({ ...form, credit: event.target.value })}
-            />
-          )}
-        </Field>
-
-        <dl className="grid grid-cols-2 gap-3 rounded-[var(--radius-md)] bg-[var(--color-surface-sunken)] p-3 text-sm">
-          <div>
-            <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-              Used in
-            </dt>
-            <dd className="tabular mt-0.5 font-medium text-[var(--color-foreground)]">
-              {media.usage_count} {media.usage_count === 1 ? "place" : "places"}
-            </dd>
-          </div>
-          <div>
-            <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-              Uploaded
-            </dt>
-            <dd className="mt-0.5 truncate font-medium text-[var(--color-foreground)]">
-              {media.created_at ? formatDate(media.created_at) : "—"}
-            </dd>
-          </div>
-        </dl>
-
-        {media.url && (
-          <Field id="media-url" label="URL">
-            {(props) => (
-              <Input {...props} readOnly value={media.url ?? ""} className="font-mono text-xs" />
-            )}
-          </Field>
-        )}
-      </div>
-    </Drawer>
-  );
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

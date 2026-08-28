@@ -34,7 +34,7 @@ enum ToolTier: string
     {
         return match ($this) {
             self::Free => 'Free',
-            self::Account => 'Free account',
+            self::Account => 'Account Required',
             self::Premium => 'Pro',
         };
     }
@@ -44,7 +44,7 @@ enum ToolTier: string
     {
         return match ($this) {
             self::Free => 'Use it right now — no account needed.',
-            self::Account => 'Create a free account to use this tool.',
+            self::Account => 'Sign up for a free account to use this tool.',
             self::Premium => 'Included with a Pro subscription.',
         };
     }

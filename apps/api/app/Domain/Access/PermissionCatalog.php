@@ -41,7 +41,7 @@ final class PermissionCatalog
         'roles' => ['view_any', 'manage'],
 
         // Commerce
-        'plans' => ['view_any', 'update'],
+        'plans' => ['view_any', 'create', 'update', 'delete'],
         'subscriptions' => ['view_any', 'view', 'update', 'cancel'],
         'invoices' => ['view_any', 'view', 'export'],
         'refunds' => ['create'],
@@ -126,7 +126,7 @@ final class PermissionCatalog
             'permissions' => [
                 'invoices.*', 'refunds.create',
                 'subscriptions.view_any', 'subscriptions.view', 'subscriptions.update', 'subscriptions.cancel',
-                'plans.view_any', 'plans.update',
+                'plans.view_any', 'plans.create', 'plans.update', 'plans.delete',
                 'users.view_any', 'users.view',
                 'reports.export', 'analytics.view',
             ],

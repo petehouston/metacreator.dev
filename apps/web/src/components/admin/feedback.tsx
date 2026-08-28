@@ -5,7 +5,6 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import type { ApiFailure } from "@/lib/http";
-import { cn } from "@/lib/utils";
 
 /**
  * Telling someone what happened.
@@ -204,87 +203,6 @@ export function ConfirmDialog({
             {confirmLabel}
           </Button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-/** A right-hand panel for editing one row without leaving the list. */
-export function Drawer({
-  open,
-  title,
-  description,
-  onClose,
-  footer,
-  children,
-  className,
-}: {
-  open: boolean;
-  title: string;
-  description?: React.ReactNode;
-  onClose: () => void;
-  footer?: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  React.useEffect(() => {
-    if (!open) return;
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[75]">
-      <button
-        type="button"
-        aria-label="Close panel"
-        onClick={onClose}
-        className="animate-fade-in absolute inset-0 bg-[oklch(0.15_0.02_258/0.45)]"
-      />
-
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className={cn(
-          "absolute inset-y-0 right-0 flex w-full max-w-lg flex-col border-l border-[var(--color-border)] bg-[var(--app-surface)] shadow-[var(--shadow-popover)]",
-          className,
-        )}
-      >
-        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-[var(--color-border-subtle)] px-5 py-4">
-          <div className="min-w-0">
-            <h2 className="truncate text-base font-semibold text-[var(--color-foreground)]">
-              {title}
-            </h2>
-            {description && (
-              <p className="mt-0.5 text-xs text-[var(--color-foreground-subtle)]">{description}</p>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-foreground-muted)] transition-colors hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-foreground)]"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="scrollbar-slim flex-1 overflow-y-auto px-5 py-4">{children}</div>
-
-        {footer && (
-          <div className="flex shrink-0 justify-end gap-2 border-t border-[var(--color-border-subtle)] px-5 py-3">
-            {footer}
-          </div>
-        )}
       </div>
     </div>
   );

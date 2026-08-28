@@ -72,6 +72,21 @@ final class Post extends Model
         return $this->belongsTo(PostCategory::class, 'category_id');
     }
 
+    /**
+     * Secondary categories.
+     *
+     * The primary one stays on `category_id` — it owns the URL, the breadcrumb and
+     * the archive a post belongs to. These are the extra shelves it also sits on,
+     * which is exactly how WordPress behaves once you stop pretending "one of these
+     * many is special" can be derived rather than declared.
+     *
+     * @return BelongsToMany<PostCategory, $this>
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(PostCategory::class, 'post_post_category');
+    }
+
     /** @return BelongsTo<Media, $this> */
     public function featuredMedia(): BelongsTo
     {

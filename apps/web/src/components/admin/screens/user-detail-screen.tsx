@@ -280,7 +280,7 @@ export function UserDetailScreen({ id }: { id: string }) {
             action={
               <Can permission="tool_grants.create">
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={`/admin/grants?user=${encodeURIComponent(data.email)}`}>
+                  <Link href={`/admin/grants/new?user=${encodeURIComponent(data.email)}`}>
                     <Sparkles className="size-3.5" aria-hidden="true" />
                     Grant
                   </Link>

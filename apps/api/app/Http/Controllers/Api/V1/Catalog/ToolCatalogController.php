@@ -32,7 +32,9 @@ final class ToolCatalogController extends Controller
     {
         $tools = Tool::query()
             ->public()
-            ->with('category:id,slug,name,icon,accent_color')
+            // One extra query for the whole page, not one per card: the sitemap
+            // needs to know which of these are set to no-index.
+            ->with(['category:id,slug,name,icon,accent_color', 'seo:id,seoable_type,seoable_id,robots'])
             ->when($request->filled('q'), fn ($q) => $q->search((string) $request->string('q')))
             ->when($request->filled('filter.category'), fn ($q) => $q->whereRelation(
                 'category', 'slug', $request->string('filter.category')
@@ -47,7 +49,9 @@ final class ToolCatalogController extends Controller
             ->orderByRaw('featured_at IS NULL, featured_at DESC')
             ->orderBy('sort_order')
             ->orderByDesc('run_count')
-            ->paginate(perPage: min(48, $request->integer('per_page', 24)))
+            // The public catalog renders every tool on one page and filters client-side,
+            // so the cap has to clear the whole catalog rather than one screen of it.
+            ->paginate(perPage: min(250, $request->integer('per_page', 24)))
             ->withQueryString();
 
         // One bulk decision for the whole page rather than N entitlement lookups.
@@ -64,7 +68,9 @@ final class ToolCatalogController extends Controller
             ->public()
             ->with([
                 'category',
-                'seo',
+                // `ogMedia` with it: the social card image is part of the same one
+                // round trip the page is built around.
+                'seo.ogMedia',
                 'related' => fn ($q) => $q->public()->with('category:id,slug,name')->limit(6),
                 'successor:id,slug,name',
             ])

@@ -16,6 +16,10 @@ final class AdminMediaResource extends JsonResource
     {
         return [
             'id' => $this->public_id,
+            // The numeric key, for the one thing a public id cannot do: fill
+            // `posts.featured_media_id` and `seo.og_media_id`, both of which are
+            // integer foreign keys. Same reason AdminTaxonomyResource carries one.
+            'numeric_id' => (int) $this->getKey(),
             'filename' => $this->filename,
             'mime_type' => $this->mime_type,
             'kind' => str_contains((string) $this->mime_type, '/')

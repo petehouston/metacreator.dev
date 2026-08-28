@@ -49,12 +49,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       lastModified: new Date(),
     })),
-    ...tools.map((tool) => ({
-      url: `${base}/tools/${tool.slug}`,
-      changeFrequency: "weekly" as const,
-      priority: tool.is_featured ? 0.9 : 0.8,
-      lastModified: new Date(),
-    })),
+    // A no-index tool in the sitemap is a contradictory signal: it asks a crawler
+    // to spend budget on a URL the page itself then tells it not to index.
+    ...tools
+      .filter((tool) => tool.is_indexable !== false)
+      .map((tool) => ({
+        url: `${base}/tools/${tool.slug}`,
+        changeFrequency: "weekly" as const,
+        priority: tool.is_featured ? 0.9 : 0.8,
+        lastModified: new Date(),
+      })),
     ...postCategories.map((category) => ({
       url: `${base}/blog?category=${category.slug}`,
       changeFrequency: "weekly" as const,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Tools\Data;
 
 use App\Domain\Tools\Enums\ResultView;
+use App\Support\Social\PreviewFrame;
 
 /**
  * The normalised output of every tool.
@@ -82,6 +83,24 @@ final readonly class ToolResult
     public static function compare(array $variants, array $rows, ?string $summary = null): self
     {
         return new self(ResultView::DiffCompare, ['variants' => $variants, 'rows' => $rows], summary: $summary);
+    }
+
+    /**
+     * Platform-accurate mock-ups, built with {@see PreviewFrame}.
+     *
+     * `$table` is optional supporting evidence — the tags, limits or margins behind
+     * the picture — drawn under the frames in the same table renderer.
+     *
+     * @param  list<array<string, mixed>>  $frames
+     * @param  array{columns: list<array{key: string, label: string, align?: string}>, rows: list<array<string, mixed>>}|null  $table
+     */
+    public static function socialPreview(array $frames, ?string $summary = null, ?array $table = null): self
+    {
+        return new self(
+            ResultView::SocialPreview,
+            array_filter(['frames' => $frames, 'table' => $table], fn ($value) => $value !== null),
+            summary: $summary,
+        );
     }
 
     /** @param  list<ResultArtifact>  $artifacts */

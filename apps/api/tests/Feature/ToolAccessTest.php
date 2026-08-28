@@ -6,9 +6,11 @@ use App\Domain\Tools\Enums\AccessReason;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolCategory;
+use App\Domain\Tools\Runners\YouTubeCitationGeneratorRunner;
 use App\Domain\Tools\Services\ToolAccessService;
 use App\Domain\Users\Models\User;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Access control is the one thing in this codebase that must never be wrong: a
@@ -145,4 +147,47 @@ it('returns the same decisions in bulk as it does one at a time', function () {
             expect($bulk[$tool->slug])->toBe($service->decide($tool, $actor)->allowed);
         }
     }
+});
+
+/**
+ * Laravel rewrites empty form strings to null by default, and a tool's input is
+ * validated against its own JSON Schema — where an optional field's empty value is
+ * `""`, not null. Left on, clearing an optional field produced "must be a string"
+ * on a field the form itself labels optional, on every tool that has one.
+ */
+it('accepts an empty string in an optional field, rather than calling it a type error', function () {
+    $category = ToolCategory::query()->firstOrCreate(
+        ['slug' => 'testing'],
+        ['name' => 'Testing', 'sort_order' => 0, 'is_visible' => true],
+    );
+
+    $tool = Tool::query()->create([
+        'slug' => 'youtube-citation-generator',
+        'key' => 'youtube.citation-generator',
+        'category_id' => $category->id,
+        'name' => 'YouTube Citation Generator',
+        'tier' => ToolTier::Free,
+        'status' => 'published',
+        'is_visible' => true,
+        'input_schema' => app(YouTubeCitationGeneratorRunner::class)->inputSchema(),
+        'published_at' => now(),
+    ]);
+
+    Http::fake([
+        'www.youtube.com/watch*' => Http::response(
+            '<meta property="og:title" content="A video"><meta itemprop="datePublished" content="2009-10-25">',
+        ),
+        'www.youtube.com/oembed*' => Http::response(
+            ['title' => 'A video', 'author_name' => 'A channel'],
+        ),
+    ]);
+
+    $this->postJson("/api/v1/tools/{$tool->slug}/run", [
+        'input' => [
+            'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            // Both optional, both cleared — exactly what the form sends.
+            'author' => '',
+            'accessed' => '',
+        ],
+    ])->assertOk()->assertJsonPath('data.status', 'succeeded');
 });

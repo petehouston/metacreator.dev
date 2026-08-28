@@ -19,7 +19,7 @@ a correctly permission-filtered admin shell.
 
 Tool registry, runner contract, access + quota services, run recording, the generated `ToolForm`,
 the result renderers, the public catalog with search and filters, tool pages with instructions and
-examples, and **the P1 tool set (34 tools)** from [07](07-tool-catalog.md).
+examples, and **the P1 tool set (46 tools)** from [07](07-tool-catalog.md).
 
 **Done when:** an anonymous visitor can run a free tool from search, a free account raises their
 limits, and a premium tool correctly refuses with an upgrade prompt.

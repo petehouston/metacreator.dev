@@ -52,6 +52,18 @@ final class MediaController extends Controller
         return new ApiCollection($media, AdminMediaResource::class);
     }
 
+    /**
+     * One file, addressed by its public id.
+     *
+     * The library grid used to open an editing panel over itself; it now navigates
+     * to a page, and a page has to be able to load its own subject after a refresh
+     * rather than inheriting a row somebody happened to click.
+     */
+    public function show(Media $media): AdminMediaResource
+    {
+        return new AdminMediaResource($media->load('uploader'));
+    }
+
     public function store(Request $request): AdminMediaResource
     {
         $validated = $request->validate([

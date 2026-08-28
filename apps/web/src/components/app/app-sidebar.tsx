@@ -36,7 +36,41 @@ export function AppSidebar({
           collapsed ? "justify-center px-2" : "justify-between px-4",
         )}
       >
-        {collapsed ? (
+        {collapsed && onToggleCollapsed ? (
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            aria-label="Expand sidebar"
+            title="Expand sidebar"
+            className="group flex size-10 items-center justify-center rounded-[var(--radius-md)] transition-colors hover:bg-[var(--color-surface-sunken)]"
+          >
+            <svg viewBox="0 0 32 32" className="size-8 group-hover:hidden" aria-hidden="true">
+              <rect
+                x="3"
+                y="3"
+                width="19"
+                height="19"
+                rx="6"
+                className="fill-[var(--color-brand-500)]"
+                opacity="0.85"
+              />
+              <rect
+                x="10"
+                y="10"
+                width="19"
+                height="19"
+                rx="6"
+                className="fill-[var(--color-signal-400)]"
+                opacity="0.9"
+                style={{ mixBlendMode: "screen" }}
+              />
+            </svg>
+            <ChevronsRight
+              className="hidden size-4 text-[var(--color-foreground-muted)] group-hover:block"
+              aria-hidden="true"
+            />
+          </button>
+        ) : collapsed ? (
           <Link href="/dashboard" aria-label="MetaCreator.Dev dashboard">
             <svg viewBox="0 0 32 32" className="size-8" aria-hidden="true">
               <rect
@@ -143,18 +177,7 @@ export function AppSidebar({
       >
         <PlanMeter compact={collapsed} />
 
-        {collapsed ? (
-          onToggleCollapsed && (
-            <button
-              type="button"
-              onClick={onToggleCollapsed}
-              aria-label="Expand sidebar"
-              className="flex size-10 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-foreground-subtle)] transition-colors hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-foreground)]"
-            >
-              <ChevronsRight className="size-4" aria-hidden="true" />
-            </button>
-          )
-        ) : (
+        {!collapsed && (
           <Link
             href="/"
             className="mt-3 flex items-center gap-2 px-2.5 text-xs font-medium text-[var(--color-foreground-subtle)] transition-colors hover:text-[var(--color-foreground)]"

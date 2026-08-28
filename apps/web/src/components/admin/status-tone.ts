@@ -46,6 +46,10 @@ const INVOICE: Record<string, Tone> = {
   paid: "success",
   open: "warning",
   draft: "muted",
+  // Money that came back is not a failure and not a success — it is a thing that
+  // happened, and the amber says "read the reason" rather than "something broke".
+  refunded: "warning",
+  partially_refunded: "warning",
   void: "muted",
   uncollectible: "danger",
 };

@@ -26,6 +26,7 @@ final class Plan extends Model
     {
         return [
             'features' => 'array',
+            'gateway_ids' => 'array',
             'limits' => 'array',
             'is_active' => 'boolean',
             'is_highlighted' => 'boolean',

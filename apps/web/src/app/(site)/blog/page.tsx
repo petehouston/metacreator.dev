@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/config/site";
 import { api } from "@/lib/api";
 import { ApiRequestError } from "@/lib/api";
+import { blogDisplay, type BlogDisplay } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -38,6 +39,8 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
     return [];
   });
 
+  const display = await blogDisplay();
+
   return (
     <div className="mx-auto w-full max-w-[80rem] px-4 py-12 sm:px-6 lg:py-16">
       <header className="flex flex-col gap-3">
@@ -49,7 +52,7 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
         </p>
       </header>
 
-      {categories.length > 0 && (
+      {display.showCategories && categories.length > 0 && (
         <nav aria-label="Categories" className="mt-8 flex flex-wrap items-center gap-2">
           <FilterChip href={buildHref({ q: query, tag })} active={!category}>
             All posts
@@ -72,7 +75,7 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
       )}
 
       <Suspense key={`${query}-${category}-${tag}-${page}`} fallback={<GridFallback />}>
-        <PostGrid query={query} category={category} tag={tag} page={page} />
+        <PostGrid query={query} category={category} tag={tag} page={page} display={display} />
       </Suspense>
     </div>
   );
@@ -83,13 +86,17 @@ async function PostGrid({
   category,
   tag,
   page,
+  display,
 }: {
   query?: string;
   category?: string;
   tag?: string;
   page: number;
+  display: BlogDisplay;
 }) {
-  const response = await api.blog.list({ q: query, category, tag, page }).catch(() => null);
+  const response = await api.blog
+    .list({ q: query, category, tag, page, per_page: display.postsPerPage })
+    .catch(() => null);
 
   if (!response) {
     return (
@@ -126,13 +133,18 @@ async function PostGrid({
     <>
       {lead ? (
         <div className="mt-10">
-          <PostCard post={lead} featured className="lg:flex-row lg:[&>div:first-child]:w-1/2" />
+          <PostCard
+            post={lead}
+            featured
+            display={display}
+            className="lg:flex-row lg:[&>div:first-child]:w-1/2"
+          />
         </div>
       ) : null}
 
       <div className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", lead ? "mt-6" : "mt-10")}>
         {rest.map((post) => (
-          <PostCard key={post.slug} post={post} />
+          <PostCard key={post.slug} post={post} display={display} />
         ))}
       </div>
 

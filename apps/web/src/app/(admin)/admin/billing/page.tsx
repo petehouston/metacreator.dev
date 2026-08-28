@@ -1,14 +1,10 @@
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { BillingScreen } from "@/components/admin/screens/billing-screen";
-import { RequireStaff } from "@/components/admin/require-staff";
-
-export const metadata: Metadata = { title: "Billing" };
-
+/**
+ * Billing has four screens now, not one with tabs — so `/admin/billing` is a
+ * section, not a page. Old links and bookmarks land on the plans list rather than
+ * on a 404.
+ */
 export default function AdminBillingPage() {
-  return (
-    <RequireStaff permissions={["invoices.view_any", "subscriptions.view_any", "plans.view_any"]}>
-      <BillingScreen />
-    </RequireStaff>
-  );
+  redirect("/admin/billing/plans");
 }

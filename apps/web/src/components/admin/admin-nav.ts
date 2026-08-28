@@ -1,13 +1,16 @@
 import {
   Activity,
   BarChart3,
-  CreditCard,
   FileText,
   Gauge,
   Image,
   Inbox,
   KeyRound,
+  Layers,
+  LineChart,
   Mail,
+  Receipt,
+  RefreshCcw,
   Settings,
   Sparkles,
   Tags,
@@ -131,14 +134,39 @@ export const adminNavSections: AdminNavSection[] = [
     ],
   },
   {
-    title: "Commerce",
+    // Four destinations rather than one screen with four tabs. Tabs made every
+    // one of these unaddressable: "look at invoice 412" was not a link, a refresh
+    // dropped you back on Plans, and the browser's back button undid a filter
+    // instead of leaving the screen.
+    title: "Billing",
     items: [
       {
-        href: "/admin/billing",
-        label: "Billing",
-        icon: CreditCard,
-        description: "Plans, subscriptions and invoices",
-        permissions: ["invoices.view_any", "subscriptions.view_any", "plans.view_any"],
+        href: "/admin/billing/plans",
+        label: "Plans",
+        icon: Layers,
+        description: "What is for sale, and at what price",
+        permissions: ["plans.view_any"],
+      },
+      {
+        href: "/admin/billing/subscriptions",
+        label: "Subscriptions",
+        icon: RefreshCcw,
+        description: "Who is paying, and what renews when",
+        permissions: ["subscriptions.view_any"],
+      },
+      {
+        href: "/admin/billing/invoices",
+        label: "Invoices",
+        icon: Receipt,
+        description: "Every charge, refund and outstanding balance",
+        permissions: ["invoices.view_any"],
+      },
+      {
+        href: "/admin/billing/report",
+        label: "Report",
+        icon: LineChart,
+        description: "Revenue, churn and what is driving both",
+        permissions: ["invoices.view_any"],
       },
     ],
   },

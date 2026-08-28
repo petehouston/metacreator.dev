@@ -1,9 +1,10 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { ImagePlus, Plus, Trash2 } from "lucide-react";
 import * as React from "react";
 
 import { RichText } from "@/components/admin/editor/rich-text";
+import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { Input, Select, Textarea } from "@/components/ui/field";
 import type { Block } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -21,19 +22,35 @@ import { cn } from "@/lib/utils";
  */
 export function BlockFields({
   block,
+  selected,
   onChange,
   onEnterAtEnd,
   onBackspaceWhenEmpty,
+  onPickMedia,
 }: {
   block: Block;
+  /** Options are only drawn for the block the caret is in. */
+  selected?: boolean;
   onChange: (data: Record<string, unknown>) => void;
   onEnterAtEnd?: () => void;
   onBackspaceWhenEmpty?: () => void;
+  /** Opens the media library and resolves with what was chosen. */
+  onPickMedia?: (apply: (media: { url: string; alt: string; width: number | null; height: number | null }) => void) => void;
 }) {
   const data = block.data ?? {};
 
   function set(patch: Record<string, unknown>) {
     onChange({ ...data, ...patch });
+  }
+
+  /** A block whose published form *is* the preview: render it, then offer options. */
+  function asPublished(children: React.ReactNode) {
+    return (
+      <div className="flex flex-col gap-2">
+        <BlockRenderer document={{ version: 1, blocks: [block] }} />
+        <Options open={selected === true}>{children}</Options>
+      </div>
+    );
   }
 
   switch (block.type) {
@@ -278,75 +295,131 @@ export function BlockFields({
       );
     }
 
-    case "image":
-      return (
-        <figure className="flex flex-col gap-2">
-          {String(data.url ?? "") !== "" ? (
-            // A plain <img>: the source is arbitrary and next/image would need every
-            // possible host in its remote patterns. The published article uses the
-            // optimised component; this is a preview.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={String(data.url)}
-              alt={String(data.alt ?? "")}
-              className="max-h-80 w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] object-contain"
-            />
-          ) : (
-            <div className="flex h-32 items-center justify-center rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] text-sm text-[var(--color-foreground-subtle)]">
-              Paste an image URL below, or pick one from the media library
-            </div>
-          )}
+    case "image": {
+      const url = String(data.url ?? "");
 
-          <FieldRow>
+      const options = (
+        <>
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Input
-              value={String(data.url ?? "")}
+              value={url}
               onChange={(event) => set({ url: event.target.value })}
               placeholder="https://…"
               aria-label="Image URL"
+              className="text-xs"
             />
             <Select
               value={String(data.size ?? "inline")}
               onChange={(event) => set({ size: event.target.value })}
               aria-label="Image width"
-              className="sm:w-32"
+              className="text-xs sm:w-32"
             >
               <option value="inline">Inline</option>
               <option value="wide">Wide</option>
               <option value="full">Full bleed</option>
             </Select>
-          </FieldRow>
+          </div>
 
           <Input
             value={String(data.alt ?? "")}
             onChange={(event) => set({ alt: event.target.value })}
             placeholder="Alt text — describe the image for someone who cannot see it"
             aria-label="Alt text"
+            className="text-xs"
           />
 
-          <RichText
+          <Input
             value={String(data.caption ?? "")}
-            onChange={(caption) => set({ caption })}
+            onChange={(event) => set({ caption: event.target.value })}
             placeholder="Caption (optional)"
-            className="text-xs text-[var(--color-foreground-subtle)]"
+            aria-label="Image caption"
+            className="text-xs"
           />
-        </figure>
+        </>
       );
 
-    case "embed":
+      // The library link is the point of entry, not the URL box: an editor who has
+      // to find a URL by hand ends up hotlinking, and the media library stops being
+      // a record of what the site actually uses.
+      const libraryLink = onPickMedia ? (
+        <button
+          type="button"
+          onClick={() =>
+            onPickMedia((media) =>
+              set({
+                url: media.url,
+                alt: String(data.alt ?? "") || media.alt,
+                width: media.width,
+                height: media.height,
+              }),
+            )
+          }
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:underline"
+        >
+          <ImagePlus className="size-3.5" aria-hidden="true" />
+          {url === "" ? "Open the media library" : "Replace from the media library"}
+        </button>
+      ) : null;
+
+      if (url === "") {
+        return (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-4 py-8">
+            {libraryLink}
+            <p className="text-xs text-[var(--color-foreground-subtle)]">
+              or paste a URL below
+            </p>
+            <div className="mt-1 w-full max-w-md">{options}</div>
+          </div>
+        );
+      }
+
+      const size = String(data.size ?? "inline");
+      const caption = String(data.caption ?? "");
+
+      // The public figure's own markup, with a plain <img> instead of next/image:
+      // `next/image` only optimises the hosts in `next.config.ts`, and an editor
+      // pasting a URL from anywhere would see an empty box rather than their photo.
+      // Classes are copied from the renderer so the measure and the break-out
+      // widths are the ones that ship.
       return (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-center rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-4 py-8 text-center text-sm text-[var(--color-foreground-subtle)]">
-            {String(data.url ?? "") === ""
-              ? "Paste the URL of the video, tweet or pen"
-              : `${String(data.provider ?? "generic")} · ${String(data.url)}`}
-          </div>
+          <figure
+            className={cn(
+              "flex flex-col gap-2",
+              size === "wide" && "lg:-mx-16",
+              size === "full" && "lg:-mx-24",
+            )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={url}
+              alt={String(data.alt ?? "")}
+              className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)]"
+            />
+            {caption !== "" ? (
+              <figcaption className="text-center text-sm text-[var(--color-foreground-subtle)]">
+                {caption}
+              </figcaption>
+            ) : null}
+          </figure>
 
+          <Options open={selected === true}>
+            {libraryLink}
+            {options}
+          </Options>
+        </div>
+      );
+    }
+
+    case "embed": {
+      const options = (
+        <>
           <FieldRow>
             <Select
               value={String(data.provider ?? "youtube")}
               onChange={(event) => set({ provider: event.target.value })}
               aria-label="Embed provider"
-              className="sm:w-40"
+              className="text-xs sm:w-36"
             >
               <option value="youtube">YouTube</option>
               <option value="vimeo">Vimeo</option>
@@ -360,13 +433,14 @@ export function BlockFields({
               onChange={(event) => set({ url: event.target.value })}
               placeholder="https://…"
               aria-label="Embed URL"
+              className="text-xs"
             />
 
             <Select
               value={String(data.aspect ?? "16:9")}
               onChange={(event) => set({ aspect: event.target.value })}
               aria-label="Aspect ratio"
-              className="sm:w-28"
+              className="text-xs sm:w-24"
             >
               <option value="16:9">16:9</option>
               <option value="4:3">4:3</option>
@@ -380,9 +454,24 @@ export function BlockFields({
             onChange={(event) => set({ caption: event.target.value })}
             placeholder="Caption (optional)"
             aria-label="Embed caption"
+            className="text-xs"
           />
-        </div>
+        </>
       );
+
+      if (String(data.url ?? "") === "") {
+        return (
+          <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-3">
+            <p className="text-center text-sm text-[var(--color-foreground-subtle)]">
+              Paste the URL of the video, tweet or pen
+            </p>
+            {options}
+          </div>
+        );
+      }
+
+      return asPublished(options);
+    }
 
     case "code":
       return (
@@ -546,21 +635,17 @@ export function BlockFields({
     }
 
     case "divider":
-      return (
-        <div className="flex items-center gap-3">
-          <hr className="flex-1 border-t border-[var(--color-border)]" />
-          <select
-            value={String(data.style ?? "plain")}
-            onChange={(event) => set({ style: event.target.value })}
-            aria-label="Divider style"
-            className="rounded-[var(--radius-sm)] border border-transparent bg-transparent font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)] outline-none hover:border-[var(--color-border)]"
-          >
-            <option value="plain">Rule</option>
-            <option value="dots">Dots</option>
-            <option value="asterism">Asterism</option>
-          </select>
-          <hr className="flex-1 border-t border-[var(--color-border)]" />
-        </div>
+      return asPublished(
+        <Select
+          value={String(data.style ?? "plain")}
+          onChange={(event) => set({ style: event.target.value })}
+          aria-label="Divider style"
+          className="w-40 text-xs"
+        >
+          <option value="plain">Rule</option>
+          <option value="dots">Dots</option>
+          <option value="asterism">Asterism</option>
+        </Select>,
       );
 
     case "faq": {
@@ -632,26 +717,28 @@ export function BlockFields({
       );
     }
 
-    case "button":
-      return (
+    case "button": {
+      const options = (
         <FieldRow>
           <Input
             value={String(data.label ?? "")}
             onChange={(event) => set({ label: event.target.value })}
             placeholder="Button label"
             aria-label="Button label"
+            className="text-xs"
           />
           <Input
             value={String(data.href ?? "")}
             onChange={(event) => set({ href: event.target.value })}
             placeholder="/tools/…  or  https://…"
             aria-label="Button link"
+            className="text-xs"
           />
           <Select
             value={String(data.variant ?? "primary")}
             onChange={(event) => set({ variant: event.target.value })}
             aria-label="Button style"
-            className="sm:w-36"
+            className="text-xs sm:w-32"
           >
             <option value="primary">Primary</option>
             <option value="secondary">Secondary</option>
@@ -660,21 +747,46 @@ export function BlockFields({
         </FieldRow>
       );
 
-    case "toolCard":
-      return (
-        <div className="flex flex-col gap-1.5">
+      // The renderer draws nothing without both a label and a href, and a block
+      // that renders as empty space is a block nobody can click back into.
+      if (String(data.label ?? "") === "" || String(data.href ?? "") === "") {
+        return (
+          <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-3">
+            {options}
+          </div>
+        );
+      }
+
+      return asPublished(options);
+    }
+
+    case "toolCard": {
+      const options = (
+        <>
           <Input
             value={String(data.toolSlug ?? "")}
             onChange={(event) => set({ toolSlug: event.target.value })}
             placeholder="tool-slug"
             aria-label="Tool slug"
+            className="text-xs"
           />
-          <p className="text-xs text-[var(--color-foreground-subtle)]">
+          <p className="text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
             The card renders live from the catalog — its name, tier and run count stay
             current without anyone editing this post again.
           </p>
-        </div>
+        </>
       );
+
+      if (String(data.toolSlug ?? "") === "") {
+        return (
+          <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-3">
+            {options}
+          </div>
+        );
+      }
+
+      return asPublished(options);
+    }
 
     default:
       // Content written by a newer deploy. Show the JSON rather than swallowing it:
@@ -698,6 +810,28 @@ export function BlockFields({
 
 function FieldRow({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-2 sm:flex-row">{children}</div>;
+}
+
+/**
+ * The options strip under a block.
+ *
+ * Hidden until the block is selected, which is the whole difference between the
+ * editor and the published article: the same markup, plus the controls for the
+ * block you are actually working on. Kept in the DOM rather than unmounted so a
+ * half-typed URL survives a click elsewhere and back.
+ */
+function Options({ open, children }: { open: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      hidden={!open}
+      className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-surface-sunken)]/60 p-2.5"
+    >
+      <p className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+        Block options
+      </p>
+      {children}
+    </div>
+  );
 }
 
 /** Two shapes exist in stored content; normalise rather than migrating either. */

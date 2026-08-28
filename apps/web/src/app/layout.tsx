@@ -42,6 +42,8 @@ export const metadata: Metadata = {
     "youtube tools",
     "instagram tools",
     "tiktok tools",
+    "pinterest tools",
+    "threads tools",
     "engagement rate calculator",
     "hashtag generator",
   ],

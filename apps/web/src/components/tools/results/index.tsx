@@ -3,6 +3,7 @@
 import { AlertTriangle, Download, TriangleAlert } from "lucide-react";
 import * as React from "react";
 
+import { SocialPreviewResult } from "@/components/tools/results/social-preview";
 import { CopyButton } from "@/components/ui/copy-button";
 import { cn, formatNumber } from "@/lib/utils";
 import type { ResultView, ToolResult } from "@/lib/types";
@@ -26,6 +27,7 @@ const RENDERERS: Record<
   "diff.compare": CompareResult,
   "chart.timeseries": FallbackResult,
   "download.bundle": MediaResult,
+  "preview.social": SocialPreviewResult,
 };
 
 export function ResultRenderer({ result }: { result: ToolResult }) {
@@ -40,6 +42,10 @@ export function ResultRenderer({ result }: { result: ToolResult }) {
       )}
 
       <Renderer result={result} />
+
+      {result.meta.json !== undefined && result.meta.json !== null && (
+        <JsonCard payload={result.meta.json} />
+      )}
 
       {result.warnings.length > 0 && (
         <ul className="flex flex-col gap-2">
@@ -142,11 +148,15 @@ function TableResult({ result }: { result: ToolResult }) {
                 <td
                   key={column.key}
                   className={cn(
-                    "tabular px-4 py-3 text-[var(--color-foreground)]",
+                    "tabular px-4 py-3 align-top text-[var(--color-foreground)]",
                     column.align === "right" ? "text-right" : "text-left",
+                    // Labels stay on one line; only the value column wraps.
+                    column.key === "value"
+                      ? "w-full"
+                      : "whitespace-nowrap",
                   )}
                 >
-                  <Cell value={row[column.key]} />
+                  <Cell value={row[column.key]} copyable={column.key === "value"} />
                 </td>
               ))}
             </tr>
@@ -157,33 +167,68 @@ function TableResult({ result }: { result: ToolResult }) {
   );
 }
 
-function Cell({ value }: { value: unknown }) {
-  if (typeof value === "string" && /^https?:\/\//.test(value)) {
-    return (
-      <span className="flex items-center justify-end gap-1">
-        <a
-          href={value}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[var(--color-primary)] hover:underline"
-        >
-          Open
-        </a>
-        <CopyButton
-          value={value}
-          label=""
-          copiedLabel=""
-          size="icon"
-          className="size-7"
-        />
-      </span>
-    );
-  }
+function Cell({ value, copyable = false }: { value: unknown; copyable?: boolean }) {
+  if (value === null || value === undefined || value === "") return <>—</>;
+
+  const isUrl = typeof value === "string" && /^https?:\/\//.test(value);
+  const body = isUrl ? (
+    <a
+      href={value as string}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="break-all text-[var(--color-primary)] hover:underline"
+    >
+      {value as string}
+    </a>
+  ) : (
+    // Wrapping is the cell's call, not this component's: label columns are
+    // whitespace-nowrap on the <td>, so inherit rather than override them.
+    <span className={cn(copyable && "whitespace-pre-wrap break-words")}>
+      {typeof value === "number" ? formatNumber(value) : String(value)}
+    </span>
+  );
+
+  if (!copyable) return body;
+
+  // The copy button sits hard right so the icons line up down the column, however
+  // ragged the values beside them are.
+  return (
+    <span className="flex items-start justify-between gap-3">
+      {body}
+      <CopyButton
+        value={String(value)}
+        label=""
+        copiedLabel=""
+        size="icon"
+        className="size-7 shrink-0"
+        aria-label="Copy value"
+      />
+    </span>
+  );
+}
+
+/* ── raw JSON card ────────────────────────────────────────────────────────── */
+
+/**
+ * Tools that fetch a structured payload carry it verbatim in `meta.json`. The table
+ * above is the readable view; this is the one people copy into their own code.
+ */
+function JsonCard({ payload }: { payload: unknown }) {
+  const json = React.useMemo(() => JSON.stringify(payload, null, 2), [payload]);
 
   return (
-    <>
-      {typeof value === "number" ? formatNumber(value) : String(value ?? "—")}
-    </>
+    <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+          Raw JSON
+        </span>
+        <CopyButton value={json} label="Copy JSON" />
+      </div>
+
+      <pre className="max-h-[32rem] overflow-auto font-mono text-sm leading-relaxed text-[var(--color-foreground)]">
+        {json}
+      </pre>
+    </div>
   );
 }
 
@@ -442,18 +487,26 @@ function MediaResult({ result }: { result: ToolResult }) {
           className="flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"
         >
           {artifact.preview_url && (
-            // eslint-disable-next-line @next/next/no-img-element -- signed, expiring URL on an unknown host
-            <img
-              src={artifact.preview_url}
-              alt={artifact.label ?? artifact.filename}
-              className="aspect-video w-full object-cover"
-              loading="lazy"
-            />
+            // Contained, not cropped: these tools exist to show you a 9:16 story
+            // export or a 2:3 Pin at its real shape, and a thumbnail that
+            // centre-crops every output to 16:9 would hide the thing being checked.
+            <div className="flex h-48 items-center justify-center bg-[var(--color-surface-sunken)] p-2">
+              {/* eslint-disable-next-line @next/next/no-img-element -- signed, expiring URL on an unknown host */}
+              <img
+                src={artifact.preview_url}
+                alt={artifact.label ?? artifact.filename}
+                className="max-h-full max-w-full object-contain"
+                loading="lazy"
+              />
+            </div>
           )}
 
           <figcaption className="flex items-center justify-between gap-2 p-3">
             <span className="truncate text-xs text-[var(--color-foreground-muted)]">
               {artifact.label ?? artifact.filename}
+              {artifact.width && artifact.height
+                ? ` · ${artifact.width} × ${artifact.height}`
+                : ""}
             </span>
 
             {artifact.url && (

@@ -44,6 +44,11 @@ final class AdminPostResource extends JsonResource
                 'slug' => $this->category->slug,
                 'name' => $this->category->name,
             ]),
+            'categories' => $this->whenLoaded('categories', fn () => $this->categories->map(fn ($category): array => [
+                'id' => $category->id,
+                'slug' => $category->slug,
+                'name' => $category->name,
+            ])->all()),
             'tags' => $this->whenLoaded('tags', fn () => $this->tags->map(fn ($tag): array => [
                 'id' => $tag->id,
                 'slug' => $tag->slug,

@@ -52,6 +52,31 @@ one renderer per view type, so most tools need no frontend code at all:
 | `chart.timeseries` | Growth trackers |
 | `diff.compare` | A/B testers |
 | `download.bundle` | Zip exports |
+| `preview.social` | Post, profile, channel, link card, Pin and safe-zone mock-ups |
+
+### `preview.social`
+
+The preview view is the one worth spelling out, because it is the one that could easily have become
+sixty bespoke components. A result carries a list of **frames**, each describing one mock-up in
+data: the platform it is styled as, the surface it represents ("Mobile app", "Pin closeup"), its
+kind (`post`, `profile`, `channel`, `link-card`, `pin`, `safe-zone`), and then whichever parts apply
+— author row, body split at the fold, media placeholder at the right aspect, link card, action row,
+a status badge, and the margins an app's chrome covers.
+
+A `channel` frame is the exception to the placeholder rule: it carries `artwork` (real banner and
+avatar URLs from the platform's own CDN) and a `cta` button out to the channel. A verdict about a
+channel is only trustworthy once you can see, above it, that the tool looked at the channel you
+meant.
+
+Frames are built with `App\Support\Social\PreviewFrame`, so every platform fact — where the fold
+falls, which card shape a `twitter:card` value produces, how wide TikTok's right rail is — is
+decided in PHP where it is testable and cacheable. The renderer only draws what it is told, which is
+why a new preview tool still needs no frontend code. A frame may also carry a supporting `table`:
+the tags, limits or margins behind the picture, drawn underneath it.
+
+The body arrives pre-split into `visible` and `hidden` at a **grapheme** count, not a byte or
+codepoint count, so an emoji costs one character exactly as it does in the app. The renderer greys
+the hidden half in place rather than dropping it: seeing the sentence that gets cut is the point.
 
 A tool only needs custom UI when it is genuinely interactive (grid planner, carousel splitter,
 thumbnail A/B tester). Those register a component in `apps/web/src/tools/custom/<key>.tsx` and the

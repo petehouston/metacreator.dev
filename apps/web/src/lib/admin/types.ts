@@ -212,6 +212,7 @@ export interface AdminTool {
   platforms: string[];
   category: { id: number; slug: string; name: string } | null;
   config: Record<string, unknown> | null;
+  seo?: SeoOverrides | null;
   stats: { runs: number; avg_duration_ms: number; success_rate: number; grants?: number };
   published_at: string | null;
   updated_at: string | null;
@@ -244,6 +245,8 @@ export interface AdminPost {
   version: number;
   author: { id: string; display_name: string; initials: string } | null;
   category: { id: number; slug: string; name: string } | null;
+  /** Secondary categories. The primary one above owns the URL and the breadcrumb. */
+  categories?: { id: number; slug: string; name: string }[];
   tags: { id: number; slug: string; name: string }[];
   published_at: string | null;
   scheduled_for: string | null;
@@ -252,7 +255,12 @@ export interface AdminPost {
   allowed_transitions: string[];
 }
 
-export interface PostSeo {
+/**
+ * SEO overrides as an admin form holds them — the same shape for every entity that
+ * has them (posts, tools), because the fields are the same and a per-entity copy is
+ * how the two drift.
+ */
+export interface SeoOverrides {
   title?: string | null;
   description?: string | null;
   canonical_url?: string | null;
@@ -261,9 +269,13 @@ export interface PostSeo {
   og_title?: string | null;
   og_description?: string | null;
   og_media_id?: number | null;
+  /** Read-only: resolved from `og_media_id` so the form can show a thumbnail. */
+  og_image_url?: string | null;
   twitter_card?: string | null;
   schema_type?: string | null;
 }
+
+export type PostSeo = SeoOverrides;
 
 export interface AdminPostDetail {
   post: AdminPost;
@@ -282,6 +294,8 @@ export interface AdminPostDetail {
 
 export interface AdminMedia {
   id: string;
+  /** The integer key, for the foreign keys a public id cannot fill. */
+  numeric_id: number;
   filename: string;
   mime_type: string;
   kind: string;
@@ -336,6 +350,10 @@ export interface AdminPlan {
   is_highlighted: boolean;
   sort_order: number;
   stripe_price_id: string | null;
+  /** The plan's identifier at each gateway, keyed by provider. */
+  gateway_ids: Record<string, string | null>;
+  /** Every subscription ever, not just live ones — what makes a plan undeletable. */
+  total_subscriptions: number;
   active_subscriptions?: number;
 }
 
@@ -354,20 +372,122 @@ export interface AdminSubscription {
   created_at: string | null;
 }
 
+/** The card, wallet or bank a payment came from. Never a full number. */
+export interface InvoicePaymentMethod {
+  type: string | null;
+  brand: string | null;
+  last4: string | null;
+}
+
 export interface AdminInvoice {
   id: number;
   number: string | null;
   status: string;
+  /** Which provider took the money: stripe | paypal | braintree. */
+  gateway: string;
   subtotal: number;
   tax: number;
   total: number;
   amount_refunded: number;
+  /** Total minus refunded — what the business actually kept. */
+  net_total: number;
   currency: string;
+  payment_method: InvoicePaymentMethod | null;
   user: { id: string; display_name: string; email: string } | null;
   issued_at: string | null;
   paid_at: string | null;
+  refunded_at: string | null;
   hosted_url?: string | null;
   pdf_url?: string | null;
+}
+
+export interface AdminInvoiceLine {
+  id: number;
+  description: string;
+  quantity: number;
+  unit_amount: number;
+  amount: number;
+}
+
+/**
+ * One invoice, complete. The extra fields over {@link AdminInvoice} are the ones a
+ * detail page exists for: what was billed, against which subscription, on what
+ * card, under which transaction at the gateway, and why money went back.
+ *
+ * The gateway references are absent rather than null for an actor without
+ * `invoices.view` — the API omits them, and the screen must not print "—" as if
+ * the payment had no transaction behind it.
+ */
+export interface AdminInvoiceDetail extends AdminInvoice {
+  billing_name: string | null;
+  billing_email: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  lines: AdminInvoiceLine[];
+  subscription: {
+    id: number;
+    status: string;
+    current_period_end: string | null;
+    cancellation_reason: string | null;
+  } | null;
+  plan: {
+    id: number;
+    key: string;
+    name: string;
+    amount: number;
+    currency: string;
+    interval: string | null;
+    billing_mode: string;
+  } | null;
+  refund: {
+    amount: number;
+    is_partial: boolean;
+    refunded_at: string | null;
+    reason: string | null;
+    reference?: string | null;
+  } | null;
+  transaction_id?: string | null;
+  transaction_url?: string | null;
+}
+
+/** Everything on the billing report, in one payload. */
+export interface BillingReport {
+  period: PeriodInfo;
+  periods: number[];
+  currency: string;
+  metrics: Metric[];
+  revenue_series: SeriesPoint[];
+  subscription_series: { date: string; new: number; cancelled: number }[];
+  by_plan: {
+    id: number;
+    key: string;
+    name: string;
+    interval: string | null;
+    billing_mode: string;
+    is_active: boolean;
+    revenue: number;
+    invoices: number;
+    active_subscriptions: number;
+    share: number;
+  }[];
+  by_gateway: { gateway: string; revenue: number; invoices: number; share: number }[];
+  by_status: { status: string; invoices: number; total: number }[];
+  top_customers: {
+    id: string;
+    email: string;
+    display_name: string;
+    revenue: number;
+    invoices: number;
+  }[];
+  recent_refunds: {
+    id: number;
+    number: string | null;
+    email: string | null;
+    amount: number;
+    currency: string;
+    refunded_at: string | null;
+    reason: string | null;
+  }[];
 }
 
 // ── Support & platform ───────────────────────────────────────────────────────

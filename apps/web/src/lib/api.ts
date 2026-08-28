@@ -109,6 +109,19 @@ export const api = {
       }).then((r) => r.data),
   },
 
+  /**
+   * Public site settings, as a flat map.
+   *
+   * Only the rows an admin marked public and that are not encrypted — the filter
+   * lives on the API so "which settings are safe to publish" is answered once.
+   * Cached for five minutes, and tagged so a settings save can revalidate it.
+   */
+  settings: () =>
+    request<{ data: Record<string, unknown> }>("/settings", {
+      tags: ["settings"],
+      revalidate: 300,
+    }).then((r) => r.data),
+
   blog: {
     list: (params: {
       q?: string;

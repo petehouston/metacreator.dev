@@ -36,9 +36,9 @@ Last updated: 2026-08-27.
 | Tool registry, runner contract, access & quota services | ✅ | [08](08-tool-engine.md) |
 | Public catalog, search, filters, tool pages | ✅ | |
 | Generated `ToolForm` and result renderers | ✅ | |
-| Tool runners | 🟡 | **8 of the 78** catalogued in [07](07-tool-catalog.md). The engine is proven end to end; the rest are mechanical |
+| Tool runners | 🟡 | **46 of the 88** catalogued in [07](07-tool-catalog.md) — every free tool, plus one account tool. What remains is the account and premium tiers, which need providers rather than runners |
 | Run recording & telemetry | ✅ | |
-| Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter and a per-run drawer |
+| Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter, and a page per run at `/dashboard/runs/{id}` |
 | In-app catalog (`/dashboard/tools`) | ✅ | Search, tier/platform/category filters, per-user access shown on each card |
 
 ## Accounts
@@ -86,6 +86,10 @@ Last updated: 2026-08-27.
 | Scheduled publishing | ✅ | `blog:publish-scheduled`, every minute |
 | `features.blog_enabled` kill switch | ✅ | Middleware 404s the route group; sitemap drops the URLs |
 | Admin editor, list screens, bulk actions, revisions | ✅ | [25](25-admin.md). Block editor for all 14 implemented types, status tabs with counts, per-row-authorized bulk actions, optimistic concurrency, revisions on every content save |
+| Editor renders as the published article | ✅ | Public header and public block renderer inside the editing column; configuration blocks show an options strip only while selected |
+| Primary + secondary categories, inline tag search/create | ✅ | `posts.category_id` stays primary; `post_post_category` holds the rest |
+| Featured image, media-library modal, full permalink | ✅ | The modal is reachable from the image block and the featured image |
+| Autosave (7s) and preview-without-publishing | ✅ | Autosave flags `is_autosave`; preview renders the *unsaved* draft at `/admin/posts/preview` |
 
 ## Admin
 
@@ -93,7 +97,7 @@ Full detail in [25](25-admin.md).
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| Admin API, permission-gated per route | ✅ | 56 routes; a test asserts every one declares a permission *and* that a customer is refused by all of them |
+| Admin API, permission-gated per route | ✅ | 61 routes; a test asserts every one declares a permission *and* that a customer is refused by all of them |
 | Overview dashboard | ✅ | Eight headline metrics with period-over-period deltas and sparklines, run volume, funnel, access-reason split, top tools, top errors |
 | Tool analytics | ✅ | Every panel in [15](15-analytics.md): runs, paywall hits, failure rate, p95, cache hit rate, access-reason split, comped runs |
 | Funnel & content analytics | ✅ | |
@@ -104,11 +108,15 @@ Full detail in [25](25-admin.md).
 | Tools: tier, status, visibility, featuring | ✅ | `key`, `slug`, `version` and `input_schema` deliberately not editable |
 | Tool grants | ✅ | Attributed, expirable, audited, and the user is notified |
 | Media library | ✅ | Grid, upload, alt text with a "no alt text" warning, soft delete |
-| Billing: plans, subscriptions, invoices | 🟡 | Plans are writable; Stripe records are read-only and empty until the integration exists |
+| Billing: plans, subscriptions, invoices | 🟡 | Four sidebar destinations rather than one tabbed screen, so every one is addressable. Plans are full CRUD on their own pages — create, edit, enable/disable, delete — with price locked once a plan has live subscribers. Subscriptions stay read-only and empty until a gateway integration exists; invoices have demo rows and a detail page carrying lines, plan, card, gateway transaction and refund |
+| Billing report | ✅ | `/admin/billing/report`: net revenue, MRR/ARR, churn, ARPU, revenue by plan and gateway, top customers and the refunds behind the refund total. Gated on `invoices.view_any` — this is money, not product analytics |
+| Payment provider configuration | 🟡 | Settings → Payments picks Stripe / PayPal / Braintree and stores each one's credentials; plans carry a per-gateway price id. **No gateway is called yet** — this is the configuration surface, not the integration |
 | Support queue | ✅ | Overdue-first ordering, reply/internal-note toggle, triage, SLA timeline |
 | Contact inbox | ✅ | Triage for the public form |
 | Newsletter subscribers | ✅ | List, sync-failure banner, streamed CSV export |
-| Settings | ✅ | Three permissions over one table, checked per key; secrets never sent to the browser |
+| Settings | ✅ | A section rail (general, blog, accounts, payments, SEO, tracking, newsletter) over one table, each section a stack of titled cards the way a merchant configuration screen reads — Payments is *General*, then Stripe, then PayPal, then Braintree, never one flat column. No Features tab: every flag sits in the section it governs. Three permissions checked per key; secrets never sent to the browser |
+| Blog presentation settings | ✅ | Author, date, reading time, featured image, categories, tags, related posts and page size, read by the frontend through the public `GET /api/v1/settings` and defaulting to everything-on if that request fails |
+| Demo invoices, tickets and contact messages | ✅ | `CommerceDemoSeeder` and `SupportDemoSeeder`, non-production only. The billing and support screens were correct and untestable while their tables were empty |
 | Audit log | ✅ | Actor, subject, diff. No endpoint edits or deletes an entry |
 
 ## Not yet started
@@ -117,7 +125,7 @@ Each has a full specification and its schema, models and permissions already in 
 
 | Area | Spec |
 | --- | --- |
-| Stripe integration: checkout, portal, webhooks | [11](11-billing.md) |
+| Stripe integration: checkout, portal, webhooks | [11](11-billing.md) — the settings and per-plan price ids it will read now exist |
 | Customer-facing ticket creation | [12](12-support-tickets.md) |
 | Newsletter provider adapters (MailChimp, Sendy, …) | [14](14-newsletter-marketing.md) |
 | Google OAuth | [03](03-tech-stack.md) — blocked on a Guzzle major-version conflict |
@@ -131,10 +139,16 @@ open a ticket from the dashboard, and no provider adapter syncs the list outward
 
 - **Synchronous tool runs record telemetry, not results.** `RecordToolRun` persists the run row;
   only `RunToolJob` (asynchronous runs) writes a `result_ref` through `ArtifactStore`. So history
-  lists every run, and the run drawer can only re-render the output of the ones that ran in the
+  lists every run, and the run page can only re-render the output of the ones that ran in the
   background. If "unlimited history" is meant to include the *results* on paid plans, the
   synchronous path needs to store them too — that is a storage and privacy decision, not an
   oversight in the UI.
+- **The blog kill switch stops at the API.** `features.blog_enabled` is now its own section in
+  Settings, and `EnsureBlogEnabled` 404s the public blog endpoints and drops the sitemap URLs when it
+  is off. The Next.js header still links to `/blog` regardless, because the web app does not read
+  public settings at all yet — the link goes to a 404 rather than disappearing. Wiring it needs a
+  public settings endpoint the frontend layout can read.
+
 - **`POST /api/v1/contact` does not exist.** The public contact form posts to it and reports a
   failure — so the admin's Contact inbox reads a table nothing writes to yet. The dashboard's Help
   screen deliberately links to email and to that form rather than claiming a ticket will be opened.

@@ -31,6 +31,8 @@ final class PlanResource extends JsonResource
             'is_highlighted' => (bool) $this->is_highlighted,
             'sort_order' => (int) $this->sort_order,
             'stripe_price_id' => $this->stripe_price_id,
+            'gateway_ids' => $this->gateway_ids ?? [],
+            'total_subscriptions' => (int) $this->subscriptions()->count(),
             'active_subscriptions' => $this->whenNotNull($this->subscriptions_count ?? null),
         ];
     }

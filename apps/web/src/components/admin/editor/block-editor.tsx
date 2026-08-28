@@ -38,10 +38,13 @@ export function BlockEditor({
   document: value,
   onChange,
   className,
+  onPickMedia,
 }: {
   document: BlockDocument;
   onChange: (next: BlockDocument) => void;
   className?: string;
+  /** Opens the media library; the editor calls back with what was chosen. */
+  onPickMedia?: (apply: (media: { url: string; alt: string; width: number | null; height: number | null }) => void) => void;
 }) {
   const [selected, setSelected] = React.useState<string | null>(null);
   const [inserting, setInserting] = React.useState<{ afterIndex: number } | null>(null);
@@ -103,6 +106,7 @@ export function BlockEditor({
           <div
             key={id}
             onFocusCapture={() => setSelected(id)}
+            onMouseDown={() => setSelected(id)}
             className={cn(
               "group relative -mx-2 rounded-[var(--radius-md)] px-2 py-1.5 transition-colors",
               active && "bg-[var(--color-surface-sunken)]/50",
@@ -140,6 +144,8 @@ export function BlockEditor({
 
             <BlockFields
               block={block}
+              selected={active}
+              onPickMedia={onPickMedia}
               onChange={(data) => update(index, data)}
               onEnterAtEnd={() => insert("paragraph", index)}
               onBackspaceWhenEmpty={() => {

@@ -174,7 +174,7 @@ function AccessGate({ tool }: { tool: ToolDetail }) {
         </span>
 
         <h2 className="text-heading-2">
-          {needsSubscription ? "Included with Pro" : "Free account required"}
+          {needsSubscription ? "Included with Pro" : "Account required"}
         </h2>
 
         <p className="text-[var(--color-foreground-muted)]">

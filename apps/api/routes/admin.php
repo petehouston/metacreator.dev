@@ -185,6 +185,10 @@ Route::prefix('post-categories')->group(function (): void {
         ->middleware('permission:post_categories.create')
         ->name('admin.post-categories.store');
 
+    Route::get('{category}', [TaxonomyController::class, 'showCategory'])
+        ->middleware('permission:post_categories.view_any')
+        ->name('admin.post-categories.show');
+
     Route::patch('{category}', [TaxonomyController::class, 'updateCategory'])
         ->middleware('permission:post_categories.update')
         ->name('admin.post-categories.update');
@@ -202,6 +206,10 @@ Route::prefix('tags')->group(function (): void {
     Route::post('/', [TaxonomyController::class, 'storeTag'])
         ->middleware('permission:tags.create')
         ->name('admin.tags.store');
+
+    Route::get('{tag}', [TaxonomyController::class, 'showTag'])
+        ->middleware('permission:tags.view_any')
+        ->name('admin.tags.show');
 
     Route::patch('{tag}', [TaxonomyController::class, 'updateTag'])
         ->middleware('permission:tags.update')
@@ -221,6 +229,10 @@ Route::prefix('media')->group(function (): void {
         ->middleware('permission:media.create')
         ->name('admin.media.store');
 
+    Route::get('{media}', [MediaController::class, 'show'])
+        ->middleware('permission:media.view_any')
+        ->name('admin.media.show');
+
     Route::patch('{media}', [MediaController::class, 'update'])
         ->middleware('permission:media.update|media.update.own')
         ->name('admin.media.update');
@@ -236,17 +248,38 @@ Route::get('plans', [BillingController::class, 'plans'])
     ->middleware('permission:plans.view_any')
     ->name('admin.plans.index');
 
+Route::post('plans', [BillingController::class, 'storePlan'])
+    ->middleware('permission:plans.create')
+    ->name('admin.plans.store');
+
+Route::get('plans/{plan}', [BillingController::class, 'showPlan'])
+    ->middleware('permission:plans.view_any')
+    ->name('admin.plans.show');
+
 Route::patch('plans/{plan}', [BillingController::class, 'updatePlan'])
     ->middleware('permission:plans.update')
     ->name('admin.plans.update');
+
+Route::delete('plans/{plan}', [BillingController::class, 'destroyPlan'])
+    ->middleware('permission:plans.delete')
+    ->name('admin.plans.destroy');
 
 Route::get('subscriptions', [BillingController::class, 'subscriptions'])
     ->middleware('permission:subscriptions.view_any')
     ->name('admin.subscriptions.index');
 
+// Before `invoices/{invoice}`: a bare segment would otherwise swallow it.
+Route::get('invoices/report', [BillingController::class, 'report'])
+    ->middleware('permission:invoices.view_any')
+    ->name('admin.invoices.report');
+
 Route::get('invoices', [BillingController::class, 'invoices'])
     ->middleware('permission:invoices.view_any')
     ->name('admin.invoices.index');
+
+Route::get('invoices/{invoice}', [BillingController::class, 'invoice'])
+    ->middleware('permission:invoices.view')
+    ->name('admin.invoices.show');
 
 // ── Support ──────────────────────────────────────────────────────────────────
 

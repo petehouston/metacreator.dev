@@ -50,6 +50,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'blog.enabled' => EnsureBlogEnabled::class,
         ]);
 
+        // A tool run's `input` is validated against the tool's own JSON Schema, and
+        // that schema says what an optional field's empty value looks like — almost
+        // always `""`. Laravel's default of rewriting empty strings to null turns
+        // "I cleared this optional field" into `null is not a string`, which the
+        // user sees as a validation error on a field they were told to leave blank.
+        // The body is data here, not a form, so it reaches the runner as it was sent.
+        $middleware->convertEmptyStringsToNull(except: [
+            fn (Request $request): bool => $request->is('api/v1/tools/*/run'),
+        ]);
+
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {

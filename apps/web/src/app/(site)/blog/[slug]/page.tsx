@@ -11,6 +11,7 @@ import { ToolCard } from "@/components/tools/tool-card";
 import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/config/site";
 import { api, ApiRequestError } from "@/lib/api";
+import { blogDisplay } from "@/lib/site-settings";
 import { toolsForReader } from "@/lib/tool-discovery";
 import { formatDate } from "@/lib/utils";
 import type { PostDetail, ToolSummary } from "@/lib/types";
@@ -81,7 +82,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   if (!post) notFound();
 
   const document = { version: 1, blocks: post.blocks };
-  const tools = await resolveTools(document);
+  const [tools, display] = await Promise.all([resolveTools(document), blogDisplay()]);
 
   // The tools the article itself reached for lead the shelf below it; the rest is
   // topped up from the catalog. Best-effort — an article still reads fine without.
@@ -89,23 +90,30 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
     () => [],
   );
 
+  const showAuthor = display.showAuthor && post.author !== null && post.author !== undefined;
+  const showDate = display.showPublishedDate && Boolean(post.published_at);
+
   return (
     <article className="mx-auto w-full max-w-[80rem] px-4 py-10 sm:px-6 lg:py-14">
       <Breadcrumbs post={post} />
 
       <header className="mx-auto mt-6 flex max-w-[46rem] flex-col gap-5">
-        <div className="flex flex-wrap items-center gap-2">
-          {post.category ? (
-            <Link href={`/blog?category=${post.category.slug}`}>
-              <Badge variant="neutral" size="md" className="cursor-pointer">
-                {post.category.name}
-              </Badge>
-            </Link>
-          ) : null}
-          <span className="tabular font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-            {post.reading_minutes} min read
-          </span>
-        </div>
+        {(display.showCategories && post.category) || display.showReadingTime ? (
+          <div className="flex flex-wrap items-center gap-2">
+            {display.showCategories && post.category ? (
+              <Link href={`/blog?category=${post.category.slug}`}>
+                <Badge variant="neutral" size="md" className="cursor-pointer">
+                  {post.category.name}
+                </Badge>
+              </Link>
+            ) : null}
+            {display.showReadingTime ? (
+              <span className="tabular font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+                {post.reading_minutes} min read
+              </span>
+            ) : null}
+          </div>
+        ) : null}
 
         <h1 className="text-heading-1 text-balance sm:text-display-lg">{post.title}</h1>
 
@@ -113,35 +121,39 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           <p className="text-body-lg text-[var(--color-foreground-muted)]">{post.excerpt}</p>
         ) : null}
 
-        <div className="flex items-center gap-3 border-t border-[var(--color-border-subtle)] pt-5">
-          {post.author?.avatar_url ? (
-            <Image
-              src={post.author.avatar_url}
-              alt=""
-              width={36}
-              height={36}
-              className="size-9 rounded-full object-cover"
-            />
-          ) : null}
-          <div className="flex flex-col text-sm">
-            {post.author ? (
-              <span className="font-medium text-[var(--color-foreground)]">
-                {post.author.name}
-              </span>
+        {/* The rule under the byline belongs to the byline: with both the author
+            and the date hidden, an empty bordered strip is left behind. */}
+        {showAuthor || showDate ? (
+          <div className="flex items-center gap-3 border-t border-[var(--color-border-subtle)] pt-5">
+            {showAuthor && post.author?.avatar_url ? (
+              <Image
+                src={post.author.avatar_url}
+                alt=""
+                width={36}
+                height={36}
+                className="size-9 rounded-full object-cover"
+              />
             ) : null}
-            {post.published_at ? (
-              <time
-                dateTime={post.published_at}
-                className="text-[var(--color-foreground-subtle)]"
-              >
-                {formatDate(post.published_at)}
-              </time>
-            ) : null}
+            <div className="flex flex-col text-sm">
+              {showAuthor && post.author ? (
+                <span className="font-medium text-[var(--color-foreground)]">
+                  {post.author.name}
+                </span>
+              ) : null}
+              {showDate && post.published_at ? (
+                <time
+                  dateTime={post.published_at}
+                  className="text-[var(--color-foreground-subtle)]"
+                >
+                  {formatDate(post.published_at)}
+                </time>
+              ) : null}
+            </div>
           </div>
-        </div>
+        ) : null}
       </header>
 
-      {post.featured_image ? (
+      {post.featured_image && display.showFeaturedImage ? (
         <figure className="mx-auto mt-8 max-w-[60rem]">
           <Image
             src={post.featured_image.url}
@@ -160,7 +172,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         <BlockRenderer document={document} className="gap-6" tools={tools} />
       </div>
 
-      {post.tags && post.tags.length > 0 ? (
+      {display.showTags && post.tags && post.tags.length > 0 ? (
         <div className="mx-auto mt-10 flex max-w-[46rem] flex-wrap items-center gap-2 border-t border-[var(--color-border-subtle)] pt-6">
           <span className="eyebrow">Tagged</span>
           {post.tags.map((tag) => (
@@ -205,7 +217,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </section>
       ) : null}
 
-      {post.related.length > 0 ? (
+      {display.showRelatedPosts && post.related.length > 0 ? (
         <section aria-labelledby="keep-reading" className="mt-16">
           <hr className="rule-fade" />
 
@@ -218,7 +230,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
 
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {post.related.map((related) => (
-              <PostCard key={related.slug} post={related} />
+              <PostCard key={related.slug} post={related} display={display} />
             ))}
           </div>
         </section>

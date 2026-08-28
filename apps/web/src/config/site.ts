@@ -3,7 +3,7 @@ export const siteConfig = {
   shortName: "MetaCreator",
   tagline: "Tools that help creators grow",
   description:
-    "A professional toolkit for creators and influencers — analyze, optimize and grow your accounts across YouTube, Instagram, TikTok, X, Facebook and LinkedIn. Free to start, no account needed.",
+    "A professional toolkit for creators and influencers — analyze, optimize and grow your accounts across YouTube, Instagram, TikTok, X, Facebook, LinkedIn, Threads and Pinterest. Free to start, no account needed.",
   url: process.env.NEXT_PUBLIC_APP_URL ?? "https://metacreator.dev",
   supportEmail: "support@metacreator.dev",
   social: {
@@ -19,6 +19,8 @@ export const platforms = [
   { key: "x", label: "X" },
   { key: "facebook", label: "Facebook" },
   { key: "linkedin", label: "LinkedIn" },
+  { key: "threads", label: "Threads" },
+  { key: "pinterest", label: "Pinterest" },
 ] as const;
 
 export const primaryNav = [
@@ -45,6 +47,8 @@ export const footerNav = [
       { href: "/tools?platform=instagram", label: "Instagram tools" },
       { href: "/tools?platform=tiktok", label: "TikTok tools" },
       { href: "/tools?platform=x", label: "X tools" },
+      { href: "/tools?platform=threads", label: "Threads tools" },
+      { href: "/tools?platform=pinterest", label: "Pinterest tools" },
     ],
   },
   {

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { keyed } from "@/components/ui/keyed";
 import { cn } from "@/lib/utils";
 
 /**
@@ -113,17 +114,7 @@ export function Select({
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select className={cn(controlClasses, "h-11 pr-8", className)} {...props}>
-      {/*
-        `children` is pulled out of the spread and passed through `Children.toArray`.
-
-        Children written inline compile to `jsxs`, which tells React the list is
-        static and needs no keys. Forwarding them inside `{...props}` loses that:
-        React then sees a plain array and warns "each child in a list should have a
-        unique key" for every `<option>` — on every Select in the app, from a wrapper
-        the call site cannot see or fix. `toArray` assigns the keys itself, which is
-        the API that exists for exactly this.
-      */}
-      {React.Children.toArray(children)}
+      {keyed(children)}
     </select>
   );
 }

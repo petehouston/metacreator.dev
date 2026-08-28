@@ -33,6 +33,9 @@ final class CharacterCounterRunner implements Cacheable, ToolRunner
         'youtube_description' => ['label' => 'YouTube description', 'limit' => 5000, 'truncates_at' => 157, 'weighted' => false],
         'linkedin_post' => ['label' => 'LinkedIn post', 'limit' => 3000, 'truncates_at' => 210, 'weighted' => false],
         'facebook_post' => ['label' => 'Facebook post', 'limit' => 63206, 'truncates_at' => 477, 'weighted' => false],
+        'threads_post' => ['label' => 'Threads post', 'limit' => 500, 'truncates_at' => 280, 'weighted' => false],
+        'pinterest_title' => ['label' => 'Pinterest Pin title', 'limit' => 100, 'truncates_at' => 40, 'weighted' => false],
+        'pinterest_description' => ['label' => 'Pinterest Pin description', 'limit' => 500, 'truncates_at' => 50, 'weighted' => false],
         'meta_description' => ['label' => 'SEO meta description', 'limit' => 160, 'truncates_at' => 155, 'weighted' => false],
     ];
 

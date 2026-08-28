@@ -52,6 +52,17 @@ final class TaxonomyController extends Controller
         return new ApiCollection($tags, AdminTaxonomyResource::class);
     }
 
+    /**
+     * One category, addressed by slug.
+     *
+     * Editing happens on its own page rather than in a panel over the list, so the
+     * screen has to be able to resolve its subject from the URL alone.
+     */
+    public function showCategory(PostCategory $category): AdminTaxonomyResource
+    {
+        return new AdminTaxonomyResource($category->loadCount('posts'));
+    }
+
     public function storeCategory(Request $request): AdminTaxonomyResource
     {
         return new AdminTaxonomyResource($this->write($request, new PostCategory, 'post_categories'));
@@ -75,6 +86,12 @@ final class TaxonomyController extends Controller
         $category->delete();
 
         return response()->json(status: 204);
+    }
+
+    /** One tag, addressed by slug. See {@see self::showCategory()}. */
+    public function showTag(Tag $tag): AdminTaxonomyResource
+    {
+        return new AdminTaxonomyResource($tag->loadCount('posts'));
     }
 
     public function storeTag(Request $request): AdminTaxonomyResource

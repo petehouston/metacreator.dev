@@ -38,6 +38,14 @@ final class ToolResource extends JsonResource
             ]),
             'is_featured' => $this->isFeatured(),
             'is_deprecated' => $this->status->value === 'deprecated',
+            // So the sitemap can leave out what an admin has set to no-index.
+            // Indexable unless a stored override says otherwise, which is what an
+            // absent SEO row means for the long tail of tools nobody has tuned.
+            'is_indexable' => $this->whenLoaded(
+                'seo',
+                fn (): bool => $this->seo?->isIndexable() ?? true,
+                true,
+            ),
             'stats' => [
                 'runs' => $this->run_count,
                 'avg_duration_ms' => $this->avg_duration_ms,

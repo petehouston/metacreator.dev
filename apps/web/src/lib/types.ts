@@ -16,7 +16,8 @@ export type ResultView =
   | "score.report"
   | "chart.timeseries"
   | "diff.compare"
-  | "download.bundle";
+  | "download.bundle"
+  | "preview.social";
 
 export interface TierInfo {
   value: ToolTier;
@@ -44,6 +45,8 @@ export interface ToolSummary {
   category?: ToolCategory;
   is_featured: boolean;
   is_deprecated: boolean;
+  /** False when an admin has set this tool to no-index. Defaults to true. */
+  is_indexable?: boolean;
   stats: { runs: number; avg_duration_ms: number };
 }
 
@@ -60,6 +63,11 @@ export interface JsonSchemaProperty {
   maxLength?: number;
   examples?: unknown[];
   format?: string;
+  /**
+   * Presentation hint, ignored by validation: forces a single-line control on a
+   * field whose `maxLength` would otherwise make it a textarea. See `kindOf`.
+   */
+  "x-control"?: "text";
 }
 
 export interface JsonSchema {
@@ -87,13 +95,24 @@ export interface AccessInfo {
   required_tier: ToolTier | null;
 }
 
+/**
+ * Both field-name pairs found in the database. See `faqEntries` in `lib/faq.ts`,
+ * which is the only place either shape should be read.
+ */
+export interface FaqEntry {
+  question?: string;
+  answer?: string;
+  q?: string;
+  a?: string;
+}
+
 export interface ToolDetail extends Omit<ToolSummary, "stats"> {
   description: string | null;
   version: number;
   input_schema: JsonSchema;
   instructions: BlockDocument | null;
   example: { input: Record<string, unknown>; note?: string } | null;
-  faq: { q: string; a: string }[];
+  faq: FaqEntry[];
   access?: AccessInfo;
   related: ToolSummary[];
   successor?: { slug: string; name: string } | null;
@@ -102,13 +121,21 @@ export interface ToolDetail extends Omit<ToolSummary, "stats"> {
   updated_at: string | null;
 }
 
+/**
+ * The stored overrides for one entity, exactly as the API holds them.
+ *
+ * Every field is nullable because every field is optional: null means "fall back",
+ * and the fallback chain (entity copy → site template) is resolved at render.
+ */
 export interface SeoMeta {
   title: string | null;
   description: string | null;
   canonical_url: string | null;
   robots: string;
+  focus_keyword: string | null;
   og_title: string | null;
   og_description: string | null;
+  og_image_url: string | null;
   twitter_card: string;
   schema_type: string | null;
 }

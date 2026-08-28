@@ -39,4 +39,11 @@ enum ResultView: string
 
     /** A single archive to download. Bulk exports. */
     case DownloadBundle = 'download.bundle';
+
+    /**
+     * A mock-up of the post, profile, link card or pin as the platform draws it.
+     * Preview tools: a table of fold positions tells you a post is cut, a picture of
+     * the cut post tells you whether that matters.
+     */
+    case SocialPreview = 'preview.social';
 }

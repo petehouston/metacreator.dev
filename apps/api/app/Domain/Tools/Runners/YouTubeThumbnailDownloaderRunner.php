@@ -55,6 +55,7 @@ final class YouTubeThumbnailDownloaderRunner implements Cacheable, ToolRunner
             'properties' => [
                 'url' => [
                     'type' => 'string',
+                    'x-control' => 'text',
                     'title' => 'YouTube video URL or ID',
                     'description' => 'Paste any YouTube link — watch, share, embed, Shorts, or just the 11-character video ID.',
                     'minLength' => 11,

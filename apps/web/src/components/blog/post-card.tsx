@@ -5,24 +5,55 @@ import { cn, formatDate } from "@/lib/utils";
 import type { PostSummary } from "@/lib/types";
 
 /**
+ * What a card is allowed to show, as configured under Settings → Blog.
+ *
+ * Passed in rather than read here: the settings read is `server-only`, and this
+ * card is rendered from more than one kind of boundary. Structurally compatible
+ * with {@link BlogDisplay} rather than importing it, so no page can drag the
+ * server module into a client bundle through this file. Defaults to everything
+ * on, so a caller with no opinion gets the card the product has always had.
+ */
+interface CardDisplay {
+  showAuthor: boolean;
+  showPublishedDate: boolean;
+  showReadingTime: boolean;
+  showCategories: boolean;
+  showFeaturedImage: boolean;
+}
+
+const SHOW_ALL: CardDisplay = {
+  showAuthor: true,
+  showPublishedDate: true,
+  showReadingTime: true,
+  showCategories: true,
+  showFeaturedImage: true,
+};
+
+/**
  * The blog grid card. Two shapes from one component: `featured` gives the lead
  * post a wider image and larger type, everything else uses the compact form.
  */
 export function PostCard({
   post,
   featured = false,
+  display = SHOW_ALL,
   className,
 }: {
   post: PostSummary;
   featured?: boolean;
+  display?: CardDisplay;
   className?: string;
 }) {
+  const showAuthor = display.showAuthor && post.author !== null && post.author !== undefined;
+  const showDate = display.showPublishedDate && Boolean(post.published_at);
+  const byline = showAuthor || showDate;
+
   return (
     <article
       className={cn("panel panel-lift group relative flex flex-col overflow-hidden", className)}
     >
       <div className={cn("relative overflow-hidden bg-[var(--color-surface-sunken)]", featured ? "aspect-[2/1]" : "aspect-[16/9]")}>
-        {post.featured_image ? (
+        {post.featured_image && display.showFeaturedImage ? (
           <Image
             src={post.featured_image.url}
             alt={post.featured_image.alt}
@@ -48,18 +79,30 @@ export function PostCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-2.5 p-5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-          {post.category ? (
-            <span
-              className="font-medium"
-              style={post.category.accent_color ? { color: post.category.accent_color } : undefined}
-            >
-              {post.category.name}
-            </span>
-          ) : null}
-          <span aria-hidden="true">·</span>
-          <span className="tabular">{post.reading_minutes} min read</span>
-        </div>
+        {/* The separator only earns its place between two things: with categories
+            or reading time switched off, a lone middot reads as a rendering bug. */}
+        {(display.showCategories && post.category) || display.showReadingTime ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+            {display.showCategories && post.category ? (
+              <span
+                className="font-medium"
+                style={
+                  post.category.accent_color ? { color: post.category.accent_color } : undefined
+                }
+              >
+                {post.category.name}
+              </span>
+            ) : null}
+
+            {display.showCategories && post.category && display.showReadingTime ? (
+              <span aria-hidden="true">·</span>
+            ) : null}
+
+            {display.showReadingTime ? (
+              <span className="tabular">{post.reading_minutes} min read</span>
+            ) : null}
+          </div>
+        ) : null}
 
         <h3
           className={cn(
@@ -85,24 +128,24 @@ export function PostCard({
           </p>
         ) : null}
 
-        <footer className="mt-auto flex items-center gap-2 pt-2 text-xs text-[var(--color-foreground-subtle)]">
-          {post.author?.avatar_url ? (
-            <Image
-              src={post.author.avatar_url}
-              alt=""
-              width={20}
-              height={20}
-              className="size-5 rounded-full object-cover"
-            />
-          ) : null}
-          {post.author ? <span>{post.author.name}</span> : null}
-          {post.published_at ? (
-            <>
-              <span aria-hidden="true">·</span>
+        {byline ? (
+          <footer className="mt-auto flex items-center gap-2 pt-2 text-xs text-[var(--color-foreground-subtle)]">
+            {showAuthor && post.author?.avatar_url ? (
+              <Image
+                src={post.author.avatar_url}
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 rounded-full object-cover"
+              />
+            ) : null}
+            {showAuthor && post.author ? <span>{post.author.name}</span> : null}
+            {showAuthor && post.author && showDate ? <span aria-hidden="true">·</span> : null}
+            {showDate && post.published_at ? (
               <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
-            </>
-          ) : null}
-        </footer>
+            ) : null}
+          </footer>
+        ) : null}
       </div>
     </article>
   );

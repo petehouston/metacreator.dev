@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Domain\Tools\Models\Tool;
+use App\Http\Resources\SeoResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -39,6 +40,14 @@ final class AdminToolResource extends JsonResource
                 'name' => $this->category->name,
             ]),
             'config' => $this->config,
+            // Null, not an empty object, when the tool has never been tuned: the
+            // form can then show its placeholders rather than blank overrides.
+            'seo' => $this->whenLoaded(
+                'seo',
+                fn (): ?array => $this->seo === null
+                    ? null
+                    : (new SeoResource($this->seo))->toArray($request),
+            ),
             'stats' => [
                 'runs' => (int) $this->run_count,
                 'avg_duration_ms' => (int) $this->avg_duration_ms,

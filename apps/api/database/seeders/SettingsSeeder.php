@@ -31,6 +31,20 @@ final class SettingsSeeder extends Seeder
         ['key' => 'features.billing_enabled', 'value' => true, 'type' => 'bool', 'group' => 'features', 'is_public' => true],
         ['key' => 'features.newsletter_enabled', 'value' => true, 'type' => 'bool', 'group' => 'features', 'is_public' => true],
 
+        // Blog — how an article presents itself. Public: the frontend reads these
+        // when it renders a post, so they have to be readable without a session.
+        ['key' => 'blog.show_author', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true,
+            'description' => 'Show the author name and avatar on posts and cards.'],
+        ['key' => 'blog.show_published_date', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true,
+            'description' => 'Show when a post was published. Off, the article reads as evergreen.'],
+        ['key' => 'blog.show_reading_time', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true],
+        ['key' => 'blog.show_categories', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true],
+        ['key' => 'blog.show_tags', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true],
+        ['key' => 'blog.show_related_posts', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true],
+        ['key' => 'blog.show_featured_image', 'value' => true, 'type' => 'bool', 'group' => 'blog', 'is_public' => true],
+        ['key' => 'blog.posts_per_page', 'value' => 12, 'type' => 'int', 'group' => 'blog', 'is_public' => true,
+            'description' => 'How many posts a listing page shows. 12 fills a three-column grid exactly.'],
+
         // Tracking — public, but writable only with settings.scripts.update
         ['key' => 'tracking.ga4_id', 'value' => '', 'type' => 'string', 'group' => 'scripts', 'is_public' => true],
         ['key' => 'tracking.gtm_id', 'value' => '', 'type' => 'string', 'group' => 'scripts', 'is_public' => true],
@@ -48,6 +62,35 @@ final class SettingsSeeder extends Seeder
         ['key' => 'newsletter.double_opt_in', 'value' => true, 'type' => 'bool', 'group' => 'newsletter', 'is_public' => false],
         ['key' => 'newsletter.list_id', 'value' => '', 'type' => 'string', 'group' => 'newsletter', 'is_public' => false],
         ['key' => 'newsletter.api_key', 'value' => '', 'type' => 'secret', 'group' => 'newsletter', 'is_public' => false, 'is_encrypted' => true],
+
+        // Payments — which gateway takes the money, and the credentials for it.
+        // One provider is live at a time; the rest keep their keys so switching back
+        // is a dropdown rather than a re-onboarding.
+        ['key' => 'payments.provider', 'value' => 'stripe', 'type' => 'string', 'group' => 'payments', 'is_public' => true,
+            'description' => 'none | stripe | paypal | braintree'],
+        ['key' => 'payments.enabled', 'value' => false, 'type' => 'bool', 'group' => 'payments', 'is_public' => true,
+            'description' => 'Turn checkout on. Off, the pricing page still lists plans but no purchase can start.'],
+        ['key' => 'payments.test_mode', 'value' => true, 'type' => 'bool', 'group' => 'payments', 'is_public' => true],
+        ['key' => 'payments.currency', 'value' => 'USD', 'type' => 'string', 'group' => 'payments', 'is_public' => true],
+
+        ['key' => 'payments.stripe.publishable_key', 'value' => '', 'type' => 'string', 'group' => 'payments', 'is_public' => true],
+        ['key' => 'payments.stripe.secret_key', 'value' => '', 'type' => 'secret', 'group' => 'payments', 'is_public' => false, 'is_encrypted' => true],
+        ['key' => 'payments.stripe.webhook_secret', 'value' => '', 'type' => 'secret', 'group' => 'payments', 'is_public' => false, 'is_encrypted' => true],
+
+        ['key' => 'payments.paypal.client_id', 'value' => '', 'type' => 'string', 'group' => 'payments', 'is_public' => true],
+        ['key' => 'payments.paypal.client_secret', 'value' => '', 'type' => 'secret', 'group' => 'payments', 'is_public' => false, 'is_encrypted' => true],
+        ['key' => 'payments.paypal.webhook_id', 'value' => '', 'type' => 'string', 'group' => 'payments', 'is_public' => false],
+
+        ['key' => 'payments.braintree.merchant_id', 'value' => '', 'type' => 'string', 'group' => 'payments', 'is_public' => false],
+        ['key' => 'payments.braintree.public_key', 'value' => '', 'type' => 'string', 'group' => 'payments', 'is_public' => false],
+        ['key' => 'payments.braintree.private_key', 'value' => '', 'type' => 'secret', 'group' => 'payments', 'is_public' => false, 'is_encrypted' => true],
+
+        // External providers. Tools that need a key say so plainly when it is missing,
+        // rather than failing as though the site were broken.
+        ['key' => 'providers.youtube.api_key', 'value' => '', 'type' => 'secret', 'group' => 'providers',
+            'is_public' => false, 'is_encrypted' => true,
+            'description' => 'YouTube Data API v3 key. Required by the Comment Finder; every other '
+                .'YouTube tool works without it.'],
 
         // SEO templates
         ['key' => 'seo.title_template', 'value' => '{{title}} | MetaCreator.Dev', 'type' => 'string', 'group' => 'seo', 'is_public' => true],

@@ -17,6 +17,32 @@ import { cn } from "@/lib/utils";
  * blue, so a screenshot from the admin and a screenshot from a customer's
  * dashboard can never be mistaken for one another in a support thread.
  */
+function Mark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
+      <rect
+        x="3"
+        y="3"
+        width="19"
+        height="19"
+        rx="6"
+        className="fill-[var(--color-brand-500)]"
+        opacity="0.85"
+      />
+      <rect
+        x="10"
+        y="10"
+        width="19"
+        height="19"
+        rx="6"
+        className="fill-[var(--color-signal-400)]"
+        opacity="0.9"
+        style={{ mixBlendMode: "screen" }}
+      />
+    </svg>
+  );
+}
+
 export function AdminSidebar({
   collapsed = false,
   onToggleCollapsed,
@@ -43,34 +69,28 @@ export function AdminSidebar({
           collapsed ? "justify-center px-2" : "justify-between px-4",
         )}
       >
-        <Link
-          href="/admin"
-          className="flex min-w-0 items-center gap-2.5"
-          aria-label="MetaCreator.Dev admin"
-        >
-          <svg viewBox="0 0 32 32" className="size-8 shrink-0" aria-hidden="true">
-            <rect
-              x="3"
-              y="3"
-              width="19"
-              height="19"
-              rx="6"
-              className="fill-[var(--color-brand-500)]"
-              opacity="0.85"
+        {collapsed && onToggleCollapsed ? (
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            aria-label="Expand sidebar"
+            title="Expand sidebar"
+            className="group flex size-10 items-center justify-center rounded-[var(--radius-md)] transition-colors hover:bg-[var(--color-surface-sunken)]"
+          >
+            <Mark className="size-8 shrink-0 group-hover:hidden" />
+            <ChevronsRight
+              className="hidden size-4 text-[var(--color-foreground-muted)] group-hover:block"
+              aria-hidden="true"
             />
-            <rect
-              x="10"
-              y="10"
-              width="19"
-              height="19"
-              rx="6"
-              className="fill-[var(--color-signal-400)]"
-              opacity="0.9"
-              style={{ mixBlendMode: "screen" }}
-            />
-          </svg>
+          </button>
+        ) : (
+          <Link
+            href="/admin"
+            className="flex min-w-0 items-center gap-2.5"
+            aria-label="MetaCreator.Dev admin"
+          >
+            <Mark className="size-8 shrink-0" />
 
-          {!collapsed && (
             <span className="flex min-w-0 flex-col leading-tight">
               <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">
                 MetaCreator
@@ -79,8 +99,8 @@ export function AdminSidebar({
                 Staff
               </span>
             </span>
-          )}
-        </Link>
+          </Link>
+        )}
 
         {onToggleCollapsed && !collapsed && (
           <button
@@ -180,18 +200,7 @@ export function AdminSidebar({
           {collapsed && <span className="sr-only">Your dashboard</span>}
         </Link>
 
-        {collapsed ? (
-          onToggleCollapsed && (
-            <button
-              type="button"
-              onClick={onToggleCollapsed}
-              aria-label="Expand sidebar"
-              className="flex size-10 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-foreground-subtle)] transition-colors hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-foreground)]"
-            >
-              <ChevronsRight className="size-4" aria-hidden="true" />
-            </button>
-          )
-        ) : (
+        {!collapsed && (
           <Link
             href="/"
             className="flex items-center gap-2 rounded-[var(--radius-md)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-foreground-subtle)] transition-colors hover:text-[var(--color-foreground)]"

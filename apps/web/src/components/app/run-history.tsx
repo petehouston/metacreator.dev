@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, RotateCw, Sparkles, X } from "lucide-react";
+import { Filter, RotateCw, Sparkles } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -9,10 +9,8 @@ import { useEntitlements } from "@/components/app/entitlements-provider";
 import { formatDuration } from "@/components/app/overview";
 import { RunStatusBadge } from "@/components/app/run-status-badge";
 import { FormAlert } from "@/components/auth/form-alert";
-import { ResultRenderer } from "@/components/tools/results";
 import { Button } from "@/components/ui/button";
-import { CopyButton } from "@/components/ui/copy-button";
-import { apiData, apiFetch } from "@/lib/http";
+import { apiFetch } from "@/lib/http";
 import type { Paginated, ToolRun } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -21,18 +19,15 @@ const STATUSES: ToolRun["status"][] = ["succeeded", "failed", "running", "queued
 /**
  * Everything this account has run, windowed by the plan's `history_days`.
  *
- * The row opens a drawer instead of a page: history is a list people scan, and
- * losing the list to look at one entry means losing their place in it. The drawer
- * re-renders the stored result where there is one — only asynchronous runs keep
- * their payload (docs/08), so a tool that answered instantly leaves a record of the
- * run and not the output.
+ * A row opens `/dashboard/runs/<id>`, which is an address: it survives a refresh,
+ * it can be pasted into a support thread, and the back button returns to the list
+ * rather than half-closing something on top of it.
  */
 export function RunHistory() {
   const { entitlements } = useEntitlements();
 
   const [page, setPage] = React.useState(1);
   const [status, setStatus] = React.useState<ToolRun["status"] | null>(null);
-  const [selected, setSelected] = React.useState<ToolRun | null>(null);
   const [reloadToken, setReloadToken] = React.useState(0);
 
   /**
@@ -219,8 +214,8 @@ export function RunHistory() {
                   </td>
 
                   <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="sm" onClick={() => setSelected(run)}>
-                      View
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/dashboard/runs/${run.id}`}>View</Link>
                     </Button>
                   </td>
                 </tr>
@@ -255,158 +250,6 @@ export function RunHistory() {
           </Button>
         </div>
       )}
-
-      {selected && <RunDrawer run={selected} onClose={() => setSelected(null)} />}
-    </div>
-  );
-}
-
-/**
- * The stored run, re-hydrated.
- *
- * The list endpoint returns runs without their full payload, so the drawer fetches
- * the single run it is showing. It renders the row it already has first, which is
- * what makes the drawer feel instant even while the body is still arriving.
- */
-function RunDrawer({ run, onClose }: { run: ToolRun; onClose: () => void }) {
-  const [detail, setDetail] = React.useState<ToolRun>(run);
-  const [loading, setLoading] = React.useState(run.result === null);
-
-  React.useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      const result = await apiData<ToolRun>(`/tools/runs/${run.id}`);
-      if (cancelled) return;
-
-      if (result.ok) setDetail(result.data);
-      setLoading(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [run.id]);
-
-  React.useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
-
-  return (
-    <div className="fixed inset-0 z-[60] flex justify-end" role="presentation">
-      <button
-        type="button"
-        aria-label="Close run"
-        onClick={onClose}
-        className="animate-fade-in absolute inset-0 bg-[oklch(0.15_0.02_258/0.45)]"
-      />
-
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${detail.tool?.name ?? "Tool"} run`}
-        className="animate-fade-in relative flex h-full w-full max-w-[34rem] flex-col border-l border-[var(--color-border)] bg-[var(--app-surface)] shadow-[var(--shadow-popover)]"
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-[var(--color-border-subtle)] px-5 py-4">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">
-              {detail.tool?.name ?? "Tool run"}
-            </p>
-            <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-[var(--color-foreground-subtle)]">
-              <span>{formatDateTime(detail.created_at)}</span>
-              {detail.meta.duration_ms !== null && (
-                <span className="tabular">· {formatDuration(detail.meta.duration_ms)}</span>
-              )}
-              {detail.meta.cache_hit && <span>· cached</span>}
-            </p>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1">
-            <RunStatusBadge status={detail.status} />
-
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close"
-              className="flex size-8 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-foreground-muted)] transition-colors hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-foreground)]"
-            >
-              <X className="size-4" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-
-        <div className="scrollbar-slim flex-1 overflow-y-auto px-5 py-4">
-          {loading && (
-            <div className="h-40 animate-pulse rounded-[var(--radius-md)] bg-[var(--color-surface-sunken)]" />
-          )}
-
-          {!loading && detail.error && (
-            <FormAlert>
-              <span className="block font-medium">{detail.error.message}</span>
-              <span className="mt-1 block font-mono text-[0.6875rem] opacity-80">
-                {detail.error.code}
-              </span>
-            </FormAlert>
-          )}
-
-          {!loading && detail.result && (
-            <div className="flex flex-col gap-4">
-              {detail.result.summary && (
-                <p className="text-sm leading-relaxed text-[var(--color-foreground-muted)]">
-                  {detail.result.summary}
-                </p>
-              )}
-
-              <ResultRenderer result={detail.result} />
-
-              {detail.result.warnings.length > 0 && (
-                <ul className="flex flex-col gap-1">
-                  {detail.result.warnings.map((warning) => (
-                    <li key={warning} className="text-xs text-[var(--color-warning)]">
-                      {warning}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
-          {!loading && !detail.result && !detail.error && (
-            <div className="py-10 text-center">
-              <p className="text-sm text-[var(--color-foreground-muted)]">
-                No stored output for this run.
-              </p>
-              <p className="mx-auto mt-1.5 max-w-xs text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-                Tools that answer instantly are recorded but their results are not kept.
-                Running it again takes the same input and costs one run.
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between gap-3 border-t border-[var(--color-border-subtle)] px-5 py-3">
-          <span className="truncate font-mono text-[0.625rem] text-[var(--color-foreground-subtle)]">
-            {detail.id}
-          </span>
-
-          <div className="flex items-center gap-2">
-            {detail.result && (
-              <CopyButton value={JSON.stringify(detail.result.data, null, 2)} label="Copy JSON" />
-            )}
-
-            {detail.tool && (
-              <Button asChild size="sm">
-                <Link href={`/tools/${detail.tool.slug}`}>Run again</Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

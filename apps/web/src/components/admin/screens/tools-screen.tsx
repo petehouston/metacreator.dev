@@ -1,18 +1,16 @@
 "use client";
 
-import { ExternalLink, Eye, EyeOff, Save, Star } from "lucide-react";
+import { ExternalLink, EyeOff, Star } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { AdminPageHeader, AdminPanel, StatusPill } from "@/components/admin/admin-page";
-import { useCan } from "@/components/admin/can";
-import { Drawer, useToast } from "@/components/admin/feedback";
 import { DataTable, Pagination, type Column } from "@/components/admin/data-table";
 import { LoadError } from "@/components/admin/load-error";
 import { humanise, tone } from "@/components/admin/status-tone";
 import { FilterSelect, SearchInput } from "@/components/admin/toolbar";
 import { Button } from "@/components/ui/button";
-import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { adminApi } from "@/lib/admin/api";
 import type { AdminTool } from "@/lib/admin/types";
 import { usePagedFilters } from "@/lib/admin/use-paged-filters";
@@ -22,13 +20,12 @@ import { formatNumber } from "@/lib/utils";
 /**
  * The catalog, as an admin changes it.
  *
- * What is editable here is what a tool *is* — its tier, its visibility, its copy.
- * What it *does* lives in the runner bound to its key, and the key is not editable
- * from any screen: a catalog row whose key drifted from its runner is a 500 on the
- * next run, which is exactly the failure the architecture test exists to prevent.
+ * The list stays a list: clicking a row navigates to `/admin/tools/<slug>`, where
+ * the whole tool is on screen at once and the URL is something that can be shared,
+ * refreshed and bookmarked.
  */
 export function ToolsScreen() {
-  const can = useCan();
+  const router = useRouter();
 
   const [{ query, tier, status, category }, setFilters, page, setPage] = usePagedFilters({
     query: "",
@@ -36,8 +33,6 @@ export function ToolsScreen() {
     status: "",
     category: "",
   });
-
-  const [editing, setEditing] = React.useState<AdminTool | null>(null);
 
   const { data, error, loading, reload } = useAdminResource(
     () =>
@@ -55,8 +50,6 @@ export function ToolsScreen() {
   const categories = useAdminResource(() => adminApi.tools.categories(), []);
 
   if (error) return <LoadError error={error} onRetry={reload} />;
-
-  const editable = can("tools.update");
 
   const columns: Column<AdminTool>[] = [
     {
@@ -232,7 +225,7 @@ export function ToolsScreen() {
           columns={columns}
           rowKey={(row) => row.id}
           loading={loading}
-          onRowClick={editable ? (row) => setEditing(row) : undefined}
+          onRowClick={(row) => router.push(`/admin/tools/${row.slug}`)}
           empty={
             <p className="px-4 py-12 text-center text-sm text-[var(--color-foreground-subtle)]">
               No tool matches those filters.
@@ -250,240 +243,6 @@ export function ToolsScreen() {
           />
         )}
       </AdminPanel>
-
-      {editing && (
-        <ToolEditor
-          tool={editing}
-          categories={(categories.data?.data ?? []).map((entry) => ({
-            id: entry.id,
-            name: entry.name,
-          }))}
-          onClose={() => setEditing(null)}
-          onSaved={() => {
-            setEditing(null);
-            reload();
-          }}
-        />
-      )}
     </>
-  );
-}
-
-function ToolEditor({
-  tool,
-  categories,
-  onClose,
-  onSaved,
-}: {
-  tool: AdminTool;
-  categories: { id: number; name: string }[];
-  onClose: () => void;
-  onSaved: () => void;
-}) {
-  const { notify, reportError } = useToast();
-
-  const [form, setForm] = React.useState({
-    name: tool.name,
-    tagline: tool.tagline ?? "",
-    description: tool.description ?? "",
-    tier: tool.tier,
-    status: tool.status,
-    is_visible: tool.is_visible,
-    is_featured: tool.is_featured,
-    sort_order: tool.sort_order,
-    category_id: tool.category?.id ?? categories[0]?.id ?? 0,
-  });
-
-  const [saving, setSaving] = React.useState(false);
-
-  async function save() {
-    setSaving(true);
-
-    const result = await adminApi.tools.update(tool.slug, {
-      ...form,
-      tagline: form.tagline || null,
-      description: form.description || null,
-    } as Partial<AdminTool>);
-
-    setSaving(false);
-
-    if (result.ok) {
-      notify(`${form.name} saved.`);
-      onSaved();
-    } else {
-      reportError(result.error);
-    }
-  }
-
-  return (
-    <Drawer
-      open
-      title={tool.name}
-      description={`v${tool.version} · ${tool.key}`}
-      onClose={onClose}
-      footer={
-        <>
-          <Button variant="secondary" size="sm" onClick={onClose} disabled={saving}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={() => void save()} loading={saving}>
-            <Save className="size-4" aria-hidden="true" />
-            Save tool
-          </Button>
-        </>
-      }
-    >
-      <div className="flex flex-col gap-4">
-        <Field id="tool-name" label="Name" required>
-          {(props) => (
-            <Input
-              {...props}
-              value={form.name}
-              onChange={(event) => setForm({ ...form, name: event.target.value })}
-            />
-          )}
-        </Field>
-
-        <Field
-          id="tool-tagline"
-          label="Tagline"
-          hint="One line, shown on the catalog card and in search results."
-          counter={`${form.tagline.length}/220`}
-        >
-          {(props) => (
-            <Input
-              {...props}
-              maxLength={220}
-              value={form.tagline}
-              onChange={(event) => setForm({ ...form, tagline: event.target.value })}
-            />
-          )}
-        </Field>
-
-        <Field id="tool-description" label="Description">
-          {(props) => (
-            <Textarea
-              {...props}
-              value={form.description}
-              onChange={(event) => setForm({ ...form, description: event.target.value })}
-            />
-          )}
-        </Field>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            id="tool-tier"
-            label="Access tier"
-            hint="Who can run this without paying."
-          >
-            {(props) => (
-              <Select
-                {...props}
-                value={form.tier}
-                onChange={(event) => setForm({ ...form, tier: event.target.value })}
-              >
-                <option value="free">Free — anyone</option>
-                <option value="account">Account — signed in</option>
-                <option value="premium">Premium — subscribers</option>
-              </Select>
-            )}
-          </Field>
-
-          <Field id="tool-status" label="Status">
-            {(props) => (
-              <Select
-                {...props}
-                value={form.status}
-                onChange={(event) => setForm({ ...form, status: event.target.value })}
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-                <option value="hidden">Hidden</option>
-                <option value="deprecated">Deprecated</option>
-              </Select>
-            )}
-          </Field>
-
-          <Field id="tool-category" label="Category">
-            {(props) => (
-              <Select
-                {...props}
-                value={String(form.category_id)}
-                onChange={(event) =>
-                  setForm({ ...form, category_id: Number(event.target.value) })
-                }
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </Select>
-            )}
-          </Field>
-
-          <Field
-            id="tool-sort"
-            label="Sort order"
-            hint="Lower sorts first within its category."
-          >
-            {(props) => (
-              <Input
-                {...props}
-                type="number"
-                min={0}
-                max={9999}
-                value={form.sort_order}
-                onChange={(event) =>
-                  setForm({ ...form, sort_order: Number(event.target.value) })
-                }
-              />
-            )}
-          </Field>
-        </div>
-
-        <div className="flex flex-col gap-1 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-3">
-          <Checkbox
-            label="Visible in the catalog"
-            hint="Turning this off removes it from listings and search without unpublishing it. Anyone with a direct link still gets the page."
-            checked={form.is_visible}
-            onChange={(event) => setForm({ ...form, is_visible: event.target.checked })}
-          />
-
-          <Checkbox
-            label="Feature on the catalog"
-            hint="Featured tools sort to the top of the listing."
-            checked={form.is_featured}
-            onChange={(event) => setForm({ ...form, is_featured: event.target.checked })}
-          />
-        </div>
-
-        <dl className="grid grid-cols-2 gap-3 rounded-[var(--radius-md)] bg-[var(--color-surface-sunken)] p-3 text-sm">
-          <div>
-            <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-              Lifetime runs
-            </dt>
-            <dd className="tabular mt-0.5 font-medium text-[var(--color-foreground)]">
-              {formatNumber(tool.stats.runs)}
-            </dd>
-          </div>
-          <div>
-            <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-              Average duration
-            </dt>
-            <dd className="tabular mt-0.5 font-medium text-[var(--color-foreground)]">
-              {formatNumber(tool.stats.avg_duration_ms)}ms
-            </dd>
-          </div>
-        </dl>
-
-        <p className="flex items-start gap-2 text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-          <Eye className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-          The slug, the key, the version and the input schema are fixed here on
-          purpose. Changing a slug breaks every link pointing at it, and the other
-          three belong to the runner — they move with a deploy, not with a form.
-        </p>
-      </div>
-    </Drawer>
   );
 }

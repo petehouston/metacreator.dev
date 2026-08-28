@@ -15,6 +15,7 @@ import type { Paginated } from "@/lib/types";
 import type {
   ActivityEntry,
   AdminInvoice,
+  AdminInvoiceDetail,
   AdminMedia,
   AdminPlan,
   AdminPost,
@@ -24,6 +25,7 @@ import type {
   AdminTicket,
   AdminTool,
   AdminUser,
+  BillingReport,
   ContactMessage,
   ContentAnalyticsRow,
   FunnelStep,
@@ -95,6 +97,7 @@ export const adminApi = {
 
   tools: {
     list: (params: Params) => list<AdminTool>("/tools", params),
+    get: (slug: string) => one<AdminTool>(`/tools/${slug}`),
     update: (slug: string, body: Partial<AdminTool>) =>
       write<AdminTool>("PATCH", `/tools/${slug}`, body),
     categories: () => list<Taxonomy>("/tool-categories"),
@@ -126,6 +129,8 @@ export const adminApi = {
   taxonomy: {
     categories: () => list<Taxonomy>("/post-categories"),
     tags: (params: Params = {}) => list<Taxonomy>("/tags", params),
+    category: (slug: string) => one<Taxonomy>(`/post-categories/${slug}`),
+    tag: (slug: string) => one<Taxonomy>(`/tags/${slug}`),
     saveCategory: (body: Partial<Taxonomy>, slug?: string) =>
       slug
         ? write<Taxonomy>("PATCH", `/post-categories/${slug}`, body)
@@ -138,6 +143,7 @@ export const adminApi = {
 
   media: {
     list: (params: Params) => list<AdminMedia>("/media", params),
+    get: (id: string) => one<AdminMedia>(`/media/${id}`),
     upload: (formData: FormData) => apiData<AdminMedia>("/admin/media", { method: "POST", formData }),
     update: (id: string, body: Partial<AdminMedia>) => write<AdminMedia>("PATCH", `/media/${id}`, body),
     remove: (id: string) => write<null>("DELETE", `/media/${id}`),
@@ -145,10 +151,15 @@ export const adminApi = {
 
   billing: {
     plans: () => list<AdminPlan>("/plans"),
+    plan: (id: number) => one<AdminPlan>(`/plans/${id}`),
+    createPlan: (body: Partial<AdminPlan>) => write<AdminPlan>("POST", "/plans", body),
     updatePlan: (id: number, body: Partial<AdminPlan>) => write<AdminPlan>("PATCH", `/plans/${id}`, body),
+    removePlan: (id: number) => write<null>("DELETE", `/plans/${id}`),
     subscriptions: (params: Params) => list<AdminSubscription>("/subscriptions", params),
     invoices: (params: Params) =>
       list<AdminInvoice, { totals: Record<string, number | string> }>("/invoices", params),
+    invoice: (id: number) => one<AdminInvoiceDetail>(`/invoices/${id}`),
+    report: (period: number) => one<BillingReport>(`/invoices/report?period=${period}`),
   },
 
   tickets: {

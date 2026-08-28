@@ -155,7 +155,16 @@ type FieldKind = "checkbox" | "select" | "textarea" | "number" | "text";
 function kindOf(property: JsonSchemaProperty): FieldKind {
   if (property.type === "boolean") return "checkbox";
   if (Array.isArray(property.enum) && property.enum.length > 0) return "select";
-  // Anything that can hold a paragraph gets a box you can see a paragraph in.
+  // A one-line field can still need a generous `maxLength` — a YouTube link with
+  // a playlist and a timestamp is long, and so is a URL somebody pasted from an
+  // ad platform. `x-control` lets a schema say so, because the alternative signal
+  // (`format: "uri"`) is validated by Opis on the server and would reject the bare
+  // video ID these same fields are built to accept.
+  if (property["x-control"] === "text") return "text";
+  if (property.format === "uri" || property.format === "url") return "text";
+  // A date is a date picker, never a paragraph, whatever its length says.
+  if (property.format === "date") return "text";
+  // Anything else that can hold a paragraph gets a box you can see a paragraph in.
   if (property.type === "string" && (property.maxLength ?? Infinity) > 300) return "textarea";
   if (property.type === "integer" || property.type === "number") return "number";
 
@@ -255,7 +264,15 @@ function SchemaField({
         return (
           <Input
             {...aria}
-            type={numeric ? "number" : property.format === "uri" ? "url" : "text"}
+            type={
+              numeric
+                ? "number"
+                : property.format === "uri"
+                  ? "url"
+                  : property.format === "date"
+                    ? "date"
+                    : "text"
+            }
             inputMode={numeric ? "numeric" : undefined}
             step={property.type === "integer" ? 1 : "any"}
             min={property.minimum}
