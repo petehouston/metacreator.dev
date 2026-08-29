@@ -13,8 +13,19 @@ export function CopyButton({
   value,
   label = "Copy",
   copiedLabel = "Copied",
+  iconOnly = false,
   ...props
-}: { value: string; label?: string; copiedLabel?: string } & Omit<ButtonProps, "onClick">) {
+}: {
+  value: string;
+  label?: string;
+  copiedLabel?: string;
+  /**
+   * Icon with no visible text, for a control sitting inside a field row where a
+   * word would crowd the input. The label still reaches assistive tech — as the
+   * accessible name, and as a live region so the copy is announced either way.
+   */
+  iconOnly?: boolean;
+} & Omit<ButtonProps, "onClick">) {
   const [copied, setCopied] = React.useState(false);
 
   React.useEffect(() => {
@@ -46,7 +57,9 @@ export function CopyButton({
       {...props}
     >
       {copied ? <Check className="text-[var(--color-success)]" /> : <Copy />}
-      <span aria-live="polite">{copied ? copiedLabel : label}</span>
+      <span aria-live="polite" className={iconOnly ? "sr-only" : undefined}>
+        {copied ? copiedLabel : label}
+      </span>
     </Button>
   );
 }

@@ -65,6 +65,7 @@ final class ColorPaletteExtractorRunner implements ToolRunner
             $onBlack = self::contrast($swatch['rgb'], [0, 0, 0]);
 
             $rows[] = [
+                'swatch' => $swatch['hex'],
                 'rank' => $index === 0 ? 'Dominant' : '#'.($index + 1),
                 'hex' => $swatch['hex'],
                 'rgb' => "rgb({$r}, {$g}, {$b})",
@@ -78,9 +79,10 @@ final class ColorPaletteExtractorRunner implements ToolRunner
 
         return ToolResult::table(
             columns: [
+                ['key' => 'swatch', 'label' => 'Colour', 'type' => 'color'],
                 ['key' => 'rank', 'label' => 'Rank'],
-                ['key' => 'hex', 'label' => 'Hex'],
-                ['key' => 'rgb', 'label' => 'RGB'],
+                ['key' => 'hex', 'label' => 'Hex', 'copyable' => true],
+                ['key' => 'rgb', 'label' => 'RGB', 'copyable' => true],
                 ['key' => 'share', 'label' => 'Share of image', 'align' => 'right'],
                 ['key' => 'text', 'label' => 'Best text colour'],
                 ['key' => 'usable', 'label' => 'Verdict'],

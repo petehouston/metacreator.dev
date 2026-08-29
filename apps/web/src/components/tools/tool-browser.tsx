@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 
 import { ToolCard } from "@/components/tools/tool-card";
@@ -16,6 +17,22 @@ const TIERS = [
   { value: "premium", label: "Pro" },
 ] as const;
 
+const SORTS = [
+  { value: "popular", label: "Popular" },
+  { value: "az", label: "A-Z" },
+  { value: "za", label: "Z-A" },
+] as const;
+
+const DEFAULT_SORT = "popular";
+
+type Filters = {
+  q?: string;
+  tier?: string;
+  platform?: string;
+  category?: string;
+  sort?: string;
+};
+
 /**
  * The whole catalog, filtered in the browser.
  *
@@ -23,6 +40,10 @@ const TIERS = [
  * click or a keystroke is instant and no request is made. That is only affordable
  * because a card is a handful of fields — if the catalog ever outgrows that, this
  * goes back to server-side paging.
+ *
+ * Every control is mirrored back into the query string so a filtered view can be
+ * bookmarked and shared. Unrecognised values in that string are dropped rather than
+ * matching nothing, so a stale or hand-edited link degrades to the full catalog.
  */
 export function ToolBrowser({
   tools,
@@ -32,17 +53,60 @@ export function ToolBrowser({
   tools: ToolSummary[];
   categories: ToolCategory[];
   /** Seeded from the URL so links like /tools?category=youtube still land filtered. */
-  initial?: { q?: string; tier?: string; platform?: string; category?: string };
+  initial?: Filters;
 }) {
-  const [query, setQuery] = React.useState(initial?.q ?? "");
-  const [tier, setTier] = React.useState<string>(initial?.tier ?? "");
-  const [platform, setPlatform] = React.useState<string>(initial?.platform ?? "");
-  const [category, setCategory] = React.useState<string>(initial?.category ?? "");
+  // The URL is the source of truth, not `initial`. The two agree on a fresh load,
+  // but not when the browser restores this page with the Back button: the restored
+  // entry replays the props the server rendered for whatever URL was first requested,
+  // while the address bar still carries the filters mirrored into it below. Next
+  // keeps useSearchParams in step with those replaceState writes, so reading it here
+  // is what makes Back return to the view the user actually left.
+  const searchParams = useSearchParams();
+  const seed = React.useMemo(
+    () => fromParams(searchParams, initial),
+    // Only the first render seeds state; later edits come from the controls.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const [query, setQuery] = React.useState(seed.q ?? "");
+  const [tier, setTier] = React.useState<string>(() =>
+    oneOf(seed.tier, TIERS.map((option) => option.value)),
+  );
+  const [platform, setPlatform] = React.useState<string>(() =>
+    oneOf(seed.platform, platforms.map((option) => option.key)),
+  );
+  const [category, setCategory] = React.useState<string>(() =>
+    oneOf(seed.category, categories.map((option) => option.slug)),
+  );
+  const [sort, setSort] = React.useState<string>(
+    () => oneOf(seed.sort, SORTS.map((option) => option.value)) || DEFAULT_SORT,
+  );
+
+  // Mirror the controls into the query string. This is history.replaceState rather
+  // than router.replace precisely because it must not re-run the server component:
+  // the whole point of the local filtering above is that nothing is refetched. The
+  // write is debounced so typing a word rewrites the URL once, not once per letter.
+  React.useEffect(() => {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (tier) params.set("tier", tier);
+    if (platform) params.set("platform", platform);
+    if (category) params.set("category", category);
+    if (sort !== DEFAULT_SORT) params.set("sort", sort);
+
+    const next = params.toString();
+    const timer = window.setTimeout(() => {
+      window.history.replaceState(null, "", next ? `?${next}` : window.location.pathname);
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [query, tier, platform, category, sort]);
 
   const results = React.useMemo(() => {
     const needle = query.trim().toLowerCase();
 
-    return tools.filter((tool) => {
+    const matches = tools.filter((tool) => {
       if (tier && tool.tier.value !== tier) return false;
       if (platform && !tool.platforms.includes(platform)) return false;
       if (category && tool.category?.slug !== category) return false;
@@ -55,15 +119,31 @@ export function ToolBrowser({
         .toLowerCase()
         .includes(needle);
     });
-  }, [tools, query, tier, platform, category]);
 
-  const filtered = Boolean(query || tier || platform || category);
+    // `matches` is already a fresh array from filter(), so sorting it in place
+    // never touches the `tools` prop.
+    if (sort === "az" || sort === "za") {
+      const direction = sort === "az" ? 1 : -1;
+      return matches.sort(
+        (a, b) => direction * a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+      );
+    }
 
-  function clearAll() {
+    // Popular: most-run first, with the name as a stable tie-break so tools that
+    // have never run keep a predictable order rather than the API's.
+    return matches.sort(
+      (a, b) => b.stats.runs - a.stats.runs || a.name.localeCompare(b.name),
+    );
+  }, [tools, query, tier, platform, category, sort]);
+
+  const filtered = Boolean(query || tier || platform || category || sort !== DEFAULT_SORT);
+
+  function resetAll() {
     setQuery("");
     setTier("");
     setPlatform("");
     setCategory("");
+    setSort(DEFAULT_SORT);
   }
 
   return (
@@ -142,6 +222,18 @@ export function ToolBrowser({
             ))}
           </FilterRow>
         )}
+
+        <FilterRow label="Sort">
+          {SORTS.map((option) => (
+            <FilterChip
+              key={option.value}
+              active={sort === option.value}
+              onClick={() => setSort(option.value)}
+            >
+              {option.label}
+            </FilterChip>
+          ))}
+        </FilterRow>
       </div>
 
       <div className="mt-8 flex items-center gap-3">
@@ -155,10 +247,10 @@ export function ToolBrowser({
         {filtered && (
           <button
             type="button"
-            onClick={clearAll}
-            className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--color-primary)] hover:underline"
+            onClick={resetAll}
+            className="rounded-[var(--radius-sm)] border border-[var(--color-border)] px-2 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--color-primary)] transition-colors hover:border-[var(--color-border-strong)]"
           >
-            Clear filters
+            Reset
           </button>
         )}
       </div>
@@ -179,6 +271,24 @@ export function ToolBrowser({
       )}
     </>
   );
+}
+
+/**
+ * The filters carried by the current URL. Falls back to the server-supplied values
+ * when the URL names nothing at all, so a first render is unaffected.
+ */
+function fromParams(params: URLSearchParams, initial: Filters | undefined): Filters {
+  const keys: (keyof Filters)[] = ["q", "tier", "platform", "category", "sort"];
+  if (!keys.some((key) => params.has(key))) return initial ?? {};
+
+  return Object.fromEntries(
+    keys.map((key) => [key, params.get(key) ?? undefined]),
+  ) as Filters;
+}
+
+/** Keeps a URL-supplied value only when it names a filter that actually exists. */
+function oneOf(value: string | undefined, allowed: readonly string[]): string {
+  return value && allowed.includes(value) ? value : "";
 }
 
 function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {

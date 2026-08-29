@@ -95,8 +95,9 @@ final class SafeZoneGuideRunner implements Cacheable, ToolRunner
                 'surface' => $surface['label'],
                 'canvas' => "{$surface['width']} × {$surface['height']}",
                 'safe_area' => "{$safeWidth} × {$safeHeight}",
-                'margins' => "top {$surface['top']} · bottom {$surface['bottom']} · "
-                    ."left {$surface['left']} · right {$surface['right']}",
+                // One margin per line: four numbers on a single row read as a run-on.
+                'margins' => "top {$surface['top']}\nbottom {$surface['bottom']}\n"
+                    ."left {$surface['left']}\nright {$surface['right']}",
                 'note' => $surface['note'],
             ];
 

@@ -39,7 +39,7 @@ final readonly class ToolResult
     }
 
     /**
-     * @param  list<array{key: string, label: string, align?: string}>  $columns
+     * @param  list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool}>  $columns
      * @param  list<array<string, mixed>>  $rows
      */
     public static function table(array $columns, array $rows, ?string $summary = null): self
@@ -53,6 +53,23 @@ final readonly class ToolResult
     public static function cards(array $items, ?string $summary = null): self
     {
         return new self(ResultView::ListCards, ['items' => $items], summary: $summary);
+    }
+
+    /**
+     * @param  list<array{
+     *     author: string,
+     *     body: string,
+     *     avatar?: string,
+     *     published_at?: string,
+     *     published?: string,
+     *     likes?: int,
+     *     replies?: int,
+     *     link?: string,
+     * }>  $comments
+     */
+    public static function comments(array $comments, ?string $summary = null): self
+    {
+        return new self(ResultView::CommentThread, ['comments' => $comments], summary: $summary);
     }
 
     /**
@@ -92,7 +109,7 @@ final readonly class ToolResult
      * the picture — drawn under the frames in the same table renderer.
      *
      * @param  list<array<string, mixed>>  $frames
-     * @param  array{columns: list<array{key: string, label: string, align?: string}>, rows: list<array<string, mixed>>}|null  $table
+     * @param  array{columns: list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool}>, rows: list<array<string, mixed>>}|null  $table
      */
     public static function socialPreview(array $frames, ?string $summary = null, ?array $table = null): self
     {

@@ -52,6 +52,7 @@ export default async function ToolsPage({ searchParams }: PageProps<"/tools">) {
             tier: single(params.tier),
             platform: single(params.platform),
             category: single(params.category),
+            sort: single(params.sort),
           }}
         />
       ) : (

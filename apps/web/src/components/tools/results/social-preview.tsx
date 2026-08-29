@@ -636,6 +636,63 @@ function StatusBadge({ status }: { status: NonNullable<Frame["status"]> }) {
   );
 }
 
+/**
+ * Short facts stay on one line; only prose wraps, and embedded newlines are kept so
+ * a set of margins reads as one value per line rather than a run-on sentence.
+ */
+function EvidenceCell({ value }: { value: unknown }) {
+  const text = String(value ?? "—");
+  const pairs = asLabelledNumbers(text);
+
+  if (pairs) {
+    // Labels left, numbers hard right, so the digits line up down the cell.
+    return (
+      <td className="px-4 py-3 align-top text-[var(--color-foreground)]">
+        <span className="flex min-w-[7rem] flex-col gap-0.5">
+          {pairs.map(([label, number]) => (
+            <span key={label} className="flex justify-between gap-4 whitespace-nowrap">
+              <span>{label}</span>
+              <span className="tabular">{number}</span>
+            </span>
+          ))}
+        </span>
+      </td>
+    );
+  }
+
+  return (
+    <td
+      className={cn(
+        "px-4 py-3 align-top text-[var(--color-foreground)]",
+        text.includes("\n")
+          ? "whitespace-pre-line"
+          : text.length > 60
+            ? "break-words"
+            : "whitespace-nowrap",
+      )}
+    >
+      {text}
+    </td>
+  );
+}
+
+/**
+ * A multi-line value where every line is a label followed by one number — the
+ * keep-clear margins. Anything else comes back null and is rendered as plain text.
+ */
+function asLabelledNumbers(text: string): [string, string][] | null {
+  const lines = text.split("\n");
+  if (lines.length < 2) return null;
+
+  const pairs: [string, string][] = [];
+  for (const line of lines) {
+    const match = /^(.+?)[\s:]+(-?\d[\d.,]*\s*\S*)$/.exec(line.trim());
+    if (!match) return null;
+    pairs.push([match[1], match[2]]);
+  }
+  return pairs;
+}
+
 /** The facts behind the picture: tags, margins, limits. */
 function EvidenceTable({
   columns,
@@ -664,12 +721,7 @@ function EvidenceTable({
           {rows.map((row, index) => (
             <tr key={index} className="border-t border-[var(--color-border-subtle)]">
               {columns.map((column) => (
-                <td
-                  key={column.key}
-                  className="px-4 py-3 break-words text-[var(--color-foreground)]"
-                >
-                  {String(row[column.key] ?? "—")}
-                </td>
+                <EvidenceCell key={column.key} value={row[column.key]} />
               ))}
             </tr>
           ))}

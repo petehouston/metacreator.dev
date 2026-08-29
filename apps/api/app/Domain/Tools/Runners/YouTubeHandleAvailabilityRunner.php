@@ -61,7 +61,7 @@ final class YouTubeHandleAvailabilityRunner implements Cacheable, ToolRunner, Us
                         .'numbers, underscores, hyphens and periods.',
                     'minLength' => 1,
                     'maxLength' => 40,
-                    'examples' => ['theslowloaf'],
+                    'examples' => ['metacreatordev'],
                 ],
                 'suggest_variants' => [
                     'type' => 'boolean',

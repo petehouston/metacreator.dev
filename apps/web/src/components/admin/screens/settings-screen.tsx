@@ -3,9 +3,12 @@
 import {
   ChevronRight,
   CreditCard,
+  Eye,
+  EyeOff,
   FileText,
   Lock,
   Mail,
+  Plug,
   Save,
   Search,
   ShieldAlert,
@@ -19,6 +22,7 @@ import { AdminPageHeader, StatusPill } from "@/components/admin/admin-page";
 import { useToast } from "@/components/admin/feedback";
 import { LoadError } from "@/components/admin/load-error";
 import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { adminApi } from "@/lib/admin/api";
 import type { SettingItem, SettingsPayload } from "@/lib/admin/types";
@@ -274,6 +278,23 @@ const SECTIONS: SettingsSection[] = [
         description:
           "Where the list actually lives. `Local list only` keeps every subscriber here and syncs nothing outward.",
         keys: ["newsletter.provider", "newsletter.list_id", "newsletter.api_key"],
+      },
+    ],
+  },
+  {
+    id: "integrations",
+    label: "Integrations",
+    icon: Plug,
+    description:
+      "Keys for the third-party APIs the tools call. A tool that needs a key it does not have says so plainly rather than failing as though the site were broken, so leaving one blank disables that tool and nothing else.",
+    groups: ["providers"],
+    panels: [
+      {
+        id: "youtube",
+        label: "YouTube Data API",
+        description:
+          "A Data API v3 key from the Google Cloud console, on a project with the YouTube Data API enabled. Only the Comment Finder needs it today; every other YouTube tool works without one. The daily quota belongs to that project, and the key is shared by every visitor using the tool.",
+        match: prefixed("providers.youtube."),
       },
     ],
   },
@@ -682,35 +703,15 @@ function SettingField({
 
   if (setting.is_secret) {
     return (
-      <Field
+      <SecretField
+        setting={setting}
+        value={value}
+        disabled={disabled}
+        highlight={highlight}
+        onChange={onChange}
         id={id}
         label={label}
-        hint={
-          setting.is_set
-            ? "A key is stored. Leave this blank to keep it — it is never sent to the browser."
-            : "No key stored yet."
-        }
-        className={highlight}
-      >
-        {(props) => (
-          <div className="flex items-center gap-2">
-            <Input
-              {...props}
-              type="password"
-              autoComplete="off"
-              value={String(value ?? "")}
-              disabled={disabled}
-              onChange={(event) => onChange(event.target.value)}
-              placeholder={setting.is_set ? "••••••••••••" : "Paste the key"}
-              className="font-mono text-xs"
-            />
-            <StatusPill
-              label={setting.is_set ? "Set" : "Not set"}
-              tone={setting.is_set ? "success" : "muted"}
-            />
-          </div>
-        )}
-      </Field>
+      />
     );
   }
 
@@ -783,6 +784,99 @@ function SettingField({
   );
 }
 
+/**
+ * A credential field.
+ *
+ * The reveal and copy controls act on what is *in the box*, which is only ever a
+ * key the admin just typed or pasted: the stored value is never sent to the
+ * browser, so there is nothing to unmask when the box is empty. Both controls are
+ * disabled in that state rather than silently revealing nothing or copying an
+ * empty string over whatever was on the clipboard — the "Set" pill beside them is
+ * the honest answer to "is a key configured?".
+ *
+ * Reveal exists because a pasted key is otherwise unverifiable — a truncated paste
+ * and a good one look identical as dots — and it starts hidden every render, so a
+ * key is never left on screen by a save or a tab away.
+ */
+function SecretField({
+  setting,
+  id,
+  label,
+  value,
+  disabled,
+  highlight,
+  onChange,
+}: {
+  setting: SettingItem;
+  id: string;
+  label: string;
+  value: unknown;
+  disabled: boolean;
+  highlight?: string;
+  onChange: (value: unknown) => void;
+}) {
+  const [revealed, setRevealed] = React.useState(false);
+  const typed = String(value ?? "");
+  const empty = typed === "";
+
+  return (
+    <Field
+      id={id}
+      label={label}
+      hint={
+        setting.is_set
+          ? "A key is stored. Leave this blank to keep it — it is never sent to the browser."
+          : "No key stored yet."
+      }
+      className={highlight}
+    >
+      {(props) => (
+        <div className="flex items-center gap-2">
+          <Input
+            {...props}
+            type={revealed ? "text" : "password"}
+            autoComplete="off"
+            spellCheck={false}
+            value={typed}
+            disabled={disabled}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder={setting.is_set ? "••••••••••••" : "Paste the key"}
+            className="font-mono text-xs"
+          />
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={disabled || empty}
+            aria-pressed={revealed}
+            aria-controls={id}
+            onClick={() => setRevealed((current) => !current)}
+            title={empty ? "Nothing to show — the stored key is never sent here" : undefined}
+          >
+            {revealed ? <EyeOff /> : <Eye />}
+            <span className="sr-only">{revealed ? `Hide ${label}` : `Show ${label}`}</span>
+          </Button>
+
+          <CopyButton
+            value={typed}
+            iconOnly
+            label={`Copy ${label}`}
+            copiedLabel={`${label} copied`}
+            disabled={disabled || empty}
+            title={empty ? "Nothing to copy — the stored key is never sent here" : undefined}
+          />
+
+          <StatusPill
+            label={setting.is_set ? "Set" : "Not set"}
+            tone={setting.is_set ? "success" : "muted"}
+          />
+        </div>
+      )}
+    </Field>
+  );
+}
+
 /** `tracking.ga4_id` → "GA4 id". Cheap, and better than showing the raw key. */
 function labelFor(key: string): string {
   const leaf = key.includes(".") ? key.slice(key.indexOf(".") + 1) : key;
@@ -796,6 +890,7 @@ function labelFor(key: string): string {
     .replace(/\bseo\b/i, "SEO")
     .replace(/\bid\b/i, "ID")
     .replace(/\bapi\b/i, "API")
+    .replace(/\byoutube\b/i, "YouTube")
     .replace(/\bpaypal\b/i, "PayPal")
     .replace(/\bstripe\b/i, "Stripe")
     .replace(/\bbraintree\b/i, "Braintree")

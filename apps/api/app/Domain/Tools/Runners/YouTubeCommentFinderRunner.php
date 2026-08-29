@@ -127,12 +127,18 @@ final class YouTubeCommentFinderRunner implements Cacheable, ToolRunner, UsesPro
             $snippet = $comment['snippet'] ?? [];
             $commentId = is_string($comment['id'] ?? null) ? $comment['id'] : null;
 
+            $publishedAt = $this->text($snippet, 'publishedAt');
+
             $rows[] = [
                 'author' => $this->text($snippet, 'authorDisplayName'),
-                'comment' => $this->collapse($this->text($snippet, 'textDisplay')),
+                // The card lays the comment out over as many lines as it needs, so
+                // unlike a table row it keeps the author's own line breaks.
+                'body' => trim($this->text($snippet, 'textDisplay')),
+                'avatar' => $this->httpsUrl($this->text($snippet, 'authorProfileImageUrl')),
                 'likes' => (int) ($snippet['likeCount'] ?? 0),
                 'replies' => (int) ($thread['snippet']['totalReplyCount'] ?? 0),
-                'published' => $this->date($this->text($snippet, 'publishedAt')),
+                'published_at' => $publishedAt,
+                'published' => $this->date($publishedAt),
                 'link' => $commentId !== null
                     ? YouTubeUrl::watchUrl($videoId)."&lc={$commentId}"
                     : '',
@@ -143,16 +149,8 @@ final class YouTubeCommentFinderRunner implements Cacheable, ToolRunner, UsesPro
         // what people actually want when hunting for a half-remembered one.
         usort($rows, fn (array $a, array $b) => $b['likes'] <=> $a['likes']);
 
-        return ToolResult::table(
-            columns: [
-                ['key' => 'author', 'label' => 'Author'],
-                ['key' => 'comment', 'label' => 'Comment'],
-                ['key' => 'likes', 'label' => 'Likes', 'align' => 'right'],
-                ['key' => 'replies', 'label' => 'Replies', 'align' => 'right'],
-                ['key' => 'published', 'label' => 'Posted'],
-                ['key' => 'link', 'label' => 'Link', 'align' => 'right'],
-            ],
-            rows: $rows,
+        return ToolResult::comments(
+            comments: $rows,
             summary: $rows === []
                 ? "No comment on this video matches “{$query}”."
                 : count($rows)." comment(s) matching “{$query}”, most-liked first.",
@@ -169,16 +167,25 @@ final class YouTubeCommentFinderRunner implements Cacheable, ToolRunner, UsesPro
      */
     private function fetch(string $apiKey, string $videoId, string $query, string $order, int $limit): array
     {
+        $parameters = [
+            'part' => 'snippet',
+            'videoId' => $videoId,
+            'searchTerms' => $query,
+            'maxResults' => $limit,
+            'textFormat' => 'plainText',
+            'key' => $apiKey,
+        ];
+
+        // `order=relevance` alongside `searchTerms` makes the API answer 400
+        // processingFailure — a long-standing quirk of commentThreads.list. Only
+        // `time` is safe to send; relevance falls back to the API default and the
+        // most-liked-first sort we apply to the rows anyway.
+        if ($order === 'time') {
+            $parameters['order'] = 'time';
+        }
+
         try {
-            $response = Http::timeout(8.0)->connectTimeout(3.0)->get(self::ENDPOINT, [
-                'part' => 'snippet',
-                'videoId' => $videoId,
-                'searchTerms' => $query,
-                'order' => in_array($order, ['relevance', 'time'], true) ? $order : 'relevance',
-                'maxResults' => $limit,
-                'textFormat' => 'plainText',
-                'key' => $apiKey,
-            ]);
+            $response = Http::timeout(8.0)->connectTimeout(3.0)->get(self::ENDPOINT, $parameters);
         } catch (Throwable) {
             throw ToolExecutionException::upstreamFailed('youtube');
         }
@@ -193,6 +200,13 @@ final class YouTubeCommentFinderRunner implements Cacheable, ToolRunner, UsesPro
 
         if ($response->status() === 404) {
             throw ToolExecutionException::notFound('that video');
+        }
+
+        if ($response->status() === 400) {
+            throw ToolExecutionException::upstreamFailed(
+                'youtube',
+                'YouTube rejected the comment search. Try different search words, or a shorter phrase.',
+            );
         }
 
         if ($response->failed()) {
@@ -212,10 +226,13 @@ final class YouTubeCommentFinderRunner implements Cacheable, ToolRunner, UsesPro
         return is_string($value) ? $value : '';
     }
 
-    /** Comments carry newlines; a table row wants one line. */
-    private function collapse(string $text): string
+    /**
+     * The avatar URL comes from the API, not the user, but it is still rendered into
+     * a `src`: anything that is not plain https is dropped rather than passed through.
+     */
+    private function httpsUrl(string $value): string
     {
-        return trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
+        return str_starts_with($value, 'https://') ? $value : '';
     }
 
     private function date(string $value): string

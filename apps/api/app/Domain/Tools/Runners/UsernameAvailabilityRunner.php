@@ -137,7 +137,7 @@ final class UsernameAvailabilityRunner implements Cacheable, ToolRunner
 
             $rows[] = [
                 'platform' => $platform['label'],
-                'valid' => 'Valid format',
+                'valid' => 'Valid',
                 'status' => $status,
                 'rule' => $platform['rule'],
                 'url' => $url,

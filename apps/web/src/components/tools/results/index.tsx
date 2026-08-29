@@ -3,6 +3,7 @@
 import { AlertTriangle, Download, TriangleAlert } from "lucide-react";
 import * as React from "react";
 
+import { CommentThreadResult } from "@/components/tools/results/comment-thread";
 import { SocialPreviewResult } from "@/components/tools/results/social-preview";
 import { CopyButton } from "@/components/ui/copy-button";
 import { cn, formatNumber } from "@/lib/utils";
@@ -21,6 +22,7 @@ const RENDERERS: Record<
   keyvalue: KeyValueResult,
   table: TableResult,
   "list.cards": CardsResult,
+  "list.comments": CommentThreadResult,
   "text.blocks": TextBlocksResult,
   "score.report": ScoreResult,
   "media.gallery": MediaResult,
@@ -41,7 +43,11 @@ export function ResultRenderer({ result }: { result: ToolResult }) {
         </p>
       )}
 
+      <PaletteStrip palette={result.meta.palette} />
+
       <Renderer result={result} />
+
+      {isCodeBlock(result.meta.code) && <CodeCard block={result.meta.code} />}
 
       {result.meta.json !== undefined && result.meta.json !== null && (
         <JsonCard payload={result.meta.json} />
@@ -83,9 +89,21 @@ function KeyValueResult({ result }: { result: ToolResult }) {
           key={pair.label}
           className="flex flex-col gap-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-4"
         >
-          <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-            {pair.label}
-          </dt>
+          <div className="flex items-start justify-between gap-3">
+            <dt className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+              {pair.label}
+            </dt>
+            {/* Hard right, so the icons line up down the grid however long the
+                labels beside them run. */}
+            <CopyButton
+              value={String(pair.value)}
+              label=""
+              copiedLabel=""
+              size="icon"
+              className="-mt-1 size-7 shrink-0"
+              aria-label={`Copy ${pair.label}`}
+            />
+          </div>
           <dd
             className={cn(
               "tabular text-heading-3 break-words",
@@ -114,6 +132,9 @@ function TableResult({ result }: { result: ToolResult }) {
     key: string;
     label: string;
     align?: string;
+    type?: string;
+    copyable?: boolean;
+    copy_all?: boolean;
   }[];
   const rows = (result.data.rows ?? []) as Record<string, unknown>[];
 
@@ -133,7 +154,24 @@ function TableResult({ result }: { result: ToolResult }) {
                   column.align === "right" ? "text-right" : "text-left",
                 )}
               >
-                {column.label}
+                <span className="inline-flex items-center gap-2">
+                  {column.label}
+                  {/* One button for the whole column, so a long tag list does not
+                      have to be copied a row at a time. */}
+                  {column.copy_all && rows.length > 0 && (
+                    <CopyButton
+                      value={rows
+                        .map((row) => String(row[column.key] ?? ""))
+                        .filter((value) => value !== "")
+                        .join(", ")}
+                      label="Copy all"
+                      copiedLabel="Copied all"
+                      size="sm"
+                      className="h-6 px-1.5 text-[0.625rem] tracking-normal normal-case"
+                      aria-label={`Copy all ${column.label} values`}
+                    />
+                  )}
+                </span>
               </th>
             ))}
           </tr>
@@ -151,12 +189,19 @@ function TableResult({ result }: { result: ToolResult }) {
                     "tabular px-4 py-3 align-top text-[var(--color-foreground)]",
                     column.align === "right" ? "text-right" : "text-left",
                     // Labels stay on one line; only the value column wraps.
-                    column.key === "value"
-                      ? "w-full"
-                      : "whitespace-nowrap",
+                    column.key === "value" ? "w-full" : "whitespace-nowrap",
                   )}
                 >
-                  <Cell value={row[column.key]} copyable={column.key === "value"} />
+                  {column.type === "color" ? (
+                    <Swatch value={row[column.key]} />
+                  ) : column.type === "download" ? (
+                    <DownloadCell value={row[column.key]} />
+                  ) : (
+                    <Cell
+                      value={row[column.key]}
+                      copyable={column.copyable ?? column.key === "value"}
+                    />
+                  )}
                 </td>
               ))}
             </tr>
@@ -167,7 +212,35 @@ function TableResult({ result }: { result: ToolResult }) {
   );
 }
 
-function Cell({ value, copyable = false }: { value: unknown; copyable?: boolean }) {
+/**
+ * A download column holds a file URL, not something anyone reads: a CDN path with
+ * a crop spec in it tells the reader nothing and wraps the table. Show the verb.
+ */
+function DownloadCell({ value }: { value: unknown }) {
+  const url = typeof value === "string" ? value : "";
+  if (!/^https?:\/\//.test(url)) return <>—</>;
+
+  return (
+    <a
+      href={url}
+      download
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 whitespace-nowrap text-[var(--color-primary)] hover:underline"
+    >
+      <Download className="size-3.5" aria-hidden="true" />
+      Download
+    </a>
+  );
+}
+
+function Cell({
+  value,
+  copyable = false,
+}: {
+  value: unknown;
+  copyable?: boolean;
+}) {
   if (value === null || value === undefined || value === "") return <>—</>;
 
   const isUrl = typeof value === "string" && /^https?:\/\//.test(value);
@@ -207,12 +280,117 @@ function Cell({ value, copyable = false }: { value: unknown; copyable?: boolean 
   );
 }
 
+/**
+ * Only hex and rgb()/rgba() literals are honoured, so a colour coming back from a
+ * tool can never turn into arbitrary CSS.
+ */
+function asColor(value: unknown): string | null {
+  const color = typeof value === "string" ? value.trim() : "";
+
+  return /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(color) ||
+    /^rgba?\(\s*[\d.\s,%/]+\)$/i.test(color)
+    ? color
+    : null;
+}
+
+/**
+ * The palette itself, before any of the numbers about it: one full-width bar split
+ * into equal bands, one per extracted colour. Tools opt in by putting a list of
+ * colours in `meta.palette`.
+ */
+function PaletteStrip({ palette }: { palette: unknown }) {
+  if (!Array.isArray(palette)) return null;
+
+  const colors = palette
+    .map(asColor)
+    .filter((color): color is string => color !== null);
+
+  if (colors.length === 0) return null;
+
+  return (
+    <div
+      className="flex h-24 w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]"
+      role="img"
+      aria-label={`Extracted palette: ${colors.join(", ")}`}
+    >
+      {colors.map((color, index) => (
+        <div
+          key={`${color}-${index}`}
+          className="flex-1"
+          style={{ backgroundColor: color }}
+          title={color}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * A column declared `type: "color"` holds a colour, not a string to read: draw it.
+ */
+function Swatch({ value }: { value: unknown }) {
+  const color = asColor(value);
+
+  if (!color) return <>—</>;
+
+  return (
+    <span
+      className="block size-6 rounded-full border border-[var(--color-border)] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]"
+      style={{ backgroundColor: color }}
+      role="img"
+      aria-label={`Colour ${color}`}
+      title={color}
+    />
+  );
+}
+
 /* ── raw JSON card ────────────────────────────────────────────────────────── */
 
 /**
  * Tools that fetch a structured payload carry it verbatim in `meta.json`. The table
  * above is the readable view; this is the one people copy into their own code.
  */
+interface CodeBlock {
+  label: string;
+  text: string;
+}
+
+function isCodeBlock(value: unknown): value is CodeBlock {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as CodeBlock).label === "string" &&
+    typeof (value as CodeBlock).text === "string" &&
+    (value as CodeBlock).text !== ""
+  );
+}
+
+/**
+ * Raw source a tool wants to hand over whole — a feed document, a manifest, a
+ * generated snippet.
+ *
+ * It sits outside the table on purpose: this is the payload, not a field of it,
+ * and squeezing kilobytes of markup into a table cell makes both unreadable. The
+ * copy button takes the entire block, since a partial copy of a document is
+ * useless.
+ */
+function CodeCard({ block }: { block: CodeBlock }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+          {block.label}
+        </span>
+        <CopyButton value={block.text} label="Copy" />
+      </div>
+
+      <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap break-all font-mono text-xs leading-relaxed text-[var(--color-foreground)]">
+        {block.text}
+      </pre>
+    </div>
+  );
+}
+
 function JsonCard({ payload }: { payload: unknown }) {
   const json = React.useMemo(() => JSON.stringify(payload, null, 2), [payload]);
 

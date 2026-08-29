@@ -27,6 +27,23 @@ describe("actionVerb", () => {
     expect(actionVerb("Giveaway Winner Picker")).toBe("Pick");
   });
 
+  it("reads the newer agent nouns the catalog uses", () => {
+    expect(actionVerb("YouTube Metadata Viewer")).toBe("View");
+    expect(actionVerb("Pin Image Sizer")).toBe("Size");
+    expect(actionVerb("Script Timer")).toBe("Time");
+    expect(actionVerb("YouTube Search Suggestions")).toBe("Get suggestions");
+  });
+
+  it("names the object when the bare verb would be vague", () => {
+    expect(actionVerb("Word & Character Counter", "word-counter")).toBe("Count words");
+    expect(actionVerb("YouTube Metadata Viewer", "youtube-metadata-viewer")).toBe(
+      "View metadata",
+    );
+    expect(
+      actionVerb("Follower Milestone Countdown", "follower-milestone-countdown"),
+    ).toBe("Check followers");
+  });
+
   it("does not read the site's own vocabulary as an action", () => {
     // "creator" is a descriptor here, not an agent noun — it must not yield "Create".
     expect(actionVerb("Creator Media Kit")).toBe("Run tool");

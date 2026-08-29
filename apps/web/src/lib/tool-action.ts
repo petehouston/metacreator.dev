@@ -99,6 +99,9 @@ const SUFFIX_VERBS: Record<string, string> = {
   mixer: "Mix",
   shortener: "Shorten",
   expander: "Expand",
+  sizer: "Size",
+  viewer: "View",
+  timer: "Time",
 };
 
 /** Bare nouns that are the action, with no agent suffix to strip. */
@@ -116,6 +119,7 @@ const WORD_VERBS: Record<string, string> = {
   report: "Generate report",
   score: "Score",
   stats: "Get stats",
+  suggestions: "Get suggestions",
   summary: "Summarize",
   tips: "Get tips",
 };
@@ -126,6 +130,16 @@ const OVERRIDES: Record<string, string> = {
   "utm-link-builder": "Build the link",
   "social-media-character-counter": "Count characters",
   "youtube-thumbnail-downloader": "Get the thumbnail",
+  "word-counter": "Count words",
+  "script-timer": "Time the script",
+  "link-preview-debugger": "Preview the URL",
+  "follower-milestone-countdown": "Check followers",
+  "safe-zone-guide": "Show safe zones",
+  "story-templates-sizer": "Size for Stories",
+  "pin-image-sizer": "Size the pin",
+  "youtube-metadata-viewer": "View metadata",
+  "youtube-content-calendar": "Build the calendar",
+  "youtube-search-suggestions": "Get suggestions",
 };
 
 /**

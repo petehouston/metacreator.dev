@@ -91,7 +91,7 @@ final class YouTubeThumbnailDownloaderRunner implements Cacheable, ToolRunner
                 ['key' => 'label', 'label' => 'Size'],
                 ['key' => 'resolution', 'label' => 'Dimensions'],
                 ['key' => 'availability', 'label' => 'Availability'],
-                ['key' => 'url', 'label' => 'Download', 'align' => 'right'],
+                ['key' => 'url', 'label' => 'Download', 'align' => 'right', 'type' => 'download'],
             ],
             rows: $rows,
             summary: "Found 5 thumbnail sizes for video {$videoId}.",

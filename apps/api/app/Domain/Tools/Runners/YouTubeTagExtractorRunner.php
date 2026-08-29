@@ -90,7 +90,7 @@ final class YouTubeTagExtractorRunner implements Cacheable, ToolRunner, UsesProv
 
         return ToolResult::table(
             columns: [
-                ['key' => 'tag', 'label' => 'Tag'],
+                ['key' => 'tag', 'label' => 'Tag', 'copyable' => true, 'copy_all' => true],
                 ['key' => 'words', 'label' => 'Words', 'align' => 'right'],
                 ['key' => 'characters', 'label' => 'Characters', 'align' => 'right'],
             ],

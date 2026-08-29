@@ -11,6 +11,7 @@ export type ResultView =
   | "keyvalue"
   | "table"
   | "list.cards"
+  | "list.comments"
   | "text.blocks"
   | "media.gallery"
   | "score.report"

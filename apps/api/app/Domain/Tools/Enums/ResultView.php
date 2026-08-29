@@ -22,6 +22,14 @@ enum ResultView: string
     /** Cards with a title, body and copy action. Idea and hashtag generators. */
     case ListCards = 'list.cards';
 
+    /**
+     * Social comments drawn the way the platform draws them — avatar, author,
+     * relative time, body, like and reply counts — each card linking to the comment
+     * itself. A table of comments reads like a spreadsheet; a comment should look
+     * like a comment.
+     */
+    case CommentThread = 'list.comments';
+
     /** Long-form text split into copyable blocks. Descriptions, captions, scripts. */
     case TextBlocks = 'text.blocks';
 

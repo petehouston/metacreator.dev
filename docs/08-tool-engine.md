@@ -46,6 +46,7 @@ one renderer per view type, so most tools need no frontend code at all:
 | `keyvalue` | Calculators, counters |
 | `table` | Extractors, bulk checks |
 | `list.cards` | Idea/hashtag/hook generators |
+| `list.comments` | Comment search, drawn as platform comment cards linking to the comment |
 | `text.blocks` | Descriptions, captions, scripts (with per-block copy buttons) |
 | `media.gallery` | Downloaders, resizers, croppers |
 | `score.report` | Audits and scores (headline gauge + weighted sub-scores + fixes) |

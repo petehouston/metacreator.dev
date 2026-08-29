@@ -848,3 +848,103 @@ it('rejects a handle that breaks YouTube’s own rules before spending a request
     'illegal character' => 'the slow loaf',
     'reads as a number' => '123.456',
 ]);
+
+/**
+ * The RSS feed generator, whose whole difficulty is that YouTube's feed endpoint
+ * is unreliable: the same URL answers 200, 404 and 500 within seconds. The tool
+ * used to read one response and report a correct URL as broken.
+ */
+describe('youtube rss feed generator', function () {
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'
+        .'<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">'
+        .'<entry><yt:videoId>abcdefghijk</yt:videoId><title>Hello &amp; Goodbye</title>'
+        .'<published>2026-08-25T23:23:00+00:00</published></entry></feed>';
+
+    $page = '<html><link rel="canonical" href="https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ">'
+        .'<meta property="og:title" content="Marques Brownlee"></html>';
+
+    it('retries a flapping feed rather than calling a correct URL broken', function () use ($xml, $page) {
+        Http::fake([
+            'www.youtube.com/feeds/videos.xml?channel_id=*' => Http::sequence()
+                ->push('nope', 404)
+                ->push('nope', 500)
+                ->push($xml, 200),
+            'www.youtube.com/feeds/videos.xml?playlist_id=*' => Http::response('nope', 404),
+            '*' => Http::response($page, 200),
+        ]);
+
+        $result = runRunner(new Runners\YouTubeRssFeedGeneratorRunner, ['source' => '@mkbhd']);
+
+        expect($result->view)->toBe(ResultView::Table)
+            ->and($result->meta['feed_reachable'])->toBeTrue()
+            ->and($result->warnings)->toBeEmpty()
+            ->and($result->summary)->toContain('1 entry');
+    });
+
+    it('shows the feed document in its own card when the feed reads', function () use ($xml, $page) {
+        Http::fake([
+            'www.youtube.com/feeds/videos.xml?channel_id=*' => Http::response($xml, 200),
+            'www.youtube.com/feeds/videos.xml?playlist_id=*' => Http::response('nope', 404),
+            '*' => Http::response($page, 200),
+        ]);
+
+        $result = runRunner(new Runners\YouTubeRssFeedGeneratorRunner, ['source' => '@mkbhd']);
+
+        expect($result->meta['code']['text'])->toBe($xml)
+            // The uploads feed answered 404 throughout, so it is not offered.
+            ->and(array_column($result->data['rows'], 'label'))
+            ->not->toContain('Uploads playlist feed')
+            ->toContain('Channel RSS feed');
+    });
+
+    it('keeps the URL but drops the card and warns when the feed never reads', function () use ($page) {
+        Http::fake([
+            'www.youtube.com/feeds/videos.xml*' => Http::response('nope', 500),
+            '*' => Http::response($page, 200),
+        ]);
+
+        $result = runRunner(new Runners\YouTubeRssFeedGeneratorRunner, ['source' => '@mkbhd']);
+
+        $rows = collect($result->data['rows'])->keyBy('label');
+
+        expect($result->meta)->not->toHaveKey('code')
+            ->and($result->meta['feed_reachable'])->toBeFalse()
+            ->and($result->warnings)->toHaveCount(1)
+            ->and($rows['Channel RSS feed']['value'])
+            ->toBe('https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ')
+            ->and($rows['Entries in the feed']['value'])->toBe('Could not read');
+    });
+
+    it('rejects a 200 carrying Google\'s HTML error page', function () use ($page) {
+        Http::fake([
+            'www.youtube.com/feeds/videos.xml*' => Http::response('<!DOCTYPE html><title>Error 404</title>', 200),
+            '*' => Http::response($page, 200),
+        ]);
+
+        $result = runRunner(new Runners\YouTubeRssFeedGeneratorRunner, ['source' => '@mkbhd']);
+
+        expect($result->meta['feed_reachable'])->toBeFalse();
+    });
+
+    it('trusts the playlist page when a playlist feed will not serve', function () {
+        Http::fake([
+            'www.youtube.com/feeds/videos.xml*' => Http::response('nope', 500),
+            'www.youtube.com/playlist*' => Http::response('<html><title>Dark Psychology</title></html>', 200),
+        ]);
+
+        $result = runRunner(new Runners\YouTubeRssFeedGeneratorRunner, [
+            'source' => 'https://www.youtube.com/playlist?list=PL4Z2VFKFXMshO_XHkkNKF8vMCllRgyoto',
+        ]);
+
+        expect($result->warnings)->toHaveCount(1)
+            ->and($result->meta['code'] ?? null)->toBeNull();
+    });
+
+    it('reports not found when neither the playlist feed nor its page exists', function () {
+        Http::fake(['*' => Http::response('nope', 404)]);
+
+        expect(fn () => runRunner(new Runners\YouTubeRssFeedGeneratorRunner, [
+            'source' => 'https://www.youtube.com/playlist?list=PL4Z2VFKFXMshO_XHkkNKF8vMCllRgyoto',
+        ]))->toThrow(ToolExecutionException::class);
+    });
+});

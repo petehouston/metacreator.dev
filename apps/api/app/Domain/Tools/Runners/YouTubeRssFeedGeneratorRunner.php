@@ -75,6 +75,12 @@ final class YouTubeRssFeedGeneratorRunner implements Cacheable, ToolRunner, Uses
             : $this->channelFeed($source);
     }
 
+    /** The two columns every result in this tool is drawn in. */
+    private const COLUMNS = [
+        ['key' => 'label', 'label' => 'Field', 'copyable' => false],
+        ['key' => 'value', 'label' => 'Value', 'copyable' => true],
+    ];
+
     private function channelFeed(string $source): ToolResult
     {
         $html = YouTubePage::channel(YouTubePage::channelUrl($source));
@@ -83,73 +89,174 @@ final class YouTubeRssFeedGeneratorRunner implements Cacheable, ToolRunner, Uses
         $name = YouTubePage::og($html, 'title');
 
         $feed = self::FEED_BASE."?channel_id={$channelId}";
+        $result = $this->fetch($feed);
+
+        $rows = [['label' => 'Channel RSS feed', 'value' => $feed]];
+
         // Swapping the UC prefix for UU names the playlist holding every public
-        // upload — a second feed for the same videos, which some readers prefer
-        // because it excludes nothing the channel has hidden from its main tab.
-        $uploads = 'UU'.substr($channelId, 2);
+        // upload — a second feed for the same videos, which some readers prefer.
+        // It is offered only once it has been seen to return a feed, because
+        // YouTube serves it for some channels and 404s it for others with nothing
+        // on the channel page to say which.
+        $uploads = self::FEED_BASE.'?playlist_id=UU'.substr($channelId, 2);
 
-        $entries = $this->entries($feed);
-
-        $pairs = [
-            ['label' => 'Channel RSS feed', 'value' => $feed, 'tone' => 'positive',
-                'hint' => 'Paste this into any reader, Zapier, Make or n8n trigger.'],
-            ['label' => 'Uploads playlist feed', 'value' => self::FEED_BASE."?playlist_id={$uploads}",
-                'hint' => 'The same videos, read from the uploads playlist instead.'],
-            ['label' => 'Channel ID', 'value' => $channelId],
-            ['label' => 'Channel', 'value' => $name ?? '—'],
-            ['label' => 'Entries in the feed', 'value' => count($entries) === 0 ? 'None' : (string) count($entries),
-                'hint' => 'YouTube caps every feed at the 15 most recent items.'],
-        ];
-
-        if ($entries !== []) {
-            $pairs[] = ['label' => 'Newest entry', 'value' => $entries[0]['title'],
-                'hint' => $entries[0]['published']];
+        if ($this->fetch($uploads) !== null) {
+            $rows[] = ['label' => 'Uploads playlist feed', 'value' => $uploads];
         }
 
-        return ToolResult::keyValue($pairs, summary: $entries === []
+        $rows[] = ['label' => 'Channel ID', 'value' => $channelId];
+        $rows[] = ['label' => 'Channel', 'value' => $name ?? '—'];
+
+        $who = $name !== null ? "“{$name}”" : 'that channel';
+
+        if ($result === null) {
+            return $this->unreadable($rows, sprintf(
+                'The feed URL for %s is correct — it is built from the channel id on the channel\'s '
+                .'own page — but YouTube would not return the feed itself.',
+                $who,
+            ));
+        }
+
+        $entries = $result['entries'];
+
+        $rows[] = ['label' => 'Entries in the feed', 'value' => $entries === [] ? 'None' : (string) count($entries)];
+
+        if ($entries !== []) {
+            $rows[] = ['label' => 'Newest entry', 'value' => $entries[0]['title']];
+            $rows[] = ['label' => 'Published', 'value' => $entries[0]['published']];
+        }
+
+        return ToolResult::table(self::COLUMNS, $rows, summary: $entries === []
             ? 'The feed URL is correct, but YouTube returned no entries — the channel has no public uploads.'
-            : sprintf('Feed for %s, returning %d entries. Newest: “%s”.',
-                $name !== null ? "“{$name}”" : 'that channel', count($entries), $entries[0]['title']),
+            : sprintf('Feed for %s, returning %s. Newest: “%s”.', $who,
+                $this->plural(count($entries), 'entry', 'entries'), $entries[0]['title']),
         )->withMeta([
             'channel_id' => $channelId,
             'feed_url' => $feed,
+            'feed_reachable' => true,
             'entries' => $entries,
+            'code' => ['label' => 'RSS feed', 'text' => $result['xml']],
         ]);
     }
 
     private function playlistFeed(string $playlistId): ToolResult
     {
         $feed = self::FEED_BASE."?playlist_id={$playlistId}";
-        $entries = $this->entries($feed);
+        $result = $this->fetch($feed);
 
-        if ($entries === []) {
-            throw ToolExecutionException::notFound('a public feed for that playlist');
+        $rows = [
+            ['label' => 'Playlist RSS feed', 'value' => $feed],
+            ['label' => 'Playlist ID', 'value' => $playlistId],
+        ];
+
+        // YouTube's playlist feeds are the flakiest corner of this endpoint, so a
+        // run of errors is not evidence the playlist is missing. The playlist page
+        // is the reliable witness: if that loads, the id is real and the feed URL
+        // is worth handing back with a caveat rather than refusing outright.
+        if ($result === null) {
+            $page = SafeHttpClient::attempt("https://www.youtube.com/playlist?list={$playlistId}");
+
+            if ($page === null || $page->failed()) {
+                throw ToolExecutionException::notFound('a public feed for that playlist');
+            }
+
+            return $this->unreadable(
+                $rows,
+                'The playlist exists and this is its feed URL, but YouTube would not return the feed itself.',
+            );
         }
 
-        return ToolResult::keyValue([
-            ['label' => 'Playlist RSS feed', 'value' => $feed, 'tone' => 'positive'],
-            ['label' => 'Playlist ID', 'value' => $playlistId],
-            ['label' => 'Entries in the feed', 'value' => (string) count($entries)],
-            ['label' => 'Newest entry', 'value' => $entries[0]['title'], 'hint' => $entries[0]['published']],
-        ], summary: sprintf('Feed for playlist %s, returning %d entries.', $playlistId, count($entries)))
-            ->withMeta(['playlist_id' => $playlistId, 'feed_url' => $feed, 'entries' => $entries]);
+        $entries = $result['entries'];
+
+        if ($entries === []) {
+            throw ToolExecutionException::notFound('any videos in that playlist\'s feed');
+        }
+
+        $rows[] = ['label' => 'Entries in the feed', 'value' => (string) count($entries)];
+        $rows[] = ['label' => 'Newest entry', 'value' => $entries[0]['title']];
+        $rows[] = ['label' => 'Published', 'value' => $entries[0]['published']];
+
+        return ToolResult::table(self::COLUMNS, $rows, summary: sprintf(
+            'Feed for playlist %s, returning %s.', $playlistId,
+            $this->plural(count($entries), 'entry', 'entries'),
+        ))->withMeta([
+            'playlist_id' => $playlistId,
+            'feed_url' => $feed,
+            'feed_reachable' => true,
+            'entries' => $entries,
+            'code' => ['label' => 'RSS feed', 'text' => $result['xml']],
+        ]);
     }
 
     /**
-     * The feed's entries, newest first.
+     * The result for a feed whose URL is right but which YouTube would not serve.
      *
-     * @return list<array{title: string, published: string, url: string}>
+     * No feed card is attached: there is no document to show, and an empty or
+     * half-written code block reads as "the feed is broken" when the URL is fine.
+     * The warning carries the explanation instead, because the one thing the reader
+     * needs is to know the URL is worth keeping.
+     *
+     * @param  list<array{label: string, value: string}>  $rows
      */
-    private function entries(string $feed): array
+    private function unreadable(array $rows, string $why): ToolResult
     {
-        $response = SafeHttpClient::attempt($feed);
+        $rows[] = ['label' => 'Entries in the feed', 'value' => 'Could not read'];
 
-        if ($response === null || $response->failed()) {
-            return [];
+        return ToolResult::table(self::COLUMNS, $rows, summary: $why)
+            ->withWarnings([
+                'YouTube serves this endpoint from backends that disagree about which feeds they '
+                .'hold, so the same URL can answer 200, 404 and 500 within a few seconds. We '
+                .'retried and got an error every time, which is why there is no feed shown below. '
+                .'Save the URL and use it anyway: feed readers and automation tools retry on a '
+                .'schedule, and it will pick the feed up on a later attempt.',
+            ])
+            ->withMeta(['feed_reachable' => false, 'entries' => []]);
+    }
+
+    /**
+     * A feed document and its entries, or null when YouTube would not serve it.
+     *
+     * The retry is the point of this method. YouTube answers this endpoint from a
+     * set of backends that disagree about which feeds they hold: for some channels
+     * every request succeeds, and for others the same URL returns 200, 404 and 500
+     * in turn, seconds apart. One attempt therefore measures luck rather than
+     * whether the feed exists, which is what made this tool report a correct URL as
+     * broken. Attempts are cheap — these responses come back in about 200ms.
+     *
+     * An empty entry list still means a real feed with nothing in it; only null
+     * means the URL would not serve.
+     *
+     * @return array{xml: string, entries: list<array{title: string, published: string, url: string}>}|null
+     */
+    private function fetch(string $feed, int $attempts = 4): ?array
+    {
+        for ($attempt = 1; $attempt <= $attempts; $attempt++) {
+            if ($attempt > 1) {
+                usleep(250_000);
+            }
+
+            $response = SafeHttpClient::attempt($feed);
+
+            if ($response === null || $response->failed()) {
+                continue;
+            }
+
+            $xml = SafeHttpClient::body($response);
+
+            // A 200 carrying Google's HTML error page is the other way this fails.
+            if (! str_contains($xml, '<feed')) {
+                continue;
+            }
+
+            return ['xml' => $xml, 'entries' => $this->parse($xml)];
         }
 
-        $xml = SafeHttpClient::body($response);
+        return null;
+    }
 
+    /** @return list<array{title: string, published: string, url: string}> */
+    private function parse(string $xml): array
+    {
         preg_match_all(
             '#<entry>.*?<yt:videoId>([A-Za-z0-9_-]{11})</yt:videoId>.*?<title>(.*?)</title>'
             .'.*?<published>(.*?)</published>.*?</entry>#s',
@@ -175,6 +282,11 @@ final class YouTubeRssFeedGeneratorRunner implements Cacheable, ToolRunner, Uses
         return preg_match('/[?&]list=((?:PL|UU|OL|FL|LL|RD)[A-Za-z0-9_-]{10,})/', $source, $match) === 1
             ? $match[1]
             : null;
+    }
+
+    private function plural(int $count, string $one, string $many): string
+    {
+        return $count.' '.($count === 1 ? $one : $many);
     }
 
     private function date(string $value): string

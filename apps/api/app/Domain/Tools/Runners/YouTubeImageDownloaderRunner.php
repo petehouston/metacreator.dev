@@ -113,8 +113,8 @@ final class YouTubeImageDownloaderRunner implements Cacheable, ToolRunner, UsesP
                 ['key' => 'image', 'label' => 'Image'],
                 ['key' => 'dimensions', 'label' => 'Dimensions'],
                 ['key' => 'availability', 'label' => 'Availability'],
-                ['key' => 'url', 'label' => 'JPG', 'align' => 'right'],
-                ['key' => 'webp_url', 'label' => 'WebP', 'align' => 'right'],
+                ['key' => 'url', 'label' => 'JPG', 'align' => 'right', 'type' => 'download'],
+                ['key' => 'webp_url', 'label' => 'WebP', 'align' => 'right', 'type' => 'download'],
             ],
             rows: $rows,
             summary: 'Eight images published for video '.$videoId.' — the chosen thumbnail, plus the '
@@ -196,7 +196,7 @@ final class YouTubeImageDownloaderRunner implements Cacheable, ToolRunner, UsesP
             columns: [
                 ['key' => 'image', 'label' => 'Image'],
                 ['key' => 'dimensions', 'label' => 'Dimensions'],
-                ['key' => 'url', 'label' => 'Download', 'align' => 'right'],
+                ['key' => 'url', 'label' => 'Download', 'align' => 'right', 'type' => 'download'],
             ],
             rows: $rows,
             summary: 'Avatar'.($banner !== null ? ' and banner' : '').' for '

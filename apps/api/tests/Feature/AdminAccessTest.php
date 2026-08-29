@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Domain\Access\PermissionCatalog;
 use App\Domain\Settings\Setting;
+use App\Domain\Settings\Settings;
+use App\Domain\Tools\Runners\YouTubeCommentFinderRunner;
 use App\Domain\Users\Models\User;
 use Database\Seeders\SettingsSeeder;
 use Illuminate\Support\Facades\Route;
@@ -177,6 +179,29 @@ it('treats a blank secret as "leave it alone", not as "erase it"', function () {
 
     expect(Setting::query()->where('key', 'newsletter.api_key')->first()?->typedValue())
         ->toBe('sk_live_real');
+});
+
+it('exposes the YouTube Data API key as a settable provider secret', function () {
+    $this->seed(SettingsSeeder::class);
+
+    $root = staff('super-admin');
+
+    $this->actingAs($root)->putJson('/api/v1/admin/settings', [
+        'settings' => [['key' => 'providers.youtube.api_key', 'value' => 'AIza-real']],
+    ])->assertOk();
+
+    // The point of the setting: the tool that needs the key reads it back without a
+    // deploy, and the key itself never travels to the browser.
+    expect(app(Settings::class)->string(YouTubeCommentFinderRunner::API_KEY_SETTING))
+        ->toBe('AIza-real');
+
+    $response = $this->actingAs($root)->getJson('/api/v1/admin/settings')->assertOk();
+    $providers = collect($response->json('data.groups'))->firstWhere('group', 'providers');
+    $key = collect($providers['settings'])->firstWhere('key', 'providers.youtube.api_key');
+
+    expect($key['value'])->toBeNull()
+        ->and($key['is_set'])->toBeTrue()
+        ->and(json_encode($response->json()))->not->toContain('AIza-real');
 });
 
 it('lets an admin write an ordinary setting', function () {

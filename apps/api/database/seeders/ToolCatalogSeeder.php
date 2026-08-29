@@ -2045,9 +2045,9 @@ final class ToolCatalogSeeder extends Seeder
                     Blocks::paragraph('Paste the video and the words you remember. YouTube’s own comment '
                         .'search does the matching, so a phrase in quotes matches exactly and loose words '
                         .'match anywhere in the comment.'),
-                    Blocks::heading('The link column is the point', 2),
-                    Blocks::paragraph('Each result links straight to that comment in the thread rather than '
-                        .'to the top of the page — which is the difference between finding a comment and '
+                    Blocks::heading('Every card is a link', 2),
+                    Blocks::paragraph('Click a result and it opens that comment in the thread rather than '
+                        .'the top of the page — which is the difference between finding a comment and '
                         .'scrolling for it. Sorting puts the most-liked matches first, because the comment '
                         .'people half-remember is usually the one everybody upvoted.'),
                     Blocks::callout('info', 'This tool uses the official YouTube Data API rather than '
