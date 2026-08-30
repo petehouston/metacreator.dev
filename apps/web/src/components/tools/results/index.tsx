@@ -127,17 +127,96 @@ function KeyValueResult({ result }: { result: ToolResult }) {
 
 /* ── table ────────────────────────────────────────────────────────────────── */
 
-function TableResult({ result }: { result: ToolResult }) {
-  const columns = (result.data.columns ?? []) as {
-    key: string;
-    label: string;
-    align?: string;
-    type?: string;
-    copyable?: boolean;
-    copy_all?: boolean;
-  }[];
-  const rows = (result.data.rows ?? []) as Record<string, unknown>[];
+interface TableColumn {
+  key: string;
+  label: string;
+  align?: string;
+  type?: string;
+  copyable?: boolean;
+  copy_all?: boolean;
+  /** For `type: "link"` — the row key holding the anchor text. */
+  text_key?: string;
+  /** Whether long values may wrap. Defaults to true for the value column only. */
+  wrap?: boolean;
+}
 
+interface TableGroup {
+  label: string;
+  hint?: string;
+  count?: number;
+  rows: Record<string, unknown>[];
+}
+
+/**
+ * One table, or several under their own headings.
+ *
+ * A tool that returns genuinely different kinds of row — YouTube's direct
+ * completions and its A-Z sweep are not the same list — reads as one undifferentiated
+ * dump when they are concatenated, so `groups` splits them without needing a
+ * renderer of its own.
+ */
+function TableResult({ result }: { result: ToolResult }) {
+  const columns = (result.data.columns ?? []) as TableColumn[];
+  const rows = (result.data.rows ?? []) as Record<string, unknown>[];
+  const groups = (result.data.groups ?? []) as TableGroup[];
+
+  if (groups.length > 0) {
+    return (
+      <div className="flex flex-col gap-6">
+        {groups.map((group) => (
+          <section key={group.label} className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h3 className="text-body-lg font-semibold text-[var(--color-foreground)]">
+                  {group.label}
+                </h3>
+                <span className="rounded-full bg-[var(--color-surface-sunken)] px-2 py-0.5 font-mono text-[0.625rem] text-[var(--color-foreground-subtle)]">
+                  {formatNumber(group.count ?? group.rows.length)}
+                </span>
+                {group.hint && (
+                  <p className="text-sm text-[var(--color-foreground-muted)]">
+                    {group.hint}
+                  </p>
+                )}
+              </div>
+              {/* Copying a group is a thing you do to the group, so the button
+                  belongs to its heading rather than to a column header buried
+                  inside the table. */}
+              <div className="flex shrink-0 items-baseline gap-2">
+                {columns
+                  .filter((column) => column.copy_all)
+                  .map((column) => (
+                    <CopyAllButton
+                      key={column.key}
+                      column={column}
+                      rows={group.rows}
+                    />
+                  ))}
+              </div>
+            </div>
+            <TableGrid
+              columns={columns}
+              rows={group.rows}
+              copyAllInHead={false}
+            />
+          </section>
+        ))}
+      </div>
+    );
+  }
+
+  return <TableGrid columns={columns} rows={rows} />;
+}
+
+function TableGrid({
+  columns,
+  rows,
+  copyAllInHead = true,
+}: {
+  columns: TableColumn[];
+  rows: Record<string, unknown>[];
+  copyAllInHead?: boolean;
+}) {
   return (
     // Wide tables scroll inside their own container; the page body never scrolls
     // horizontally.
@@ -157,19 +236,10 @@ function TableResult({ result }: { result: ToolResult }) {
                 <span className="inline-flex items-center gap-2">
                   {column.label}
                   {/* One button for the whole column, so a long tag list does not
-                      have to be copied a row at a time. */}
-                  {column.copy_all && rows.length > 0 && (
-                    <CopyButton
-                      value={rows
-                        .map((row) => String(row[column.key] ?? ""))
-                        .filter((value) => value !== "")
-                        .join(", ")}
-                      label="Copy all"
-                      copiedLabel="Copied all"
-                      size="sm"
-                      className="h-6 px-1.5 text-[0.625rem] tracking-normal normal-case"
-                      aria-label={`Copy all ${column.label} values`}
-                    />
+                      have to be copied a row at a time. A grouped table hoists it
+                      up to the group heading instead. */}
+                  {copyAllInHead && column.copy_all && (
+                    <CopyAllButton column={column} rows={rows} />
                   )}
                 </span>
               </th>
@@ -188,18 +258,26 @@ function TableResult({ result }: { result: ToolResult }) {
                   className={cn(
                     "tabular px-4 py-3 align-top text-[var(--color-foreground)]",
                     column.align === "right" ? "text-right" : "text-left",
-                    // Labels stay on one line; only the value column wraps.
-                    column.key === "value" ? "w-full" : "whitespace-nowrap",
+                    // Labels stay on one line; only wrapping columns wrap.
+                    (column.wrap ?? column.key === "value")
+                      ? "w-full"
+                      : "whitespace-nowrap",
                   )}
                 >
                   {column.type === "color" ? (
                     <Swatch value={row[column.key]} />
                   ) : column.type === "download" ? (
                     <DownloadCell value={row[column.key]} />
+                  ) : column.type === "link" ? (
+                    <LinkCell
+                      href={row[column.key]}
+                      text={column.text_key ? row[column.text_key] : undefined}
+                    />
                   ) : (
                     <Cell
                       value={row[column.key]}
                       copyable={column.copyable ?? column.key === "value"}
+                      wrap={column.wrap ?? column.key === "value"}
                     />
                   )}
                 </td>
@@ -209,6 +287,57 @@ function TableResult({ result }: { result: ToolResult }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+/**
+ * Every value in one column, copied at once. Lives either in the column header or,
+ * for a grouped table, beside the group's heading.
+ */
+function CopyAllButton({
+  column,
+  rows,
+}: {
+  column: TableColumn;
+  rows: Record<string, unknown>[];
+}) {
+  const values = rows
+    .map((row) => String(row[column.key] ?? ""))
+    .filter((value) => value !== "");
+
+  if (values.length === 0) return null;
+
+  return (
+    <CopyButton
+      value={values.join(", ")}
+      label="Copy all"
+      copiedLabel="Copied all"
+      size="sm"
+      className="h-6 px-1.5 text-[0.625rem] tracking-normal normal-case"
+      aria-label={`Copy all ${column.label} values`}
+    />
+  );
+}
+
+/**
+ * A link whose text is another cell of the same row: an "open this search on
+ * YouTube" column reads as the search itself, not as the query string behind it.
+ */
+function LinkCell({ href, text }: { href: unknown; text?: unknown }) {
+  const url = typeof href === "string" ? href : "";
+  if (!/^https?:\/\//.test(url)) return <>—</>;
+
+  const label = typeof text === "string" && text !== "" ? text : url;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="whitespace-nowrap text-[var(--color-primary)] hover:underline"
+    >
+      {label}
+    </a>
   );
 }
 
@@ -237,9 +366,11 @@ function DownloadCell({ value }: { value: unknown }) {
 function Cell({
   value,
   copyable = false,
+  wrap = copyable,
 }: {
   value: unknown;
   copyable?: boolean;
+  wrap?: boolean;
 }) {
   if (value === null || value === undefined || value === "") return <>—</>;
 
@@ -256,7 +387,7 @@ function Cell({
   ) : (
     // Wrapping is the cell's call, not this component's: label columns are
     // whitespace-nowrap on the <td>, so inherit rather than override them.
-    <span className={cn(copyable && "whitespace-pre-wrap break-words")}>
+    <span className={cn(wrap && "whitespace-pre-wrap break-words")}>
       {typeof value === "number" ? formatNumber(value) : String(value)}
     </span>
   );

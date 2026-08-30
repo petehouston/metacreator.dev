@@ -948,3 +948,65 @@ describe('youtube rss feed generator', function () {
         ]))->toThrow(ToolExecutionException::class);
     });
 });
+
+/**
+ * Google's suggestion endpoint answers with `[query, [suggestions...]]`, and the
+ * order of that second array is the ranking the search box drops down.
+ */
+function suggestResponse(): Closure
+{
+    return function ($request) {
+        parse_str((string) parse_url((string) $request->url(), PHP_URL_QUERY), $query);
+        $q = $query['q'] ?? '';
+
+        return Http::response(json_encode([$q, ["{$q} recipe", "{$q} for beginners"]]));
+    };
+}
+
+it('groups YouTube suggestions the way the search box behaves', function () {
+    Http::fake(['suggestqueries.google.com/*' => suggestResponse()]);
+
+    $result = runRunner(app(Runners\YouTubeSearchSuggestRunner::class), [
+        'keyword' => 'sourdough starter',
+        'expansion' => 'everything',
+    ]);
+
+    $labels = array_column($result->data['groups'], 'label');
+
+    expect($result->view)->toBe(ResultView::Table)
+        ->and($labels)->toBe([
+            'Direct suggestions',
+            'Questions & long-tail',
+            'Commercial intent',
+            'Alphabet expansion (A–Z)',
+        ])
+        // 1 seed + 9 questions + 8 commercial + 26 letters, two suggestions each.
+        ->and($result->meta['queries_made'])->toBe(44)
+        ->and($result->meta['suggestions'])->toBe(88);
+
+    $direct = $result->data['groups'][0];
+
+    // YouTube's own ranking, kept: re-sorting would throw away the only popularity
+    // signal the endpoint gives.
+    expect($direct['rows'][0]['suggestion'])->toBe('sourdough starter recipe')
+        ->and($direct['rows'][1]['suggestion'])->toBe('sourdough starter for beginners')
+        ->and($direct['rows'][0]['rank'])->toBe(1)
+        ->and($direct['rows'][0]['search'])->toContain('search_query=sourdough%20starter%20recipe');
+});
+
+it('runs a single group when one is asked for, and never repeats a suggestion', function () {
+    Http::fake(['suggestqueries.google.com/*' => suggestResponse()]);
+
+    $result = runRunner(app(Runners\YouTubeSearchSuggestRunner::class), [
+        'keyword' => 'sourdough starter',
+        'expansion' => 'questions',
+        'position' => 'after',
+    ]);
+
+    $suggestions = array_column($result->data['rows'], 'suggestion');
+
+    expect($result->data['groups'])->toHaveCount(1)
+        ->and($suggestions)->toEqual(array_unique($suggestions))
+        // "after" appends the modifier, the way typing another word into the box does.
+        ->and($suggestions[0])->toBe('sourdough starter how recipe');
+});

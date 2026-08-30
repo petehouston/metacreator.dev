@@ -121,8 +121,8 @@ final class YouTubeTimestampLinkBuilderRunner implements Cacheable, ToolRunner
             columns: [
                 ['key' => 'time', 'label' => 'Time'],
                 ['key' => 'label', 'label' => 'Moment'],
-                ['key' => 'link', 'label' => 'Deep link'],
-                ['key' => 'short_link', 'label' => 'Short link'],
+                ['key' => 'link', 'label' => 'Deep link', 'copyable' => true],
+                ['key' => 'short_link', 'label' => 'Short link', 'copyable' => true],
             ],
             rows: $rows,
             summary: count($rows).' timestamp links built for video '.$videoId.'.',

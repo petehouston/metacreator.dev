@@ -2094,8 +2094,10 @@ final class ToolCatalogSeeder extends Seeder
                     .'commercial intent and A–Z sweeps. Free, no account, no API key.',
                 'instructions' => Blocks::make([
                     Blocks::paragraph('Enter a seed of two or three words — a single word returns searches '
-                        .'too broad to act on. Pick an expansion and the tool queries YouTube’s suggestion '
-                        .'endpoint once per modifier, then merges and de-duplicates the results.'),
+                        .'too broad to act on. The default run queries YouTube’s suggestion endpoint once '
+                        .'per modifier and groups what comes back the way the search box behaves: the '
+                        .'direct completions for your seed, then the question and intent phrasings, then '
+                        .'the A–Z sweep. Inside each group the order is YouTube’s own, not ours.'),
                     Blocks::heading('Why there are no search volumes', 2),
                     Blocks::paragraph('Nobody outside Google has YouTube search volumes. Every tool that '
                         .'shows them is modelling them from Google Ads data for web search, which is a '
@@ -2103,15 +2105,17 @@ final class ToolCatalogSeeder extends Seeder
                         .'report anybody actually acts on, so inventing one would be the most damaging thing '
                         .'this tool could do. What you get instead is certainty: every row is a search '
                         .'YouTube itself suggests, which means people type it.'),
-                    Blocks::heading('Longest first, on purpose', 2),
-                    Blocks::paragraph('“Sourdough” is unwinnable. “How to fix a sourdough starter that '
-                        .'won’t rise” is a video you can make this week and rank for by Friday. Sorting by '
-                        .'phrase length puts the winnable searches at the top rather than burying them.'),
+                    Blocks::heading('YouTube’s order, kept', 2),
+                    Blocks::paragraph('The endpoint returns each list ranked, and that ranking is the '
+                        .'closest thing in free data to popularity — so the rows appear exactly as the '
+                        .'search box would drop them down. “Sourdough” is unwinnable; “how to fix a '
+                        .'sourdough starter that won’t rise” is a video you can make this week, and the '
+                        .'questions group is where those live.'),
                     Blocks::callout('info', 'Suggestions differ by country. If your audience is not in the '
                         .'US, change the region — the lists are often barely related.'),
                 ]),
                 'example' => [
-                    'input' => ['keyword' => 'sourdough starter', 'expansion' => 'questions',
+                    'input' => ['keyword' => 'sourdough starter', 'expansion' => 'everything',
                         'position' => 'before', 'region' => 'US'],
                 ],
                 'faq' => [

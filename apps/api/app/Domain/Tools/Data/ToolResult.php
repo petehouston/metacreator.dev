@@ -39,7 +39,11 @@ final readonly class ToolResult
     }
 
     /**
-     * @param  list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool}>  $columns
+     * `type` picks a cell renderer: `color`, `download`, or `link` — which draws the
+     * row's `text_key` value as the anchor text over the column's own URL. `wrap`
+     * lets a long value break across lines; without it only the value column does.
+     *
+     * @param  list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool, text_key?: string, wrap?: bool}>  $columns
      * @param  list<array<string, mixed>>  $rows
      */
     public static function table(array $columns, array $rows, ?string $summary = null): self

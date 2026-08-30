@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Http;
 
 use App\Domain\Tools\Exceptions\ToolExecutionException;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\UriInterface;
@@ -49,6 +50,58 @@ final class SafeHttpClient
         } catch (ToolExecutionException) {
             return null;
         }
+    }
+
+    /**
+     * Several safe URLs fetched concurrently, keyed the way they were passed in.
+     *
+     * Sequential requests are the wrong shape for an expansion that makes dozens of
+     * small calls: forty-odd round trips at a couple of hundred milliseconds each
+     * spends a worker's whole budget on waiting. Every URL is guarded exactly as it
+     * is in {@see self::request()}; a failure comes back as null for that key
+     * alone, because one dead request should not cost the other thirty-nine.
+     *
+     * @param  array<array-key, string>  $urls
+     * @return array<array-key, Response|null>
+     */
+    public static function attemptPool(array $urls, float $timeout = 6.0): array
+    {
+        $safe = array_filter($urls, static fn (string $url) => UrlGuard::isPublicHttpUrl($url));
+
+        if ($safe === []) {
+            return array_map(static fn () => null, $urls);
+        }
+
+        try {
+            $responses = Http::pool(fn (Pool $pool) => array_map(
+                fn (string $url, int|string $key) => $pool->as((string) $key)
+                    ->timeout($timeout)
+                    ->connectTimeout(min($timeout, 3.0))
+                    ->withHeaders([
+                        'User-Agent' => 'MetaCreatorBot/1.0 (+https://metacreator.dev/bot)',
+                        'Accept' => 'application/json,text/plain;q=0.9,*/*;q=0.8',
+                    ])
+                    ->withOptions(['allow_redirects' => false])
+                    ->get($url),
+                array_values($safe),
+                array_keys($safe),
+            ));
+        } catch (Throwable) {
+            return array_map(static fn () => null, $urls);
+        }
+
+        return array_map(
+            static function (int|string $key) use ($responses, $safe): ?Response {
+                if (! array_key_exists($key, $safe)) {
+                    return null;
+                }
+
+                $response = $responses[(string) $key] ?? null;
+
+                return $response instanceof Response ? $response : null;
+            },
+            array_combine(array_keys($urls), array_keys($urls)),
+        );
     }
 
     private static function request(string $url, float $timeout): Response

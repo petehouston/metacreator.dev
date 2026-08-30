@@ -10,6 +10,7 @@ use App\Domain\Tools\Contracts\UsesProvider;
 use App\Domain\Tools\Data\RunContext;
 use App\Domain\Tools\Data\ToolInput;
 use App\Domain\Tools\Data\ToolResult;
+use App\Domain\Tools\Enums\ResultView;
 use App\Domain\Tools\Exceptions\ToolExecutionException;
 use App\Support\Http\SafeHttpClient;
 
@@ -21,9 +22,11 @@ use App\Support\Http\SafeHttpClient;
  * not give volumes, and it deliberately does not pretend to: a tool that invented a
  * number here would be inventing the only figure anybody would act on.
  *
- * The expansion runs on a wall-clock budget rather than a fixed request count. An
- * alphabet sweep is 26 requests, and on a slow day that is a minute of a worker —
- * so it stops when the budget is spent and says how far it got.
+ * The result is grouped the way the search box behaves: what YouTube completes for
+ * the bare seed first, then the question and intent phrasings, then the A–Z sweep.
+ * Inside a group the order is YouTube's own ranking, because that ranking is the
+ * closest thing in the data to popularity — re-sorting it throws away the only
+ * signal the endpoint gives.
  */
 final class YouTubeSearchSuggestRunner implements Cacheable, ToolRunner, UsesProvider
 {
@@ -32,21 +35,39 @@ final class YouTubeSearchSuggestRunner implements Cacheable, ToolRunner, UsesPro
     /** Whole seconds of wall clock the expansion may spend before it stops early. */
     private const BUDGET_SECONDS = 15.0;
 
-    private const REQUEST_TIMEOUT = 2.5;
+    private const REQUEST_TIMEOUT = 4.0;
+
+    /** Requests fired at once. Enough to finish the sweep, small enough to be polite. */
+    private const POOL_SIZE = 12;
 
     private const MODIFIERS = [
-        'seed' => ['label' => 'Just the seed', 'terms' => ['']],
-        'questions' => ['label' => 'Questions', 'terms' => [
-            'how', 'what', 'why', 'when', 'where', 'which', 'who', 'can', 'is',
-        ]],
-        'commercial' => ['label' => 'Commercial intent', 'terms' => [
-            'best', 'cheap', 'free', 'vs', 'review', 'alternative', 'for beginners', 'tutorial',
-        ]],
-        'alphabet' => ['label' => 'A–Z sweep', 'terms' => [
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        ]],
+        'seed' => [
+            'label' => 'Direct suggestions',
+            'hint' => 'What the search box completes for the seed on its own.',
+            'terms' => [''],
+        ],
+        'questions' => [
+            'label' => 'Questions & long-tail',
+            'hint' => 'The how/what/why phrasings — the searches a small channel can rank for.',
+            'terms' => ['how', 'what', 'why', 'when', 'where', 'which', 'who', 'can', 'is'],
+        ],
+        'commercial' => [
+            'label' => 'Commercial intent',
+            'hint' => 'Searches made by someone comparing, choosing or about to buy.',
+            'terms' => ['best', 'cheap', 'free', 'vs', 'review', 'alternative', 'for beginners', 'tutorial'],
+        ],
+        'alphabet' => [
+            'label' => 'Alphabet expansion (A–Z)',
+            'hint' => 'The seed plus each letter, the way the box fills in as you keep typing.',
+            'terms' => [
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            ],
+        ],
     ];
+
+    /** The one-run default: everything the search box would show, in reading order. */
+    private const EVERYTHING = ['seed', 'questions', 'commercial', 'alphabet'];
 
     public static function key(): string
     {
@@ -82,16 +103,16 @@ final class YouTubeSearchSuggestRunner implements Cacheable, ToolRunner, UsesPro
                 'expansion' => [
                     'type' => 'string',
                     'title' => 'Expansion',
-                    'description' => 'Questions finds the how/what/why searches; the A–Z sweep is the '
-                        .'broadest and the slowest.',
-                    'enum' => array_keys(self::MODIFIERS),
-                    'default' => 'questions',
+                    'description' => 'Everything runs all four groups in one pass; the others narrow the '
+                        .'run to a single group.',
+                    'enum' => ['everything', ...array_keys(self::MODIFIERS)],
+                    'default' => 'everything',
                 ],
                 'position' => [
                     'type' => 'string',
                     'title' => 'Where the modifier goes',
                     'description' => '“Before” finds “how to make sourdough starter”; “after” finds '
-                        .'“sourdough starter a…”.',
+                        .'“sourdough starter a…”, which is what typing into the box does.',
                     'enum' => ['before', 'after'],
                     'default' => 'before',
                 ],
@@ -111,78 +132,117 @@ final class YouTubeSearchSuggestRunner implements Cacheable, ToolRunner, UsesPro
     public function run(ToolInput $input, RunContext $context): ToolResult
     {
         $keyword = trim($input->string('keyword'));
-        $expansion = $input->string('expansion', 'questions');
+        $expansion = $input->string('expansion', 'everything');
         $before = $input->string('position', 'before') === 'before';
         $region = mb_strtolower($input->string('region', 'US'));
 
-        $modifier = self::MODIFIERS[$expansion] ?? self::MODIFIERS['questions'];
+        $wanted = $expansion === 'everything' || ! isset(self::MODIFIERS[$expansion])
+            ? self::EVERYTHING
+            : [$expansion];
 
         $deadline = microtime(true) + self::BUDGET_SECONDS;
+        // Shared across groups: the alphabet sweep repeats plenty of what the
+        // questions already found, and the same phrase twice is noise.
         $seen = [];
+        $groups = [];
         $rows = [];
         $queried = 0;
+        $planned = 0;
         $stoppedEarly = false;
 
-        foreach ($modifier['terms'] as $term) {
+        foreach ($wanted as $name) {
+            $modifier = self::MODIFIERS[$name];
+            $planned += count($modifier['terms']);
+
             if (microtime(true) > $deadline) {
                 $stoppedEarly = true;
-                break;
+
+                continue;
             }
 
-            $query = $term === ''
-                ? $keyword
-                : ($before ? "{$term} {$keyword}" : "{$keyword} {$term}");
+            $queries = [];
 
-            $queried++;
+            foreach ($modifier['terms'] as $term) {
+                $queries[$term] = $term === ''
+                    ? $keyword
+                    : ($before ? "{$term} {$keyword}" : "{$keyword} {$term}");
+            }
 
-            foreach ($this->suggest($query, $region) as $suggestion) {
-                $normalised = mb_strtolower($suggestion);
+            $groupRows = [];
 
-                if (isset($seen[$normalised])) {
-                    continue;
+            foreach ($this->suggestMany($queries, $region, $deadline, $queried, $stoppedEarly) as $term => $suggestions) {
+                foreach ($suggestions as $suggestion) {
+                    $normalised = mb_strtolower($suggestion);
+
+                    if (isset($seen[$normalised])) {
+                        continue;
+                    }
+
+                    $seen[$normalised] = true;
+
+                    $groupRows[] = [
+                        'rank' => count($groupRows) + 1,
+                        'suggestion' => $suggestion,
+                        'modifier' => $term === '' ? '—' : $term,
+                        'words' => count(preg_split('/\s+/u', $suggestion, -1, PREG_SPLIT_NO_EMPTY) ?: []),
+                        'search' => 'https://www.youtube.com/results?search_query='.rawurlencode($suggestion),
+                    ];
                 }
-
-                $seen[$normalised] = true;
-
-                $rows[] = [
-                    'suggestion' => $suggestion,
-                    'modifier' => $term === '' ? '—' : $term,
-                    'words' => count(preg_split('/\s+/u', $suggestion, -1, PREG_SPLIT_NO_EMPTY) ?: []),
-                    'search' => 'https://www.youtube.com/results?search_query='.rawurlencode($suggestion),
-                ];
             }
+
+            if ($groupRows === []) {
+                continue;
+            }
+
+            $groups[] = [
+                'label' => $modifier['label'],
+                'hint' => $modifier['hint'],
+                'count' => count($groupRows),
+                'rows' => $groupRows,
+            ];
+
+            $rows = [...$rows, ...$groupRows];
         }
 
         if ($rows === []) {
             throw ToolExecutionException::notFound("any suggestions for “{$keyword}”");
         }
 
-        // Longer phrases are the ones worth making a video for: they are specific
-        // enough that a small channel can actually rank for them.
-        usort($rows, fn (array $a, array $b) => [$b['words'], $a['suggestion']] <=> [$a['words'], $b['suggestion']]);
-
-        return ToolResult::table(
-            columns: [
-                ['key' => 'suggestion', 'label' => 'Search'],
-                ['key' => 'modifier', 'label' => 'From'],
-                ['key' => 'words', 'label' => 'Words', 'align' => 'right'],
-                ['key' => 'search', 'label' => 'Open on YouTube', 'align' => 'right'],
+        return (new ToolResult(
+            view: ResultView::Table,
+            data: [
+                'columns' => [
+                    ['key' => 'rank', 'label' => '#', 'align' => 'right'],
+                    // Suggestions never wrap: a keyword broken across two lines
+                    // stops reading like the phrase somebody typed.
+                    ['key' => 'suggestion', 'label' => 'Search suggestion',
+                        'copyable' => true, 'copy_all' => true, 'wrap' => false],
+                    ['key' => 'modifier', 'label' => 'From'],
+                    // The link reads as the search it runs, not as the URL.
+                    ['key' => 'search', 'label' => 'Open on YouTube', 'align' => 'right',
+                        'type' => 'link', 'text_key' => 'suggestion'],
+                ],
+                'rows' => $rows,
+                'groups' => $groups,
             ],
-            rows: $rows,
             summary: sprintf(
-                '%d unique searches for “%s”, from %d %s queries, longest phrases first.',
+                '%d suggestions for “%s” across %d %s, in the order YouTube ranks them.',
                 count($rows),
                 $keyword,
-                $queried,
-                mb_strtolower($modifier['label']),
+                count($groups),
+                count($groups) === 1 ? 'group' : 'groups',
             ),
-        )->withMeta([
+        ))->withMeta([
             'keyword' => $keyword,
             'expansion' => $expansion,
             'region' => $region,
             'queries_made' => $queried,
             'suggestions' => count($rows),
-        ])->withWarnings($this->warnings($stoppedEarly, $queried, count($modifier['terms'])));
+            'groups' => array_map(
+                fn (array $group) => ['label' => $group['label'], 'count' => $group['count']],
+                $groups,
+            ),
+        ])->withWarnings($this->warnings($stoppedEarly, $queried, $planned));
     }
 
     /** @return list<string> */
@@ -202,30 +262,60 @@ final class YouTubeSearchSuggestRunner implements Cacheable, ToolRunner, UsesPro
     }
 
     /**
+     * One group's queries, fetched in batches and returned in the order asked for.
+     *
+     * @param  array<string, string>  $queries  modifier term => search query
+     * @return array<string, list<string>>
+     */
+    private function suggestMany(
+        array $queries,
+        string $region,
+        float $deadline,
+        int &$queried,
+        bool &$stoppedEarly,
+    ): array {
+        $results = [];
+
+        foreach (array_chunk($queries, self::POOL_SIZE, preserve_keys: true) as $batch) {
+            if (microtime(true) > $deadline) {
+                $stoppedEarly = true;
+                break;
+            }
+
+            // Keyed by position, not by the modifier term: the seed's term is the
+            // empty string, which is not a key an HTTP pool can be asked to use.
+            $terms = array_keys($batch);
+            $urls = array_map(fn (string $query) => $this->url($query, $region), array_values($batch));
+            $queried += count($urls);
+
+            foreach (SafeHttpClient::attemptPool($urls, self::REQUEST_TIMEOUT) as $index => $response) {
+                $results[$terms[$index]] = $response === null || ! $response->successful()
+                    ? []
+                    : $this->parse($response->body());
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Google's public, keyless suggestion endpoint — the same one the search box
      * itself calls, with `ds=yt` scoping it to YouTube.
-     *
-     * A failure returns nothing rather than throwing: one modifier timing out
-     * should cost that modifier's suggestions, not the whole run.
-     *
-     * @return list<string>
      */
-    private function suggest(string $query, string $region): array
+    private function url(string $query, string $region): string
     {
-        $url = self::ENDPOINT.'?'.http_build_query([
+        return self::ENDPOINT.'?'.http_build_query([
             'client' => 'firefox',
             'ds' => 'yt',
             'gl' => $region,
             'q' => $query,
         ]);
+    }
 
-        $response = SafeHttpClient::attempt($url, self::REQUEST_TIMEOUT);
-
-        if ($response === null || ! $response->successful()) {
-            return [];
-        }
-
-        $decoded = json_decode($response->body(), true);
+    /** @return list<string> */
+    private function parse(string $body): array
+    {
+        $decoded = json_decode($body, true);
 
         if (! is_array($decoded) || ! isset($decoded[1]) || ! is_array($decoded[1])) {
             return [];
