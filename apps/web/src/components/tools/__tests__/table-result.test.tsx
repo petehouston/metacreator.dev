@@ -99,6 +99,49 @@ describe("copy all column", () => {
     expect(write).toHaveBeenCalledWith("claude code, ai agents");
   });
 
+  it("honours a column's own separator", async () => {
+    const write = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText: write } });
+
+    // Hashtags are pasted space-separated; "#a, #b" is not what goes in a
+    // description.
+    render(
+      <ResultRenderer
+        result={
+          {
+            ...tags,
+            data: {
+              ...tags.data,
+              columns: [
+                {
+                  key: "tag",
+                  label: "Tag",
+                  copyable: true,
+                  copy_all: true,
+                  copy_separator: " ",
+                },
+              ],
+              rows: [{ tag: "#claudecode" }, { tag: "#aiagents" }],
+            },
+          } as unknown as ToolResult
+        }
+      />,
+    );
+    fireEvent.click(screen.getByLabelText("Copy all Tag values"));
+
+    expect(write).toHaveBeenCalledWith("#claudecode #aiagents");
+  });
+
+  it("puts the button above the table, not inside its header", () => {
+    render(<ResultRenderer result={tags} />);
+
+    const button = screen.getByLabelText("Copy all Tag values");
+
+    // On a wide table a header button scrolls out of reach, and it reads as a
+    // control for the column rather than for the list.
+    expect(button.closest("table")).toBeNull();
+  });
+
   it("keeps a per-row copy button on the tag cells", () => {
     render(<ResultRenderer result={tags} />);
 

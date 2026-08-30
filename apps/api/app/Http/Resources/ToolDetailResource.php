@@ -44,6 +44,10 @@ final class ToolDetailResource extends JsonResource
 
         return [
             'id' => $this->public_id,
+            // The registry key, not just an internal detail: the web app keys its
+            // custom tool UIs off it, and unlike the slug it never changes when
+            // an admin rewrites a URL.
+            'key' => $this->key,
             'slug' => $this->slug,
             'name' => $this->name,
             'tagline' => $this->tagline,

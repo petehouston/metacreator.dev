@@ -56,7 +56,9 @@ because it is how people search. The heading is a **platform**, not a category.
 | Subscribe Link Generator | 🟢 | P2 | `?sub_confirmation=1` links, with HTML and Markdown snippets |
 | Content Calendar | 🟢 | P2 | Dated upload schedule, slots spaced and pillars rotated |
 | Comment Finder | 🟢 | P2 | Search a video's comments via the official Data API (needs a key) |
+| Fake Comment Generator | 🟢 | P2 | A YouTube comment drawn on a canvas in the browser, downloadable as PNG/JPG/WebP |
 | Search Suggestions | 🟢 | P1 | Real searches from YouTube's own autocomplete, no volumes invented |
+| Hashtag Generator | 🟢 | P1 | 25 tags built from real autocomplete, placed by YouTube's own limits |
 | Embed Code Generator | 🟢 | P2 | Responsive, lazy and privacy-enhanced embeds with working parameters |
 | RSS Feed Generator | 🟢 | P2 | Channel and playlist feed URLs, verified against the live feed |
 | Handle Availability Checker | 🟢 | P2 | A definite yes or no on an @handle, plus variants |
@@ -235,7 +237,8 @@ The category column is the functional category the tool is filed under; the plat
 listed separately on the tool itself.
 
 🔑 marks the one tool that needs an operator-supplied API key; everything else runs on public
-page metadata or pure computation.
+page metadata or pure computation. 🖥 marks a tool whose web UI is a custom client-side component
+(docs/08) rather than the generated form — the runner is still the API's implementation of it.
 
 | Category | Slug | Runner |
 | --- | --- | --- |
@@ -264,6 +267,7 @@ page metadata or pure computation.
 | Content | `youtube-channel-description-generator` | `YouTubeChannelDescriptionGeneratorRunner` |
 | Content | `youtube-content-calendar` | `YouTubeContentCalendarRunner` |
 | Content | `youtube-search-suggestions` | `YouTubeSearchSuggestRunner` |
+| Content | `youtube-hashtag-generator` | `YouTubeHashtagGeneratorRunner` |
 | Media | `youtube-thumbnail-downloader` | `YouTubeThumbnailDownloaderRunner` |
 | Media | `youtube-image-downloader` | `YouTubeImageDownloaderRunner` |
 | Media | `social-image-resizer` | `SocialImageResizerRunner` |
@@ -275,6 +279,7 @@ page metadata or pure computation.
 | Media | `story-templates-sizer` | `StoryTemplateSizerRunner` |
 | Media | `pin-image-sizer` | `PinImageSizerRunner` |
 | Media | `tweet-screenshot-generator` | `TweetScreenshotRunner` |
+| Media | `fake-youtube-comment-generator` 🖥 | `YouTubeCommentGeneratorRunner` |
 | Media | `qr-code-generator` | `QrCodeGeneratorRunner` |
 | Analytics | `engagement-rate-calculator` | `EngagementRateCalculatorRunner` |
 | Analytics | `youtube-money-calculator` | `YouTubeMoneyCalculatorRunner` |

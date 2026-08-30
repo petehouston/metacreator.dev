@@ -6,6 +6,7 @@ import * as React from "react";
 
 import { ResultRenderer } from "@/components/tools/results";
 import { ToolForm } from "@/components/tools/tool-form";
+import { renderCustomTool } from "@/tools/custom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { pollRun, runTool, type RunToolFailure } from "@/lib/client-api";
@@ -26,6 +27,7 @@ export function ToolRunner({ tool }: { tool: ToolDetail }) {
   const resultRef = React.useRef<HTMLDivElement>(null);
 
   const locked = tool.access?.allowed === false;
+  const custom = renderCustomTool(tool);
 
   async function handleSubmit(values: Record<string, unknown>, source?: string) {
     setPending(true);
@@ -72,6 +74,14 @@ export function ToolRunner({ tool }: { tool: ToolDetail }) {
 
   if (locked) {
     return <AccessGate tool={tool} />;
+  }
+
+  // A handful of tools are interactive enough that "submit, wait, render" is the
+  // wrong shape for them, and they bring their own workspace. The access check
+  // above still runs first — a custom UI is a different form, not a way past the
+  // gate.
+  if (custom) {
+    return custom;
   }
 
   return (

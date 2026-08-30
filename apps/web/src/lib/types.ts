@@ -108,6 +108,8 @@ export interface FaqEntry {
 }
 
 export interface ToolDetail extends Omit<ToolSummary, "stats"> {
+  /** The stable registry key (`youtube.comment-generator`). Custom tool UIs are keyed on it. */
+  key: string;
   description: string | null;
   version: number;
   input_schema: JsonSchema;

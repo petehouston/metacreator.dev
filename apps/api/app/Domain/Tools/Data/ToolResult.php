@@ -43,7 +43,12 @@ final readonly class ToolResult
      * row's `text_key` value as the anchor text over the column's own URL. `wrap`
      * lets a long value break across lines; without it only the value column does.
      *
-     * @param  list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool, text_key?: string, wrap?: bool}>  $columns
+     * `copy_all` puts one button above the table that copies the whole column,
+     * joined with `copy_separator` — a comma and space unless the column says
+     * otherwise, which a hashtag column does, since "#a, #b" is not what gets
+     * pasted into a description.
+     *
+     * @param  list<array{key: string, label: string, align?: string, type?: string, copyable?: bool, copy_all?: bool, copy_separator?: string, text_key?: string, wrap?: bool}>  $columns
      * @param  list<array<string, mixed>>  $rows
      */
     public static function table(array $columns, array $rows, ?string $summary = null): self

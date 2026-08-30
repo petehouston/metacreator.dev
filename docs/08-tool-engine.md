@@ -79,9 +79,26 @@ The body arrives pre-split into `visible` and `hidden` at a **grapheme** count, 
 codepoint count, so an emoji costs one character exactly as it does in the app. The renderer greys
 the hidden half in place rather than dropping it: seeing the sentence that gets cut is the point.
 
+## Custom tool UIs
+
 A tool only needs custom UI when it is genuinely interactive (grid planner, carousel splitter,
-thumbnail A/B tester). Those register a component in `apps/web/src/tools/custom/<key>.tsx` and the
-generic path picks it up automatically.
+thumbnail A/B tester), or when the work has to happen on the visitor's own machine — the fake
+comment generator draws its card on a canvas in the browser precisely so that a dropped avatar is
+never uploaded, and so there is nothing on our side to store or leak.
+
+Those live in `apps/web/src/tools/custom/`, and are dispatched by `renderCustomTool()` in that
+directory's `index.tsx`, keyed on the tool's registry `key` (not its slug, which an admin can
+rewrite). `ToolRunner` renders the returned element in place of the form and the result renderer;
+everything around it on the tool page — masthead, access gate, instructions, FAQ, related tools,
+SEO — is untouched, and so is the access check, which still runs first.
+
+Each one is loaded with `next/dynamic` and `ssr: false`, so a canvas renderer stays out of every
+other tool page's bundle.
+
+A custom UI does **not** excuse the tool from having a runner. The catalog row pulls its input
+schema from the runner, the API has to be able to execute the tool for anyone not using the web
+app, and the drift test asserts both directions. The runner is the headless implementation; the
+custom component is a better front end for the same tool.
 
 ## Execution pipeline
 

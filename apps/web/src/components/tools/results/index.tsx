@@ -134,6 +134,12 @@ interface TableColumn {
   type?: string;
   copyable?: boolean;
   copy_all?: boolean;
+  /**
+   * What "Copy all" puts between the values. Defaults to a comma, which is right
+   * for a list of phrases; a hashtag column sets a single space, because
+   * `#a, #b` is not what anyone pastes into a description.
+   */
+  copy_separator?: string;
   /** For `type: "link"` — the row key holding the anchor text. */
   text_key?: string;
   /** Whether long values may wrap. Defaults to true for the value column only. */
@@ -194,28 +200,40 @@ function TableResult({ result }: { result: ToolResult }) {
                   ))}
               </div>
             </div>
-            <TableGrid
-              columns={columns}
-              rows={group.rows}
-              copyAllInHead={false}
-            />
+            <TableGrid columns={columns} rows={group.rows} />
           </section>
         ))}
       </div>
     );
   }
 
-  return <TableGrid columns={columns} rows={rows} />;
+  const copyAll = columns.filter((column) => column.copy_all);
+
+  if (copyAll.length === 0) {
+    return <TableGrid columns={columns} rows={rows} />;
+  }
+
+  // Copying the column is something you do to the whole table, so the button sits
+  // above it rather than inside a header cell — where it scrolled out of reach on a
+  // wide table, and read as a control for sorting the column rather than copying it.
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex shrink-0 items-center justify-end gap-2">
+        {copyAll.map((column) => (
+          <CopyAllButton key={column.key} column={column} rows={rows} />
+        ))}
+      </div>
+      <TableGrid columns={columns} rows={rows} />
+    </div>
+  );
 }
 
 function TableGrid({
   columns,
   rows,
-  copyAllInHead = true,
 }: {
   columns: TableColumn[];
   rows: Record<string, unknown>[];
-  copyAllInHead?: boolean;
 }) {
   return (
     // Wide tables scroll inside their own container; the page body never scrolls
@@ -233,15 +251,7 @@ function TableGrid({
                   column.align === "right" ? "text-right" : "text-left",
                 )}
               >
-                <span className="inline-flex items-center gap-2">
-                  {column.label}
-                  {/* One button for the whole column, so a long tag list does not
-                      have to be copied a row at a time. A grouped table hoists it
-                      up to the group heading instead. */}
-                  {copyAllInHead && column.copy_all && (
-                    <CopyAllButton column={column} rows={rows} />
-                  )}
-                </span>
+                {column.label}
               </th>
             ))}
           </tr>
@@ -291,8 +301,8 @@ function TableGrid({
 }
 
 /**
- * Every value in one column, copied at once. Lives either in the column header or,
- * for a grouped table, beside the group's heading.
+ * Every value in one column, copied at once — above the table, or beside the
+ * heading of the group it belongs to.
  */
 function CopyAllButton({
   column,
@@ -309,7 +319,7 @@ function CopyAllButton({
 
   return (
     <CopyButton
-      value={values.join(", ")}
+      value={values.join(column.copy_separator ?? ", ")}
       label="Copy all"
       copiedLabel="Copied all"
       size="sm"

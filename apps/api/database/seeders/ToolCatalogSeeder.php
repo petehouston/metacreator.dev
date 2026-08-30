@@ -2027,6 +2027,65 @@ final class ToolCatalogSeeder extends Seeder
             ],
 
             [
+                'key' => 'youtube.comment-generator',
+                'slug' => 'fake-youtube-comment-generator',
+                'category' => 'media',
+                'name' => 'Fake YouTube Comment Generator',
+                'tagline' => 'A YouTube comment card, drawn instead of screenshotted — light or dark.',
+                'description' => 'Draws a comment exactly as YouTube draws one — avatar, handle, age, body, '
+                    .'like count, creator heart — in the light and dark themes, and downloads it as a PNG, '
+                    .'JPG or WebP. In the browser the whole card is rendered locally: an avatar you drop in '
+                    .'is never uploaded and never stored.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'fake youtube comment generator',
+                'seo_title' => 'Fake YouTube Comment Generator — Light & Dark, PNG/JPG/WebP (Free)',
+                'seo_description' => 'Create a realistic YouTube comment image for thumbnails, slides and '
+                    .'videos. Custom avatar, likes, age and creator heart. Nothing is uploaded. Free.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Type the username and the comment, set how long ago it was posted and '
+                        .'how many likes it has, then download the card. The preview updates as you type, in '
+                        .'whichever theme you pick.'),
+                    Blocks::heading('Your images stay on your device', 2),
+                    Blocks::paragraph('Drop in an avatar and a creator avatar if you want them. The card is '
+                        .'drawn in your own browser onto a canvas, so those files are never uploaded to us '
+                        .'and nothing is stored — close the tab and they are gone.'),
+                    Blocks::heading('This is a mock-up, not evidence', 2),
+                    Blocks::paragraph('The card draws whatever you type into it, which means it proves '
+                        .'nothing about who commented what. Use it to illustrate your own comments, to mock '
+                        .'up a thumbnail, or to reproduce a comment you have permission to quote — never to '
+                        .'present invented text as something a real person posted.'),
+                    Blocks::callout('tip', 'Match the theme to wherever the card is going. A light card on a '
+                        .'dark thumbnail reads as a sticker; a dark card reads as a screenshot.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'username' => 'John_Smith',
+                        'content' => 'This video was very funny, thanks for sharing',
+                        'time' => 5,
+                        'unit' => 'hours',
+                        'likes' => 5000,
+                        'reaction' => 'neutral',
+                        'creator_liked' => true,
+                        'theme' => 'light',
+                    ],
+                ],
+                'faq' => [
+                    ['question' => 'Are my images uploaded anywhere?',
+                        'answer' => 'No. The web tool renders the card in your browser, so the avatars you '
+                            .'drop in never leave your device and nothing is saved on our side.'],
+                    ['question' => 'Which format should I download?',
+                        'answer' => 'PNG for anything with text you want crisp, and it keeps a transparent '
+                            .'background if you turn one on. JPG is smallest for photo-heavy thumbnails. '
+                            .'WebP splits the difference and every current browser reads it.'],
+                    ['question' => 'Can I use this to fake a real person’s comment?',
+                        'answer' => 'Please do not. Passing off an invented comment as a real one is '
+                            .'defamatory at worst and dishonest at best. The tool draws no verified badge '
+                            .'and no channel link, so a card is never a substitute for the real thing.'],
+                ],
+            ],
+
+            [
                 'key' => 'youtube.comment-finder',
                 'slug' => 'youtube-comment-finder',
                 'category' => 'utility',
@@ -2238,6 +2297,74 @@ final class ToolCatalogSeeder extends Seeder
                         'answer' => 'Every 15 minutes is plenty and stays well clear of anything that looks '
                             .'abusive. The feed is cached upstream, so polling harder does not get you the '
                             .'video sooner.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.hashtag-generator',
+                'slug' => 'youtube-hashtag-generator',
+                'category' => 'content',
+                'name' => 'YouTube Hashtag Generator',
+                'tagline' => 'Twenty-five tags built from what YouTube’s own search box completes.',
+                'description' => 'Expands your topic against YouTube autocomplete and turns the real searches '
+                    .'it returns into 25 ranked hashtags for a Short or a long-form upload — with each tag '
+                    .'placed where YouTube will actually use it: the first three above your title, fifteen in '
+                    .'the description, the rest held back as spares.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'youtube hashtag generator',
+                'seo_title' => 'YouTube Hashtag Generator — 25 Tags From Real Searches (Free)',
+                'seo_description' => 'Generate 25 YouTube hashtags for Shorts or long-form video, built from '
+                    .'YouTube’s own autocomplete. Ranked, placed by YouTube’s real limits. No invented '
+                    .'numbers. Free.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Describe the video, pick whether it is a Short or a long-form upload, '
+                        .'and run it. Adding two or three related keywords sharpens the tags noticeably — '
+                        .'“catching butterflies” gives more to work with than “butterflies”.'),
+                    Blocks::heading('Where the tags come from', 2),
+                    Blocks::paragraph('Most of them are built from YouTube’s autocomplete: the phrases the '
+                        .'search box completes are searches people demonstrably type, which is the closest '
+                        .'thing to real demand that is available without a paid data source. When '
+                        .'autocomplete has little to say about a topic, the list is topped up from your own '
+                        .'words and those rows say so.'),
+                    Blocks::heading('Why there are no video counts', 2),
+                    Blocks::paragraph('Other generators print a “used by 1M videos” figure beside each tag. '
+                        .'Nobody outside Google has hashtag volumes, and that number is the only one on the '
+                        .'page anyone would act on, so we do not print one. The breadth column is a shape '
+                        .'heuristic — short tags are crowded, long compounds are quiet — and it is labelled '
+                        .'as such.'),
+                    Blocks::heading('YouTube’s actual limits', 2),
+                    Blocks::paragraph('Fifteen hashtags in the description is the cap; anything after the '
+                        .'fifteenth is dropped. The first three appear above your video title, so those three '
+                        .'are the ones that matter. Go past sixty hashtags on an upload and YouTube ignores '
+                        .'every hashtag on it.'),
+                    Blocks::callout('tip', 'Do not paste all 25. Take the top fifteen, drop anything that '
+                        .'does not describe the video, and keep the rest as spares for the next upload.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'topic' => 'catching butterflies',
+                        'format' => 'shorts',
+                        'extra_keywords' => 'nature, kids outdoors',
+                        'region' => 'US',
+                    ],
+                ],
+                'faq' => [
+                    ['question' => 'How many hashtags should I actually use?',
+                        'answer' => 'Between three and five that genuinely describe the video. YouTube keeps '
+                            .'fifteen in the description, but a wall of loosely related tags helps nobody '
+                            .'find you and past sixty it ignores all of them.'],
+                    ['question' => 'Should a long-form video use #shorts?',
+                        'answer' => 'No. It pushes the video in front of an audience expecting something '
+                            .'under a minute, and they swipe away — which is a retention signal working '
+                            .'against you. Pick the long-form format and the tool leaves those tags out.'],
+                    ['question' => 'Why do the results change by region?',
+                        'answer' => 'Autocomplete is regional, sometimes completely. Set the region to where '
+                            .'your audience actually watches, not where you are sitting.'],
+                    ['question' => 'Do hashtags help a video rank?',
+                        'answer' => 'A little, and mostly for discovery rather than ranking — they group '
+                            .'your video onto a hashtag page and give YouTube another signal about the '
+                            .'topic. They do not rescue a weak title or thumbnail.'],
                 ],
             ],
 

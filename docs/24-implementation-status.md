@@ -36,7 +36,8 @@ Last updated: 2026-08-27.
 | Tool registry, runner contract, access & quota services | ✅ | [08](08-tool-engine.md) |
 | Public catalog, search, filters, tool pages | ✅ | |
 | Generated `ToolForm` and result renderers | ✅ | |
-| Tool runners | 🟡 | **46 of the 88** catalogued in [07](07-tool-catalog.md) — every free tool, plus one account tool. What remains is the account and premium tiers, which need providers rather than runners |
+| Tool runners | 🟡 | **62 registered**, each with a catalog row (`ToolServiceProvider::RUNNERS`; the drift test asserts both directions) — every free tool, plus one account tool. What remains of [07](07-tool-catalog.md) is the account and premium tiers, which need providers rather than runners |
+| Custom tool UIs | ✅ | `apps/web/src/tools/custom/`, dispatched on the tool's registry key. One so far: the fake YouTube comment generator, which draws its card on a canvas in the browser so no image is ever uploaded |
 | Run recording & telemetry | ✅ | |
 | Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter, and a page per run at `/dashboard/runs/{id}` |
 | In-app catalog (`/dashboard/tools`) | ✅ | Search, tier/platform/category filters, per-user access shown on each card |

@@ -292,6 +292,9 @@ it('runs every offline runner against a representative input', function (string 
     [Runners\YouTubeChannelDescriptionGeneratorRunner::class, ['channel_name' => 'The Slow Loaf',
         'topic' => 'sourdough baking for small kitchens', 'audience' => 'home bakers', 'tone' => 'expert',
         'keywords' => 'sourdough starter, bread scoring']],
+    [Runners\YouTubeCommentGeneratorRunner::class, ['username' => 'John_Smith',
+        'content' => 'This video was very funny, thanks for sharing', 'time' => 5, 'unit' => 'hours',
+        'likes' => 5000, 'creator_liked' => true, 'theme' => 'dark']],
     [Runners\YouTubeContentCalendarRunner::class, ['start_date' => '2026-09-07', 'weeks' => 4,
         'long_form_per_week' => 1, 'shorts_per_week' => 3]],
     [Runners\YouTubeEmbedCodeGeneratorRunner::class, ['url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
@@ -540,6 +543,40 @@ it('says plainly that a post card is a mock-up, not a screenshot', function () {
     ]);
 
     expect(implode(' ', $result->warnings))->toContain('mock-up');
+});
+
+it('writes a comment age the way YouTube writes it', function () {
+    $svg = function (array $input): string {
+        $url = runRunner(app(Runners\YouTubeCommentGeneratorRunner::class), $input)->artifacts[0]->url;
+
+        return (string) base64_decode(substr($url, strpos($url, ',') + 1), true);
+    };
+
+    // "1 hours ago" is the detail that gives a fake comment away fastest.
+    expect($svg(['username' => 'john', 'content' => 'Nice.', 'time' => 1, 'unit' => 'hours']))
+        ->toContain('1 hour ago')
+        ->and($svg(['username' => 'john', 'content' => 'Nice.', 'time' => 5, 'unit' => 'hours']))
+        ->toContain('5 hours ago');
+});
+
+it('draws a comment card in the dark theme with one @ and a compact like count', function () {
+    $result = runRunner(app(Runners\YouTubeCommentGeneratorRunner::class), [
+        'username' => '@John_Smith',
+        'content' => 'This video was very funny, thanks for sharing',
+        'likes' => 5000,
+        'theme' => 'dark',
+        'creator_liked' => true,
+    ]);
+
+    $svg = base64_decode(substr($result->artifacts[0]->url, strpos($result->artifacts[0]->url, ',') + 1), true);
+
+    expect($svg)->toContain('<svg')
+        ->and($svg)->toContain('#0F0F0F')
+        ->and($svg)->toContain('@John_Smith')
+        ->and($svg)->not->toContain('@@John_Smith')
+        // 5000 likes is "5K" on YouTube, never "5.0K".
+        ->and($svg)->toContain('>5K<')
+        ->and(implode(' ', $result->warnings))->toContain('mock-up');
 });
 
 it('rejects a handle no network could accept', function () {
@@ -1010,3 +1047,73 @@ it('runs a single group when one is asked for, and never repeats a suggestion', 
         // "after" appends the modifier, the way typing another word into the box does.
         ->and($suggestions[0])->toBe('sourdough starter how recipe');
 });
+
+it('builds 25 YouTube hashtags and places them by YouTube’s own limits', function () {
+    Http::fake(['suggestqueries.google.com/*' => suggestResponse()]);
+
+    $result = runRunner(app(Runners\YouTubeHashtagGeneratorRunner::class), [
+        'topic' => 'catching butterflies',
+        'format' => 'shorts',
+    ]);
+
+    $rows = $result->data['rows'];
+    $tags = array_column($rows, 'hashtag');
+
+    expect($result->view)->toBe(ResultView::Table)
+        ->and($rows)->toHaveCount(25)
+        ->and($tags)->toEqual(array_unique($tags))
+        // The topic itself leads, stopwords stripped and the words joined up.
+        ->and($tags[0])->toBe('#catchingbutterflies')
+        ->and($rows[0]['source'])->toBe('Your topic')
+        ->and($rows[0]['link'])->toBe('https://www.youtube.com/hashtag/catchingbutterflies')
+        // First three above the title, fifteen in the description, the rest spare.
+        ->and($rows[2]['placement'])->toBe('Above the title')
+        ->and($rows[3]['placement'])->toBe('Description')
+        ->and($rows[14]['placement'])->toBe('Description')
+        ->and($rows[15]['placement'])->toBe('Spare — swap one in');
+
+    // A tag built from a real completion, with "for" and "beginners" surviving as
+    // the words that carry the search.
+    expect($tags)->toContain('#catchingbutterfliesbeginners');
+
+    // No column claims a video or channel count, because nobody outside Google has one.
+    expect(array_column($result->data['columns'], 'key'))
+        ->not->toContain('videos')
+        ->not->toContain('channels');
+
+    expect(implode(' ', $result->warnings))->toContain('no video or channel counts');
+});
+
+it('keeps #shorts away from a long-form upload', function () {
+    Http::fake(['suggestqueries.google.com/*' => suggestResponse()]);
+
+    $tagsFor = function (string $format): array {
+        return array_column(runRunner(app(Runners\YouTubeHashtagGeneratorRunner::class), [
+            'topic' => 'catching butterflies',
+            'format' => $format,
+        ])->data['rows'], 'hashtag');
+    };
+
+    // #shorts on a ten-minute video is the own goal the tool exists to prevent.
+    expect($tagsFor('long-form'))->not->toContain('#shorts')
+        ->and($tagsFor('shorts'))->toContain('#shorts');
+});
+
+it('tops the list up from the topic when autocomplete has nothing to say', function () {
+    Http::fake(['suggestqueries.google.com/*' => Http::response('', 500)]);
+
+    $result = runRunner(app(Runners\YouTubeHashtagGeneratorRunner::class), [
+        'topic' => 'catching butterflies',
+        'format' => 'shorts',
+    ]);
+
+    expect($result->data['rows'])->toHaveCount(25)
+        ->and($result->meta['from_autocomplete'])->toBeLessThan(25)
+        // The rows that were guessed at say so, rather than passing as real searches.
+        ->and(array_column($result->data['rows'], 'source'))->toContain('Built from your topic')
+        ->and(implode(' ', $result->warnings))->toContain('built from your topic rather than');
+});
+
+it('rejects a hashtag topic with nothing to build from', function () {
+    runRunner(app(Runners\YouTubeHashtagGeneratorRunner::class), ['topic' => '!!']);
+})->throws(ToolExecutionException::class);
