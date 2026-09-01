@@ -26,7 +26,11 @@
 </head>
 @php
     $siteUrl = rtrim((string) config('app.frontend_url'), '/');
-    $preferencesUrl = $siteUrl.'/dashboard/settings/notifications';
+
+    // Account mail gets the preferences link by default; mail addressed to someone
+    // who may have no account (a newsletter confirmation) passes its own footer.
+    $preferencesUrl = $preferencesUrl ?? $siteUrl.'/dashboard/settings/notifications';
+    $footerNote = $footerNote ?? 'You are receiving this because you have a MetaCreator account.';
 @endphp
 <body class="mc-body" style="margin:0;padding:0;background:#f4f5f8;">
 <span style="display:none!important;visibility:hidden;opacity:0;height:0;width:0;overflow:hidden;">{{ $preview ?? \Illuminate\Support\Str::limit(strip_tags($body ?? ''), 120) }}</span>
@@ -48,7 +52,7 @@
     </td></tr>
 
     <tr><td style="padding-top:24px;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#8b90a8;" class="mc-muted">
-      <p style="margin:0 0 8px;">You are receiving this because you have a MetaCreator account.</p>
+      <p style="margin:0 0 8px;">{{ $footerNote }}</p>
       @if (! empty($preferencesUrl))
         <p style="margin:0 0 8px;"><a href="{{ $preferencesUrl }}" style="color:#8b90a8;">Manage notification preferences</a></p>
       @endif

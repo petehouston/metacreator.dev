@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\Auth\SessionController;
 use App\Http\Controllers\Api\V1\Blog\BlogController;
 use App\Http\Controllers\Api\V1\Catalog\ToolCatalogController;
 use App\Http\Controllers\Api\V1\Changelog\ChangelogController;
+use App\Http\Controllers\Api\V1\Newsletter\NewsletterSubscriptionController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\Tools\RunToolController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,21 @@ Route::prefix('blog')->middleware('blog.enabled')->group(function (): void {
 
     // Last: a bare segment would otherwise swallow `categories` and `tags`.
     Route::get('posts/{slug}', [BlogController::class, 'show'])->name('blog.posts.show');
+});
+
+// The public newsletter. Throttled by address *and* by IP: the first stops one
+// mailbox being flooded with confirmation mail, the second stops a script seeding
+// the list. The group 404s when an admin turns the newsletter off.
+Route::prefix('newsletter')->middleware('newsletter.enabled')->group(function (): void {
+    Route::post('subscribe', [NewsletterSubscriptionController::class, 'store'])
+        ->middleware('throttle:newsletter')
+        ->name('newsletter.subscribe');
+
+    // Its own limit, keyed by IP alone: the subscribe limiter keys on the submitted
+    // address, which a confirmation carries no copy of.
+    Route::post('confirm', [NewsletterSubscriptionController::class, 'confirm'])
+        ->middleware('throttle:20,1')
+        ->name('newsletter.confirm');
 });
 
 Route::prefix('tools')->group(function (): void {

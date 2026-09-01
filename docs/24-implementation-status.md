@@ -141,6 +141,10 @@ the ticket queue and the subscriber list all have working screens ([25](25-admin
 missing is the machinery that fills them: nothing writes a Stripe subscription yet, customers cannot
 open a ticket from the dashboard, and no provider adapter syncs the list outward.
 
+Public newsletter capture *is* wired: `POST /newsletter/subscribe` and `/newsletter/confirm` write
+the local list and run double opt-in. Unsubscribe is still handled only by an admin editing the
+row — the footer's "unsubscribe in one click" has no endpoint behind it yet.
+
 ## Known gaps worth knowing about
 
 - **Synchronous tool runs record telemetry, not results.** `RecordToolRun` persists the run row;

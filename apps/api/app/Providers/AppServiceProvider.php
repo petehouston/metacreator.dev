@@ -75,6 +75,13 @@ final class AppServiceProvider extends ServiceProvider
             Limit::perMinute(20)->by('ip:'.$request->ip()),
         ]);
 
+        // Two keys, two different abuses: one address being flooded with confirmation
+        // mail, and one client seeding the list with addresses it does not own.
+        RateLimiter::for('newsletter', fn (Request $request) => [
+            Limit::perMinute(3)->by('email:'.$request->input('email')),
+            Limit::perMinute(10)->by('ip:'.$request->ip()),
+        ]);
+
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
     }

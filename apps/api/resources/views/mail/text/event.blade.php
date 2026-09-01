@@ -8,4 +8,4 @@
 
 --
 MetaCreator.dev
-You are receiving this because you have a MetaCreator account.
+{{ $footerNote ?? 'You are receiving this because you have a MetaCreator account.' }}

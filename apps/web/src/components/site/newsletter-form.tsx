@@ -5,6 +5,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { newsletterApi } from "@/lib/newsletter-api";
 import { cn } from "@/lib/utils";
 
 /**
@@ -34,38 +35,24 @@ export function NewsletterForm({
 
     setState("pending");
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/newsletter/subscribe`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            email: form.get("email"),
-            source,
-            source_url: window.location.pathname,
-          }),
-        },
-      );
+    const result = await newsletterApi.subscribe({
+      email: String(form.get("email") ?? ""),
+      source,
+      source_url: window.location.pathname,
+    });
 
-      const payload = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        setState("error");
-        setMessage(payload?.error?.message ?? "That didn't work. Please try again.");
-        return;
-      }
-
-      setState("done");
-      setMessage(
-        payload?.data?.requires_confirmation
-          ? "Almost there — check your inbox to confirm."
-          : "You're subscribed. Thanks!",
-      );
-    } catch {
+    if (!result.ok) {
       setState("error");
-      setMessage("We couldn't reach the server. Please try again.");
+      setMessage(result.error.message);
+      return;
     }
+
+    setState("done");
+    setMessage(
+      result.data.requires_confirmation
+        ? "Almost there — check your inbox to confirm."
+        : "You're subscribed. Thanks!",
+    );
   }
 
   if (state === "done") {

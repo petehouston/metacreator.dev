@@ -29,6 +29,15 @@ final class NewsletterSubscriber extends Model
 
     protected $hidden = ['confirm_token_hash', 'consent_ip_hash'];
 
+    /**
+     * Confirmation tokens are stored hashed for the same reason password reset
+     * tokens are: a database copy must not be a set of working links.
+     */
+    public static function hashToken(string $token): string
+    {
+        return hash('sha256', $token);
+    }
+
     protected function casts(): array
     {
         return [
