@@ -2,6 +2,8 @@ import type * as React from "react";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { TrackingScripts, TrackingScriptsBodyEnd } from "@/components/site/tracking-scripts";
+import { trackingScripts } from "@/lib/site-settings";
 
 /**
  * The public, indexable surface: header, content, footer, and the painted canvas
@@ -11,9 +13,16 @@ import { SiteHeader } from "@/components/site/header";
  * workspace can be a genuinely different thing — an app shell — instead of the
  * marketing site with a sidebar bolted on.
  */
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  // The tags configured under Settings → Tracking & scripts. Read here rather than
+  // in the root layout because that root also wraps `/admin` and the customer
+  // dashboard, and neither is ever allowed to carry a third-party tag (docs/15).
+  const scripts = await trackingScripts();
+
   return (
     <div className="flex min-h-dvh flex-col">
+      <TrackingScripts scripts={scripts} />
+
       {/* Skip link: the first thing a keyboard user meets, and the cheapest
           accessibility win on any site. */}
       <a
@@ -30,6 +39,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </main>
 
       <SiteFooter />
+
+      <TrackingScriptsBodyEnd scripts={scripts} />
     </div>
   );
 }

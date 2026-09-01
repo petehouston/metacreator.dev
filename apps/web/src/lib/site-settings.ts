@@ -127,3 +127,59 @@ export async function contactEmail(): Promise<string> {
     ? value.trim()
     : siteConfig.supportEmail;
 }
+
+/**
+ * The tracking configuration from Settings → Tracking & scripts.
+ *
+ * Two halves that behave differently: the measurement IDs, which we turn into the
+ * provider's official snippet ourselves, and four raw-HTML slots an admin pastes
+ * into verbatim. Both are public settings, so this is the same cached `/settings`
+ * read every other surface makes — no extra request.
+ */
+export interface TrackingScripts {
+  ga4Id: string;
+  gtmId: string;
+  metaPixelId: string;
+  tiktokPixelId: string;
+  headStart: string;
+  headEnd: string;
+  bodyStart: string;
+  bodyEnd: string;
+}
+
+const NO_TRACKING: TrackingScripts = {
+  ga4Id: "",
+  gtmId: "",
+  metaPixelId: "",
+  tiktokPixelId: "",
+  headStart: "",
+  headEnd: "",
+  bodyStart: "",
+  bodyEnd: "",
+};
+
+export async function trackingScripts(): Promise<TrackingScripts> {
+  const settings = await api.settings().catch(() => null);
+
+  // Unlike the blog and feature defaults, the fallback here is *nothing*. A
+  // settings read that fails should drop a page view, not inject a half-configured
+  // tag or, worse, some stale default onto every page on the site.
+  if (settings === null) return NO_TRACKING;
+
+  const text = (key: string): string => {
+    const value = settings[key];
+
+    return typeof value === "string" ? value.trim() : "";
+  };
+
+  return {
+    ga4Id: text("tracking.ga4_id"),
+    gtmId: text("tracking.gtm_id"),
+    metaPixelId: text("tracking.meta_pixel_id"),
+    tiktokPixelId: text("tracking.tiktok_pixel_id"),
+    headStart: text("scripts.head_start"),
+    headEnd: text("scripts.head_end"),
+    bodyStart: text("scripts.body_start"),
+    bodyEnd: text("scripts.body_end"),
+  };
+}
