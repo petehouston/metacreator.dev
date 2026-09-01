@@ -45,7 +45,7 @@ sitting; start here and follow the links.
 | --- | --- | --- |
 | 11 | [Billing & subscriptions](11-billing.md) | Plans, Stripe integration, invoices, dunning, entitlements |
 | 12 | [Support tickets](12-support-tickets.md) | Ticket lifecycle, threading, SLA, admin workflows |
-| 13 | [Notifications & email](13-notifications-email.md) | Channels, event catalog, Mailgun transactional setup |
+| 13 | [Notifications & email](13-notifications-email.md) | Channels, event catalog, admin-configured transactional providers |
 
 ## 5. Design
 

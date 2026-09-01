@@ -634,6 +634,33 @@ export interface SettingsPayload {
   permissions: Record<string, boolean>;
 }
 
+/**
+ * What the stored mail settings add up to.
+ *
+ * `configured` only means every credential the provider needs is present — it is
+ * not a promise that mail arrives, which is why `missing` names the empty keys and
+ * `delivers_via_flow` exists at all.
+ */
+export interface MailStatus {
+  provider: string;
+  provider_label: string;
+  configured: boolean;
+  /** Setting keys still empty for the selected provider. */
+  missing: string[];
+  from_address: string;
+  reply_to_address: string;
+  /** Klaviyo: the send is handed to a flow the operator has to build themselves. */
+  delivers_via_flow: boolean;
+}
+
+export interface MailTestResult {
+  sent: boolean;
+  recipient?: string;
+  /** The provider's own error, passed through rather than paraphrased. */
+  error?: string;
+  status: MailStatus;
+}
+
 export interface ActivityEntry {
   id: number;
   log_name: string | null;

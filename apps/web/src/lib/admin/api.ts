@@ -33,6 +33,8 @@ import type {
   NewsletterSubscriber,
   Overview,
   PeriodInfo,
+  MailStatus,
+  MailTestResult,
   PermissionCatalog,
   SettingsPayload,
   Taxonomy,
@@ -213,6 +215,14 @@ export const adminApi = {
     get: () => one<SettingsPayload>("/settings"),
     update: (settings: { key: string; value: unknown }[]) =>
       write<{ updated: string[] }>("PUT", "/settings", { settings }),
+
+    mail: {
+      status: () => one<MailStatus>("/settings/mail"),
+      // Omitting the address sends to the signed-in admin, which is the case that
+      // wants no typing at all.
+      test: (email?: string) =>
+        write<MailTestResult>("POST", "/settings/mail/test", email ? { email } : {}),
+    },
   },
 
   activity: (params: Params) => list<ActivityEntry>("/activity", params),

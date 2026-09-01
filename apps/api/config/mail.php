@@ -53,16 +53,35 @@ return [
             'transport' => 'ses',
         ],
 
+        // Mailgun, Postmark, Resend and Klaviyo are delivered by the HTTP transports
+        // in App\Domain\Notifications\Mail\Transports rather than by a vendor
+        // package, and every value below is normally written at runtime from the
+        // mail settings — the env fallbacks are what a deployment gets before an
+        // operator has touched the admin screen.
+
+        'mailgun' => [
+            'transport' => 'mailgun',
+            'domain' => env('MAILGUN_DOMAIN'),
+            'secret' => env('MAILGUN_SECRET'),
+            // `api.eu.mailgun.net` for an account in the EU region.
+            'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        ],
+
         'postmark' => [
             'transport' => 'postmark',
-            // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
+            'token' => env('POSTMARK_TOKEN'),
+            'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID', 'outbound'),
         ],
 
         'resend' => [
             'transport' => 'resend',
+            'key' => env('RESEND_KEY'),
+        ],
+
+        'klaviyo' => [
+            'transport' => 'klaviyo',
+            'api_key' => env('KLAVIYO_API_KEY'),
+            'metric' => env('KLAVIYO_METRIC', 'Transactional Email'),
         ],
 
         'sendmail' => [

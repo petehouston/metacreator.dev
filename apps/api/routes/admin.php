@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\ActivityController;
 use App\Http\Controllers\Api\V1\Admin\BillingController;
 use App\Http\Controllers\Api\V1\Admin\ChangelogController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController;
+use App\Http\Controllers\Api\V1\Admin\MailController;
 use App\Http\Controllers\Api\V1\Admin\MediaController;
 use App\Http\Controllers\Api\V1\Admin\NewsletterController;
 use App\Http\Controllers\Api\V1\Admin\OverviewController;
@@ -349,6 +350,19 @@ Route::get('settings', [SettingsController::class, 'index'])
 Route::put('settings', [SettingsController::class, 'update'])
     ->middleware('permission:settings.update|settings.scripts.update|settings.secrets.update')
     ->name('admin.settings.update');
+
+// Mail readiness and test sends. Reading the status is `settings.view` — it reports
+// which keys are missing, never a value. Sending is `settings.update`: it puts a real
+// message through the provider and costs a send, so it is a write, not a read.
+Route::prefix('settings/mail')->group(function (): void {
+    Route::get('/', [MailController::class, 'status'])
+        ->middleware('permission:settings.view')
+        ->name('admin.settings.mail.status');
+
+    Route::post('test', [MailController::class, 'test'])
+        ->middleware('permission:settings.update')
+        ->name('admin.settings.mail.test');
+});
 
 Route::get('newsletter/subscribers', [NewsletterController::class, 'index'])
     ->middleware('permission:newsletter.view')

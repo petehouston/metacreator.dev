@@ -10,6 +10,8 @@ import {
   Lock,
   Mail,
   Plug,
+  Send,
+  SendHorizonal,
   Save,
   Search,
   ShieldAlert,
@@ -328,6 +330,69 @@ const SECTIONS: SettingsSection[] = [
     ],
   },
   {
+    id: "mail",
+    label: "Email",
+    icon: SendHorizonal,
+    description:
+      "How transactional email leaves the building — password resets, receipts, ticket replies. This is the one integration whose failure is invisible from outside: the site looks fine while nobody can reset a password, which is why there is a delivery check at the top rather than a save button and hope.",
+    groups: ["mail"],
+    panels: [
+      {
+        id: "sender",
+        label: "Sender",
+        description:
+          "Who the mail appears to come from. The From address has to sit on a domain whose SPF and DKIM records name the provider below — get that wrong and every message sends successfully and lands in spam, which looks identical to working from in here.",
+        keys: ["mail.from_address", "mail.from_name", "mail.reply_to_address"],
+      },
+      {
+        id: "provider",
+        label: "Provider",
+        description:
+          "Which transport carries the mail. One is live at a time; the others keep their credentials, so switching back is a dropdown rather than a re-onboarding. Every field below is an override — left blank, the deployment's own MAIL_* environment keeps working.",
+        keys: ["mail.provider"],
+      },
+      {
+        id: "smtp",
+        label: "SMTP",
+        description:
+          "Used when the provider above is SMTP. Works with anything that speaks it, including a provider's own relay.",
+        match: prefixed("mail.smtp."),
+      },
+      {
+        id: "mailgun",
+        label: "Mailgun",
+        description: "Used when the provider above is Mailgun.",
+        match: prefixed("mail.mailgun."),
+      },
+      {
+        id: "postmark",
+        label: "Postmark",
+        description: "Used when the provider above is Postmark.",
+        match: prefixed("mail.postmark."),
+      },
+      {
+        id: "resend",
+        label: "Resend",
+        description: "Used when the provider above is Resend.",
+        match: prefixed("mail.resend."),
+      },
+      {
+        id: "ses",
+        label: "Amazon SES",
+        description:
+          "Used when the provider above is SES. The sending identity has to be verified in the region named here — an identity verified in one region does not exist in another.",
+        match: prefixed("mail.ses."),
+      },
+      {
+        id: "klaviyo",
+        label: "Klaviyo",
+        description:
+          "Used when the provider above is Klaviyo. Klaviyo has no endpoint that sends a rendered message: this posts an event on the metric below carrying the subject and body, and a flow you build in Klaviyo does the actual sending. Until that flow exists every send succeeds and delivers nothing, and attachments cannot travel this way at all.",
+        match: prefixed("mail.klaviyo."),
+      },
+    ],
+  },
+  {
     id: "newsletter",
     label: "Newsletter",
     icon: Mail,
@@ -379,6 +444,25 @@ const CHOICES: Record<string, { value: string; label: string }[]> = {
     { value: "stripe", label: "Stripe" },
     { value: "paypal", label: "PayPal" },
     { value: "braintree", label: "Braintree" },
+  ],
+  "mail.provider": [
+    { value: "smtp", label: "SMTP" },
+    { value: "mailgun", label: "Mailgun" },
+    { value: "postmark", label: "Postmark" },
+    { value: "resend", label: "Resend" },
+    { value: "ses", label: "Amazon SES" },
+    { value: "klaviyo", label: "Klaviyo — delivered by a flow you build" },
+    { value: "sendmail", label: "Sendmail — the local binary" },
+    { value: "log", label: "Log only — nothing is delivered" },
+  ],
+  "mail.smtp.scheme": [
+    { value: "auto", label: "Automatic — inferred from the port" },
+    { value: "smtp", label: "STARTTLS (usually port 587)" },
+    { value: "smtps", label: "Implicit TLS (usually port 465)" },
+  ],
+  "mail.mailgun.endpoint": [
+    { value: "api.mailgun.net", label: "US — api.mailgun.net" },
+    { value: "api.eu.mailgun.net", label: "EU — api.eu.mailgun.net" },
   ],
   "newsletter.provider": [
     { value: "local", label: "Local list only" },
@@ -597,6 +681,10 @@ export function SettingsScreen() {
               consent is required — but it is still code, and every change is attributed to you in
               the audit log.
             </p>
+          )}
+
+          {current.section.id === "mail" && (
+            <MailDeliveryCheck hasUnsavedChanges={dirtyInSection > 0} canSend={current.canUpdate} />
           )}
 
           {panels.map((panel) => (
@@ -955,6 +1043,193 @@ function SecretField({
 }
 
 /**
+ * The delivery check that sits above the mail fields.
+ *
+ * Saving mail settings proves nothing. Every other section on this screen changes
+ * something an admin can immediately see — a flag flips, a template renders — but a
+ * wrong SMTP password looks exactly like a right one until a customer cannot reset
+ * their password, and the failure surfaces days later as a support ticket. So this
+ * card does two things a save cannot: it says what the *stored* settings add up to,
+ * naming the keys still empty rather than reporting a bare "not configured", and it
+ * pushes a real message through the provider and reports the provider's own error
+ * verbatim. "Domain not found" and "invalid API key" need different fixes, and a
+ * paraphrase loses which one you have.
+ *
+ * It reads saved state, never the draft, which is why an unsaved change here is
+ * called out rather than quietly tested around: a test that silently used the
+ * pending values would be a green tick for a configuration nobody is running.
+ */
+function MailDeliveryCheck({
+  hasUnsavedChanges,
+  canSend,
+}: {
+  hasUnsavedChanges: boolean;
+  canSend: boolean;
+}) {
+  const { data: status, loading, reload } = useAdminResource(() => adminApi.settings.mail.status(), []);
+
+  const [recipient, setRecipient] = React.useState("");
+  const [sending, setSending] = React.useState(false);
+  // Narrower than the endpoint's payload on purpose: the card only reports the
+  // outcome of the send, and the status beside it is re-read from the server rather
+  // than taken from the response, so the two cannot disagree.
+  const [result, setResult] = React.useState<{
+    sent: boolean;
+    recipient?: string;
+    error?: string;
+  } | null>(null);
+
+  async function send() {
+    setSending(true);
+    setResult(null);
+
+    const response = await adminApi.settings.mail.test(recipient.trim() || undefined);
+
+    setSending(false);
+
+    if (response.ok) {
+      setResult(response.data);
+      reload();
+    } else {
+      // A provider rejecting the message comes back as a 200 with `sent: false`;
+      // reaching here means the request itself failed, which is a different problem
+      // and deserves the wording the API gave it.
+      setResult({ sent: false, error: response.error.message });
+    }
+  }
+
+  return (
+    <section className="app-card overflow-hidden">
+      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[var(--color-border-subtle)] px-5 py-3.5">
+        <div className="min-w-0">
+          <h3 className="text-sm font-semibold text-[var(--color-foreground)]">Delivery check</h3>
+          <p className="mt-0.5 max-w-2xl text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
+            What the saved settings add up to, and a real message through the configured provider.
+          </p>
+        </div>
+
+        {status && (
+          <StatusPill
+            label={status.configured ? `${status.provider_label} ready` : "Incomplete"}
+            tone={status.configured ? "success" : "warning"}
+          />
+        )}
+      </header>
+
+      <div className="flex flex-col gap-4 px-5 py-5">
+        {loading && !status ? (
+          <div
+            className="h-16 animate-pulse rounded-[var(--radius-md)] bg-[var(--color-surface-sunken)]"
+            aria-hidden="true"
+          />
+        ) : status ? (
+          <>
+            <dl className="grid gap-3 text-xs sm:grid-cols-2">
+              <div>
+                <dt className="text-[var(--color-foreground-subtle)]">Provider</dt>
+                <dd className="mt-0.5 font-medium text-[var(--color-foreground)]">
+                  {status.provider_label}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[var(--color-foreground-subtle)]">From</dt>
+                <dd className="mt-0.5 font-medium text-[var(--color-foreground)]">
+                  {status.from_address || "Not set — the deployment's own MAIL_FROM_ADDRESS is used"}
+                </dd>
+              </div>
+            </dl>
+
+            {status.missing.length > 0 && (
+              <p className="rounded-[var(--radius-md)] bg-[var(--color-surface-sunken)] p-3 text-xs leading-relaxed text-[var(--color-foreground-muted)]">
+                Still empty for this provider:{" "}
+                <span className="font-mono">{status.missing.join(", ")}</span>. Until they are
+                filled in, the deployment keeps using whatever its environment configured.
+              </p>
+            )}
+
+            {status.delivers_via_flow && (
+              <p className="flex items-start gap-2 rounded-[var(--radius-md)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/8 p-3 text-xs leading-relaxed text-[var(--color-foreground-muted)]">
+                <ShieldAlert
+                  className="mt-0.5 size-3.5 shrink-0 text-[var(--color-warning)]"
+                  aria-hidden="true"
+                />
+                Klaviyo does not send the message itself — it receives an event and a flow you
+                build there sends the email. A green tick above means the API key works, not that
+                anything is delivered. Build the flow on the metric below before you rely on this
+                for password resets.
+              </p>
+            )}
+          </>
+        ) : null}
+
+        {hasUnsavedChanges && (
+          <p className="text-xs leading-relaxed text-[var(--color-foreground-muted)]" role="status">
+            You have unsaved changes in this section. The test uses the <em>saved</em> settings —
+            save first, or you will be testing the configuration you are replacing.
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-end gap-2">
+          <Field
+            id="mail-test-recipient"
+            label="Send a test to"
+            hint="Leave blank to send to your own address."
+            className="min-w-56 flex-1"
+          >
+            {(props) => (
+              <Input
+                {...props}
+                type="email"
+                autoComplete="off"
+                value={recipient}
+                disabled={!canSend}
+                placeholder="you@example.com"
+                onChange={(event) => setRecipient(event.target.value)}
+              />
+            )}
+          </Field>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => void send()}
+            loading={sending}
+            disabled={!canSend}
+          >
+            <Send className="size-4" aria-hidden="true" />
+            Send test
+          </Button>
+        </div>
+
+        {result && (
+          <p
+            role="status"
+            className={cn(
+              "rounded-[var(--radius-md)] p-3 text-xs leading-relaxed",
+              result.sent
+                ? "bg-[var(--color-success)]/10 text-[var(--color-foreground)]"
+                : "bg-[var(--color-danger)]/10 text-[var(--color-foreground)]",
+            )}
+          >
+            {result.sent ? (
+              <>
+                Sent to <span className="font-medium">{result.recipient}</span>. If it does not
+                arrive within a minute, check the spam folder — landing there is a DNS problem
+                (SPF, DKIM, DMARC on the From domain), not a credentials problem.
+              </>
+            ) : (
+              <>
+                Not sent. <span className="font-mono">{result.error}</span>
+              </>
+            )}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/**
  * Keys whose derived label would be wrong or unhelpful.
  *
  * `tools.limits.free.daily` would read as "Limits free daily", which is not what
@@ -963,6 +1238,25 @@ function SecretField({
  * so repeating it on every row would only add noise.
  */
 const LABEL_OVERRIDES: Record<string, string> = {
+  // The mail panels are titled by provider, so repeating "SMTP" or "Mailgun" on
+  // every row inside them would only add noise.
+  "mail.reply_to_address": "Reply-to address",
+  "mail.smtp.host": "Host",
+  "mail.smtp.port": "Port",
+  "mail.smtp.scheme": "Encryption",
+  "mail.smtp.username": "Username",
+  "mail.smtp.password": "Password",
+  "mail.mailgun.domain": "Sending domain",
+  "mail.mailgun.secret": "API key",
+  "mail.mailgun.endpoint": "Region",
+  "mail.postmark.token": "Server API token",
+  "mail.postmark.message_stream": "Message stream",
+  "mail.resend.key": "API key",
+  "mail.ses.key": "Access key ID",
+  "mail.ses.secret": "Secret access key",
+  "mail.ses.region": "Region",
+  "mail.klaviyo.api_key": "Private API key",
+  "mail.klaviyo.metric": "Metric name",
   // Historically a support address; it is now the only one the site publishes,
   // and calling it "Support email" hides that the legal pages point at it too.
   "site.support_email": "Contact email",

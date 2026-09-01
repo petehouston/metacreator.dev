@@ -36,7 +36,7 @@ that filtering protects anything. Every route re-checks server-side.
 | Tickets | `/c0ns0le/tickets` | `tickets.view_any` | The queue, worst-first |
 | Contact inbox | `/c0ns0le/messages` | `tickets.view_any` | The public form's inbox |
 | Newsletter | `/c0ns0le/newsletter` | `newsletter.view` | The list and its provider sync |
-| Settings | `/c0ns0le/settings` | `settings.view` | A section rail: general, blog, accounts, payments, SEO, tracking, newsletter |
+| Settings | `/c0ns0le/settings` | `settings.view` | A section rail: general, blog, accounts, payments, SEO, tracking, email, newsletter |
 | Audit log | `/c0ns0le/activity` | `activity_log.view` | Who changed what |
 
 A staff member who lands on a screen their role does not cover is redirected to the first screen it
@@ -105,6 +105,24 @@ Inside a section, keys are dealt into titled cards rather than one flat column: 
 credentials in one column is a screen where a Stripe key gets pasted into a PayPal field. A key no
 card claims falls through to the section's catch-all, so a setting added server-side appears in the
 UI without a matching frontend change.
+
+### Mail settings carry a delivery check
+
+Every other section on the settings screen changes something an admin can immediately see — a flag
+flips, a template renders. Email does not: a wrong SMTP password looks exactly like a right one
+until a customer cannot reset their password, and the failure surfaces days later as a support
+ticket.
+
+So the Email section opens with a card that does two things a save cannot. It reports what the
+*saved* settings add up to, naming the keys still empty rather than a bare "not configured", and it
+sends a real message through the configured provider and reports the provider's own error verbatim.
+It reads saved state, never the draft, which is why an unsaved change is called out rather than
+quietly tested around — a test that silently used the pending values would be a green tick for a
+configuration nobody is running.
+
+Klaviyo is flagged separately wherever it appears, because it is not a sending provider: it receives
+an event and a flow the operator builds does the sending. A green "ready" there means the API key
+works, not that mail arrives. See [13](13-notifications-email.md).
 
 ### Blog presentation is configuration
 

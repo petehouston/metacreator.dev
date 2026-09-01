@@ -64,6 +64,66 @@ final class SettingsSeeder extends Seeder
         ['key' => 'scripts.body_start', 'value' => '', 'type' => 'string', 'group' => 'scripts', 'is_public' => true],
         ['key' => 'scripts.body_end', 'value' => '', 'type' => 'string', 'group' => 'scripts', 'is_public' => true],
 
+        // Transactional email — which transport carries password resets, receipts and
+        // ticket replies, and the credentials for it. None of this is public: the
+        // frontend never needs to know how mail leaves the building, and an SMTP
+        // host is reconnaissance. Credentials are encrypted at rest, so changing one
+        // needs `settings.secrets.update` rather than plain `settings.update`.
+        //
+        // Every value here is an *override*. Blank means "not configured here" and
+        // the deployment's own MAIL_* environment keeps working — which is what lets
+        // local development stay pointed at Mailpit with nothing seeded.
+        ['key' => 'mail.provider', 'value' => 'smtp', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'smtp | mailgun | postmark | resend | ses | klaviyo | sendmail | log'],
+        ['key' => 'mail.from_address', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'The address every message is sent from. It has to be on a domain whose '
+                .'SPF and DKIM records name the provider above, or the mail will send and land in spam.'],
+        ['key' => 'mail.from_name', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'The display name beside that address. Defaults to the app name when blank.'],
+        ['key' => 'mail.reply_to_address', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'Where a reply should land, when that is not the From address — the usual '
+                .'reason being that From is a no-reply on the sending domain. Blank sends replies to From. '
+                .'A mailable that sets its own reply-to keeps it.'],
+
+        ['key' => 'mail.smtp.host', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false],
+        ['key' => 'mail.smtp.port', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => '587 for STARTTLS, 465 for implicit TLS, 2525 where 587 is blocked.'],
+        ['key' => 'mail.smtp.scheme', 'value' => 'auto', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'auto | smtp | smtps. Auto infers encryption from the port and is right '
+                .'far more often than a wrong explicit choice.'],
+        ['key' => 'mail.smtp.username', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false],
+        ['key' => 'mail.smtp.password', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true],
+
+        ['key' => 'mail.mailgun.domain', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'The sending domain as Mailgun spells it, e.g. mg.example.com.'],
+        ['key' => 'mail.mailgun.secret', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true,
+            'description' => 'A Mailgun sending API key.'],
+        ['key' => 'mail.mailgun.endpoint', 'value' => 'api.mailgun.net', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'api.mailgun.net, or api.eu.mailgun.net for an EU-region account. The wrong '
+                .'one authenticates and then reports the domain as unknown.'],
+
+        ['key' => 'mail.postmark.token', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true,
+            'description' => 'A Postmark server API token — the server token, not the account token.'],
+        ['key' => 'mail.postmark.message_stream', 'value' => 'outbound', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'Postmark keeps transactional and broadcast traffic in separate streams and '
+                .'refuses a send to the wrong one. `outbound` is the default transactional stream.'],
+
+        ['key' => 'mail.resend.key', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true],
+
+        ['key' => 'mail.ses.key', 'value' => '', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'An IAM access key ID whose policy allows ses:SendRawEmail and nothing else.'],
+        ['key' => 'mail.ses.secret', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true],
+        ['key' => 'mail.ses.region', 'value' => 'us-east-1', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'The region the sending identity is verified in. An identity verified in one '
+                .'region does not exist in another.'],
+
+        ['key' => 'mail.klaviyo.api_key', 'value' => '', 'type' => 'secret', 'group' => 'mail', 'is_public' => false, 'is_encrypted' => true,
+            'description' => 'A Klaviyo private API key with events:write.'],
+        ['key' => 'mail.klaviyo.metric', 'value' => 'Transactional Email', 'type' => 'string', 'group' => 'mail', 'is_public' => false,
+            'description' => 'Klaviyo cannot send a rendered message directly, so this transport posts '
+                .'an event on this metric carrying the subject and body, and a flow triggered by the '
+                .'metric sends it. Until that flow exists, every send succeeds and delivers nothing.'],
+
         // Newsletter — provider choice public, credentials never
         ['key' => 'newsletter.provider', 'value' => 'local', 'type' => 'string', 'group' => 'newsletter', 'is_public' => true,
             'description' => 'local | mailchimp | mailerlite | moosend | sendy | brevo'],

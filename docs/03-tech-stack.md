@@ -63,7 +63,7 @@ Go 1.24, standard library plus:
 | Cache/queue | Redis 7.4 | Separate logical DBs: `0` cache, `1` sessions, `2` queues, `3` locks |
 | Object storage | DigitalOcean Spaces | S3 API + built-in CDN |
 | Web server | Caddy 2 | Automatic TLS, HTTP/3, simple config |
-| Email (transactional) | Mailgun | EU/US region configurable; Mailpit locally |
+| Email (transactional) | SMTP, Mailgun, Postmark, Resend, SES or Klaviyo | Chosen in admin, not at deploy; Mailpit locally — see [13](13-notifications-email.md) |
 | Payments | Stripe | Checkout + Billing Portal, minimal bespoke UI |
 | Error tracking | Sentry | Both apps, release-tagged |
 | Local dev | Docker Compose | [19](19-local-development.md) |

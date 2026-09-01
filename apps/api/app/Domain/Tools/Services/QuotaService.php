@@ -140,43 +140,71 @@ final readonly class QuotaService
         $now = CarbonImmutable::now();
         $limits = $this->limitsFor($user, $tool);
 
+        // The day is the fallback headline, so it is read by name rather than fished
+        // back out of the map — the loop below reuses this entry when it reaches it.
+        $daily = $this->windowStatus(QuotaWindow::Daily, $limits, $user, $visitorHash, $now);
+
         $windows = [];
         $binding = null;
+        $bindingWindow = null;
 
         foreach (QuotaWindow::all() as $window) {
-            $limit = $limits[$window->value];
-            $unlimited = $this->isUnlimited($limit);
-            $used = (int) (Redis::get($this->keyFor($user, $visitorHash, $window, $now)) ?? 0);
+            $entry = $window === QuotaWindow::Daily
+                ? $daily
+                : $this->windowStatus($window, $limits, $user, $visitorHash, $now);
 
-            $windows[$window->value] = [
-                'limit' => $limit,
-                'used' => $used,
-                // Null rather than a large number: "unlimited minus four" is not a
-                // quantity, and a meter drawn from one would be a lie.
-                'remaining' => $unlimited ? null : max(0, $limit - $used),
-                'unlimited' => $unlimited,
-                'label' => $window->label(),
-                'resets_at' => $window->endsAt($now)->format(DATE_ATOM),
-            ];
+            $windows[$window->value] = $entry;
 
-            if (! $unlimited && ($binding === null || $windows[$window->value]['remaining'] < $windows[$binding]['remaining'])) {
-                $binding = $window->value;
+            // A null remaining is an unlimited window: it can never be the binding
+            // one, because it never runs out.
+            if ($entry['remaining'] !== null && ($binding === null || $entry['remaining'] < $binding['remaining'])) {
+                $binding = $entry;
+                $bindingWindow = $window;
             }
         }
 
         // Nothing is enforced: the day is the honest thing to name, since that is
         // the period the counters would roll over on if one were ever switched on.
-        $headline = $windows[$binding ?? QuotaWindow::Daily->value];
+        $headline = $binding ?? $daily;
 
         return [
             'limit' => $headline['limit'],
             'used' => $headline['used'],
             'remaining' => $headline['remaining'],
             'unlimited' => $headline['unlimited'],
-            'window' => $binding ?? QuotaWindow::Daily->value,
+            'window' => ($bindingWindow ?? QuotaWindow::Daily)->value,
             'tier' => $this->entitlements->accessTierFor($user)->value,
             'resets_at' => $headline['resets_at'],
             'windows' => $windows,
+        ];
+    }
+
+    /**
+     * One window's line in the meter.
+     *
+     * @param  array<string, int>  $limits
+     * @return array{limit: int, used: int, remaining: int|null, unlimited: bool, label: string, resets_at: string}
+     */
+    private function windowStatus(
+        QuotaWindow $window,
+        array $limits,
+        ?User $user,
+        ?string $visitorHash,
+        CarbonImmutable $now,
+    ): array {
+        $limit = $limits[$window->value];
+        $unlimited = $this->isUnlimited($limit);
+        $used = (int) (Redis::get($this->keyFor($user, $visitorHash, $window, $now)) ?? 0);
+
+        return [
+            'limit' => $limit,
+            'used' => $used,
+            // Null rather than a large number: "unlimited minus four" is not a
+            // quantity, and a meter drawn from one would be a lie.
+            'remaining' => $unlimited ? null : max(0, $limit - $used),
+            'unlimited' => $unlimited,
+            'label' => $window->label(),
+            'resets_at' => $window->endsAt($now)->format(DATE_ATOM),
         ];
     }
 

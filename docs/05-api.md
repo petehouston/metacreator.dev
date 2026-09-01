@@ -127,7 +127,8 @@ posts, post-revisions, categories, tags, media
 users, roles, permissions
 subscriptions, invoices, refunds
 tickets
-settings (branding, scripts, newsletter, feature flags)
+settings (branding, scripts, mail, newsletter, feature flags)
+settings/mail (readiness), settings/mail/test (a real send through the configured provider)
 analytics (dashboards)
 ```
 
