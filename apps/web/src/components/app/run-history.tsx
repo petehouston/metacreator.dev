@@ -157,7 +157,7 @@ export function RunHistory() {
               </Button>
             ) : (
               <Button asChild size="sm">
-                <Link href="/dashboard/tools">Browse tools</Link>
+                <Link href="/tools">Browse tools</Link>
               </Button>
             )
           }

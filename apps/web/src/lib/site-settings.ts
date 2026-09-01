@@ -1,5 +1,6 @@
 import "server-only";
 
+import { siteConfig } from "@/config/site";
 import { api } from "@/lib/api";
 
 /**
@@ -63,4 +64,66 @@ export async function blogDisplay(): Promise<BlogDisplay> {
     postsPerPage:
       Number.isFinite(count) && count >= 1 ? Math.min(24, Math.round(count)) : DEFAULTS.postsPerPage,
   };
+}
+
+/**
+ * Site-wide feature switches the whole app renders against.
+ *
+ * `billingEnabled` is the master switch for money (Settings → Features). Off, the
+ * product has no paid plans at all: pricing and billing surfaces are absent rather
+ * than disabled, and the API has already downgraded every Pro tool to "Account
+ * Required", so a card never advertises a plan the site does not sell.
+ */
+export interface SiteFeatures {
+  billingEnabled: boolean;
+  /**
+   * `features.changelog_enabled` (Settings → Changelog). Off, the public changelog
+   * routes 404 and the footer link that points at them goes with it.
+   */
+  changelogEnabled: boolean;
+}
+
+/**
+ * On is the fallback, for the same reason the blog defaults hold: a settings
+ * request that fails for ten seconds must not silently give the paid catalog away.
+ * The API is the real gate — this only decides what gets drawn.
+ */
+const FEATURE_DEFAULTS: SiteFeatures = { billingEnabled: true, changelogEnabled: true };
+
+export async function siteFeatures(): Promise<SiteFeatures> {
+  const settings = await api.settings().catch(() => null);
+
+  if (settings === null) return FEATURE_DEFAULTS;
+
+  const flag = (key: string, fallback: boolean): boolean => {
+    const value = settings[key];
+
+    return value === undefined || value === null ? fallback : Boolean(value);
+  };
+
+  return {
+    billingEnabled: flag("features.billing_enabled", FEATURE_DEFAULTS.billingEnabled),
+    changelogEnabled: flag("features.changelog_enabled", FEATURE_DEFAULTS.changelogEnabled),
+  };
+}
+
+/**
+ * The one address the site hands out, from Settings → General → Support email.
+ *
+ * Contact, support, privacy questions and security reports all point here. It is a
+ * single setting rather than one per purpose because a small team reading four
+ * inboxes reads none of them, and because an address published on a legal page and
+ * then changed in only three of the five places it appears is worse than no address.
+ *
+ * `siteConfig.supportEmail` is the fallback, on the same principle as the blog
+ * defaults: a settings request that fails must leave a reachable address on the
+ * page, not a `mailto:undefined`.
+ */
+export async function contactEmail(): Promise<string> {
+  const settings = await api.settings().catch(() => null);
+  const value = settings?.["site.support_email"];
+
+  return typeof value === "string" && value.trim() !== ""
+    ? value.trim()
+    : siteConfig.supportEmail;
 }

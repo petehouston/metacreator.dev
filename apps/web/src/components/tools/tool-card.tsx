@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
+import { FavoriteButton } from "@/components/tools/favorite-button";
 import { TierBadge } from "@/components/ui/badge";
 import { cn, formatNumber } from "@/lib/utils";
 import { actionVerb } from "@/lib/tool-action";
@@ -44,10 +45,15 @@ export function ToolCard({
           )}
         </div>
 
-        <ArrowUpRight
-          aria-hidden="true"
-          className="size-4 shrink-0 text-[var(--color-foreground-subtle)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--color-primary)]"
-        />
+        <div className="flex shrink-0 items-center gap-0.5">
+          {/* Renders nothing for a guest — see FavoriteButton. */}
+          <FavoriteButton slug={tool.slug} />
+
+          <ArrowUpRight
+            aria-hidden="true"
+            className="size-4 shrink-0 text-[var(--color-foreground-subtle)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--color-primary)]"
+          />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5">

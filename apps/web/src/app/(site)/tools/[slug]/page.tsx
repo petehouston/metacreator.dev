@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { NewsletterForm } from "@/components/site/newsletter-form";
+import { FavoriteButton } from "@/components/tools/favorite-button";
 import { ToolCard, ToolCardSkeleton } from "@/components/tools/tool-card";
 import { ToolRunner } from "@/components/tools/tool-runner";
 import { Badge, TierBadge } from "@/components/ui/badge";
@@ -143,7 +144,13 @@ export default async function ToolPage({ params }: PageProps<"/tools/[slug]">) {
               {tool.tagline}
             </p>
 
-            <ToolFacts tool={tool} />
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <ToolFacts tool={tool} />
+
+              {/* For a guest this is a link to sign in rather than nothing: it is
+                  the clearest small reason on the page to have an account. */}
+              <FavoriteButton slug={tool.slug} variant="labelled" />
+            </div>
           </div>
         </div>
       </header>

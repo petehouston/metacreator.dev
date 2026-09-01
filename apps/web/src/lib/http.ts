@@ -132,7 +132,13 @@ export async function apiData<T>(
   path: string,
   init: ApiRequestInit = {},
 ): Promise<ApiResult<T>> {
-  const result = await apiFetch<{ data: T }>(path, init);
+  const result = await apiFetch<{ data: T } | null>(path, init);
 
-  return result.ok ? { ok: true, data: result.data.data } : result;
+  if (!result.ok) return result;
+
+  // A 204 arrives as `null`, not as an envelope — every DELETE in the admin API
+  // answers that way. Reaching straight for `.data` threw a TypeError *after* the
+  // row was already gone, which left the screen showing a spinner over a record
+  // that no longer existed.
+  return { ok: true, data: (result.data?.data ?? null) as T };
 }

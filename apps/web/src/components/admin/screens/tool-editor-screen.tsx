@@ -12,6 +12,7 @@ import { useToast } from "@/components/admin/feedback";
 import { LoadError } from "@/components/admin/load-error";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { humanise, tone } from "@/components/admin/status-tone";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { adminApi } from "@/lib/admin/api";
@@ -32,10 +33,7 @@ import { formatNumber } from "@/lib/utils";
  * next run, which is exactly the failure the architecture test exists to prevent.
  */
 export function ToolEditorScreen({ slug }: { slug: string }) {
-  const { data, error, reload } = useAdminResource(
-    () => adminApi.tools.get(slug),
-    [slug],
-  );
+  const { data, error, reload } = useAdminResource(() => adminApi.tools.get(slug), [slug]);
 
   const categories = useAdminResource(() => adminApi.tools.categories(), []);
 
@@ -65,6 +63,40 @@ export function ToolEditorScreen({ slug }: { slug: string }) {
   );
 }
 
+/**
+ * The windows a tool can cap itself over, in the order they are enforced.
+ *
+ * Shortest first, because that is the order a visitor hits them, and the same
+ * order the global settings screen uses — two screens describing one mechanism
+ * should not disagree about which end of it comes first.
+ */
+const RUN_LIMIT_WINDOWS = [
+  {
+    id: "daily",
+    label: "Per day",
+    hint: "Resets at midnight, site time.",
+  },
+  {
+    id: "weekly",
+    label: "Per week",
+    hint: "Resets Monday. Catches a backlog saved up for one sitting.",
+  },
+  {
+    id: "monthly",
+    label: "Per month",
+    hint: "Resets on the 1st. The window a metered provider actually bills on.",
+  },
+] as const;
+
+type RunLimitWindow = (typeof RUN_LIMIT_WINDOWS)[number]["id"];
+
+/** The stored cap for one window as a form value — "" when the tool defers. */
+function limitValue(tool: AdminTool, window: RunLimitWindow): string {
+  const limit = tool.run_limits?.[window];
+
+  return typeof limit === "number" ? String(limit) : "";
+}
+
 function ToolForm({
   tool,
   categories,
@@ -80,6 +112,8 @@ function ToolForm({
 
   const editable = can("tools.update");
 
+  const billingEnabled = useBillingEnabled();
+
   const [form, setForm] = React.useState({
     name: tool.name,
     tagline: tool.tagline ?? "",
@@ -90,6 +124,15 @@ function ToolForm({
     is_featured: tool.is_featured,
     sort_order: tool.sort_order,
     category_id: tool.category?.id ?? 0,
+  });
+
+  // Blank is a real value here — it means "defer to the tier" — so the caps are
+  // held as strings and only become numbers (or null) on the way out. A number
+  // state would have to spell blank as 0, which is a very different instruction.
+  const [limits, setLimits] = React.useState<Record<RunLimitWindow, string>>({
+    daily: limitValue(tool, "daily"),
+    weekly: limitValue(tool, "weekly"),
+    monthly: limitValue(tool, "monthly"),
   });
 
   // SEO lives beside the rest of the form rather than in its own request: a tool
@@ -106,9 +149,7 @@ function ToolForm({
     twitter_card: tool.seo?.twitter_card ?? "summary_large_image",
   });
 
-  const [ogImageUrl, setOgImageUrl] = React.useState<string | null>(
-    tool.seo?.og_image_url ?? null,
-  );
+  const [ogImageUrl, setOgImageUrl] = React.useState<string | null>(tool.seo?.og_image_url ?? null);
 
   const [pickingImage, setPickingImage] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
@@ -132,6 +173,13 @@ function ToolForm({
       category_id: categoryId,
       tagline: form.tagline || null,
       description: form.description || null,
+      // Only `limits` is sent: the API merges `config` rather than assigning it, so
+      // a runner's own settings survive a save from this form.
+      config: {
+        limits: Object.fromEntries(
+          RUN_LIMIT_WINDOWS.map(({ id }) => [id, limits[id] === "" ? null : Number(limits[id])]),
+        ),
+      },
       // Blank goes over the wire as null: the API treats null as "no override" and
       // falls back to the tool's own copy, where "" would publish an empty tag.
       seo: Object.fromEntries(
@@ -225,7 +273,19 @@ function ToolForm({
 
           <AdminPanel title="Access & placement" description="Who can run it, and where it appears">
             <fieldset disabled={!editable} className="grid gap-4 sm:grid-cols-2">
-              <Field id="tool-tier" label="Access tier" hint="Who can run this without paying.">
+              {/* The stored tier is what this field edits, and Premium stays
+                  selectable with billing off — but it behaves as Account until
+                  billing is switched back on, and an admin who is not told that
+                  will think the paywall is broken. */}
+              <Field
+                id="tool-tier"
+                label="Access tier"
+                hint={
+                  billingEnabled
+                    ? "Who can run this without paying."
+                    : "Who can run this. Billing is off site-wide, so Premium currently behaves as Account — the setting is kept and takes effect again when billing is switched back on."
+                }
+              >
                 {(props) => (
                   <Select
                     {...props}
@@ -234,7 +294,11 @@ function ToolForm({
                   >
                     <option value="free">Free — anyone</option>
                     <option value="account">Account — signed in</option>
-                    <option value="premium">Premium — subscribers</option>
+                    <option value="premium">
+                      {billingEnabled
+                        ? "Premium — subscribers"
+                        : "Premium — subscribers (inactive: billing is off)"}
+                    </option>
                   </Select>
                 )}
               </Field>
@@ -261,7 +325,10 @@ function ToolForm({
                     value={String(categoryId)}
                     disabled={!editable || loadingCategories}
                     onChange={(event) =>
-                      setForm({ ...form, category_id: Number(event.target.value) })
+                      setForm({
+                        ...form,
+                        category_id: Number(event.target.value),
+                      })
                     }
                   >
                     {categories.map((category) => (
@@ -286,7 +353,10 @@ function ToolForm({
                     max={9999}
                     value={form.sort_order}
                     onChange={(event) =>
-                      setForm({ ...form, sort_order: Number(event.target.value) })
+                      setForm({
+                        ...form,
+                        sort_order: Number(event.target.value),
+                      })
                     }
                   />
                 )}
@@ -306,6 +376,56 @@ function ToolForm({
                   checked={form.is_featured}
                   onChange={(event) => setForm({ ...form, is_featured: event.target.checked })}
                 />
+              </div>
+            </fieldset>
+          </AdminPanel>
+
+          <AdminPanel
+            title="Run limits"
+            description="This tool's own caps, on top of the global ones"
+          >
+            <fieldset disabled={!editable} className="flex flex-col gap-4">
+              <p className="text-sm text-[var(--color-foreground-muted)]">
+                Leave a window blank to use the site-wide allowance from{" "}
+                <Link
+                  href="/admin/settings"
+                  className="underline decoration-dotted underline-offset-2"
+                >
+                  Settings → Tools
+                </Link>
+                , which is what almost every tool should do. A number here only ever{" "}
+                <em>narrows</em> the visitor&rsquo;s allowance — it cannot raise it above their
+                tier, so a cap set here is a ceiling for everyone including subscribers. That is the
+                point: a tool that spends metered third-party credit should not be unlimited just
+                because somebody&rsquo;s plan is.
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                {RUN_LIMIT_WINDOWS.map((window) => (
+                  <Field
+                    key={window.id}
+                    id={`tool-limit-${window.id}`}
+                    label={window.label}
+                    hint={window.hint}
+                  >
+                    {(props) => (
+                      <Input
+                        {...props}
+                        type="number"
+                        min={1}
+                        inputMode="numeric"
+                        placeholder="Tier default"
+                        value={limits[window.id]}
+                        onChange={(event) =>
+                          setLimits({
+                            ...limits,
+                            [window.id]: event.target.value,
+                          })
+                        }
+                      />
+                    )}
+                  </Field>
+                ))}
               </div>
             </fieldset>
           </AdminPanel>
@@ -372,7 +492,10 @@ function ToolForm({
                 </dt>
                 <dd className="tabular mt-0.5 font-medium text-[var(--color-foreground)]">
                   {tool.stats.grants ? (
-                    <Link href="/admin/grants" className="text-[var(--color-primary)] hover:underline">
+                    <Link
+                      href="/admin/grants"
+                      className="text-[var(--color-primary)] hover:underline"
+                    >
                       {tool.stats.grants}
                     </Link>
                   ) : (
@@ -384,9 +507,9 @@ function ToolForm({
 
             <p className="flex items-start gap-2 text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
               <Eye className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-              The slug, the key, the version and the input schema are fixed on purpose.
-              Changing a slug breaks every link pointing at it, and the other three
-              belong to the runner — they move with a deploy, not with a form.
+              The slug, the key, the version and the input schema are fixed on purpose. Changing a
+              slug breaks every link pointing at it, and the other three belong to the runner — they
+              move with a deploy, not with a form.
             </p>
           </div>
         </AdminPanel>
@@ -631,8 +754,8 @@ function SeoPanel({
 
             <div className="flex min-w-[12rem] flex-1 flex-col gap-2">
               <p className="text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-                1200×630 is the size every network crops to. With none set, the
-                site-wide card is used — never nothing, so a share is never a grey box.
+                1200×630 is the size every network crops to. With none set, the site-wide card is
+                used — never nothing, so a share is never a grey box.
               </p>
 
               <div className="flex gap-2">

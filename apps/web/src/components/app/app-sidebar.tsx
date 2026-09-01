@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
-import { isActive, navSections } from "@/components/app/nav-items";
+import { isActive, navSectionsFor } from "@/components/app/nav-items";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { PlanMeter } from "@/components/app/plan-meter";
-import { Logo } from "@/components/site/logo";
+import { Logo, LogoMark } from "@/components/site/logo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,6 +28,8 @@ export function AppSidebar({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const billingEnabled = useBillingEnabled();
+  const sections = React.useMemo(() => navSectionsFor(billingEnabled), [billingEnabled]);
 
   return (
     <div className="flex h-full flex-col gap-1 bg-[var(--app-rail)] backdrop-blur-xl">
@@ -44,27 +47,7 @@ export function AppSidebar({
             title="Expand sidebar"
             className="group flex size-10 items-center justify-center rounded-[var(--radius-md)] transition-colors hover:bg-[var(--color-surface-sunken)]"
           >
-            <svg viewBox="0 0 32 32" className="size-8 group-hover:hidden" aria-hidden="true">
-              <rect
-                x="3"
-                y="3"
-                width="19"
-                height="19"
-                rx="6"
-                className="fill-[var(--color-brand-500)]"
-                opacity="0.85"
-              />
-              <rect
-                x="10"
-                y="10"
-                width="19"
-                height="19"
-                rx="6"
-                className="fill-[var(--color-signal-400)]"
-                opacity="0.9"
-                style={{ mixBlendMode: "screen" }}
-              />
-            </svg>
+            <LogoMark className="size-8 group-hover:hidden" />
             <ChevronsRight
               className="hidden size-4 text-[var(--color-foreground-muted)] group-hover:block"
               aria-hidden="true"
@@ -72,27 +55,7 @@ export function AppSidebar({
           </button>
         ) : collapsed ? (
           <Link href="/dashboard" aria-label="MetaCreator.Dev dashboard">
-            <svg viewBox="0 0 32 32" className="size-8" aria-hidden="true">
-              <rect
-                x="3"
-                y="3"
-                width="19"
-                height="19"
-                rx="6"
-                className="fill-[var(--color-brand-500)]"
-                opacity="0.85"
-              />
-              <rect
-                x="10"
-                y="10"
-                width="19"
-                height="19"
-                rx="6"
-                className="fill-[var(--color-signal-400)]"
-                opacity="0.9"
-                style={{ mixBlendMode: "screen" }}
-              />
-            </svg>
+            <LogoMark className="size-8" />
           </Link>
         ) : (
           <Logo href="/dashboard" />
@@ -117,7 +80,7 @@ export function AppSidebar({
           collapsed ? "px-2" : "px-3",
         )}
       >
-        {navSections.map((section) => (
+        {sections.map((section) => (
           <div key={section.title} className="mb-4 last:mb-0">
             {collapsed ? (
               <hr className="mx-2 mb-2 border-t border-[var(--color-border-subtle)] first:hidden" />

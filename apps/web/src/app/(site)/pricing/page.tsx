@@ -1,10 +1,12 @@
 import { Check, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { siteFeatures } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Pricing — Free Tools, $9 Weekly Pass, or Pro",
@@ -76,7 +78,20 @@ const COMPARISON = [
   { feature: "Priority support", free: false, pass: false, pro: true },
 ];
 
-export default function PricingPage() {
+/**
+ * A 404 rather than an empty page when billing is off: the URL has to be genuinely
+ * absent, or search engines keep the old prices indexed and people keep landing on
+ * plans the site does not sell. Same reasoning as the blog switch (docs/09).
+ */
+export default async function PricingPage() {
+  const { billingEnabled } = await siteFeatures();
+
+  if (!billingEnabled) notFound();
+
+  return <PricingContent />;
+}
+
+function PricingContent() {
   return (
     <div className="mx-auto w-full max-w-[75rem] px-4 py-14 sm:px-6 lg:py-20">
       <header className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">

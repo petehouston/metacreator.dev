@@ -21,6 +21,7 @@ final class ToolAnalyticsController extends Controller
             'tier' => ['sometimes', 'nullable', 'in:free,account,premium'],
             'category' => ['sometimes', 'nullable', 'string', 'max:120'],
             'sort' => ['sometimes', 'nullable', 'in:runs,failure_rate,paywall_hits,p95,unique_actors'],
+            'tool' => ['sometimes', 'nullable', 'string', 'max:120'],
         ]);
 
         $period = Period::fromRequest($request->query('period'));
@@ -40,6 +41,10 @@ final class ToolAnalyticsController extends Controller
             'volume' => $this->analytics->volumeSeries($period),
             'access_reasons' => $this->analytics->accessReasonSplit($period),
             'top_errors' => $this->analytics->topErrors($period),
+            // Who the runs came from — per account, and per visitor fingerprint for
+            // anonymous traffic. Scoped to one tool when `tool` names one, so the
+            // question "who is hammering *this*?" is answerable without a new screen.
+            'actors' => $this->analytics->actors($period, $this->stringOrNull($request->query('tool'))),
         ]);
     }
 

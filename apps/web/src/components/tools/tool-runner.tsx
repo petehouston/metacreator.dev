@@ -10,7 +10,7 @@ import { renderCustomTool } from "@/tools/custom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { pollRun, runTool, type RunToolFailure } from "@/lib/client-api";
-import type { ToolDetail, ToolRun } from "@/lib/types";
+import type { QuotaExceededDetails, ToolDetail, ToolRun } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /**
@@ -188,8 +188,7 @@ function AccessGate({ tool }: { tool: ToolDetail }) {
         </h2>
 
         <p className="text-[var(--color-foreground-muted)]">
-          {tool.access?.message ??
-            "Sign in to continue using this tool."}
+          {tool.access?.message ?? "Sign in to continue using this tool."}
         </p>
 
         <ul className="mt-2 flex flex-col gap-2 text-left text-sm text-[var(--color-foreground-muted)]">
@@ -240,8 +239,57 @@ function AccessGate({ tool }: { tool: ToolDetail }) {
   );
 }
 
-function RunFailure({ failure }: { failure: { code: string; message: string; status?: number } }) {
+/**
+ * A refused or failed run.
+ *
+ * The quota case is the one worth designing: it is the most-seen conversion
+ * surface in the product, and there are exactly two things the person can do
+ * about it — move up a tier or wait for the reset. Both are named, and which
+ * upgrade is offered comes from the server (`upgrade_action`) rather than being
+ * guessed here, so the wall and the pricing page cannot disagree about whether
+ * this visitor needs an account or a subscription.
+ */
+/**
+ * When the exhausted allowance comes back, phrased for its window.
+ *
+ * A daily reset is hours away, so the clock time is the useful thing to show. A
+ * weekly or monthly one is days away, where a time of day is noise and the date is
+ * what someone would actually write down.
+ */
+function resetPhrase(details: Partial<QuotaExceededDetails>): string {
+  const resetsAt = new Date(details.resets_at ?? "");
+
+  if (details.window === "daily" || details.window === undefined) {
+    return `at ${resetsAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
+  }
+
+  return `on ${resetsAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+}
+
+function RunFailure({
+  failure,
+}: {
+  failure: {
+    code: string;
+    message: string;
+    status?: number;
+    details?: Record<string, unknown>;
+  };
+}) {
   const isQuota = failure.code === "tool.quota_exceeded";
+  const details = (failure.details ?? {}) as Partial<QuotaExceededDetails>;
+
+  const action = details.upgrade_action ?? null;
+  // The allowance quoted has to be for the window that actually walled: promising
+  // "500 runs a day" to someone who just hit a monthly ceiling is the wrong number
+  // and the wrong period.
+  const per =
+    details.window === "monthly" ? "a month" : details.window === "weekly" ? "a week" : "a day";
+  const nextAllowance = details.next_tier_unlimited
+    ? "unlimited runs"
+    : details.next_tier_limit
+      ? `${details.next_tier_limit} runs ${per}`
+      : "a higher limit";
 
   return (
     <div
@@ -256,14 +304,30 @@ function RunFailure({ failure }: { failure: { code: string; message: string; sta
       <p className="text-sm font-medium text-[var(--color-foreground)]">{failure.message}</p>
 
       {isQuota && (
-        <div className="flex flex-wrap gap-3">
-          <Button asChild size="sm">
-            <Link href="/pricing">Raise my limit</Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/tools">Browse other tools</Link>
-          </Button>
-        </div>
+        <>
+          <div className="flex flex-wrap gap-3">
+            {action === "register" ? (
+              <Button asChild size="sm">
+                <Link href="/register">Create a free account</Link>
+              </Button>
+            ) : action === "subscribe" ? (
+              <Button asChild size="sm">
+                <Link href="/pricing">See Pro plans</Link>
+              </Button>
+            ) : null}
+
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/tools">Browse other tools</Link>
+            </Button>
+          </div>
+
+          <p className="text-xs text-[var(--color-foreground-subtle)]">
+            {action ? `That gets you ${nextAllowance}. ` : ""}
+            {details.resets_at
+              ? `Or wait — your allowance resets ${resetPhrase(details)}.`
+              : "Or come back later, when your allowance resets."}
+          </p>
+        </>
       )}
     </div>
   );

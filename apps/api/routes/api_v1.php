@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Account\NotificationController;
 use App\Http\Controllers\Api\V1\Account\NotificationPreferenceController;
 use App\Http\Controllers\Api\V1\Account\PasswordController;
 use App\Http\Controllers\Api\V1\Account\ProfileController;
+use App\Http\Controllers\Api\V1\Account\ToolFavoriteController;
 use App\Http\Controllers\Api\V1\Account\ToolRunHistoryController;
 use App\Http\Controllers\Api\V1\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Auth\SessionController;
 use App\Http\Controllers\Api\V1\Blog\BlogController;
 use App\Http\Controllers\Api\V1\Catalog\ToolCatalogController;
+use App\Http\Controllers\Api\V1\Changelog\ChangelogController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\Tools\RunToolController;
 use Illuminate\Support\Facades\Route;
@@ -42,8 +44,24 @@ Route::get('settings', SettingsController::class)->name('settings.public');
 
 Route::prefix('catalog')->group(function (): void {
     Route::get('tools', [ToolCatalogController::class, 'index'])->name('catalog.tools.index');
-    Route::get('tools/{slug}', [ToolCatalogController::class, 'show'])->name('catalog.tools.show');
     Route::get('categories', [ToolCatalogController::class, 'categories'])->name('catalog.categories');
+
+    // Before the `{slug}` route: a bare segment would otherwise swallow it.
+    Route::get('tools/trending', [ToolCatalogController::class, 'trending'])
+        ->name('catalog.tools.trending');
+
+    Route::get('tools/{slug}', [ToolCatalogController::class, 'show'])->name('catalog.tools.show');
+});
+
+// The public changelog. The whole group 404s when an admin turns it off, and the
+// footer link goes with it — the admin screens keep working either way.
+Route::prefix('changelog')->middleware('changelog.enabled')->group(function (): void {
+    Route::get('/', [ChangelogController::class, 'index'])->name('changelog.index');
+
+    // Before the `{slug}` route: a bare segment would otherwise swallow it.
+    Route::get('meta', [ChangelogController::class, 'meta'])->name('changelog.meta');
+
+    Route::get('{slug}', [ChangelogController::class, 'show'])->name('changelog.show');
 });
 
 // The whole group 404s when an admin turns the blog off (docs/09).
@@ -129,6 +147,16 @@ Route::middleware('auth:sanctum')->group(function (): void {
             ->name('account.devices.destroy');
 
         Route::get('tool-runs', [ToolRunHistoryController::class, 'index'])->name('account.tool-runs');
+        Route::get('tool-runs/{ulid}', [ToolRunHistoryController::class, 'show'])
+            ->name('account.tool-runs.show');
+
+        // Saved tools. PUT rather than POST because saving is idempotent: the same
+        // request twice leaves the same one row.
+        Route::get('favorites', [ToolFavoriteController::class, 'index'])->name('account.favorites.index');
+        Route::put('favorites/{slug}', [ToolFavoriteController::class, 'store'])
+            ->name('account.favorites.store');
+        Route::delete('favorites/{slug}', [ToolFavoriteController::class, 'destroy'])
+            ->name('account.favorites.destroy');
 
         Route::get('notification-preferences', [NotificationPreferenceController::class, 'index'])
             ->name('account.notification-preferences.index');

@@ -6,8 +6,32 @@ import * as React from "react";
 
 import { useEntitlements } from "@/components/app/entitlements-provider";
 import { SectionCard } from "@/components/app/section-card";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { Badge } from "@/components/ui/badge";
-import { siteConfig } from "@/config/site";
+
+/**
+ * Two of these five answers describe a paywall. With billing off they would be
+ * support copy about a product that no longer exists — and this screen is where
+ * someone lands precisely because they are confused, so it is the worst place to
+ * leave a stale one.
+ */
+function faqFor(billingEnabled: boolean) {
+  if (billingEnabled) return FAQ;
+
+  return FAQ.filter((entry) => entry.question !== UPGRADE_QUESTION).map((entry) =>
+    entry.question === HISTORY_QUESTION
+      ? {
+          ...entry,
+          answer:
+            "Indefinitely. Every run you make stays in your history until you remove it — export anything you want a copy of outside the app.",
+        }
+      : entry,
+  );
+}
+
+const UPGRADE_QUESTION = "A tool is asking me to upgrade. What does that unlock?";
+
+const HISTORY_QUESTION = "How long are my results kept?";
 
 const FAQ = [
   {
@@ -44,19 +68,26 @@ const FAQ = [
  * does not pretend to open a thread — it answers the five questions support
  * actually receives, and hands over an address for everything else.
  */
-export function SupportPanel() {
+/** The address to write to, read from Settings by the page that renders this. */
+interface SupportPanelProps {
+  contactEmail: string;
+}
+
+export function SupportPanel({ contactEmail }: SupportPanelProps) {
   const { entitlements } = useEntitlements();
+  const billingEnabled = useBillingEnabled();
   const priority = entitlements?.limits.priority_support === true;
+  const faq = faqFor(billingEnabled);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
       <SectionCard
         title="Common questions"
-        description="The five we are asked most."
+        description={`The ${faq.length === 5 ? "five" : "four"} we are asked most.`}
         bodyClassName="p-0"
       >
         <ul className="divide-y divide-[var(--color-border-subtle)]">
-          {FAQ.map((entry) => (
+          {faq.map((entry) => (
             <li key={entry.question}>
               <details className="group px-4 py-3">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-[var(--color-foreground)]">
@@ -89,11 +120,11 @@ export function SupportPanel() {
             )}
 
             <a
-              href={`mailto:${siteConfig.supportEmail}`}
+              href={`mailto:${contactEmail}`}
               className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 text-sm font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)]"
             >
               <Mail className="size-4 text-[var(--color-primary)]" aria-hidden="true" />
-              {siteConfig.supportEmail}
+              {contactEmail}
             </a>
 
             <Link

@@ -8,13 +8,16 @@ use App\Domain\Analytics\Services\FunnelRecorder;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolCategory;
+use App\Domain\Tools\Services\FavoriteTools;
 use App\Domain\Tools\Services\ToolAccessService;
+use App\Domain\Tools\Services\TrendingTools;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiCollection;
 use App\Http\Resources\ToolCategoryResource;
 use App\Http\Resources\ToolDetailResource;
 use App\Http\Resources\ToolResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * The public catalog. Thin by design: filtering lives in model scopes and access in
@@ -25,6 +28,8 @@ final class ToolCatalogController extends Controller
     public function __construct(
         private readonly ToolAccessService $access,
         private readonly FunnelRecorder $funnel,
+        private readonly TrendingTools $trending,
+        private readonly FavoriteTools $favorites,
     ) {}
 
     /** @return ApiCollection<ToolResource> */
@@ -57,9 +62,30 @@ final class ToolCatalogController extends Controller
         // One bulk decision for the whole page rather than N entitlement lookups.
         $accessMap = $this->access->decideMany($tools->items(), $request->user());
 
+        // Both orderings travel with the page rather than being re-derived per card:
+        // the catalog filters and sorts client-side, so it needs the whole ranking
+        // once, not a request per sort change.
         return (new ApiCollection($tools, ToolResource::class))->additional([
-            'meta' => ['access' => $accessMap],
+            'meta' => [
+                'access' => $accessMap,
+                'trending' => $this->trending->describe(),
+                // Empty for a guest, which is exactly what the Favourites sort
+                // should do when nobody is signed in.
+                'favorites' => $this->favorites->slugsFor($request->user()),
+            ],
         ]);
+    }
+
+    /**
+     * The trending ranking on its own.
+     *
+     * Split out because the catalog page is server-rendered and cached for everyone,
+     * so it cannot carry a ranking that changes every ten minutes without holding
+     * the whole page hostage to the shortest-lived thing on it.
+     */
+    public function trending(): JsonResource
+    {
+        return new JsonResource($this->trending->describe());
     }
 
     public function show(Request $request, string $slug): ToolDetailResource
@@ -81,8 +107,11 @@ final class ToolCatalogController extends Controller
         $this->funnel->view($tool->id);
 
         $decision = $this->access->decide($tool, $request->user());
+        $user = $request->user();
 
-        return (new ToolDetailResource($tool))->withAccess($decision);
+        return (new ToolDetailResource($tool))
+            ->withAccess($decision)
+            ->withFavorite($user === null ? null : $this->favorites->has($user, $tool));
     }
 
     /** @return ApiCollection<ToolCategoryResource> */

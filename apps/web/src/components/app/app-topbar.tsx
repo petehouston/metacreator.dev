@@ -7,7 +7,8 @@ import * as React from "react";
 
 import { NotificationBell } from "@/components/account/notification-bell";
 import { UserMenu } from "@/components/account/user-menu";
-import { navItems } from "@/components/app/nav-items";
+import { navItemsFor, type NavItem } from "@/components/app/nav-items";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 
 /**
@@ -25,7 +26,10 @@ export function AppTopbar({
   onOpenCommandPalette: () => void;
 }) {
   const pathname = usePathname();
-  const current = resolveTitle(pathname);
+  const billingEnabled = useBillingEnabled();
+  // The breadcrumb resolves against the same list the sidebar draws, so a route
+  // that is no longer in the nav cannot still title itself from it.
+  const current = resolveTitle(pathname, navItemsFor(billingEnabled));
 
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-[var(--color-border-subtle)] bg-[var(--app-rail)] px-4 backdrop-blur-xl lg:px-6">
@@ -86,13 +90,16 @@ export function AppTopbar({
   );
 }
 
-function resolveTitle(pathname: string): {
+function resolveTitle(
+  pathname: string,
+  items: readonly NavItem[],
+): {
   title: string;
   parent?: { href: string; label: string };
 } {
   // Longest match wins, so `/dashboard/settings/notifications` resolves to the
   // settings screen rather than to `/dashboard`.
-  const match = [...navItems]
+  const match = [...items]
     .sort((a, b) => b.href.length - a.href.length)
     .find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
 

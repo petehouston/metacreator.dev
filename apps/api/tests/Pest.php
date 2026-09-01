@@ -9,6 +9,7 @@ use App\Domain\Settings\Settings;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolCategory;
+use App\Domain\Tools\Runners\WordCounterRunner;
 use App\Domain\Users\Models\MagicLink;
 use App\Domain\Users\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -111,5 +112,34 @@ function toolFixture(ToolTier $tier = ToolTier::Premium): Tool
         'tier' => $tier,
         'status' => 'published',
         'is_visible' => true,
+    ]);
+}
+
+/**
+ * A published free tool backed by the word-counter runner, so a run actually
+ * executes rather than being stubbed.
+ *
+ * `tools.key` is unique and is what binds a row to its runner, so a test needing a
+ * *second* tool passes its own key — that one is a catalog row for listing and
+ * ranking, and is never run.
+ */
+function counterTool(ToolTier $tier = ToolTier::Free, string $key = 'content.word-counter'): Tool
+{
+    $category = ToolCategory::query()->firstOrCreate(
+        ['slug' => 'quota-fixtures'],
+        ['name' => 'Fixtures', 'sort_order' => 0, 'is_visible' => true],
+    );
+
+    return Tool::query()->create([
+        'slug' => 'word-counter-'.uniqid(),
+        'key' => $key,
+        'category_id' => $category->id,
+        'name' => 'Word Counter',
+        'tagline' => 'Count words, characters and reading time in any text.',
+        'tier' => $tier,
+        'status' => 'published',
+        'is_visible' => true,
+        'input_schema' => app(WordCounterRunner::class)->inputSchema(),
+        'published_at' => now(),
     ]);
 }

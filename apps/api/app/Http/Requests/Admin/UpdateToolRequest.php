@@ -23,7 +23,16 @@ final class UpdateToolRequest extends FormRequest
             'category_id' => ['sometimes', 'integer', 'exists:tool_categories,id'],
             'platforms' => ['sometimes', 'array', 'max:12'],
             'platforms.*' => ['string', 'max:40'],
+            // Per-tool run caps, one per window. Null means "defer to the tier", which
+            // is what almost every tool wants; a number only ever *narrows* the
+            // tier's allowance, so a tool can be stricter than the plan but never
+            // more generous than it. `config.runs_per_day` is the pre-window daily
+            // key, still accepted so an old payload does not 422.
             'config' => ['sometimes', 'array'],
+            'config.limits' => ['sometimes', 'nullable', 'array'],
+            'config.limits.daily' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:100000'],
+            'config.limits.weekly' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:1000000'],
+            'config.limits.monthly' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:10000000'],
             'config.runs_per_day' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:100000'],
 
             // Per-tool SEO overrides. Every field is optional and nullable: blank

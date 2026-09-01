@@ -40,7 +40,10 @@ export const navSections: NavSection[] = [
         description: "Plan, usage and where you left off",
       },
       {
-        href: "/dashboard/tools",
+        // The public catalog, not an in-app copy of it: `/tools` already shows
+        // each card's access state for whoever is signed in, so a second browser
+        // behind the dashboard was a surface to keep in step for no gain.
+        href: "/tools",
         label: "Tools",
         icon: Wrench,
         description: "Search the catalog and run anything",
@@ -90,6 +93,32 @@ export const navSections: NavSection[] = [
 ];
 
 export const navItems: NavItem[] = navSections.flatMap((section) => section.items);
+
+/**
+ * Routes that only exist while the site sells something.
+ *
+ * Filtered out rather than disabled: with billing off there is no plan, no invoice
+ * and no card on file, so a "Plan & billing" screen would be a page about nothing.
+ * Keeping the list here means the sidebar, the topbar's breadcrumb and the ⌘K
+ * palette drop it together — the failure mode this file exists to prevent.
+ */
+const BILLING_HREFS: readonly string[] = ["/dashboard/billing"];
+
+export function navSectionsFor(billingEnabled: boolean): NavSection[] {
+  if (billingEnabled) return navSections;
+
+  return navSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => !BILLING_HREFS.includes(item.href)),
+    }))
+    // A section whose only entry was billing should not leave a heading behind.
+    .filter((section) => section.items.length > 0);
+}
+
+export function navItemsFor(billingEnabled: boolean): NavItem[] {
+  return navSectionsFor(billingEnabled).flatMap((section) => section.items);
+}
 
 /**
  * `/dashboard` is a prefix of every child route, so it only ever matches exactly;

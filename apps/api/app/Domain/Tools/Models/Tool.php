@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Tools\Models;
 
+use App\Domain\Billing\Services\BillingFeature;
 use App\Domain\Seo\Models\SeoMeta;
+use App\Domain\Tools\Enums\QuotaWindow;
 use App\Domain\Tools\Enums\ToolStatus;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Support\Casts\AsPreservedJson;
@@ -102,6 +104,12 @@ final class Tool extends Model
         return $this->hasMany(ToolGrant::class);
     }
 
+    /** @return HasMany<ToolFavorite, $this> */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(ToolFavorite::class);
+    }
+
     /** @return MorphOne<SeoMeta, $this> */
     public function seo(): MorphOne
     {
@@ -138,12 +146,27 @@ final class Tool extends Model
     }
 
     /**
+     * Filter by the tier a visitor is actually shown, not the stored one.
+     *
+     * With billing off a `premium` row presents as `account` everywhere else, so
+     * filtering must agree: asking for `account` has to include it, and asking for
+     * `premium` has to come back empty rather than listing tools whose cards say
+     * "Account Required".
+     *
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
     public function scopeTier(Builder $query, ToolTier $tier): Builder
     {
-        return $query->where('tier', $tier->value);
+        if (app(BillingFeature::class)->enabled()) {
+            return $query->where('tier', $tier->value);
+        }
+
+        return match ($tier) {
+            ToolTier::Account => $query->whereIn('tier', [ToolTier::Account->value, ToolTier::Premium->value]),
+            ToolTier::Premium => $query->whereRaw('1 = 0'),
+            ToolTier::Free => $query->where('tier', ToolTier::Free->value),
+        };
     }
 
     /**
@@ -187,6 +210,16 @@ final class Tool extends Model
         return 'slug';
     }
 
+    /**
+     * The tier this tool is gated at right now — `tier` filtered through the
+     * billing switch. Every public surface reads this; the admin editor reads the
+     * raw `tier`, because that is the value it is there to edit.
+     */
+    public function effectiveTier(): ToolTier
+    {
+        return app(BillingFeature::class)->effectiveTier($this->tier);
+    }
+
     public function isRunnable(): bool
     {
         return $this->status->isRunnable();
@@ -214,11 +247,51 @@ final class Tool extends Model
         return array_values($this->platforms ?? []);
     }
 
-    /** Per-tool overrides of the default quota, e.g. an expensive tool capped lower. */
-    public function quotaOverride(): ?int
+    /**
+     * This tool's own cap for one window, or null when it defers to the tier.
+     *
+     * Stored under `config.limits.{window}` so a tool can carry a different shape of
+     * budget from the global one — a metered provider is usually fine with a
+     * generous day and a hard month, which a single "runs per day" number cannot
+     * express. `config.runs_per_day` is still honoured as the daily value for rows
+     * written before windows existed.
+     */
+    public function quotaOverride(QuotaWindow $window): ?int
     {
-        $value = $this->config['runs_per_day'] ?? null;
+        $value = $this->config['limits'][$window->value] ?? null;
 
-        return is_numeric($value) ? (int) $value : null;
+        if (! is_numeric($value) && $window === QuotaWindow::Daily) {
+            $value = $this->config['runs_per_day'] ?? null;
+        }
+
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        $limit = (int) $value;
+
+        // A tool cap only ever narrows, so a negative here would be meaningless —
+        // treat it as "no cap" rather than letting a tool claim to be unlimited.
+        return $limit < 0 ? null : $limit;
+    }
+
+    /**
+     * Every window this tool caps, keyed by window. Windows it defers on are absent.
+     *
+     * @return array<string, int>
+     */
+    public function quotaOverrides(): array
+    {
+        $overrides = [];
+
+        foreach (QuotaWindow::all() as $window) {
+            $limit = $this->quotaOverride($window);
+
+            if ($limit !== null) {
+                $overrides[$window->value] = $limit;
+            }
+        }
+
+        return $overrides;
     }
 }

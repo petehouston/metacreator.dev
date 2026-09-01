@@ -165,3 +165,39 @@ it('rejects a period the dashboards do not offer', function () {
         // stale period should still show someone their dashboard.
         ->assertJsonPath('data.period.days', 30);
 });
+
+it('counts runs per actor, and splits accounts from visitors without double-counting', function () {
+    $tool = toolFixture();
+    $member = User::factory()->create();
+
+    // A member's runs still carry a visitor hash. Counting every hash would count
+    // them as a visitor too, and the split would stop adding up.
+    ToolRun::factory()->count(3)->create([
+        'tool_id' => $tool->id,
+        'user_id' => $member->id,
+        'visitor_hash' => str_repeat('a', 64),
+        'created_at' => now()->subHour(),
+    ]);
+
+    ToolRun::factory()->count(2)->create([
+        'tool_id' => $tool->id,
+        'user_id' => null,
+        'visitor_hash' => str_repeat('b', 64),
+        'created_at' => now()->subHour(),
+    ]);
+
+    $actors = app(ToolAnalytics::class)->actors(Period::fromRequest('30'));
+
+    expect($actors['totals']['runs'])->toBe(5)
+        ->and($actors['totals']['accounts'])->toBe(1)
+        ->and($actors['totals']['visitors'])->toBe(1)
+        ->and($actors['totals']['actors'])->toBe(2)
+        // The member ran the most, so they lead — and are named, not hashed.
+        ->and($actors['rows'][0]['type'])->toBe('user')
+        ->and($actors['rows'][0]['runs'])->toBe(3)
+        ->and($actors['rows'][0]['share'])->toBe(60.0)
+        ->and($actors['rows'][1]['type'])->toBe('visitor')
+        // A visitor is a fingerprint, never an address.
+        ->and($actors['rows'][1]['label'])->toStartWith('Visitor ')
+        ->and($actors['rows'][1]['email'])->toBeNull();
+});

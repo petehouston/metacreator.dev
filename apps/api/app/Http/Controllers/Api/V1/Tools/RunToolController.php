@@ -56,10 +56,15 @@ final class RunToolController extends Controller
             404,
         );
 
-        if ($run->status === RunStatus::Succeeded && $run->result_ref !== null) {
+        if ($run->status === RunStatus::Succeeded && $run->result_payload === null && $run->result_ref !== null) {
             $run->setAttribute('stored_result', $artifacts->retrieve($run));
         }
 
-        return new ToolRunResource($run);
+        // The owner of a run may see what it was given and what it produced; a guest
+        // polling an ownerless run gets the result and nothing else. `detailed` is
+        // false for a guest even on their own anonymous run, because nothing was
+        // stored for it in the first place.
+        return (new ToolRunResource($run))
+            ->detailed($run->user_id !== null && $run->user_id === $request->user()?->id);
     }
 }

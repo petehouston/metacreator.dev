@@ -482,13 +482,29 @@
     max-width: 68ch;
   }
 
-  /* ── The ticker. A single strip of mono type sliding under the hero, doubled
-        in the markup so the loop is seamless. Paused for anyone who asked for
-        reduced motion — the content is decorative, so stopping it loses nothing. */
+  /* ── The ticker. A single strip of mono type sliding under the hero, printed
+        twice in the markup so the loop is seamless. Paused for anyone who asked
+        for reduced motion — the content is decorative, so stopping it loses
+        nothing.
+
+        Two rules keep the loop from stuttering. The spacing between words lives
+        on the words themselves (padding, not a flex `gap`), so the two groups are
+        exactly equal and a -50% slide lands one group on top of the other rather
+        than half a gap out. And each group is at least a viewport wide, so the
+        second is already in frame before the first has finished leaving — a short
+        word list can no longer run out and show a bare strip at the end. */
   .marquee {
     display: flex;
     width: max-content;
     animation: marquee-slide 44s linear infinite;
+  }
+
+  .marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-around;
+    min-width: 100vw;
   }
 
   .marquee-mask {

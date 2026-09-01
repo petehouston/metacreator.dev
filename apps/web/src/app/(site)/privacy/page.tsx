@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { LegalPage } from "@/components/legal/legal-page";
-import { siteConfig } from "@/config/site";
+import { contactEmail } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const email = await contactEmail();
+
   return (
     <LegalPage
       title="Privacy Policy"
@@ -161,7 +163,7 @@ export default function PrivacyPage() {
               production data is limited and audited. If a breach affects your personal data we
               will tell you and the relevant authority within 72 hours of becoming aware of it.
               To report a vulnerability, email{" "}
-              <a href="mailto:security@metacreator.dev">security@metacreator.dev</a>.
+              <a href={`mailto:${email}`}>{email}</a>.
             </p>
           ),
         },
@@ -171,7 +173,7 @@ export default function PrivacyPage() {
           body: (
             <p>
               Questions about this policy, or about data we hold on you, go to{" "}
-              <a href={`mailto:${siteConfig.supportEmail}`}>{siteConfig.supportEmail}</a>.
+              <a href={`mailto:${email}`}>{email}</a>.
             </p>
           ),
         },

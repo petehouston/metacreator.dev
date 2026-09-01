@@ -95,8 +95,13 @@ For end users, access is computed by `EntitlementService` and returned wholesale
   "plan": "pro_monthly",
   "status": "active",
   "renews_at": "2026-09-24T00:00:00Z",
-  "limits": { "runs_per_day": 1000, "history_days": null, "export": true },
-  "usage":  { "runs_today": 42 },
+  "limits": {
+    "runs_per_day": 1000,
+    "runs": { "daily": 1000, "weekly": -1, "monthly": 20000 },
+    "history_days": null,
+    "export": true
+  },
+  "usage":  { "window": "monthly", "limit": 20000, "used": 42, "remaining": 19958 },
   "tool_access": { "default_tier": "premium", "grants": ["yt-thumbnail-ab-tester"] }
 }
 ```

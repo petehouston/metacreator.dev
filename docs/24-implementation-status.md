@@ -5,7 +5,7 @@ this handbook describes the intended design; this one is the only place that cla
 exists. Keep it honest — a specification that reads as a status report is how a team ends up
 surprised.
 
-Last updated: 2026-08-27.
+Last updated: 2026-08-30.
 
 ## Legend
 
@@ -34,13 +34,18 @@ Last updated: 2026-08-27.
 | Area | Status | Notes |
 | --- | --- | --- |
 | Tool registry, runner contract, access & quota services | ✅ | [08](08-tool-engine.md) |
-| Public catalog, search, filters, tool pages | ✅ | |
+| Public catalog, search, filters, tool pages | ✅ | Sort now sits above the grid, on the count's row and right-aligned, rather than inside the filter panel: a filter changes *which* tools you see, a sort only their order, and the two do not belong in one box |
+| Per-tool SEO defaults | ✅ | `ToolSeoDefaults` generates a complete, tier-honest payload — title, description, og title/description, focus keyword, card type — for any tool nobody has tuned. Stored overrides win field by field, and a cleared field falls back rather than publishing an empty string ([16](16-seo.md)) |
 | Generated `ToolForm` and result renderers | ✅ | |
 | Tool runners | 🟡 | **62 registered**, each with a catalog row (`ToolServiceProvider::RUNNERS`; the drift test asserts both directions) — every free tool, plus one account tool. What remains of [07](07-tool-catalog.md) is the account and premium tiers, which need providers rather than runners |
 | Custom tool UIs | ✅ | `apps/web/src/tools/custom/`, dispatched on the tool's registry key. One so far: the fake YouTube comment generator, which draws its card on a canvas in the browser so no image is ever uploaded |
 | Run recording & telemetry | ✅ | |
-| Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter, and a page per run at `/dashboard/runs/{id}` |
-| In-app catalog (`/dashboard/tools`) | ✅ | Search, tier/platform/category filters, per-user access shown on each card |
+| Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter, and a page per run at `/dashboard/runs/{id}` showing the **input it was given and the result it produced**. Both are stored for signed-in members only (`tool_runs.input_payload` / `result_payload`, capped at 64 KB, never for results carrying expiring artifact URLs) — an anonymous run still keeps nothing but its hash |
+| Per-tier run limits, admin-configurable | ✅ | `tools.limits.{free,account,premium}.{daily,weekly,monthly}` — 5 / 20 / unlimited a day by default, week and month off, edited under Settings → Tools (one panel per window). Anonymous is counted per IP via `visitor_hash`; `-1` leaves a window uncounted, `0` closes a tier. The quota wall names the next tier, its allowance and which window ran out, so it can offer the right button and the right wait ([08](08-tool-engine.md)) |
+| Per-tool run limits | ✅ | `config.limits.{daily,weekly,monthly}`, edited on the tool's own page under Run limits. A tool cap only narrows — it applies to subscribers too but can never raise a tier's allowance. Blank defers to the tier ([08](08-tool-engine.md)) |
+| Favourites | ✅ | `tool_favorites`; heart on every catalog card and the tool page, `Favourites first` sort in the catalog. Members only — an anonymous list keyed on a hash that rotates nightly would empty itself |
+| Trending | ✅ | `TrendingTools`, ranked from `tool_runs` over an admin-set window (`tools.trending_days`, default 3) with a floor (`tools.trending_min_runs`). Served at `GET /catalog/tools/trending` rather than baked into the cached catalog page |
+| In-app catalog (`/dashboard/tools`) | ✅ | **Removed** — `/dashboard/tools` now 308s to `/tools`. The public catalog already shows per-user access on each card, so a second browser was two surfaces to keep in step for no gain |
 
 ## Accounts
 
@@ -100,7 +105,7 @@ Full detail in [25](25-admin.md).
 | --- | --- | --- |
 | Admin API, permission-gated per route | ✅ | 61 routes; a test asserts every one declares a permission *and* that a customer is refused by all of them |
 | Overview dashboard | ✅ | Eight headline metrics with period-over-period deltas and sparklines, run volume, funnel, access-reason split, top tools, top errors |
-| Tool analytics | ✅ | Every panel in [15](15-analytics.md): runs, paywall hits, failure rate, p95, cache hit rate, access-reason split, comped runs |
+| Tool analytics | ✅ | Every panel in [15](15-analytics.md): runs, paywall hits, failure rate, p95, cache hit rate, access-reason split, comped runs — plus **runs by actor**: total runs across everyone, then per account and per visitor fingerprint, so healthy breadth can be told from one busy script |
 | Funnel & content analytics | ✅ | |
 | Nightly rollups (`analytics:rollup`) | ✅ | Recompute, not append. Every 15 min for today, 00:10 for yesterday |
 | `tool_funnel_daily` + `FunnelRecorder` | ✅ | The table [15](15-analytics.md) specified and nothing created. Paywall hits had **no source at all** before this |

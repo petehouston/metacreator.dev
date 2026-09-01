@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Domain\Seo\Models\SeoMeta;
+use App\Domain\Seo\Services\ToolSeoDefaults;
 use App\Domain\Tools\Enums\ToolStatus;
 use App\Domain\Tools\Enums\ToolTier;
 use App\Domain\Tools\Models\Tool;
@@ -38,7 +39,7 @@ final class ToolCatalogSeeder extends Seeder
         'youtube.monetization-checker',
     ];
 
-    public function run(ToolRegistry $registry): void
+    public function run(ToolRegistry $registry, ToolSeoDefaults $seo): void
     {
         Tool::query()->whereIn('key', self::RETIRED_KEYS)->delete();
 
@@ -70,7 +71,7 @@ final class ToolCatalogSeeder extends Seeder
             );
 
             $this->syncPlatforms($tool, $definition['platforms']);
-            $this->syncSeo($tool, $definition);
+            $this->syncSeo($tool, $definition, $seo);
         }
 
         $this->pruneEmptyCategories();
@@ -110,17 +111,34 @@ final class ToolCatalogSeeder extends Seeder
         ));
     }
 
-    /** @param  array<string, mixed>  $definition */
-    private function syncSeo(Tool $tool, array $definition): void
+    /**
+     * Seed the tool's SEO row.
+     *
+     * Hand-written copy in the definition wins; everything else comes from
+     * {@see ToolSeoDefaults}, which is the same generator the API falls back to at
+     * read time. One source for both means a tool tuned in this file and a tool
+     * left alone are described the same way, and neither ships a blank field.
+     *
+     * @param  array<string, mixed>  $definition
+     */
+    private function syncSeo(Tool $tool, array $definition, ToolSeoDefaults $seo): void
     {
+        $defaults = $seo->for($tool);
+
         SeoMeta::query()->updateOrCreate(
             ['seoable_type' => Tool::class, 'seoable_id' => $tool->id],
             [
-                'title' => $definition['seo_title'] ?? "{$definition['name']} — Free Online Tool",
-                'description' => $definition['seo_description'] ?? $definition['tagline'],
-                'robots' => 'index,follow',
-                'schema_type' => 'SoftwareApplication',
-                'focus_keyword' => $definition['focus_keyword'] ?? strtolower($definition['name']),
+                'title' => $definition['seo_title'] ?? $defaults['title'],
+                'description' => $definition['seo_description'] ?? $defaults['description'],
+                'robots' => $defaults['robots'],
+                'schema_type' => $defaults['schema_type'],
+                'focus_keyword' => $definition['focus_keyword'] ?? $defaults['focus_keyword'],
+                // Share copy is generated rather than hand-written per tool: sixty
+                // bespoke og titles is sixty chances to leave one empty, and the
+                // generated one is shaped for a timeline rather than a SERP.
+                'og_title' => $definition['og_title'] ?? $defaults['og_title'],
+                'og_description' => $definition['og_description'] ?? $defaults['og_description'],
+                'twitter_card' => $defaults['twitter_card'],
             ],
         );
     }

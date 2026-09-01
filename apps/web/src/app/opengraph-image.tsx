@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { siteConfig } from "@/config/site";
+import { MARK_DATA_URI } from "@/lib/brand-mark.generated";
 
 /**
  * The site-wide social card.
@@ -33,22 +34,11 @@ export default function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              background: "#6366f1",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 26,
-              fontWeight: 700,
-            }}
-          >
-            M
-          </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          {/* Satori has no CSS variables and only a subset of SVG, so the mark
+              arrives as a data URI with its palette already baked in — the same
+              bytes the favicons are cut from. */}
+          <img src={MARK_DATA_URI} width={52} height={52} alt="" />
           <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.5 }}>
             {siteConfig.name}
           </div>

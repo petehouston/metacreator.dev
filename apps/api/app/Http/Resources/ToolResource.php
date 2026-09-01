@@ -19,15 +19,20 @@ final class ToolResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
+        $tier = $this->effectiveTier();
+
         return [
             'id' => $this->public_id,
             'slug' => $this->slug,
             'name' => $this->name,
             'tagline' => $this->tagline,
+            // The *effective* tier, not the stored one: while billing is off a
+            // premium tool is gated at `account`, and a card that still said "Pro"
+            // would be advertising a plan the site does not sell.
             'tier' => [
-                'value' => $this->tier->value,
-                'label' => $this->tier->label(),
-                'description' => $this->tier->description(),
+                'value' => $tier->value,
+                'label' => $tier->label(),
+                'description' => $tier->description(),
             ],
             'platforms' => $this->platformList(),
             'category' => $this->whenLoaded('category', fn () => [

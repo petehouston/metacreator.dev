@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Tools\Services;
 
+use App\Domain\Billing\Services\BillingFeature;
 use App\Domain\Billing\Services\EntitlementService;
 use App\Domain\Tools\Data\AccessDecision;
 use App\Domain\Tools\Enums\AccessReason;
@@ -21,7 +22,10 @@ use App\Domain\Users\Models\User;
  */
 final readonly class ToolAccessService
 {
-    public function __construct(private EntitlementService $entitlements) {}
+    public function __construct(
+        private EntitlementService $entitlements,
+        private BillingFeature $billing,
+    ) {}
 
     /**
      * Resolution order is deliberate; the first match wins (see docs/06).
@@ -47,22 +51,27 @@ final readonly class ToolAccessService
             return AccessDecision::allow(AccessReason::Subscription);
         }
 
+        // From here the *effective* tier is what gates: with billing off there is
+        // nothing to subscribe to, so a `premium` tool asks for an account instead
+        // of asking for a plan that cannot be bought.
+        $tier = $this->billing->effectiveTier($tool->tier);
+
         // 4. Authenticated actors cover `account` and `free`.
-        if ($user !== null && $tool->tier !== ToolTier::Premium) {
+        if ($user !== null && $tier !== ToolTier::Premium) {
             return AccessDecision::allow(
-                $tool->tier === ToolTier::Free ? AccessReason::Free : AccessReason::Account
+                $tier === ToolTier::Free ? AccessReason::Free : AccessReason::Account
             );
         }
 
         // 5. Anonymous actors cover `free` only.
-        if ($user === null && $tool->tier === ToolTier::Free) {
+        if ($user === null && $tier === ToolTier::Free) {
             return AccessDecision::allow(AccessReason::Free);
         }
 
         // 6. Denied — say precisely what is missing.
-        return $tool->tier === ToolTier::Premium
-            ? AccessDecision::needsSubscription($tool->tier)
-            : AccessDecision::needsAccount($tool->tier);
+        return $tier === ToolTier::Premium
+            ? AccessDecision::needsSubscription($tier)
+            : AccessDecision::needsAccount($tier);
     }
 
     public function allows(Tool $tool, ?User $user): bool
@@ -88,12 +97,14 @@ final readonly class ToolAccessService
         $result = [];
 
         foreach ($tools as $tool) {
+            $tier = $this->billing->effectiveTier($tool->tier);
+
             $result[$tool->slug] = match (true) {
                 ! $tool->isRunnable() => false,
                 $isStaff, $isPaid => true,
                 in_array($tool->id, $grantedToolIds, true) => true,
-                $user !== null => $tool->tier !== ToolTier::Premium,
-                default => $tool->tier === ToolTier::Free,
+                $user !== null => $tier !== ToolTier::Premium,
+                default => $tier === ToolTier::Free,
             };
         }
 

@@ -22,6 +22,7 @@ import { SectionCard } from "@/components/app/section-card";
 import { StatTile, StatTileSkeleton } from "@/components/app/stat-tile";
 import { FormAlert } from "@/components/auth/form-alert";
 import { useSession } from "@/components/auth/session-provider";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { Button } from "@/components/ui/button";
 import { TierBadge } from "@/components/ui/badge";
 import { authApi } from "@/lib/auth-api";
@@ -37,9 +38,17 @@ import { relativeTime } from "@/lib/utils";
  * *after* all three — it is the answer to a question the numbers have already
  * raised, not an interstitial.
  */
+/** How each budget window reads as a stat-tile label. */
+const RUN_PERIOD: Record<string, string> = {
+  daily: "today",
+  weekly: "this week",
+  monthly: "this month",
+};
+
 export function Overview() {
   const { user } = useSession();
   const { entitlements, loading: entitlementsLoading } = useEntitlements();
+  const billingEnabled = useBillingEnabled();
 
   const [runs, setRuns] = React.useState<ToolRun[]>([]);
   const [notices, setNotices] = React.useState<NotificationItem[]>([]);
@@ -51,7 +60,9 @@ export function Overview() {
 
     void (async () => {
       const [runsResult, noticesResult, toolsResult] = await Promise.all([
-        apiFetch<Paginated<ToolRun>>("/account/tool-runs", { searchParams: { per_page: 6 } }),
+        apiFetch<Paginated<ToolRun>>("/account/tool-runs", {
+          searchParams: { per_page: 6 },
+        }),
         apiFetch<Paginated<NotificationItem>>("/notifications", {
           searchParams: { per_page: 3, "filter[unread]": 1 },
         }),
@@ -106,29 +117,40 @@ export function Overview() {
             </>
           ) : (
             <>
+              {/* With billing off there is no plan to be on, and a tile reading
+                  "Free" would imply a paid one exists to move to. What the tile
+                  was really answering — what can I run — is said directly. */}
               <StatTile
-                label="Plan"
-                value={planLabel(entitlements.plan)}
+                label={billingEnabled ? "Plan" : "Access"}
+                value={billingEnabled ? planLabel(entitlements.plan) : "All tools"}
                 icon={Sparkles}
-                tone={entitlements.is_paid ? "accent" : "neutral"}
+                tone={!billingEnabled || entitlements.is_paid ? "accent" : "neutral"}
                 hint={
-                  entitlements.is_paid
-                    ? entitlements.renews_at
-                      ? `Renews ${formatDate(entitlements.renews_at)}`
-                      : "Active"
-                    : "Free tools and account tools"
+                  !billingEnabled
+                    ? "Every tool in the catalog"
+                    : entitlements.is_paid
+                      ? entitlements.renews_at
+                        ? `Renews ${formatDate(entitlements.renews_at)}`
+                        : "Active"
+                      : "Free tools and account tools"
                 }
               />
 
+              {/* The window shown is whichever budget has the least left, not always
+                  the day — see QuotaService::status(). */}
               <StatTile
-                label="Runs today"
+                label={`Runs ${usage ? (RUN_PERIOD[usage.window] ?? RUN_PERIOD.daily) : RUN_PERIOD.daily}`}
                 value={`${usage?.used ?? 0} / ${usage?.limit ?? 0}`}
                 icon={Zap}
                 progress={ratio}
                 tone={ratio >= 1 ? "danger" : ratio >= 0.75 ? "warning" : "primary"}
                 hint={
                   usage
-                    ? `${usage.remaining} left · resets ${formatTime(usage.resets_at)}`
+                    ? `${usage.remaining} left · resets ${
+                        usage.window === "daily"
+                          ? formatTime(usage.resets_at)
+                          : formatDate(usage.resets_at)
+                      }`
                     : undefined
                 }
               />
@@ -185,7 +207,7 @@ export function Overview() {
                 description="Pick a tool, run it once, and everything you produce lands here."
                 action={
                   <Button asChild size="sm">
-                    <Link href="/dashboard/tools">Browse tools</Link>
+                    <Link href="/tools">Browse tools</Link>
                   </Button>
                 }
               />
@@ -222,7 +244,7 @@ export function Overview() {
             description="Featured tools, ready to run."
             action={
               <Link
-                href="/dashboard/tools"
+                href="/tools"
                 className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] hover:underline"
               >
                 All tools
@@ -242,7 +264,7 @@ export function Overview() {
                 description="No featured tools right now — the full catalog is still there."
                 action={
                   <Button asChild size="sm" variant="secondary">
-                    <Link href="/dashboard/tools">Open the catalog</Link>
+                    <Link href="/tools">Open the catalog</Link>
                   </Button>
                 }
               />
@@ -329,9 +351,10 @@ export function Overview() {
             )}
           </SectionCard>
 
-          {entitlements && !entitlements.is_paid && <UpgradeCard />}
+          {/* No upsell where there is nothing to sell. */}
+          {billingEnabled && entitlements && !entitlements.is_paid && <UpgradeCard />}
 
-          {entitlements?.is_paid && entitlements.renews_at && (
+          {billingEnabled && entitlements?.is_paid && entitlements.renews_at && (
             <SectionCard title="Subscription" description="What happens next.">
               <p className="flex items-center gap-2 text-sm text-[var(--color-foreground-muted)]">
                 <CalendarClock className="size-4 text-[var(--color-accent)]" aria-hidden="true" />
@@ -367,8 +390,8 @@ function UpgradeCard() {
       </h2>
 
       <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-foreground-muted)]">
-        Higher daily limits, unlimited history and exports. Start with a $9 seven-day pass —
-        no subscription needed.
+        Higher daily limits, unlimited history and exports. Start with a $9 seven-day pass — no
+        subscription needed.
       </p>
 
       <Button asChild className="mt-4 w-full">
@@ -437,9 +460,15 @@ export function formatDuration(ms: number): string {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }

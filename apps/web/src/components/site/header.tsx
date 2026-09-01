@@ -9,13 +9,16 @@ import { NotificationBell } from "@/components/account/notification-bell";
 import { useSession } from "@/components/auth/session-provider";
 import { UserMenu } from "@/components/account/user-menu";
 import { Logo } from "@/components/site/logo";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { ThemeToggle } from "@/components/site/theme-toggle";
-import { primaryNav } from "@/config/site";
+import { primaryNavFor } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { user } = useSession();
+  const billingEnabled = useBillingEnabled();
+  const nav = React.useMemo(() => primaryNavFor(billingEnabled), [billingEnabled]);
   // The mobile menu is stored as "the path it was opened on" rather than a bare
   // boolean, so navigating away closes it by derivation instead of by an effect that
   // resets state after the new page has already rendered with the menu open.
@@ -57,7 +60,7 @@ export function SiteHeader() {
 
           <nav aria-label="Main" className="hidden md:block">
             <ul className="flex items-center gap-1">
-              {primaryNav.map((item) => {
+              {nav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
                 return (
@@ -112,7 +115,7 @@ export function SiteHeader() {
           className="border-t border-[var(--color-border)] bg-[var(--color-background)]/95 backdrop-blur-xl md:hidden"
         >
           <ul className="mx-auto flex w-full max-w-[75rem] flex-col px-4 py-2 sm:px-6">
-            {primaryNav.map((item) => (
+            {nav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

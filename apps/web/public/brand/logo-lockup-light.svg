@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 32" width="208" height="32" role="img" aria-label="MetaCreator.Dev">
+  <defs>
+    <linearGradient id="gr" x1="3.75" y1="27.6" x2="17.15" y2="14.2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3d80f7"/><stop offset="1" stop-color="#50e2a8"/>
+    </linearGradient>
+    <linearGradient id="gs" x1="13" y1="4" x2="30" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8df3c6"/><stop offset="1" stop-color="#13c990"/>
+    </linearGradient>
+  </defs><path d="M5.38 29.23L17.54 14.59Q17.67 13.68 16.76 13.81L2.12 25.97Q1.57 29.78 5.38 29.23Z" fill="url(#gr)"/><path d="M20.05 4.1Q21.04 10.11 27.05 11.1Q21.04 12.09 20.05 18.1Q19.06 12.09 13.05 11.1Q19.06 10.11 20.05 4.1Z" fill="url(#gs)"/><path d="M26.05 14.8Q26.59 18.06 29.85 18.6Q26.59 19.14 26.05 22.4Q25.51 19.14 22.25 18.6Q25.51 18.06 26.05 14.8Z" fill="url(#gs)"/><path d="M24.05 2.8Q24.45 5.2 26.85 5.6Q24.45 6 24.05 8.4Q23.65 6 21.25 5.6Q23.65 5.2 24.05 2.8Z" fill="url(#gs)"/><path d="M13.35 4.7Q13.69 6.76 15.75 7.1Q13.69 7.44 13.35 9.5Q13.01 7.44 10.95 7.1Q13.01 6.76 13.35 4.7Z" fill="url(#gs)"/>
+  <text x="42" y="21.5" font-family="'DM Sans','Helvetica Neue',Arial,sans-serif" font-size="16" font-weight="600" letter-spacing="-0.4" fill="#141821">MetaCreator</text>
+  <text x="151" y="21.5" font-family="'JetBrains Mono','SF Mono',ui-monospace,monospace" font-size="13.5" fill="#13c990">.dev</text>
+</svg>

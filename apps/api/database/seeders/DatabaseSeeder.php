@@ -22,6 +22,7 @@ final class DatabaseSeeder extends Seeder
             $this->call(DemoSeeder::class);
             // After DemoSeeder: posts are attributed to the editor account it creates.
             $this->call(BlogDemoSeeder::class);
+            $this->call(ChangelogDemoSeeder::class);
             // Both depend on the accounts DemoSeeder creates.
             $this->call(CommerceDemoSeeder::class);
             $this->call(SupportDemoSeeder::class);

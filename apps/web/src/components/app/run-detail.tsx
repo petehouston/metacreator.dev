@@ -18,10 +18,13 @@ import type { ToolRun } from "@/lib/types";
 /**
  * One stored run, on its own page.
  *
- * The list endpoint returns runs without their full payload, so this fetches the
- * single run it is showing. Only asynchronous runs keep their result (docs/08) — a
- * tool that answered instantly leaves a record of the run and not the output, and
- * saying so is better than an empty panel.
+ * The list endpoint leaves the payloads out — a page of twenty runs must not be a
+ * page of twenty results — so this fetches the single run it is showing, with the
+ * input it was given and the output it produced.
+ *
+ * Both are kept only for signed-in members: an anonymous run stores its hash and
+ * nothing else, because there is no account it could ever be shown back to. A run
+ * whose result was too large to keep says so rather than showing an empty panel.
  */
 export function RunDetail({ id }: { id: string }) {
   const [run, setRun] = React.useState<ToolRun | null>(null);
@@ -32,7 +35,9 @@ export function RunDetail({ id }: { id: string }) {
     let cancelled = false;
 
     void (async () => {
-      const result = await apiData<ToolRun>(`/tools/runs/${id}`);
+      // The account endpoint, not the public poll: this is history, so it is
+      // scoped to the caller's own runs and returns the stored input with it.
+      const result = await apiData<ToolRun>(`/account/tool-runs/${id}`);
       if (cancelled) return;
 
       if (result.ok) {
@@ -119,6 +124,28 @@ export function RunDetail({ id }: { id: string }) {
           </FormAlert>
         )}
 
+        {/* What was asked, above what came back. Reading a stored run in the
+            other order means guessing at the question from the answer. */}
+        {run.input && Object.keys(run.input).length > 0 && (
+          <SectionCard
+            title="Input"
+            action={<CopyButton value={JSON.stringify(run.input, null, 2)} label="Copy JSON" />}
+          >
+            <dl className="flex flex-col gap-3">
+              {Object.entries(run.input).map(([field, value]) => (
+                <div key={field} className="flex flex-col gap-1">
+                  <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
+                    {humanise(field)}
+                  </dt>
+                  <dd className="whitespace-pre-wrap break-words text-sm text-[var(--color-foreground)]">
+                    {formatValue(value)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </SectionCard>
+        )}
+
         {run.result && (
           <SectionCard
             title="Result"
@@ -153,8 +180,11 @@ export function RunDetail({ id }: { id: string }) {
                 No stored output for this run.
               </p>
               <p className="mx-auto mt-1.5 max-w-sm text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-                Tools that answer instantly are recorded but their results are not kept.
-                Running it again takes the same input and costs one run.
+                {/* Two different situations that look identical as an empty
+                    panel, so they are said differently. */}
+                {run.has_stored_result
+                  ? "The saved copy could not be read. Running it again takes the same input and costs one run."
+                  : "This result was too large to keep. Running it again takes the same input and costs one run."}
               </p>
             </div>
           </SectionCard>
@@ -166,6 +196,29 @@ export function RunDetail({ id }: { id: string }) {
       </div>
     </>
   );
+}
+
+/** `video_url` → `Video url`. The schema's own titles are not on a stored run. */
+function humanise(field: string): string {
+  const spaced = field.replace(/[_-]+/g, " ").trim();
+
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/**
+ * Render one stored input value.
+ *
+ * Booleans read as words rather than as `true`, because a stored run is meant to
+ * be read back by a person; anything structured falls through to JSON, which is
+ * honest about being structured.
+ */
+function formatValue(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (Array.isArray(value)) return value.map((item) => formatValue(item)).join(", ");
+  if (typeof value === "object") return JSON.stringify(value, null, 2);
+
+  return String(value);
 }
 
 function formatDateTime(iso: string): string {

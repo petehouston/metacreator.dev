@@ -6,6 +6,7 @@ import {
   Eye,
   EyeOff,
   FileText,
+  History,
   Lock,
   Mail,
   Plug,
@@ -14,6 +15,7 @@ import {
   ShieldAlert,
   Store,
   UserPlus,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import * as React from "react";
@@ -89,7 +91,7 @@ const SECTIONS: SettingsSection[] = [
     id: "general",
     label: "General",
     icon: Store,
-    description: "The name, the promise, and where support mail goes.",
+    description: "The name, the promise, and the one address the site publishes.",
     groups: ["branding"],
     panels: [
       {
@@ -139,6 +141,23 @@ const SECTIONS: SettingsSection[] = [
     ],
   },
   {
+    id: "changelog",
+    label: "Changelog",
+    icon: History,
+    description:
+      "The public release history. It is a whole surface like the blog, so it gets the same one switch — and nothing else to configure.",
+    keys: ["features.changelog_enabled"],
+    panels: [
+      {
+        id: "availability",
+        label: "Availability",
+        description:
+          "Off, every changelog route 404s, the footer link disappears and the sitemap entries are dropped. Releases are not deleted, and they stay editable under Changelog in the sidebar.",
+        keys: ["features.changelog_enabled"],
+      },
+    ],
+  },
+  {
     id: "accounts",
     label: "Accounts & sign-in",
     icon: UserPlus,
@@ -166,11 +185,61 @@ const SECTIONS: SettingsSection[] = [
     ],
   },
   {
+    id: "tools",
+    label: "Tools",
+    icon: Wrench,
+    description:
+      "How much of the catalog each kind of visitor gets, and what counts as trending. Every window below is enforced at once and the first one to run out is the one that walls, so a tier can have a generous day and a hard month. These are the pricing model rather than a technical detail, so they are settings — raising the free allowance for a launch weekend should not need a deploy.",
+    groups: ["tools"],
+    panels: [
+      {
+        id: "limits-daily",
+        label: "Daily run limits",
+        description:
+          "Runs per day, per access tier. Anonymous visitors are counted per IP; everyone else per account. Use -1 to leave the day uncounted. Zero closes a tier entirely — an exhausted visitor is told to move up a tier or wait for the reset, and a tier set to zero says so rather than promising a reset that changes nothing.",
+        keys: [
+          "tools.limits.free.daily",
+          "tools.limits.account.daily",
+          "tools.limits.premium.daily",
+        ],
+      },
+      {
+        id: "limits-weekly",
+        label: "Weekly run limits",
+        description:
+          "The same three tiers, counted over an ISO week that rolls over on Monday. Off by default (-1). A week is the useful middle ground: it survives someone saving their whole backlog for Sunday, which a daily cap only pushes into the next day.",
+        keys: [
+          "tools.limits.free.weekly",
+          "tools.limits.account.weekly",
+          "tools.limits.premium.weekly",
+        ],
+      },
+      {
+        id: "limits-monthly",
+        label: "Monthly run limits",
+        description:
+          "Counted over the calendar month. This is the cost ceiling: it is the only window that lines up with what a metered provider actually bills, and it is the honest way to keep an “unlimited” plan from being one abusive account. Off by default (-1).",
+        keys: [
+          "tools.limits.free.monthly",
+          "tools.limits.account.monthly",
+          "tools.limits.premium.monthly",
+        ],
+      },
+      {
+        id: "trending",
+        label: "Trending",
+        description:
+          "The window behind the catalog's Trending sort. Shorter reacts faster and is noisier; longer is steadier and converges on Popular. The minimum stops a single run on a quiet day from topping the list.",
+        keys: ["tools.trending_days", "tools.trending_min_runs"],
+      },
+    ],
+  },
+  {
     id: "payments",
     label: "Payments",
     icon: CreditCard,
     description:
-      "Which gateway takes the money, and the credentials for it. One provider is live at a time; the others keep their keys, so switching back is a dropdown rather than a re-onboarding.",
+      "Whether the product sells anything at all, which gateway takes the money, and the credentials for it. One provider is live at a time; the others keep their keys, so switching back is a dropdown rather than a re-onboarding.",
     groups: ["payments"],
     keys: ["features.billing_enabled"],
     panels: [
@@ -178,7 +247,7 @@ const SECTIONS: SettingsSection[] = [
         id: "general",
         label: "General",
         description:
-          "The provider that takes the money, and whether checkout is open at all. Plans are defined under Billing; each carries the price identifier the chosen provider knows it by.",
+          "Billing enabled is the master switch: off, the product has no paid plans at all — pricing and billing pages 404, upgrade prompts disappear everywhere, and every Pro tool is gated at Account Required instead. Nothing is written to the tools table, so switching it back on restores the paywall exactly as it was. Payments enabled is narrower — it opens and closes checkout while the plans stay on show. Plans are defined under Billing; each carries the price identifier the chosen provider knows it by.",
         keys: [
           "features.billing_enabled",
           "payments.enabled",
@@ -390,7 +459,9 @@ export function SettingsScreen() {
     if (result.ok) {
       const count = result.data.updated.length;
       notify(
-        count === 0 ? "Nothing changed." : `${count} ${count === 1 ? "setting" : "settings"} saved.`,
+        count === 0
+          ? "Nothing changed."
+          : `${count} ${count === 1 ? "setting" : "settings"} saved.`,
       );
       setDraft({});
       reload();
@@ -521,10 +592,10 @@ export function SettingsScreen() {
                 className="mt-0.5 size-3.5 shrink-0 text-[var(--color-warning)]"
                 aria-hidden="true"
               />
-              Anything pasted here runs on every public page. It is never injected into
-              the admin or the customer dashboard, it loads after first paint, and it
-              waits for consent where consent is required — but it is still code, and
-              every change is attributed to you in the audit log.
+              Anything pasted here runs on every public page. It is never injected into the admin or
+              the customer dashboard, it loads after first paint, and it waits for consent where
+              consent is required — but it is still code, and every change is attributed to you in
+              the audit log.
             </p>
           )}
 
@@ -637,7 +708,11 @@ function panelsFor(
       }
     }
 
-    return { ...panel, settings: owned, isCatchAll: !panel.keys && !panel.match };
+    return {
+      ...panel,
+      settings: owned,
+      isCatchAll: !panel.keys && !panel.match,
+    };
   });
 
   // The catch-all takes whatever nothing else claimed, in the order the API sent it.
@@ -663,9 +738,7 @@ function canUpdateSection(section: SettingsSection, data: SettingsPayload): bool
   const owned = settingsFor(section, data);
   const groups = new Set(owned.map((setting) => setting.group));
 
-  return data.groups
-    .filter((group) => groups.has(group.group))
-    .every((group) => group.can_update);
+  return data.groups.filter((group) => groups.has(group.group)).every((group) => group.can_update);
 }
 
 function SettingField({
@@ -739,13 +812,17 @@ function SettingField({
   }
 
   if (setting.type === "int") {
+    // Run limits are the one place a negative is meaningful: -1 leaves that window
+    // uncounted, and 0 closes the tier. Everywhere else a count below one is a mistake.
+    const min = setting.key.startsWith("tools.limits.") ? -1 : 1;
+
     return (
       <Field id={id} label={label} hint={setting.description ?? undefined} className={highlight}>
         {(props) => (
           <Input
             {...props}
             type="number"
-            min={1}
+            min={min}
             value={String(value ?? "")}
             disabled={disabled}
             onChange={(event) => onChange(Number(event.target.value))}
@@ -877,8 +954,36 @@ function SecretField({
   );
 }
 
+/**
+ * Keys whose derived label would be wrong or unhelpful.
+ *
+ * `tools.limits.free.daily` would read as "Limits free daily", which is not what
+ * the field is: it is the allowance for one *kind of visitor*, and naming the
+ * visitor is the whole point of the row. The window is already the panel's title,
+ * so repeating it on every row would only add noise.
+ */
+const LABEL_OVERRIDES: Record<string, string> = {
+  // Historically a support address; it is now the only one the site publishes,
+  // and calling it "Support email" hides that the legal pages point at it too.
+  "site.support_email": "Contact email",
+  "tools.limits.free.daily": "Anonymous visitor (per IP)",
+  "tools.limits.account.daily": "Signed-in, no paid plan",
+  "tools.limits.premium.daily": "Subscriber or pass holder",
+  "tools.limits.free.weekly": "Anonymous visitor (per IP)",
+  "tools.limits.account.weekly": "Signed-in, no paid plan",
+  "tools.limits.premium.weekly": "Subscriber or pass holder",
+  "tools.limits.free.monthly": "Anonymous visitor (per IP)",
+  "tools.limits.account.monthly": "Signed-in, no paid plan",
+  "tools.limits.premium.monthly": "Subscriber or pass holder",
+  "tools.trending_days": "Look back this many days",
+  "tools.trending_min_runs": "Minimum runs to qualify",
+};
+
 /** `tracking.ga4_id` → "GA4 id". Cheap, and better than showing the raw key. */
 function labelFor(key: string): string {
+  const override = LABEL_OVERRIDES[key];
+  if (override !== undefined) return override;
+
   const leaf = key.includes(".") ? key.slice(key.indexOf(".") + 1) : key;
 
   return leaf

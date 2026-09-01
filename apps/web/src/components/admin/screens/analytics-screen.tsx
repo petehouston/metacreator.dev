@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Lock, TrendingDown } from "lucide-react";
+import { Clock, Lock, TrendingDown, User, Users } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -12,7 +12,7 @@ import { PeriodPicker } from "@/components/admin/period-picker";
 import { accessReasonLabel, reasonColor, tone } from "@/components/admin/status-tone";
 import { FilterSelect, SearchInput } from "@/components/admin/toolbar";
 import { adminApi } from "@/lib/admin/api";
-import type { ContentAnalyticsRow, ToolAnalyticsRow } from "@/lib/admin/types";
+import type { ContentAnalyticsRow, ToolActors, ToolAnalyticsRow } from "@/lib/admin/types";
 import { useAdminResource } from "@/lib/admin/use-admin-resource";
 import { formatNumber, relativeTime } from "@/lib/utils";
 
@@ -304,6 +304,8 @@ function ToolsTab({ period }: { period: number }) {
         />
       </AdminPanel>
 
+      <ActorsPanel actors={data?.actors} />
+
       <AdminPanel title="Top errors" description="What to fix first" className="mt-4">
         {data && data.top_errors.length === 0 ? (
           <p className="py-6 text-center text-sm text-[var(--color-foreground-subtle)]">
@@ -344,6 +346,101 @@ function ToolsTab({ period }: { period: number }) {
         </p>
       )}
     </>
+  );
+}
+
+/**
+ * Who the runs actually came from.
+ *
+ * The tool table above answers "what is being used"; this answers "by whom", and
+ * the two disagree more often than they agree — a tool with a thousand runs from
+ * four actors is a very different product signal from one with a thousand runs
+ * from four hundred.
+ *
+ * Anonymous actors are shown as a short fingerprint of the daily IP+user-agent
+ * hash. It is enough to see that one visitor accounts for a spike, and it is
+ * useless tomorrow, which is the point: we count per IP without keeping one.
+ */
+function ActorsPanel({ actors }: { actors: ToolActors | undefined }) {
+  const totals = actors?.totals;
+  const rows = actors?.rows ?? [];
+
+  return (
+    <AdminPanel
+      title="Runs by actor"
+      description="Per account, and per visitor fingerprint for anonymous traffic"
+      className="mt-4"
+      action={
+        totals && (
+          <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--color-foreground-subtle)]">
+            <span className="tabular">
+              <strong className="font-semibold text-[var(--color-foreground)]">
+                {formatNumber(totals.runs)}
+              </strong>{" "}
+              runs total
+            </span>
+            <span className="tabular">
+              <strong className="font-semibold text-[var(--color-foreground)]">
+                {formatNumber(totals.actors)}
+              </strong>{" "}
+              actors ({formatNumber(totals.accounts)} accounts, {formatNumber(totals.visitors)}{" "}
+              visitors)
+            </span>
+            <span className="tabular">{totals.runs_per_actor} runs each on average</span>
+          </div>
+        )
+      }
+    >
+      {rows.length === 0 ? (
+        <p className="py-6 text-center text-sm text-[var(--color-foreground-subtle)]">
+          Nobody ran a tool in this period.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-1.5">
+          {rows.map((row) => (
+            <li
+              key={`${row.type}:${row.label}`}
+              className="flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] px-3 py-2"
+            >
+              {row.type === "user" ? (
+                <User className="size-4 shrink-0 text-[var(--color-primary)]" aria-hidden="true" />
+              ) : (
+                <Users
+                  className="size-4 shrink-0 text-[var(--color-foreground-subtle)]"
+                  aria-hidden="true"
+                />
+              )}
+
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-xs font-medium text-[var(--color-foreground)]">
+                  {row.label}
+                </span>
+                <span className="block truncate text-xs text-[var(--color-foreground-subtle)]">
+                  {row.tools} {row.tools === 1 ? "tool" : "tools"}
+                  {row.failed > 0 && ` · ${formatNumber(row.failed)} failed`}
+                  {row.last_run_at && ` · last ${relativeTime(row.last_run_at)}`}
+                </span>
+              </span>
+
+              <span className="tabular shrink-0 text-right">
+                <span className="block text-sm font-semibold text-[var(--color-foreground)]">
+                  {formatNumber(row.runs)}
+                </span>
+                <span className="block text-[0.625rem] text-[var(--color-foreground-subtle)]">
+                  {row.share}%
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <p className="mt-4 text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
+        A visitor is identified by a hash of IP and user agent under a salt that
+        rotates daily — enough to count one person&rsquo;s runs within a day, and
+        useless afterwards. No IP address is stored.
+      </p>
+    </AdminPanel>
   );
 }
 

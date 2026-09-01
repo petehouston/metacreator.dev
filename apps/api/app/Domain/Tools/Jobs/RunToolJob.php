@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Tools\Jobs;
 
+use App\Domain\Tools\Actions\RunToolAction;
 use App\Domain\Tools\Data\RunContext;
 use App\Domain\Tools\Data\ToolInput;
+use App\Domain\Tools\Data\ToolResult;
 use App\Domain\Tools\Enums\RunStatus;
 use App\Domain\Tools\Exceptions\ToolExecutionException;
 use App\Domain\Tools\Models\ToolRun;
@@ -30,6 +32,9 @@ final class RunToolJob implements ShouldBeUnique, ShouldQueue
     public int $tries = 2;
 
     public int $timeout = 120;
+
+    /** Mirrors the inline path's cap; above it, history keeps the record only. */
+    private const MAX_STORED_RESULT_BYTES = 64 * 1024;
 
     /** @param  array<string, mixed>  $values */
     public function __construct(
@@ -85,9 +90,32 @@ final class RunToolJob implements ShouldBeUnique, ShouldQueue
             'status' => RunStatus::Succeeded,
             'result_view' => $result->view->value,
             'result_ref' => $artifacts->store($run, $result),
+            // Members keep their results; anonymous runs keep only the record. The
+            // same rule the inline path applies, for the same reasons.
+            'result_payload' => $this->retainedResult($run, $result),
             'duration_ms' => (int) round((hrtime(true) - $startedAt) / 1_000_000),
             'finished_at' => now(),
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     *
+     * @see RunToolAction::retainedPayloads()
+     */
+    private function retainedResult(ToolRun $run, ToolResult $result): ?array
+    {
+        // Artifacts carry signed URLs that expire; `result_ref` is where a result
+        // holding them belongs, and it is re-signed on read.
+        if ($run->user_id === null || $result->artifacts !== []) {
+            return null;
+        }
+
+        $encoded = json_encode($result->toArray());
+
+        return is_string($encoded) && strlen($encoded) <= self::MAX_STORED_RESULT_BYTES
+            ? $result->toArray()
+            : null;
     }
 
     /**

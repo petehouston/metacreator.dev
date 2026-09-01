@@ -11,12 +11,15 @@ use App\Domain\Notifications\EventCatalog;
 use App\Domain\Notifications\Models\NotificationPreference;
 use App\Domain\Notifications\Notifications\CatalogNotification;
 use App\Domain\Support\Models\Ticket;
+use App\Domain\Tools\Models\Tool;
+use App\Domain\Tools\Models\ToolFavorite;
 use App\Domain\Tools\Models\ToolGrant;
 use App\Domain\Tools\Models\ToolRun;
 use App\Support\Concerns\HasUlidKey;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -129,6 +132,25 @@ final class User extends Authenticatable implements MustVerifyEmail
     public function toolGrants(): HasMany
     {
         return $this->hasMany(ToolGrant::class);
+    }
+
+    /** @return HasMany<ToolFavorite, $this> */
+    public function toolFavorites(): HasMany
+    {
+        return $this->hasMany(ToolFavorite::class);
+    }
+
+    /**
+     * The saved tools themselves, newest save first — which is the order the list
+     * is read in, and the only order a "saved" list has any claim to.
+     *
+     * @return BelongsToMany<Tool, $this>
+     */
+    public function favoriteTools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class, 'tool_favorites')
+            ->withTimestamps()
+            ->orderByPivot('created_at', 'desc');
     }
 
     /** @return HasMany<Ticket, $this> */

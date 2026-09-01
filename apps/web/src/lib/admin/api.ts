@@ -11,9 +11,10 @@
  */
 
 import { apiData, apiFetch, type ApiResult } from "@/lib/http";
-import type { Paginated } from "@/lib/types";
+import type { ChangelogMeta, ChangeTypeOption, Paginated } from "@/lib/types";
 import type {
   ActivityEntry,
+  AdminChangelogRelease,
   AdminInvoice,
   AdminInvoiceDetail,
   AdminMedia,
@@ -108,6 +109,30 @@ export const adminApi = {
     create: (body: { user: string; tool: string; reason: string; expires_at?: string | null }) =>
       write<ToolGrant>("POST", "/tool-grants", body),
     remove: (id: number) => write<null>("DELETE", `/tool-grants/${id}`),
+  },
+
+  changelog: {
+    list: (params: Params) =>
+      list<AdminChangelogRelease, { counts: Record<string, number>; types: ChangeTypeOption[] }>(
+        "/changelog",
+        params,
+      ),
+    get: (id: string) => one<AdminChangelogRelease>(`/changelog/${id}`),
+    /**
+     * The change-type catalog for the editor's picker.
+     *
+     * Deliberately the public `meta` endpoint rather than an admin one: the types
+     * are not privileged, the site already fetches them to render its filter chips,
+     * and a second admin-only copy would be a second thing to keep in step.
+     */
+    types: () => apiData<ChangelogMeta>("/changelog/meta"),
+    create: (body: Record<string, unknown>) =>
+      write<AdminChangelogRelease>("POST", "/changelog", body),
+    update: (id: string, body: Record<string, unknown>) =>
+      write<AdminChangelogRelease>("PATCH", `/changelog/${id}`, body),
+    /** Live now, whatever date the release was carrying. Its own permission. */
+    publish: (id: string) => write<AdminChangelogRelease>("POST", `/changelog/${id}/publish`),
+    remove: (id: string) => write<null>("DELETE", `/changelog/${id}`),
   },
 
   posts: {

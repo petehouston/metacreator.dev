@@ -7,7 +7,7 @@
  * marketing page by autocomplete.
  */
 
-import type { BlockDocument } from "@/lib/types";
+import type { BlockDocument, ChangelogItem } from "@/lib/types";
 
 export type Trend = "up" | "down" | "flat";
 export type MetricFormat = "number" | "currency" | "percent";
@@ -87,6 +87,35 @@ export interface ToolErrorRow {
   tools: string[];
 }
 
+/**
+ * One actor's usage — an account, or an anonymous visitor identified by the daily
+ * IP+user-agent hash. A headline "runs" number cannot tell healthy breadth from
+ * one script; this is the panel that can.
+ */
+export interface ToolActorRow {
+  type: "user" | "visitor";
+  label: string;
+  email: string | null;
+  runs: number;
+  tools: number;
+  failed: number;
+  /** Percent of all runs in the window. */
+  share: number;
+  last_run_at: string | null;
+}
+
+export interface ToolActors {
+  rows: ToolActorRow[];
+  totals: {
+    /** Every run in the window, across everyone. */
+    runs: number;
+    actors: number;
+    accounts: number;
+    visitors: number;
+    runs_per_actor: number;
+  };
+}
+
 export interface Overview {
   period: PeriodInfo;
   periods: number[];
@@ -114,6 +143,7 @@ export interface ToolAnalytics {
   volume: VolumePoint[];
   access_reasons: AccessReasonSlice[];
   top_errors: ToolErrorRow[];
+  actors: ToolActors;
 }
 
 export interface ContentAnalyticsRow {
@@ -212,8 +242,18 @@ export interface AdminTool {
   platforms: string[];
   category: { id: number; slug: string; name: string } | null;
   config: Record<string, unknown> | null;
+  /**
+   * This tool's own run caps, keyed by window. A window it defers on is absent, so
+   * an empty object means "the tier's allowance applies unchanged".
+   */
+  run_limits: Partial<Record<"daily" | "weekly" | "monthly", number>>;
   seo?: SeoOverrides | null;
-  stats: { runs: number; avg_duration_ms: number; success_rate: number; grants?: number };
+  stats: {
+    runs: number;
+    avg_duration_ms: number;
+    success_rate: number;
+    grants?: number;
+  };
   published_at: string | null;
   updated_at: string | null;
 }
@@ -224,7 +264,12 @@ export interface ToolGrant {
   is_active: boolean;
   expires_at: string | null;
   created_at: string | null;
-  user: { id: string; email: string; display_name: string; initials: string } | null;
+  user: {
+    id: string;
+    email: string;
+    display_name: string;
+    initials: string;
+  } | null;
   tool: { slug: string; name: string; tier: string } | null;
   granted_by: string | null;
 }
@@ -289,7 +334,12 @@ export interface AdminPostDetail {
   blocks: BlockDocument;
   seo: PostSeo | null;
   featured_media: AdminMedia | null;
-  revisions: { id: number; title: string; is_autosave: boolean; created_at: string | null }[];
+  revisions: {
+    id: number;
+    title: string;
+    is_autosave: boolean;
+    created_at: string | null;
+  }[];
 }
 
 export interface AdminMedia {
@@ -363,7 +413,13 @@ export interface AdminSubscription {
   is_active: boolean;
   is_cancelling: boolean;
   user: { id: string; display_name: string; email: string } | null;
-  plan: { key: string; name: string; amount: number; currency: string; interval: string | null } | null;
+  plan: {
+    key: string;
+    name: string;
+    amount: number;
+    currency: string;
+    interval: string | null;
+  } | null;
   current_period_end: string | null;
   trial_ends_at: string | null;
   cancel_at: string | null;
@@ -470,7 +526,12 @@ export interface BillingReport {
     active_subscriptions: number;
     share: number;
   }[];
-  by_gateway: { gateway: string; revenue: number; invoices: number; share: number }[];
+  by_gateway: {
+    gateway: string;
+    revenue: number;
+    invoices: number;
+    share: number;
+  }[];
   by_status: { status: string; invoices: number; total: number }[];
   top_customers: {
     id: string;
@@ -501,7 +562,12 @@ export interface AdminTicket {
   status_label: string;
   priority: string;
   is_overdue: boolean;
-  requester: { id: string; display_name: string; email: string; initials: string } | null;
+  requester: {
+    id: string;
+    display_name: string;
+    email: string;
+    initials: string;
+  } | null;
   assignee: { id: string; display_name: string; initials: string } | null;
   messages_count?: number;
   messages?: {
@@ -577,4 +643,30 @@ export interface ActivityEntry {
   subject: { type: string; id: number | null } | null;
   changes: Record<string, { from: unknown; to: unknown }> | null;
   created_at: string | null;
+}
+
+// ── Changelog ────────────────────────────────────────────────────────────────
+
+/**
+ * A release as the admin list and editor hold it.
+ *
+ * `is_live` is computed by the API rather than derived here from status and date.
+ * That derivation is exactly the one an editor gets wrong — a `published` release
+ * dated next Tuesday is not live — so it is answered once, server-side.
+ */
+export interface AdminChangelogRelease {
+  id: string;
+  slug: string;
+  version: string | null;
+  title: string;
+  summary: string | null;
+  status: string;
+  status_label: string;
+  is_live: boolean;
+  is_major: boolean;
+  released_at: string | null;
+  items: ChangelogItem[];
+  items_count: number;
+  author: { id: string; display_name: string } | null;
+  updated_at: string | null;
 }

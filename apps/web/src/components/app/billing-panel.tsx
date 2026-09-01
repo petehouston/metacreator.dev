@@ -10,7 +10,6 @@ import { StatTile, StatTileSkeleton } from "@/components/app/stat-tile";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
 
 /**
  * Plan, limits and usage — everything the entitlement service knows, shown plainly.
@@ -19,7 +18,26 @@ import { siteConfig } from "@/config/site";
  * ([11 — Billing](docs/11-billing.md)), and a screen that shows an empty invoice
  * table implies one exists and is empty, which is a worse lie than saying so.
  */
-export function BillingPanel() {
+/** How each budget window reads as a stat-tile label. */
+const RUN_PERIOD: Record<string, string> = {
+  daily: "today",
+  weekly: "this week",
+  monthly: "this month",
+};
+
+/** The windows the plan sheet lists, shortest first. Uncounted ones are skipped. */
+const RUN_LIMIT_ROWS = [
+  { window: "daily", label: "per day", detail: "Resets at midnight" },
+  { window: "weekly", label: "per week", detail: "Resets Monday" },
+  { window: "monthly", label: "per month", detail: "Resets on the 1st" },
+] as const;
+
+/** The address to write to, read from Settings by the page that renders this. */
+interface BillingPanelProps {
+  contactEmail: string;
+}
+
+export function BillingPanel({ contactEmail }: BillingPanelProps) {
   const { entitlements, loading, error } = useEntitlements();
 
   if (error) return <FormAlert>{error}</FormAlert>;
@@ -78,16 +96,26 @@ export function BillingPanel() {
         </h2>
 
         <div className="grid gap-3 sm:grid-cols-3">
+          {/* The tile tracks the *binding* window — whichever of the day, week or
+              month has the least left — because that is the one that will actually
+              stop the next run. */}
           <StatTile
-            label="Runs today"
+            label={`Runs ${RUN_PERIOD[usage.window] ?? RUN_PERIOD.daily}`}
             value={`${usage.used} / ${usage.limit}`}
             icon={Zap}
             progress={ratio}
             tone={ratio >= 1 ? "danger" : ratio >= 0.75 ? "warning" : "primary"}
-            hint={`${usage.remaining} left · resets ${new Date(usage.resets_at).toLocaleTimeString(
-              undefined,
-              { hour: "numeric", minute: "2-digit" },
-            )}`}
+            hint={`${usage.remaining} left · resets ${
+              usage.window === "daily"
+                ? new Date(usage.resets_at).toLocaleTimeString(undefined, {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })
+                : new Date(usage.resets_at).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })
+            }`}
           />
 
           <StatTile
@@ -155,11 +183,19 @@ export function BillingPanel() {
             label="Priority support"
             detail="Your messages go to the front of the queue"
           />
-          <FeatureRow
-            included
-            label={`${limits.runs_per_day} runs per day`}
-            detail="Resets at midnight in your timezone"
-          />
+          {/* One row per window the plan actually counts. A plan whose real ceiling
+              is monthly should say so here rather than quoting a daily number that
+              is not what runs out first. */}
+          {RUN_LIMIT_ROWS.map(({ window, label, detail }) =>
+            limits.runs[window] < 0 ? null : (
+              <FeatureRow
+                key={window}
+                included
+                label={`${limits.runs[window]} runs ${label}`}
+                detail={detail}
+              />
+            ),
+          )}
         </ul>
       </SectionCard>
 
@@ -171,17 +207,17 @@ export function BillingPanel() {
               aria-hidden="true"
             />
             Self-serve invoice history and card management are not available in the app yet.
-            Checkout runs from the pricing page, and receipts are emailed to you when a payment
-            is taken.
+            Checkout runs from the pricing page, and receipts are emailed to you when a payment is
+            taken.
           </p>
 
           <p className="text-sm text-[var(--color-foreground-muted)]">
             Need a copy of an invoice, a VAT number added, or a refund?{" "}
             <a
-              href={`mailto:${siteConfig.supportEmail}`}
+              href={`mailto:${contactEmail}`}
               className="font-medium text-[var(--color-primary)] hover:underline"
             >
-              {siteConfig.supportEmail}
+              {contactEmail}
             </a>{" "}
             — we answer within one working day.
           </p>

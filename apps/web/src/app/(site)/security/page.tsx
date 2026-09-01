@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LegalPage } from "@/components/legal/legal-page";
+import { contactEmail } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Security",
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/security" },
 };
 
-export default function SecurityPage() {
+export default async function SecurityPage() {
+  const email = await contactEmail();
+
   return (
     <LegalPage
       title="Security"
@@ -152,7 +155,7 @@ export default function SecurityPage() {
           body: (
             <>
               <p>
-                Email <strong>security@metacreator.dev</strong> with enough detail to
+                Email <strong>{email}</strong> with enough detail to
                 reproduce the issue. We aim to acknowledge within{" "}
                 <strong>two business days</strong> and to tell you our assessment and expected
                 fix timeline within ten.

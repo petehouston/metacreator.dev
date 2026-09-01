@@ -50,6 +50,35 @@ event id. Handled events:
 Every handler is idempotent and safe to replay — the reconciliation command re-plays the last 30
 days nightly and reports drift.
 
+## Turning billing off
+
+`features.billing_enabled` (Settings → Payments → General) is the master switch for money, and it is
+a different question from `payments.enabled`: payments is the till, billing is the shop. Off, the
+product has no paid plans at all.
+
+`BillingFeature` owns the switch and everything reads through it, so the API, the catalog and the UI
+cannot disagree:
+
+| Surface | Billing on | Billing off |
+| --- | --- | --- |
+| A `premium` tool | Pro subscribers only | Gated at `account` — signing up is the whole price |
+| `free` / `account` tools | Unchanged | Unchanged |
+| `EntitlementService::isPaid()` | Reads the projection | Always `false` |
+| `limits.export`, `history_days` | Paid only | Unlocked for any account |
+| `limits.priority_support` | Paid only | Still paid only — an SLA, not a feature |
+| Quota wall's `next_tier` above `account` | `premium` | `null`, so no upgrade is offered |
+| `GET /settings` | Publishes `payments.*` | Omits them; keeps `features.billing_enabled` |
+| `/pricing`, `/dashboard/billing` | Rendered | 404, and dropped from nav and sitemap |
+
+The `tools.tier` column is **never written**. A premium tool keeps saying `premium`; only its
+*effective* tier changes, which is what makes the switch reversible — turning billing back on
+restores the paywall with no migration. `Tool::effectiveTier()` is the read every public surface
+uses; the admin editor deliberately reads the raw `tier`, because that is the value it exists to
+edit. Admin billing screens stay reachable throughout: plans and history are how an operator
+prepares to switch it back on.
+
+Asserted end to end in `tests/Feature/BillingDisabledTest.php`, in both directions.
+
 ## Entitlements
 
 `EntitlementService` computes, and caches for 60 s:

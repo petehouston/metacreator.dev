@@ -45,6 +45,19 @@ period-over-period delta.
 | Access reason split | How much premium usage is comped grants? |
 | Zero-result / abandoned runs | Where is the UX confusing? |
 | Acquisition source per tool | Which tools are earning search traffic? |
+| Runs by actor | Who is this usage actually coming from? |
+
+The **runs by actor** panel reads `tool_runs` directly rather than the daily rollup, because the
+rollup aggregates actors away: it can say how many unique actors a tool had, never that one of them
+ran it forty times. A headline "runs" number cannot tell healthy breadth from a single script, and
+the difference matters for both capacity and pricing. It reports the total across everyone, the
+account/visitor split, runs per actor, and the top actors by volume.
+
+An anonymous actor is shown as the first eight characters of their `visitor_hash` — enough to see
+that one visitor accounts for a spike, and useless tomorrow, which is the point. The counts are
+per IP without an IP ever being stored. The account/visitor split counts only *ownerless* runs as
+visitors: an authenticated run still carries a hash, and counting every hash would count members
+twice and stop the split adding up.
 
 **Content analytics** — posts by views, read-through, tool clicks per post, newsletter conversions
 per post.

@@ -21,6 +21,29 @@ const nextConfig: NextConfig = {
     remotePatterns,
     formats: ["image/avif", "image/webp"],
   },
+
+  async redirects() {
+    return [
+      {
+        // There is one catalog, not two. `/tools` is the page that ranks, it is
+        // the page every card and every share links to, and it already knows who
+        // is signed in — so a second in-app copy at `/dashboard/tools` was two
+        // surfaces to keep in step for no gain.
+        //
+        // Permanent: the address is gone for good, and old links (bookmarks, the
+        // ⌘K palette, anything pasted into a thread) should be rewritten by the
+        // browser rather than re-resolved on every visit.
+        source: "/dashboard/tools",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/tools/:path*",
+        destination: "/tools/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { siteConfig } from "@/config/site";
 import { api } from "@/lib/api";
+import { siteFeatures } from "@/lib/site-settings";
 
 /**
  * Only indexable, 200-returning URLs belong here.
@@ -15,10 +16,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const now = new Date();
 
+  // `/pricing` 404s while billing is off, and a sitemap that lists a 404 costs
+  // crawl budget — the same reason the blog URLs are dropped when the blog is.
+  const { billingEnabled } = await siteFeatures();
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, changeFrequency: "weekly", priority: 1, lastModified: now },
     { url: `${base}/tools`, changeFrequency: "daily", priority: 0.9, lastModified: now },
-    { url: `${base}/pricing`, changeFrequency: "monthly", priority: 0.8, lastModified: now },
+    ...(billingEnabled
+      ? [
+          {
+            url: `${base}/pricing`,
+            changeFrequency: "monthly" as const,
+            priority: 0.8,
+            lastModified: now,
+          },
+        ]
+      : []),
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5, lastModified: now },
     { url: `${base}/contact`, changeFrequency: "yearly", priority: 0.4, lastModified: now },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.2, lastModified: now },
@@ -29,20 +43,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // far better than telling a crawler the site has no pages. Each call fails
   // independently for the same reason: when an admin switches the blog off the API
   // 404s, and that should cost the blog URLs, not the tool catalog with them.
-  const [tools, categories, posts, postCategories] = await Promise.all([
+  const [tools, categories, posts, postCategories, releases] = await Promise.all([
     api.tools.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
     api.tools.categories().catch(() => []),
     api.blog.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
     api.blog.categories().catch(() => []),
+    api.changelog.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
   ]);
 
   const blogRoutes: MetadataRoute.Sitemap = posts.length > 0
     ? [{ url: `${base}/blog`, changeFrequency: "daily", priority: 0.8, lastModified: now }]
     : [];
 
+  // An empty changelog is a thin page, so the index only lists it once something
+  // has shipped — and its `lastModified` is the newest release rather than `now`,
+  // which is the honest signal a crawler can act on.
+  const changelogRoutes: MetadataRoute.Sitemap = releases.length > 0
+    ? [
+        {
+          url: `${base}/changelog`,
+          changeFrequency: "weekly" as const,
+          priority: 0.6,
+          lastModified: releases[0].released_at ? new Date(releases[0].released_at) : now,
+        },
+        ...releases.map((release) => ({
+          url: `${base}/changelog/${release.slug}`,
+          changeFrequency: "yearly" as const,
+          // A shipped release note does not change again; it is worth indexing, but
+          // it is not competing with the tool pages for crawl budget.
+          priority: 0.4,
+          lastModified: release.released_at ? new Date(release.released_at) : now,
+        })),
+      ]
+    : [];
+
   return [
     ...staticRoutes,
     ...blogRoutes,
+    ...changelogRoutes,
     ...categories.map((category) => ({
       url: `${base}/tools?category=${category.slug}`,
       changeFrequency: "weekly" as const,

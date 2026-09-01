@@ -6,7 +6,8 @@ import { useTheme } from "next-themes";
 import * as React from "react";
 
 import { useSession } from "@/components/auth/session-provider";
-import { navItems } from "@/components/app/nav-items";
+import { navItemsFor } from "@/components/app/nav-items";
+import { useBillingEnabled } from "@/components/site/features-provider";
 import { apiFetch } from "@/lib/http";
 import type { Paginated, ToolSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ function CommandPaletteDialog({ onOpenChange }: { onOpenChange: (open: boolean) 
   const router = useRouter();
   const { setTheme, resolvedTheme } = useTheme();
   const { signOut } = useSession();
+  const billingEnabled = useBillingEnabled();
 
   const [query, setQuery] = React.useState("");
   const [tools, setTools] = React.useState<ToolSummary[]>([]);
@@ -72,7 +74,7 @@ function CommandPaletteDialog({ onOpenChange }: { onOpenChange: (open: boolean) 
   }, [query]);
 
   const commands = React.useMemo<Command[]>(() => {
-    const navigation: Command[] = navItems.map((item) => ({
+    const navigation: Command[] = navItemsFor(billingEnabled).map((item) => ({
       id: `nav:${item.href}`,
       label: item.label,
       hint: item.description,
@@ -118,7 +120,7 @@ function CommandPaletteDialog({ onOpenChange }: { onOpenChange: (open: boolean) 
       command.hint?.toLowerCase().includes(needle) === true;
 
     return [...navigation, ...toolCommands, ...actions].filter(matches);
-  }, [tools, query, router, resolvedTheme, setTheme, signOut]);
+  }, [tools, query, router, resolvedTheme, setTheme, signOut, billingEnabled]);
 
   // The result list shrinks as the query narrows, so the stored index can point
   // past the end. Clamping on read keeps the highlight valid without a correcting

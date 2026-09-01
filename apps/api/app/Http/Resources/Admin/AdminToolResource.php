@@ -40,6 +40,10 @@ final class AdminToolResource extends JsonResource
                 'name' => $this->category->name,
             ]),
             'config' => $this->config,
+            // The caps this row sets for itself, already normalised out of the two
+            // places they can be stored. The editor renders these rather than
+            // re-deriving the legacy `runs_per_day` key in TypeScript.
+            'run_limits' => $this->quotaOverrides(),
             // Null, not an empty object, when the tool has never been tuned: the
             // form can then show its placeholders rather than blank overrides.
             'seo' => $this->whenLoaded(

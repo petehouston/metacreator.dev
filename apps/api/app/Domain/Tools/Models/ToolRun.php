@@ -20,13 +20,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * One recorded execution.
  *
  * Written asynchronously on the `analytics` queue so measurement never sits in the
- * user's request path, and deliberately free of personal data: no IP, and no raw
- * input unless the tool declares retention and the user consented.
+ * user's request path, and deliberately free of personal data: no IP, and — for an
+ * anonymous run — no raw input either, only its hash.
+ *
+ * A run made by a signed-in member is the exception: `input_payload` and
+ * `result_payload` hold what they asked for and what they got, because that is what
+ * makes run history worth having. They belong to an account that can be deleted,
+ * which is what makes keeping them defensible; an anonymous run has no such owner
+ * to answer to.
  *
  * @property RunStatus $status
  * @property AccessReason $access_reason
  * @property string $ulid
  * @property string|null $result_ref
+ * @property array<string, mixed>|null $input_payload
+ * @property array<string, mixed>|null $result_payload
  * @property string|null $visitor_hash
  * @property int|null $user_id
  * @property bool $cache_hit
@@ -64,6 +72,8 @@ final class ToolRun extends Model
             'status' => RunStatus::class,
             'access_reason' => AccessReason::class,
             'input_preview' => 'array',
+            'input_payload' => 'array',
+            'result_payload' => 'array',
             'cache_hit' => 'boolean',
             'duration_ms' => 'integer',
             'provider_calls' => 'integer',

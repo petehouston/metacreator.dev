@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Admin\ActivityController;
 use App\Http\Controllers\Api\V1\Admin\BillingController;
+use App\Http\Controllers\Api\V1\Admin\ChangelogController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController;
 use App\Http\Controllers\Api\V1\Admin\MediaController;
 use App\Http\Controllers\Api\V1\Admin\NewsletterController;
@@ -108,6 +109,34 @@ Route::prefix('roles')->group(function (): void {
 Route::get('permissions', [RoleController::class, 'permissions'])
     ->middleware('permission:roles.view_any')
     ->name('admin.permissions');
+
+Route::prefix('changelog')->group(function (): void {
+    Route::get('/', [ChangelogController::class, 'index'])
+        ->middleware('permission:changelog.view_any')
+        ->name('admin.changelog.index');
+
+    Route::post('/', [ChangelogController::class, 'store'])
+        ->middleware('permission:changelog.create')
+        ->name('admin.changelog.store');
+
+    Route::get('{release}', [ChangelogController::class, 'show'])
+        ->middleware('permission:changelog.view')
+        ->name('admin.changelog.show');
+
+    Route::patch('{release}', [ChangelogController::class, 'update'])
+        ->middleware('permission:changelog.update')
+        ->name('admin.changelog.update');
+
+    // Separate from `update` so a writer can draft releases without being able to
+    // put one in front of every customer.
+    Route::post('{release}/publish', [ChangelogController::class, 'publish'])
+        ->middleware('permission:changelog.publish')
+        ->name('admin.changelog.publish');
+
+    Route::delete('{release}', [ChangelogController::class, 'destroy'])
+        ->middleware('permission:changelog.delete')
+        ->name('admin.changelog.destroy');
+});
 
 // ── Tools ────────────────────────────────────────────────────────────────────
 

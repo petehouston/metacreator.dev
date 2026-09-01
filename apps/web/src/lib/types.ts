@@ -51,6 +51,21 @@ export interface ToolSummary {
   stats: { runs: number; avg_duration_ms: number };
 }
 
+/**
+ * The catalog's two orderings that are not derivable from a card.
+ *
+ * Both arrive as slug lists alongside the page rather than as a field on each
+ * tool: the catalog filters and sorts in the browser, so it needs the whole
+ * ranking once instead of a request per sort change.
+ */
+export interface TrendingRanking {
+  /** The window, in days, an admin has configured. */
+  days: number;
+  minimum_runs: number;
+  /** Slugs, most active first. */
+  slugs: string[];
+}
+
 /** JSON Schema subset the form generator understands. */
 export interface JsonSchemaProperty {
   type?: "string" | "integer" | "number" | "boolean" | "array" | "object";
@@ -120,6 +135,8 @@ export interface ToolDetail extends Omit<ToolSummary, "stats"> {
   related: ToolSummary[];
   successor?: { slug: string; name: string } | null;
   seo?: SeoMeta;
+  /** Absent for a guest: "not saved" and "nobody to save it for" are different. */
+  is_favorite?: boolean;
   stats: { runs: number; avg_duration_ms: number; success_rate: number };
   updated_at: string | null;
 }
@@ -168,12 +185,55 @@ export interface ToolRun {
   status: "queued" | "running" | "succeeded" | "failed" | "cancelled";
   tool?: { slug: string; name: string; version: number };
   result: ToolResult | null;
+  /** The input this run was given. Detail view only, and members only. */
+  input?: Record<string, unknown> | null;
+  /**
+   * Whether there is a stored result to open. Distinguishes "this run kept
+   * nothing" from "this run produced nothing", which look identical otherwise.
+   */
+  has_stored_result?: boolean;
   error?: { code: string; message: string };
-  meta: { cache_hit: boolean; duration_ms: number | null; access_reason: string | null };
+  meta: {
+    cache_hit: boolean;
+    duration_ms: number | null;
+    access_reason: string | null;
+  };
   created_at: string;
 }
 
+/**
+ * What the API says when an actor has spent an allowance.
+ *
+ * Carries both ways out — the tier above, and when this one resets — because
+ * those are the only two things the person can do about it. Budgets are counted
+ * over a day, a week and a month at once, so it also names *which* one ran out:
+ * telling someone who hit a monthly ceiling to come back tomorrow just sends them
+ * back into the same wall.
+ */
+export type QuotaWindow = "daily" | "weekly" | "monthly";
+
+export interface QuotaExceededDetails {
+  limit: number;
+  /** Which budget ran out. "Come back tomorrow" is only true of the daily one. */
+  window: QuotaWindow;
+  window_label: string;
+  resets_at: string;
+  upgrade_available: boolean;
+  tier: ToolTier | null;
+  next_tier: ToolTier | null;
+  /** Null when the tier above is itself unlimited — see `next_tier_unlimited`. */
+  next_tier_limit: number | null;
+  next_tier_unlimited: boolean;
+  upgrade_action: "register" | "subscribe" | null;
+}
+
 export interface Entitlements {
+  /**
+   * Whether the site sells anything at all. False collapses the ladder: `plan` is
+   * `free`, `is_paid` is false regardless of any dormant subscription, and every
+   * Pro tool is gated at `account`.
+   */
+  billing_enabled: boolean;
   plan: string;
   status: string;
   is_paid: boolean;
@@ -181,20 +241,65 @@ export interface Entitlements {
   expires_at: string | null;
   cancels_at: string | null;
   limits: {
+    /** -1 means unlimited. */
     runs_per_day: number;
+    /** The same allowance for every window. -1 means that window is not counted. */
+    runs: Record<QuotaWindow, number>;
     history_days: number | null;
     export: boolean;
     priority_support: boolean;
   };
-  usage: { limit: number; used: number; remaining: number; resets_at: string };
-  tool_access: { default_tier: ToolTier; grants: string[] };
+  /** Which rung of the ladder this actor is on. */
+  access_tier: ToolTier;
+  /** Every rung's allowance per window, so a wall can say what the next is worth. */
+  tier_limits: Record<ToolTier, Record<QuotaWindow, number>>;
+  /**
+   * The headline figures describe the **binding** window — the counted one with the
+   * least left — rather than always the day, so a site capped monthly does not show
+   * a meter reading "unlimited". `windows` has the full breakdown.
+   */
+  usage: {
+    limit: number;
+    used: number;
+    /** Null when unlimited — "unlimited minus four" is not a quantity. */
+    remaining: number | null;
+    unlimited: boolean;
+    window: QuotaWindow;
+    tier: ToolTier;
+    resets_at: string;
+    windows: Record<
+      QuotaWindow,
+      {
+        limit: number;
+        used: number;
+        remaining: number | null;
+        unlimited: boolean;
+        label: string;
+        resets_at: string;
+      }
+    >;
+  };
+  tool_access: {
+    default_tier: ToolTier;
+    /** The top rung the catalog currently has — `account` while billing is off. */
+    highest_tier: ToolTier;
+    grants: string[];
+  };
 }
 
 export interface Paginated<T> {
   data: T[];
   meta: {
-    page: { current: number; per_page: number; total: number; last_page: number };
+    page: {
+      current: number;
+      per_page: number;
+      total: number;
+      last_page: number;
+    };
     access?: Record<string, boolean>;
+    trending?: TrendingRanking;
+    /** The caller's own saved slugs. Empty for a guest. */
+    favorites?: string[];
   };
   links: { first?: string; prev?: string; next?: string; last?: string };
 }
@@ -237,13 +342,7 @@ export interface UserDevice {
   is_current: boolean;
 }
 
-export type NotificationGroup =
-  | "security"
-  | "billing"
-  | "tools"
-  | "support"
-  | "product"
-  | "staff";
+export type NotificationGroup = "security" | "billing" | "tools" | "support" | "product" | "staff";
 
 export interface NotificationItem {
   id: string;
@@ -326,4 +425,59 @@ export interface PostDetail extends PostSummary {
     schema_type: string | null;
   };
   related: PostSummary[];
+}
+
+// ── Changelog ────────────────────────────────────────────────────────────────
+
+/**
+ * The change types the API knows about, as string literals rather than an enum:
+ * the API is the source of truth and ships the catalog with every `meta` call, so
+ * a type added server-side widens this union in one line and nothing else breaks.
+ */
+export type ChangeTypeValue =
+  | "added"
+  | "improved"
+  | "fixed"
+  | "deprecated"
+  | "removed"
+  | "security";
+
+/** The tone the API asks the UI to paint a change type. */
+export type ChangeTone = "success" | "info" | "warning" | "danger" | "muted";
+
+export interface ChangelogItem {
+  id: number;
+  type: ChangeTypeValue;
+  type_label: string;
+  tone: ChangeTone;
+  title: string;
+  description: string | null;
+}
+
+export interface ChangelogRelease {
+  id: string;
+  slug: string;
+  version: string | null;
+  title: string;
+  summary: string | null;
+  is_major: boolean;
+  released_at: string | null;
+  items: ChangelogItem[];
+  /** Pre-counted per type, so the summary line costs no client-side grouping. */
+  counts?: Partial<Record<ChangeTypeValue, number>>;
+}
+
+export interface ChangeTypeOption {
+  value: ChangeTypeValue;
+  label: string;
+  hint: string;
+  tone: ChangeTone;
+  /** Canonical reading order, decided by the API. Lower sorts first. */
+  weight: number;
+}
+
+export interface ChangelogMeta {
+  types: ChangeTypeOption[];
+  /** Only the years that actually have published releases in them. */
+  years: { year: number; total: number }[];
 }

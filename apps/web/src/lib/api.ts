@@ -1,6 +1,8 @@
 import "server-only";
 
 import type {
+  ChangelogMeta,
+  ChangelogRelease,
   Entitlements,
   Paginated,
   PostCategory,
@@ -121,6 +123,40 @@ export const api = {
       tags: ["settings"],
       revalidate: 300,
     }).then((r) => r.data),
+
+  changelog: {
+    list: (params: {
+      q?: string;
+      type?: string;
+      year?: number;
+      page?: number;
+      per_page?: number;
+    } = {}) =>
+      request<Paginated<ChangelogRelease>>("/changelog", {
+        searchParams: {
+          q: params.q,
+          "filter[type]": params.type,
+          "filter[year]": params.year,
+          page: params.page,
+          per_page: params.per_page,
+        },
+        tags: ["changelog"],
+        revalidate: 300,
+      }),
+
+    get: (slug: string) =>
+      request<{ data: ChangelogRelease }>(`/changelog/${slug}`, {
+        tags: ["changelog", `release:${slug}`],
+        revalidate: 300,
+      }).then((r) => r.data),
+
+    /** The filter chips the page can offer — change types, and the years with releases. */
+    meta: () =>
+      request<{ data: ChangelogMeta }>("/changelog/meta", {
+        tags: ["changelog"],
+        revalidate: 3600,
+      }).then((r) => r.data),
+  },
 
   blog: {
     list: (params: {

@@ -7,6 +7,7 @@ import * as React from "react";
 
 import { isAdminActive, visibleSections } from "@/components/admin/admin-nav";
 import { useSession } from "@/components/auth/session-provider";
+import { LogoMark } from "@/components/site/logo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,31 +18,8 @@ import { cn } from "@/lib/utils";
  * blue, so a screenshot from the admin and a screenshot from a customer's
  * dashboard can never be mistaken for one another in a support thread.
  */
-function Mark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
-      <rect
-        x="3"
-        y="3"
-        width="19"
-        height="19"
-        rx="6"
-        className="fill-[var(--color-brand-500)]"
-        opacity="0.85"
-      />
-      <rect
-        x="10"
-        y="10"
-        width="19"
-        height="19"
-        rx="6"
-        className="fill-[var(--color-signal-400)]"
-        opacity="0.9"
-        style={{ mixBlendMode: "screen" }}
-      />
-    </svg>
-  );
-}
+/** The admin rail draws the same mark as the customer app. */
+const Mark = LogoMark;
 
 export function AdminSidebar({
   collapsed = false,

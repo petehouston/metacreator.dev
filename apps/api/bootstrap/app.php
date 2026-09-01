@@ -2,6 +2,7 @@
 
 use App\Http\ApiExceptionRenderer;
 use App\Http\Middleware\EnsureBlogEnabled;
+use App\Http\Middleware\EnsureChangelogEnabled;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\IdentifyVisitor;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -48,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'password.confirm' => RequirePassword::class,
             'blog.enabled' => EnsureBlogEnabled::class,
+            'changelog.enabled' => EnsureChangelogEnabled::class,
         ]);
 
         // A tool run's `input` is validated against the tool's own JSON Schema, and

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Domain\Billing\Services\BillingFeature;
 use App\Domain\Settings\Settings;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,10 +22,27 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class SettingsController extends Controller
 {
-    public function __construct(private readonly Settings $settings) {}
+    public function __construct(
+        private readonly Settings $settings,
+        private readonly BillingFeature $billing,
+    ) {}
 
     public function __invoke(): JsonResource
     {
-        return new JsonResource($this->settings->publicMap());
+        $map = $this->settings->publicMap();
+
+        // With billing off, the gateway settings are not merely unused — publishing a
+        // provider name and a publishable key would let a client render a checkout
+        // the server will not honour. `features.billing_enabled` stays, because it is
+        // the flag the frontend needs in order to hide everything else.
+        if ($this->billing->disabled()) {
+            $map = array_filter(
+                $map,
+                static fn (string $key): bool => ! str_starts_with($key, 'payments.'),
+                ARRAY_FILTER_USE_KEY,
+            );
+        }
+
+        return new JsonResource($map);
     }
 }

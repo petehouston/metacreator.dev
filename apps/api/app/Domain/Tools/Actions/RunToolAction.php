@@ -84,9 +84,12 @@ final readonly class RunToolAction
             user: $user,
             visitorHash: $visitorHash,
             runUlid: strtoupper((string) Str::ulid()),
-            // $user is genuinely null for anonymous runs.
-            locale: $user instanceof User ? $user->locale : 'en',
-            timezone: $user instanceof User ? $user->timezone : 'UTC',
+            // Null for an anonymous run — and also for a member whose row was just
+            // inserted, because the column defaults live in the database and are
+            // not on the in-memory model until it is re-read. Both fall back here
+            // rather than at the twenty call sites that read a context.
+            locale: ($user instanceof User ? $user->locale : null) ?: 'en',
+            timezone: ($user instanceof User ? $user->timezone : null) ?: 'UTC',
         );
 
         $runner = $this->registry->for($tool);
@@ -181,6 +184,8 @@ final readonly class RunToolAction
             'access_reason' => $context->accessReason,
             'input_hash' => $input->hash(),
             'referrer_source' => $referrerSource,
+            // The result is filled in by the job; the input is known now.
+            ...$this->retainedPayloads($context, $input, null),
         ]);
 
         RunToolJob::dispatch($run->ulid, $input->values)->onQueue('tools');
@@ -213,6 +218,47 @@ final readonly class RunToolAction
         return $tool->cacheNamespace().':'.$input->hash();
     }
 
+    /**
+     * The largest result we will keep on the run row.
+     *
+     * Above this, history stores the fact of the run and not its output. A member
+     * who ran a bulk export gets the record; the megabyte of JSON behind it is
+     * cheaper to recompute than to carry in every history query.
+     */
+    private const MAX_STORED_RESULT_BYTES = 64 * 1024;
+
+    /**
+     * What a signed-in member gets to keep of a run.
+     *
+     * Only for an authenticated actor: an anonymous run stays a hash, because there
+     * is no account it could ever be shown back to and nobody who could ask us to
+     * delete it.
+     *
+     * Results carrying artifacts are not stored, for the same reason they are not
+     * cached — the URLs in them are signed and expire, so a stored copy would
+     * become a page of dead links rather than a result.
+     *
+     * @return array{input_payload: array<string, mixed>|null, result_payload: array<string, mixed>|null}
+     */
+    private function retainedPayloads(RunContext $context, ToolInput $input, ?ToolResult $result): array
+    {
+        if ($context->user === null) {
+            return ['input_payload' => null, 'result_payload' => null];
+        }
+
+        $stored = null;
+
+        if ($result !== null && $result->artifacts === []) {
+            $encoded = json_encode($result->toArray());
+
+            if (is_string($encoded) && strlen($encoded) <= self::MAX_STORED_RESULT_BYTES) {
+                $stored = $result->toArray();
+            }
+        }
+
+        return ['input_payload' => $input->values, 'result_payload' => $stored];
+    }
+
     private function finish(
         RunContext $context,
         ToolInput $input,
@@ -235,6 +281,7 @@ final readonly class RunToolAction
             'cache_hit' => $cacheHit,
             'referrer_source' => $referrerSource,
             'finished_at' => now(),
+            ...$this->retainedPayloads($context, $input, $result),
         ]);
 
         // Telemetry is written on the analytics queue: measuring the product must
@@ -268,6 +315,9 @@ final readonly class RunToolAction
             'error_message' => $message,
             'referrer_source' => $referrerSource,
             'finished_at' => now(),
+            // The input is kept on a failure too: "what did I send that broke it?"
+            // is the whole reason to open a failed run.
+            ...$this->retainedPayloads($context, $input, null),
         ]);
 
         RecordToolRun::dispatch($run->attributesToArray())->onQueue('analytics');

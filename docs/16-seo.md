@@ -18,6 +18,34 @@ Site-wide templates are editable in settings, e.g.
 The admin UI shows a **live SERP preview** with pixel-width measurement (not character counts —
 Google truncates by pixels), warning at 580 px for titles and 960 px for descriptions.
 
+### Tool defaults are generated, not blank
+
+The "entity-derived default" step above is a real generator for tools, not a shrug:
+`App\Domain\Seo\Services\ToolSeoDefaults` produces a complete payload for any tool nobody has
+tuned by hand — title, meta description, og title, og description, focus keyword, card type,
+schema type. Tool pages carry the organic traffic and convert the paywall, so a blank meta
+description (a snippet Google writes for us) and a bare og title (a grey box in a timeline) are
+not acceptable failure modes for the long tail of the catalog.
+
+The rules the copy follows:
+
+| Field | Rule |
+| --- | --- |
+| Title | Leads with the tool's own name, because that is the phrase people search for. Ends with the qualifier that earns the click — "Free" **only** when the tool genuinely is; a premium tool never claims it. Names the platform only when the tool serves exactly one, and only when it still fits inside 60 characters |
+| Description | The tagline (the promise) plus one clause on what it costs to try, built to fit ~155 characters rather than truncated mid-word |
+| og title | A timeline gives a link one line, and the name alone is a label rather than a reason to tap — so the hook is the tagline's first clause, in sentence case, inside 70 characters |
+| og description | The promise plus where it runs. Large card, always: a tool page's share is a screenshot-shaped promise |
+| Focus keyword | The tool's name, lowercased. These are named after the query on purpose ("engagement rate calculator"), so the name *is* the keyword |
+
+Defaults are merged **field by field** under whatever an admin stored, and a blank string counts as
+a gap rather than a choice — a cleared input means "use the default", and storing the empty string
+would publish it. The merge happens in `ToolDetailResource`, not in `SeoResource`: that resource
+also feeds the admin editor, which has to show what was actually typed, or the first Save turns a
+fallback into a hard-coded override.
+
+`ToolCatalogSeeder` writes the same generator's output, so a tool with hand-written copy in the
+seeder and one left alone are described the same way.
+
 ## Per-page implementation
 
 Next's `generateMetadata` is used on every route; nothing is set client-side.

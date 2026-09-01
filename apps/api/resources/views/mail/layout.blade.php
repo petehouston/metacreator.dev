@@ -37,7 +37,10 @@
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
 
     <tr><td style="padding-bottom:24px;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-      <a href="{{ $siteUrl }}" style="text-decoration:none;color:#3b40e0;font-size:18px;font-weight:700;letter-spacing:-0.02em;">MetaCreator<span style="color:#8b90a8;">.dev</span></a>
+      {{-- Live text, not the logo PNG: most clients block images by default, and a
+           blocked header would leave the mail with no identity at all. Colours match
+           the lockup — brand cobalt for the name, signal emerald for the TLD. --}}
+      <a href="{{ $siteUrl }}" style="text-decoration:none;color:#2667e7;font-size:18px;font-weight:700;letter-spacing:-0.02em;">MetaCreator<span style="color:#13c990;">.dev</span></a>
     </td></tr>
 
     <tr><td class="mc-card" style="background:#ffffff;border:1px solid #e5e7ee;border-radius:14px;padding:36px;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">

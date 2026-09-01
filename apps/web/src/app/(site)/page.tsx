@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { platforms, siteConfig } from "@/config/site";
 import { api } from "@/lib/api";
+import { siteFeatures } from "@/lib/site-settings";
 
 export const metadata = {
   title: `${siteConfig.name} — ${siteConfig.tagline}`,
@@ -16,18 +17,38 @@ export const metadata = {
   alternates: { canonical: "/" },
 };
 
+/**
+ * The answer to "is it really free?" is different when there is nothing to sell,
+ * and this list is also the source of the FAQPage structured data — leaving the
+ * Pro sentence in would publish a plan the site does not offer.
+ */
+const FREE_FAQ_ANSWER =
+  "Yes. Every tool in the catalog is free to use right now. Most run straight away; a few of the heavier ones ask you to sign in — also free — so daily limits stay fair for everyone.";
+
+function faqsFor(billingEnabled: boolean) {
+  return billingEnabled
+    ? FAQS
+    : FAQS.map((faq) =>
+        faq.q === "Is it really free?" ? { ...faq, a: FREE_FAQ_ANSWER } : faq,
+      );
+}
+
 const FAQS = [
   {
     q: "Is it really free?",
-    a: "Yes. Around half the catalog is free with no account at all — you can run those right now. A free account raises your daily limits and saves your history. Pro unlocks the tools that cost us real money to run.",
+    a: "Yes. Most of the catalog runs straight away with nothing to sign up for. A few of the heavier tools ask for a free account so daily limits stay fair, and an account also saves your run history. Pro unlocks the tools that cost us real money to run.",
   },
   {
     q: "Do I need to connect my social accounts?",
-    a: "No. Nothing here requires account access, and we never post on your behalf. Tools work from links, text and files you provide.",
+    a: "No. Nothing here asks for access to your profiles, and we never post on your behalf. Every tool works from the links, text and files you hand it.",
   },
   {
     q: "What happens to what I paste in?",
     a: "Inputs are hashed, not stored, unless a tool explicitly says otherwise and you agree. We do not record your IP address. Files you upload are private and deleted automatically.",
+  },
+  {
+    q: "Which networks do you support?",
+    a: "All of the big ones — YouTube, Instagram, TikTok, X, Facebook, LinkedIn, Threads, Pinterest — and plenty of tools are network-agnostic, so they work anywhere you post. New networks get added as creators ask for them.",
   },
   {
     q: "Can I cancel any time?",
@@ -38,16 +59,19 @@ const FAQS = [
 /**
  * The landing page.
  *
- * Built as an editorial spread rather than a SaaS template: numbered sections, a
- * mono voice for anything measured, and one working tool above the fold instead of
- * a screenshot of one. The signature repeats deliberately — the bracket rule on
+ * Built as an editorial spread rather than a SaaS template: a mono voice for
+ * anything measured, and one working tool above the fold instead of a screenshot
+ * of one. The signature repeats deliberately — the bracket rule on
  * every section eyebrow, the two-colour spine on every card, and exactly one
  * gradient headline on the page.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const { billingEnabled } = await siteFeatures();
+  const faqs = faqsFor(billingEnabled);
+
   return (
     <>
-      <Hero />
+      <Hero billingEnabled={billingEnabled} />
       <Ticker />
       <ProofStrip />
       <Suspense fallback={<ToolGridFallback />}>
@@ -55,8 +79,10 @@ export default function HomePage() {
       </Suspense>
       <HowItWorks />
       <Outcomes />
-      <PricingTeaser />
-      <Faq />
+      {/* The whole section is an offer, so with billing off it is not softened — it
+          is absent, and the page reads as a product that is simply free. */}
+      {billingEnabled && <PricingTeaser />}
+      <Faq faqs={faqs} />
       <FinalCta />
 
       {/* FAQPage structured data — the FAQ above is the visible source of truth for
@@ -67,7 +93,7 @@ export default function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: FAQS.map((faq) => ({
+            mainEntity: faqs.map((faq) => ({
               "@type": "Question",
               name: faq.q,
               acceptedAnswer: { "@type": "Answer", text: faq.a },
@@ -79,7 +105,7 @@ export default function HomePage() {
   );
 }
 
-function Hero() {
+function Hero({ billingEnabled }: { billingEnabled: boolean }) {
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-grid opacity-70" />
@@ -87,20 +113,20 @@ function Hero() {
       <div className="relative mx-auto grid w-full max-w-[80rem] gap-14 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:pb-24 lg:pt-20">
         <div className="flex flex-col items-start gap-7">
           <Badge variant="brand" size="md" className="font-mono tracking-[0.08em]">
-            60+ tools · 6 platforms · 0 ads
+            60+ tools · every major network · free to use
           </Badge>
 
           <h1 className="text-heading-1 text-balance sm:text-display-lg lg:text-display-xl">
-            Stop juggling{" "}
-            <span className="text-gradient">sketchy</span>
+            Every <span className="text-gradient">creator</span> tool.
             <br className="hidden sm:block" />{" "}
-            <span className="marker-underline">creator tools.</span>
+            <span className="marker-underline">One tab.</span>
           </h1>
 
           <p className="max-w-xl text-body-lg text-[var(--color-foreground-muted)]">
-            Everything you need to analyze, plan and grow across YouTube, Instagram,
-            TikTok, X, Facebook and LinkedIn — in one fast, private, ad-free workspace.
-            Start using it right now, no account required.
+            Everything you need to analyze, plan and grow — across YouTube, Instagram,
+            TikTok, X, Facebook, LinkedIn, Threads, Pinterest and wherever you post
+            next. One fast, private workspace instead of twenty tabs. Start with the
+            tool on the right, right now.
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -111,13 +137,15 @@ function Hero() {
               </Link>
             </Button>
 
-            <Button asChild variant="secondary" size="xl">
-              <Link href="/pricing">See pricing</Link>
-            </Button>
+            {billingEnabled && (
+              <Button asChild variant="secondary" size="xl">
+                <Link href="/pricing">See pricing</Link>
+              </Button>
+            )}
           </div>
 
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--color-foreground-subtle)]">
-            {["No credit card", "No account for free tools", "No ads, ever"].map((item) => (
+            {["No connected accounts", "Private by default", "Every network"].map((item) => (
               <li key={item} className="flex items-center gap-1.5">
                 <Check className="size-3.5 text-[var(--color-accent)]" />
                 {item}
@@ -165,22 +193,27 @@ function Ticker() {
     "Convert",
   ];
 
-  const track = [...words, ...words];
-
   return (
     <div
       aria-hidden="true"
       className="marquee-mask relative overflow-hidden border-y border-[var(--color-border-subtle)] py-3.5"
     >
-      <div className="marquee gap-8">
-        {track.map((word, index) => (
-          <span
-            key={`${word}-${index}`}
-            className="flex shrink-0 items-center gap-8 font-mono text-[0.6875rem] uppercase tracking-[0.32em] text-[var(--color-foreground-subtle)]"
-          >
-            {word}
-            <span className="size-1 rounded-full bg-[var(--color-accent)]" />
-          </span>
+      {/* Two identical groups, each at least a viewport wide: the animation slides
+          exactly one group, so the second is always in place before the first
+          leaves and the loop never shows a gap or a jump. */}
+      <div className="marquee">
+        {[0, 1].map((copy) => (
+          <div key={copy} className="marquee-group">
+            {words.map((word) => (
+              <span
+                key={word}
+                className="flex shrink-0 items-center gap-8 pr-8 font-mono text-[0.6875rem] uppercase tracking-[0.32em] text-[var(--color-foreground-subtle)]"
+              >
+                {word}
+                <span className="size-1 rounded-full bg-[var(--color-accent)]" />
+              </span>
+            ))}
+          </div>
         ))}
       </div>
     </div>
@@ -190,9 +223,9 @@ function Ticker() {
 function ProofStrip() {
   const stats = [
     { value: "60+", label: "Tools in the catalog" },
-    { value: "6", label: "Platforms covered" },
+    { value: String(platforms.length), label: "Networks covered" },
     { value: "< 1s", label: "Typical result time" },
-    { value: "$0", label: "To get started" },
+    { value: "$0", label: "To use them today" },
   ];
 
   return (
@@ -228,10 +261,9 @@ async function FeaturedTools() {
 
   return (
     <Section
-      index="01"
       eyebrow="The catalog"
-      title="Real tools, not lead magnets"
-      description="Every tool does one job properly, with instructions and a worked example. Free ones need no account."
+      title="Small tools that finish the job"
+      description="Every tool does one job properly, with instructions and a worked example. Most run on the spot; a few ask for a free account so daily limits stay fair."
       action={{ href: "/tools", label: "See all tools" }}
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -244,7 +276,7 @@ async function FeaturedTools() {
         aria-label="Tools by platform"
         className="mt-6 flex flex-wrap items-center gap-2 border-t border-[var(--color-border-subtle)] pt-6"
       >
-        <span className="eyebrow mr-2">By platform</span>
+        <span className="eyebrow mr-2">By network</span>
         {platforms.map((platform) => (
           <Link key={platform.key} href={`/tools?platform=${platform.key}`}>
             <Badge
@@ -263,7 +295,7 @@ async function FeaturedTools() {
 
 function ToolGridFallback() {
   return (
-    <Section index="01" eyebrow="The catalog" title="Real tools, not lead magnets">
+    <Section eyebrow="The catalog" title="Small tools that finish the job">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 8 }, (_, index) => (
           <ToolCardSkeleton key={index} />
@@ -277,7 +309,7 @@ function HowItWorks() {
   const steps = [
     {
       title: "Pick a tool",
-      body: "Search or filter by platform. Each tool page tells you exactly what it does and shows a worked example.",
+      body: "Search or filter by network. Each tool page tells you exactly what it does and shows a worked example.",
     },
     {
       title: "Run it",
@@ -291,10 +323,9 @@ function HowItWorks() {
 
   return (
     <Section
-      index="02"
       eyebrow="How it works"
       title="No onboarding, no setup, no connected accounts"
-      description="You are three clicks from a useful answer, and none of them is a signup form."
+      description="You are three clicks from a useful answer, and none of them asks for access to your profiles."
     >
       <ol className="grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-border)] md:grid-cols-3">
         {steps.map((step, index) => (
@@ -336,7 +367,7 @@ function Outcomes() {
     },
     {
       title: "Create",
-      body: "Turn one long-form idea into a week of posts, fit every caption to every platform, and stop losing hooks to a character limit.",
+      body: "Turn one long-form idea into a week of posts, fit every caption to every network you publish on, and stop losing hooks to a character limit.",
       links: [
         { href: "/tools/x-thread-splitter", label: "Thread Splitter" },
         { href: "/tools/social-media-character-counter", label: "Character Counter" },
@@ -346,7 +377,6 @@ function Outcomes() {
 
   return (
     <Section
-      index="03"
       eyebrow="What you get out of it"
       title="Built around what creators actually do all day"
     >
@@ -386,8 +416,8 @@ function PricingTeaser() {
       name: "Free",
       price: "$0",
       cadence: "forever",
-      description: "Every free tool, plus higher limits once you make an account.",
-      features: ["Free + account tools", "50 runs a day", "7 days of history"],
+      description: "The whole catalog, plus higher limits once you make an account.",
+      features: ["Every free tool", "50 runs a day", "7 days of history"],
       cta: { href: "/register", label: "Create an account" },
       highlighted: false,
     },
@@ -418,7 +448,6 @@ function PricingTeaser() {
 
   return (
     <Section
-      index="04"
       eyebrow="Pricing"
       title="Start free. Upgrade only when a tool earns it."
       description="Most people never need to pay. The ones who do are usually running client work — and for them, one media kit pays for a year."
@@ -472,22 +501,47 @@ function PricingTeaser() {
   );
 }
 
-function Faq() {
+/**
+ * The FAQ.
+ *
+ * A single stacked list rather than the two-column grid it used to be: in a grid,
+ * opening one answer stretched its row, so the unopened item beside it grew a band
+ * of empty space until you opened that one too. One column per row cannot do that,
+ * and it reads better anyway — questions are a sequence, not a matrix.
+ *
+ * Still plain `<details>`, so it works before hydration and answers stay findable
+ * with the browser's own find-in-page.
+ */
+function Faq({ faqs }: { faqs: typeof FAQS }) {
   return (
-    <Section index="05" eyebrow="Questions" title="The things people actually ask">
-      <div className="grid gap-3 md:grid-cols-2">
-        {FAQS.map((faq) => (
-          <details key={faq.q} className="panel group p-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium marker:hidden">
-              {faq.q}
+    <Section
+      eyebrow="Questions"
+      title="The things people actually ask"
+      description="Still unsure about something? The contact form reaches a person, not a queue."
+      action={{ href: "/contact", label: "Ask us anything" }}
+    >
+      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] backdrop-blur-md">
+        {faqs.map((faq) => (
+          <details
+            key={faq.q}
+            className="group border-b border-[var(--color-border-subtle)] last:border-b-0 open:bg-[var(--color-surface-sunken)]"
+          >
+            <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-5 font-medium transition-colors marker:hidden hover:text-[var(--color-primary)] sm:px-7">
+              <span className="flex-1 text-balance">{faq.q}</span>
+
+              {/* A plus that becomes a minus: the horizontal bar stays put and the
+                  vertical one rotates out of sight, which reads as one control
+                  changing state rather than two icons swapping. */}
               <span
                 aria-hidden="true"
-                className="text-lg leading-none text-[var(--color-foreground-subtle)] transition-transform group-open:rotate-45"
+                className="relative size-5 shrink-0 rounded-full border border-[var(--color-border)] text-[var(--color-foreground-subtle)] transition-colors group-open:border-[var(--color-primary)] group-open:text-[var(--color-primary)]"
               >
-                +
+                <span className="absolute left-1/2 top-1/2 h-px w-2.5 -translate-x-1/2 -translate-y-1/2 bg-current" />
+                <span className="absolute left-1/2 top-1/2 h-2.5 w-px -translate-x-1/2 -translate-y-1/2 bg-current transition-transform duration-200 group-open:rotate-90" />
               </span>
             </summary>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--color-foreground-muted)]">
+
+            <p className="px-5 pb-6 pr-12 text-sm leading-relaxed text-[var(--color-foreground-muted)] sm:px-7 sm:pr-16">
               {faq.a}
             </p>
           </details>
@@ -512,11 +566,11 @@ function FinalCta() {
             <p className="eyebrow">Last thing</p>
 
             <h2 className="text-heading-1 text-balance">
-              Your next post deserves better than a browser tab full of ad-choked tools.
+              Your next post deserves better than a browser full of half-broken tabs.
             </h2>
 
             <p className="text-body-lg text-[var(--color-foreground-muted)]">
-              Pick a tool and run it. No account, no card, no email.
+              Pick a tool and run it. Most of them need nothing but the link you already have.
             </p>
 
             <Button asChild size="xl">
@@ -538,18 +592,16 @@ function FinalCta() {
 }
 
 /**
- * The section frame. Numbered, because a numbered page reads as a document with a
- * structure rather than as a stack of unrelated marketing slabs.
+ * The section frame. The eyebrow — a short mono label above every heading — is what
+ * gives the page the rhythm of a document rather than a stack of marketing slabs.
  */
 function Section({
-  index,
   eyebrow,
   title,
   description,
   action,
   children,
 }: {
-  index: string;
   eyebrow: string;
   title: string;
   description?: string;
@@ -560,15 +612,7 @@ function Section({
     <section className="mx-auto w-full max-w-[80rem] px-4 py-16 sm:px-6 lg:py-20">
       <div className="mb-9 flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-2xl flex-col gap-2.5">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="tabular font-mono text-[0.6875rem] tracking-[0.2em] text-[var(--color-primary)]"
-            >
-              {index}
-            </span>
-            <p className="eyebrow">{eyebrow}</p>
-          </div>
+          <p className="eyebrow">{eyebrow}</p>
 
           <h2 className="text-heading-1 text-balance">{title}</h2>
 

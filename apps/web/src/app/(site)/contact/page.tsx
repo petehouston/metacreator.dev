@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { ContactForm } from "@/components/site/contact-form";
 import { siteConfig } from "@/config/site";
+import { contactEmail } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-const CHANNELS = [
+/** The three routes in, given whichever address Settings currently publishes. */
+const channelsFor = (email: string) => [
   {
     icon: MessageSquare,
     title: "Support",
@@ -24,19 +26,21 @@ const CHANNELS = [
     icon: Mail,
     title: "Email",
     body: "For anything else, including partnerships and press.",
-    href: `mailto:${siteConfig.supportEmail}`,
-    label: siteConfig.supportEmail,
+    href: `mailto:${email}`,
+    label: email,
   },
   {
     icon: ShieldAlert,
     title: "Security",
     body: "Found a vulnerability? Report it privately and we will respond within one working day. We do not pursue good-faith researchers.",
-    href: "mailto:security@metacreator.dev",
-    label: "security@metacreator.dev",
+    href: `mailto:${email}`,
+    label: email,
   },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const channels = channelsFor(await contactEmail());
+
   return (
     <div className="mx-auto w-full max-w-[75rem] px-4 py-14 sm:px-6 lg:py-20">
       <header className="flex max-w-2xl flex-col gap-3">
@@ -53,7 +57,7 @@ export default function ContactPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {CHANNELS.map((channel) => {
+          {channels.map((channel) => {
             const Icon = channel.icon;
 
             return (

@@ -232,6 +232,97 @@ final class ToolAnalytics
     }
 
     /**
+     * Who is actually running the tools, ranked by volume.
+     *
+     * Reads `tool_runs` rather than the rollup, because the rollup aggregates
+     * actors away — it can say how many unique actors a tool had, never which of
+     * them ran it forty times. That distinction is the point of this panel: a
+     * headline "runs" number cannot tell healthy breadth from one script.
+     *
+     * An anonymous actor is identified by `visitor_hash`, an HMAC of IP and user
+     * agent under a salt that rotates daily (docs/21). It is shown as a short
+     * fingerprint: enough to see that one visitor accounts for a spike, not enough
+     * to identify them — and useless tomorrow, which is the whole design.
+     *
+     * @return array{
+     *     rows: list<array<string, mixed>>,
+     *     totals: array{runs: int, actors: int, accounts: int, visitors: int, runs_per_actor: float}
+     * }
+     */
+    public function actors(Period $period, ?string $toolSlug = null, int $limit = 25): array
+    {
+        $key = 'admin:tool-analytics:actors:'.$period->days.':'.($toolSlug ?? 'all').':'.$limit;
+
+        return $this->cache->remember($key, self::CACHE_TTL, function () use ($period, $toolSlug, $limit): array {
+            $scoped = fn () => DB::table('tool_runs as r')
+                ->join('tools as t', 't.id', '=', 'r.tool_id')
+                ->whereBetween('r.created_at', [$period->start, $period->end])
+                ->when($toolSlug !== null, fn ($q) => $q->where('t.slug', $toolSlug));
+
+            $rows = $scoped()
+                ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
+                // One group per actor: the account when there is one, the visitor
+                // hash otherwise. COALESCE rather than two queries so the ranking
+                // is a single ordering across both kinds.
+                ->groupByRaw("COALESCE(CONCAT('u:', r.user_id), CONCAT('v:', r.visitor_hash)), u.email, u.display_name, r.user_id")
+                ->selectRaw("COALESCE(CONCAT('u:', r.user_id), CONCAT('v:', r.visitor_hash)) as actor_key")
+                ->selectRaw('r.user_id, u.email, u.display_name')
+                ->selectRaw('COUNT(*) as runs')
+                ->selectRaw('COUNT(DISTINCT r.tool_id) as tools')
+                ->selectRaw('SUM(CASE WHEN r.status = ? THEN 1 ELSE 0 END) as failed', ['failed'])
+                ->selectRaw('MAX(r.created_at) as last_run_at')
+                ->orderByDesc('runs')
+                ->limit($limit)
+                ->get();
+
+            $totals = $scoped()
+                ->selectRaw('COUNT(*) as runs')
+                ->selectRaw("COUNT(DISTINCT COALESCE(CONCAT('u:', r.user_id), CONCAT('v:', r.visitor_hash))) as actors")
+                ->selectRaw('COUNT(DISTINCT r.user_id) as accounts')
+                // Only runs with no account behind them. An authenticated run
+                // still carries a visitor hash, so counting every hash would
+                // count members a second time and make the split — which reads
+                // as "accounts + visitors = actors" — not add up.
+                ->selectRaw('COUNT(DISTINCT CASE WHEN r.user_id IS NULL THEN r.visitor_hash END) as visitors')
+                ->first();
+
+            $runs = (int) ($totals->runs ?? 0);
+            $actorCount = (int) ($totals->actors ?? 0);
+
+            /** @var list<array<string, mixed>> $mapped */
+            $mapped = $rows->map(fn (object $row): array => [
+                'type' => $row->user_id === null ? 'visitor' : 'user',
+                // A member is named; a visitor gets the first eight characters of
+                // their daily hash, which reads as an id without being one.
+                'label' => $row->user_id === null
+                    ? 'Visitor '.substr((string) $row->actor_key, 2, 8)
+                    : ((string) ($row->display_name ?: $row->email)),
+                'email' => $row->user_id === null ? null : (string) $row->email,
+                'runs' => (int) $row->runs,
+                'tools' => (int) $row->tools,
+                'failed' => (int) $row->failed,
+                'share' => $runs > 0 ? round((int) $row->runs / $runs * 100, 1) : 0.0,
+                'last_run_at' => $row->last_run_at === null
+                    ? null
+                    : CarbonImmutable::parse($row->last_run_at)->toIso8601String(),
+            ])->values()->all();
+
+            return [
+                'rows' => $mapped,
+                'totals' => [
+                    // Every run in the window, across everyone — the denominator
+                    // the shares above are read against.
+                    'runs' => $runs,
+                    'actors' => $actorCount,
+                    'accounts' => (int) ($totals->accounts ?? 0),
+                    'visitors' => (int) ($totals->visitors ?? 0),
+                    'runs_per_actor' => $actorCount > 0 ? round($runs / $actorCount, 1) : 0.0,
+                ],
+            ];
+        });
+    }
+
+    /**
      * Visitor → run → account → paid, as counts and drop-off.
      *
      * @return list<array{step: string, label: string, count: int, retention: float|null}>

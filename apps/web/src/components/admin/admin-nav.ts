@@ -11,6 +11,7 @@ import {
   Mail,
   Receipt,
   RefreshCcw,
+  Rocket,
   Settings,
   Sparkles,
   Tags,
@@ -85,6 +86,13 @@ export const adminNavSections: AdminNavSection[] = [
         icon: Tags,
         description: "How the blog is organised",
         permissions: ["post_categories.view_any", "tags.view_any"],
+      },
+      {
+        href: "/admin/changelog",
+        label: "Changelog",
+        icon: Rocket,
+        description: "What shipped, and when it went public",
+        permissions: ["changelog.view_any"],
       },
       {
         href: "/admin/media",

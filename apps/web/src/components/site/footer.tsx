@@ -2,9 +2,14 @@ import Link from "next/link";
 
 import { Logo } from "@/components/site/logo";
 import { NewsletterForm } from "@/components/site/newsletter-form";
-import { footerNav, siteConfig } from "@/config/site";
+import { footerNavFor, siteConfig } from "@/config/site";
+import { siteFeatures } from "@/lib/site-settings";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  // A server component, so it reads the switch directly rather than through the
+  // client context — the footer is rendered once per request and never re-renders.
+  const { billingEnabled, changelogEnabled } = await siteFeatures();
+
   return (
     <footer className="relative mt-24 border-t border-[var(--color-border)]">
       {/* The rail again, closing the page the same way the header opens it. */}
@@ -26,7 +31,7 @@ export function SiteFooter() {
           {/* Sitewide links to the money pages — the least glamorous, highest-leverage
               part of the internal linking strategy (see docs/16). */}
           <nav aria-label="Footer" className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            {footerNav.map((group) => (
+            {footerNavFor(billingEnabled, changelogEnabled).map((group) => (
               <div key={group.title} className="flex flex-col gap-3">
                 <h2 className="eyebrow">{group.title}</h2>
                 <ul className="flex flex-col gap-2.5">
@@ -51,7 +56,7 @@ export function SiteFooter() {
             © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <p className="font-mono text-[0.6875rem] text-[var(--color-foreground-subtle)]">
-            Not affiliated with YouTube, Meta, TikTok or X.
+            Not affiliated with any social network. All trademarks belong to their owners.
           </p>
         </div>
       </div>

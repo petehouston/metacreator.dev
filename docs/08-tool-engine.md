@@ -127,21 +127,72 @@ Two independent mechanisms:
 | Mechanism | Window | Keyed by | Purpose |
 | --- | --- | --- | --- |
 | **Rate limit** | 60 s sliding | IP + tool (guests), user + tool (members) | Abuse and accidental loops |
-| **Quota** | Rolling 24 h token bucket | visitor hash or user id | Cost control, tier differentiation |
+| **Quota** | Calendar day, week and month | visitor hash or user id | Cost control, tier differentiation |
 
-Defaults, overridable per tool:
+### Windows
 
-| Actor | Runs/day | Concurrent runs | Burst/min |
+A budget is counted over three periods **at once** — `QuotaWindow::Daily`, `Weekly`, `Monthly` —
+and the first one to run out is the one that walls. One number cannot be both a burst guard and a
+cost ceiling: a daily cap tight enough to protect a metered provider's monthly bill is far too tight
+for the person who does a week's work on Sunday, and one loose enough for them protects nothing.
+
+Which windows are actually in force is **configuration, not code**. A window set to `-1` is not
+counted at all, so the default install runs on a daily cap alone and an operator adds a weekly or
+monthly ceiling only when they want one. Adding a fourth window is a case in the enum; nothing else
+enumerates them.
+
+Each window's counter is a Redis key that already names its period —
+`quota:runs:{actor}:{window}:{period}`, where the period is `2026-08-30`, `2026-W35` or `2026-08`.
+A new period is therefore a key nobody has written to yet: nothing has to run at midnight, on a
+Monday or on the first of the month for a budget to roll over. Keys expire at their own rollover.
+
+### Per tier
+
+Every window is set **per access tier**, and the tiers are the same three `ToolTier` cases the
+catalog uses — an actor's tier is exactly the highest tool tier they may run, so one vocabulary
+describes both sides of the check:
+
+| Access tier | Who | Setting | Default |
 | --- | --- | --- | --- |
-| Anonymous | 10 | 1 | 5 |
-| Free account | 50 | 2 | 15 |
-| 7-day pass | 300 | 4 | 30 |
-| Pro monthly/yearly | 1,000 | 8 | 60 |
-| Granted tool | Uses the actor's tier bucket | | |
+| `free` | Anonymous visitor, counted per IP | `tools.limits.free.{window}` | 5 / day, week and month off |
+| `account` | Signed in, no paid plan | `tools.limits.account.{window}` | 20 / day, week and month off |
+| `premium` | Subscriber or pass holder | `tools.limits.premium.{window}` | unlimited (`-1`) |
+| — | Staff holding `tools.bypass_quota` | — | unlimited, not configurable |
 
-Exceeding a quota returns `tool.quota_exceeded` with `details.resets_at` and, for free actors, an
-upgrade CTA payload the frontend renders inline — the single most important conversion surface in
-the product.
+These are **settings, not constants** (`Admin → Settings → Tools`, one panel per window): they are
+the pricing model, and raising the free allowance for a launch weekend must not need a deploy. A
+negative value leaves that window uncounted; zero closes the tier outright.
+`EntitlementService::limitForTier()` is the only place they are read.
+
+"Per IP" is honoured without keeping an IP: an anonymous actor's counter is keyed on the
+`visitor_hash` from `IdentifyVisitor`, an HMAC of IP and user agent under a salt that rotates daily.
+
+### Per tool
+
+A tool may cap **any window** lower than the actor's tier via `config.limits.{window}`, edited on
+the tool's own page (`Admin → Tools → … → Run limits`). Expensive providers should not be unlimited
+just because the *plan* is, and the shape a tool wants is usually not the shape the site wants — a
+metered API is typically fine with a generous day and a hard month.
+
+A tool cap only ever **narrows**: it applies to subscribers too, and it cannot raise a limit above
+the tier's. Blank means "defer to the tier", which is what almost every row should do.
+`config.runs_per_day` is the pre-window daily key and is still honoured, so an untouched catalog row
+keeps behaving exactly as it did.
+
+### The wall
+
+Exceeding a quota returns `tool.quota_exceeded` carrying both ways out: `details.resets_at` for
+waiting, and `details.next_tier`, `next_tier_limit` and `upgrade_action` (`register` | `subscribe`)
+for moving up. `details.window` names *which* budget ran out, because "come back tomorrow" is only
+true of the daily one — telling someone who hit a monthly ceiling to try again tomorrow just sends
+them back into the same wall. The frontend renders whichever button the server named rather than
+guessing, so the wall and the pricing page cannot disagree about what this visitor needs. This is
+the single most important conversion surface in the product.
+
+`QuotaService::status()` reports the **binding** window — the counted one with the least left —
+as its headline figures, with the full breakdown under `windows`. A plan meter that always quoted
+the day would read "unlimited" on a site capped monthly, which is exactly the lie a usage meter
+exists to prevent.
 
 ## Caching
 

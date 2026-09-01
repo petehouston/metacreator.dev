@@ -90,6 +90,13 @@ final class ToolController extends Controller
             unset($data['is_featured']);
         }
 
+        // `config` holds runner settings this form knows nothing about alongside the
+        // run caps it does, so a partial payload is merged rather than assigned —
+        // saving the limits panel must not erase a runner's own configuration.
+        if (array_key_exists('config', $data)) {
+            $data['config'] = $this->mergeConfig($tool->config ?? [], $data['config'] ?? []);
+        }
+
         // Publishing for the first time stamps the date the catalog page cites.
         if (($data['status'] ?? null) === ToolStatus::Published->value && $tool->published_at === null) {
             $data['published_at'] = now();
@@ -114,6 +121,52 @@ final class ToolController extends Controller
         );
 
         return new AdminToolResource($tool->refresh()->load(['category', 'seo.ogMedia'])->loadCount('grants'));
+    }
+
+    /**
+     * Fold a partial `config` payload into the stored one.
+     *
+     * Nulls are removals, not values: the limits form sends `{daily: null}` for a
+     * cleared field, and storing that would leave a key that reads as "capped at
+     * nothing" to anyone inspecting the row. Deferring to the tier is the absence of
+     * a number, so that is how it is stored.
+     *
+     * @param  array<string, mixed>  $current
+     * @param  array<string, mixed>  $incoming
+     * @return array<string, mixed>
+     */
+    private function mergeConfig(array $current, array $incoming): array
+    {
+        foreach ($incoming as $key => $value) {
+            if ($key === 'limits' && is_array($value)) {
+                $limits = array_filter(
+                    array_merge($current['limits'] ?? [], $value),
+                    fn ($limit): bool => $limit !== null && $limit !== '',
+                );
+
+                // Setting a windowed daily cap retires the pre-window key, so the
+                // two cannot disagree about what the daily number actually is.
+                unset($current['runs_per_day']);
+
+                $current['limits'] = $limits;
+
+                continue;
+            }
+
+            if ($value === null) {
+                unset($current[$key]);
+
+                continue;
+            }
+
+            $current[$key] = $value;
+        }
+
+        if (($current['limits'] ?? null) === []) {
+            unset($current['limits']);
+        }
+
+        return $current;
     }
 
     /**

@@ -18,6 +18,17 @@ const POST: Record<string, Tone> = {
   trashed: "danger",
 };
 
+/**
+ * A changelog release. `scheduled` is info rather than success on purpose: it is
+ * finished work that is not in front of anyone yet, and the colour should not say
+ * "done" about something no customer can see.
+ */
+const RELEASE: Record<string, Tone> = {
+  published: "success",
+  scheduled: "info",
+  draft: "muted",
+};
+
 const TOOL: Record<string, Tone> = {
   published: "success",
   draft: "muted",
@@ -98,6 +109,7 @@ const ACCESS_REASON: Record<string, string> = {
 
 export const tone = {
   post: (status: string): Tone => POST[status] ?? "neutral",
+  release: (status: string): Tone => RELEASE[status] ?? "neutral",
   tool: (status: string): Tone => TOOL[status] ?? "neutral",
   tier: (tier: string): Tone => TIER[tier] ?? "neutral",
   subscription: (status: string): Tone => SUBSCRIPTION[status] ?? "neutral",
