@@ -15,7 +15,7 @@ import { useAdminResource } from "@/lib/admin/use-admin-resource";
 /**
  * Comping one person one tool, on its own page.
  *
- * Deep-linked from a user's detail screen as `/admin/grants/new?user=…`, so "grant
+ * Deep-linked from a user's detail screen as `/c0ns0le/grants/new?user=…`, so "grant
  * this person something" is one click from the conversation that prompted it — and
  * a link that survives being pasted into a ticket, which a panel over the list
  * never was.
@@ -56,7 +56,7 @@ export function GrantEditorScreen() {
 
     if (result.ok) {
       notify(`${user} now has access. They have been emailed.`);
-      router.push("/admin/grants");
+      router.push("/c0ns0le/grants");
     } else {
       setErrors(result.error.fieldErrors ?? {});
       reportError(result.error);
@@ -72,7 +72,7 @@ export function GrantEditorScreen() {
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/grants">
+              <Link href="/c0ns0le/grants">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to grants
               </Link>

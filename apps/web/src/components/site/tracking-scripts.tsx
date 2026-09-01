@@ -6,7 +6,7 @@ import type { TrackingScripts } from "@/lib/site-settings";
  * Everything Settings → Tracking & scripts puts on a public page.
  *
  * Rendered from the `(site)` layout and nowhere else, which is what enforces the
- * rule in docs/15: tags never reach `/admin` or the signed-in dashboard. Putting it
+ * rule in docs/15: tags never reach `/c0ns0le` or the signed-in dashboard. Putting it
  * in the root layout would be one line shorter and would leak the pixel into both.
  *
  * Two mechanisms, on purpose:

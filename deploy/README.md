@@ -204,7 +204,7 @@ make deploy
 ```
 
 The password is printed once. Sign in at
-[metacreator.dev/login](https://metacreator.dev/login), then open `/admin`.
+[metacreator.dev/login](https://metacreator.dev/login), then open `/c0ns0le`.
 
 ---
 

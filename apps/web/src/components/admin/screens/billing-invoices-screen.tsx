@@ -49,7 +49,7 @@ export function BillingInvoicesScreen() {
       header: "Invoice",
       cell: (row) => (
         <Link
-          href={`/admin/billing/invoices/${row.id}`}
+          href={`/c0ns0le/billing/invoices/${row.id}`}
           className="font-mono text-xs font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
         >
           {row.number ?? `#${row.id}`}
@@ -62,7 +62,7 @@ export function BillingInvoicesScreen() {
       cell: (row) =>
         row.user ? (
           <Link
-            href={`/admin/users/${row.user.id}`}
+            href={`/c0ns0le/users/${row.user.id}`}
             className="truncate hover:text-[var(--color-primary)]"
           >
             {row.user.email}
@@ -127,7 +127,7 @@ export function BillingInvoicesScreen() {
       width: "3rem",
       cell: (row) => (
         <Link
-          href={`/admin/billing/invoices/${row.id}`}
+          href={`/c0ns0le/billing/invoices/${row.id}`}
           aria-label={`Open invoice ${row.number ?? row.id}`}
           className="flex size-7 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-foreground-subtle)] transition-colors hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-foreground)]"
         >

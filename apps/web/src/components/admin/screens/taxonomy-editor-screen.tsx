@@ -82,7 +82,7 @@ function TaxonomyForm({ kind, item }: { kind: TaxonomyKind; item: Taxonomy | nul
 
     if (result.ok) {
       notify(item ? `${name} updated.` : `${name} created.`);
-      router.push("/admin/taxonomy");
+      router.push("/c0ns0le/taxonomy");
     } else {
       setErrors(result.error.fieldErrors ?? {});
       reportError(result.error);
@@ -102,7 +102,7 @@ function TaxonomyForm({ kind, item }: { kind: TaxonomyKind; item: Taxonomy | nul
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/taxonomy">
+              <Link href="/c0ns0le/taxonomy">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to categories &amp; tags
               </Link>

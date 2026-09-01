@@ -1,6 +1,6 @@
 # 25 — Admin Dashboard
 
-The staff surface: `/admin` in the frontend, `/api/v1/admin/*` in the API.
+The staff surface: `/c0ns0le` in the frontend, `/api/v1/admin/*` in the API.
 
 Two rules run through everything here, and most of the design follows from them.
 
@@ -16,28 +16,28 @@ that filtering protects anything. Every route re-checks server-side.
 
 | Screen | Route | Permission | What it is for |
 | --- | --- | --- | --- |
-| Overview | `/admin` | `analytics.view` | The health of the product in one request |
-| Analytics | `/admin/analytics` | `analytics.view` or `tool_analytics.view` | Tools, funnel, content — the panels in [15](15-analytics.md) |
-| Posts | `/admin/posts` | `posts.view_any` | Status tabs with counts, search, bulk actions |
-| Post editor | `/admin/posts/{id}` | `posts.view` (row-checked) | The article itself, editable, plus a settings/SEO/history panel |
-| Post preview | `/admin/posts/preview` | `posts.view` | The unsaved draft, rendered as the public article |
-| Categories & tags | `/admin/taxonomy` | `post_categories.view_any`, `tags.view_any` | Both taxonomies on one screen |
-| Media | `/admin/media` | `media.view_any` | Grid, upload, alt text |
-| Tools | `/admin/tools` | `tools.view_any` | Tier, visibility, catalog copy |
-| Tool grants | `/admin/grants` | `tool_grants.view_any` | Comped access, attributed and expirable |
-| Users | `/admin/users` | `users.view_any` | Find anyone; detail screen per person |
-| Roles & permissions | `/admin/roles` | `roles.view_any` | Compose access from the catalog |
-| Plans | `/admin/billing/plans` | `plans.view_any` | The catalogue: what is for sale, at what price |
-| Plan editor | `/admin/billing/plans/{id}`, `/new` | `plans.view_any`, `plans.create` | One plan on its own page — pricing, features, gateway identifiers |
-| Subscriptions | `/admin/billing/subscriptions` | `subscriptions.view_any` | Who is paying and what renews when (read-only) |
-| Invoices | `/admin/billing/invoices` | `invoices.view_any` | Every charge, refund and outstanding balance |
-| Invoice | `/admin/billing/invoices/{id}` | `invoices.view` | One invoice: lines, plan, card, transaction, refund |
-| Billing report | `/admin/billing/report` | `invoices.view_any` | Revenue, churn and the breakdowns behind them |
-| Tickets | `/admin/tickets` | `tickets.view_any` | The queue, worst-first |
-| Contact inbox | `/admin/messages` | `tickets.view_any` | The public form's inbox |
-| Newsletter | `/admin/newsletter` | `newsletter.view` | The list and its provider sync |
-| Settings | `/admin/settings` | `settings.view` | A section rail: general, blog, accounts, payments, SEO, tracking, newsletter |
-| Audit log | `/admin/activity` | `activity_log.view` | Who changed what |
+| Overview | `/c0ns0le` | `analytics.view` | The health of the product in one request |
+| Analytics | `/c0ns0le/analytics` | `analytics.view` or `tool_analytics.view` | Tools, funnel, content — the panels in [15](15-analytics.md) |
+| Posts | `/c0ns0le/posts` | `posts.view_any` | Status tabs with counts, search, bulk actions |
+| Post editor | `/c0ns0le/posts/{id}` | `posts.view` (row-checked) | The article itself, editable, plus a settings/SEO/history panel |
+| Post preview | `/c0ns0le/posts/preview` | `posts.view` | The unsaved draft, rendered as the public article |
+| Categories & tags | `/c0ns0le/taxonomy` | `post_categories.view_any`, `tags.view_any` | Both taxonomies on one screen |
+| Media | `/c0ns0le/media` | `media.view_any` | Grid, upload, alt text |
+| Tools | `/c0ns0le/tools` | `tools.view_any` | Tier, visibility, catalog copy |
+| Tool grants | `/c0ns0le/grants` | `tool_grants.view_any` | Comped access, attributed and expirable |
+| Users | `/c0ns0le/users` | `users.view_any` | Find anyone; detail screen per person |
+| Roles & permissions | `/c0ns0le/roles` | `roles.view_any` | Compose access from the catalog |
+| Plans | `/c0ns0le/billing/plans` | `plans.view_any` | The catalogue: what is for sale, at what price |
+| Plan editor | `/c0ns0le/billing/plans/{id}`, `/new` | `plans.view_any`, `plans.create` | One plan on its own page — pricing, features, gateway identifiers |
+| Subscriptions | `/c0ns0le/billing/subscriptions` | `subscriptions.view_any` | Who is paying and what renews when (read-only) |
+| Invoices | `/c0ns0le/billing/invoices` | `invoices.view_any` | Every charge, refund and outstanding balance |
+| Invoice | `/c0ns0le/billing/invoices/{id}` | `invoices.view` | One invoice: lines, plan, card, transaction, refund |
+| Billing report | `/c0ns0le/billing/report` | `invoices.view_any` | Revenue, churn and the breakdowns behind them |
+| Tickets | `/c0ns0le/tickets` | `tickets.view_any` | The queue, worst-first |
+| Contact inbox | `/c0ns0le/messages` | `tickets.view_any` | The public form's inbox |
+| Newsletter | `/c0ns0le/newsletter` | `newsletter.view` | The list and its provider sync |
+| Settings | `/c0ns0le/settings` | `settings.view` | A section rail: general, blog, accounts, payments, SEO, tracking, newsletter |
+| Audit log | `/c0ns0le/activity` | `activity_log.view` | Who changed what |
 
 A staff member who lands on a screen their role does not cover is redirected to the first screen it
 *does* cover, rather than shown an empty page.
@@ -205,7 +205,7 @@ locked out. Both are deliberately console-only — shell access on the server is
 
 ```
 php artisan admin:create [email] [--role=super-admin] [--name=] [--password=] [--no-password]
-php artisan admin:login-link <email> [--ttl=15] [--redirect=/admin]
+php artisan admin:login-link <email> [--ttl=15] [--redirect=/c0ns0le]
 ```
 
 `admin:create` is idempotent: an existing account is promoted rather than rejected, keeping its

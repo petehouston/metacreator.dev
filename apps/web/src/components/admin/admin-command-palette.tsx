@@ -94,7 +94,7 @@ function Dialog({ onOpenChange }: { onOpenChange: (open: boolean) => void }) {
       hint: person.email,
       icon: UserIcon,
       group: "People" as const,
-      run: () => router.push(`/admin/users/${person.id}`),
+      run: () => router.push(`/c0ns0le/users/${person.id}`),
     }));
 
     const actions: Command[] = [

@@ -16,7 +16,7 @@ import { useAdminResource } from "@/lib/admin/use-admin-resource";
 import { formatNumber, relativeTime } from "@/lib/utils";
 
 /**
- * `/admin` — the health of the product in one screen.
+ * `/c0ns0le` — the health of the product in one screen.
  *
  * Ordered by what someone opening it at nine in the morning needs, in order: are
  * the numbers moving, is anything on fire, and where is the funnel leaking. The
@@ -85,7 +85,7 @@ export function OverviewScreen() {
           description="Ranked by how often it happens"
           action={
             <Button asChild variant="ghost" size="sm">
-              <Link href="/admin/analytics">
+              <Link href="/c0ns0le/analytics">
                 All errors
                 <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
@@ -154,7 +154,7 @@ export function OverviewScreen() {
         bodyClassName="p-0"
         action={
           <Button asChild variant="ghost" size="sm">
-            <Link href="/admin/analytics">
+            <Link href="/c0ns0le/analytics">
               Full tool analytics
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </Link>
@@ -187,7 +187,7 @@ export function OverviewScreen() {
                 >
                   <td className="px-4 py-2.5">
                     <Link
-                      href={`/admin/analytics?tool=${row.slug}`}
+                      href={`/c0ns0le/analytics?tool=${row.slug}`}
                       className="font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
                     >
                       {row.name}

@@ -209,7 +209,7 @@ export function UsersScreen() {
           loading={loading}
           sort={sort}
           onSortChange={(next) => setFilters({ sort: next })}
-          onRowClick={(row) => router.push(`/admin/users/${row.id}`)}
+          onRowClick={(row) => router.push(`/c0ns0le/users/${row.id}`)}
           empty={
             <div className="px-4 py-12 text-center">
               <p className="text-sm font-medium text-[var(--color-foreground)]">
@@ -244,7 +244,7 @@ export function UsersScreen() {
       <p className="mt-4 text-xs text-[var(--color-foreground-subtle)]">
         Looking for who can do what?{" "}
         <Link
-          href="/admin/roles"
+          href="/c0ns0le/roles"
           className="text-[var(--color-primary)] underline-offset-4 hover:underline"
         >
           Roles and permissions

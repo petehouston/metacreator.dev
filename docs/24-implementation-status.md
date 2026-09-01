@@ -95,7 +95,7 @@ Last updated: 2026-08-30.
 | Editor renders as the published article | ✅ | Public header and public block renderer inside the editing column; configuration blocks show an options strip only while selected |
 | Primary + secondary categories, inline tag search/create | ✅ | `posts.category_id` stays primary; `post_post_category` holds the rest |
 | Featured image, media-library modal, full permalink | ✅ | The modal is reachable from the image block and the featured image |
-| Autosave (7s) and preview-without-publishing | ✅ | Autosave flags `is_autosave`; preview renders the *unsaved* draft at `/admin/posts/preview` |
+| Autosave (7s) and preview-without-publishing | ✅ | Autosave flags `is_autosave`; preview renders the *unsaved* draft at `/c0ns0le/posts/preview` |
 
 ## Admin
 
@@ -115,7 +115,7 @@ Full detail in [25](25-admin.md).
 | Tool grants | ✅ | Attributed, expirable, audited, and the user is notified |
 | Media library | ✅ | Grid, upload, alt text with a "no alt text" warning, soft delete |
 | Billing: plans, subscriptions, invoices | 🟡 | Four sidebar destinations rather than one tabbed screen, so every one is addressable. Plans are full CRUD on their own pages — create, edit, enable/disable, delete — with price locked once a plan has live subscribers. Subscriptions stay read-only and empty until a gateway integration exists; invoices have demo rows and a detail page carrying lines, plan, card, gateway transaction and refund |
-| Billing report | ✅ | `/admin/billing/report`: net revenue, MRR/ARR, churn, ARPU, revenue by plan and gateway, top customers and the refunds behind the refund total. Gated on `invoices.view_any` — this is money, not product analytics |
+| Billing report | ✅ | `/c0ns0le/billing/report`: net revenue, MRR/ARR, churn, ARPU, revenue by plan and gateway, top customers and the refunds behind the refund total. Gated on `invoices.view_any` — this is money, not product analytics |
 | Payment provider configuration | 🟡 | Settings → Payments picks Stripe / PayPal / Braintree and stores each one's credentials; plans carry a per-gateway price id. **No gateway is called yet** — this is the configuration surface, not the integration |
 | Support queue | ✅ | Overdue-first ordering, reply/internal-note toggle, triage, SLA timeline |
 | Contact inbox | ✅ | Triage for the public form |

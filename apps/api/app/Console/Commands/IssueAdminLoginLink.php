@@ -29,7 +29,7 @@ final class IssueAdminLoginLink extends Command
     protected $signature = 'admin:login-link
                             {email : Email address of the staff account}
                             {--ttl=15 : Minutes the link stays valid}
-                            {--redirect=/admin : Same-site path to land on after sign-in}
+                            {--redirect=/c0ns0le : Same-site path to land on after sign-in}
                             {--any-user : Allow issuing for a non-staff account}';
 
     protected $description = 'Print a one-time sign-in URL for an admin who cannot use their password';

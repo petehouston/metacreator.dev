@@ -90,7 +90,7 @@ export function ChangelogScreen() {
         <span className="flex min-w-0 flex-col">
           <span className="flex items-center gap-1.5">
             <Link
-              href={`/admin/changelog/${row.id}`}
+              href={`/c0ns0le/changelog/${row.id}`}
               onClick={(event) => event.stopPropagation()}
               className="truncate font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
             >
@@ -213,7 +213,7 @@ export function ChangelogScreen() {
         description="What shipped and when. Publishing puts an entry in front of every customer, so a release stays a draft until you say otherwise."
         actions={
           <Can permission="changelog.create">
-            <Button size="sm" onClick={() => router.push("/admin/changelog/new")}>
+            <Button size="sm" onClick={() => router.push("/c0ns0le/changelog/new")}>
               <Plus className="size-4" aria-hidden="true" />
               New release
             </Button>
@@ -252,7 +252,7 @@ export function ChangelogScreen() {
           columns={columns}
           rowKey={(row) => row.id}
           loading={loading}
-          onRowClick={(row) => router.push(`/admin/changelog/${row.id}`)}
+          onRowClick={(row) => router.push(`/c0ns0le/changelog/${row.id}`)}
           empty={
             <div className="flex flex-col items-center gap-2 px-4 py-16 text-center">
               <p className="text-sm font-medium text-[var(--color-foreground)]">

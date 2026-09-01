@@ -125,7 +125,7 @@ export function BillingReportScreen() {
                     <li key={plan.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                       <div className="min-w-0 flex-1">
                         <Link
-                          href={`/admin/billing/plans/${plan.id}`}
+                          href={`/c0ns0le/billing/plans/${plan.id}`}
                           className="truncate text-sm font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
                         >
                           {plan.name}
@@ -207,7 +207,7 @@ export function BillingReportScreen() {
                       className="flex items-center justify-between gap-3 px-4 py-2.5"
                     >
                       <Link
-                        href={`/admin/users/${customer.id}`}
+                        href={`/c0ns0le/users/${customer.id}`}
                         className="min-w-0 flex-1 truncate text-sm text-[var(--color-foreground-muted)] hover:text-[var(--color-primary)]"
                       >
                         {customer.display_name}
@@ -236,7 +236,7 @@ export function BillingReportScreen() {
                   {data.recent_refunds.map((refund) => (
                     <li key={refund.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3">
                       <Link
-                        href={`/admin/billing/invoices/${refund.id}`}
+                        href={`/c0ns0le/billing/invoices/${refund.id}`}
                         className="font-mono text-xs font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
                       >
                         {refund.number ?? `#${refund.id}`}

@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Edit release" };
 
 export default async function EditReleasePage({
   params,
-}: PageProps<"/admin/changelog/[id]">) {
+}: PageProps<"/c0ns0le/changelog/[id]">) {
   const { id } = await params;
 
   return (

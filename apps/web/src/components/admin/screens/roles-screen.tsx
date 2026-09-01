@@ -56,7 +56,7 @@ export function RolesScreen() {
         actions={
           <Can permission="roles.manage">
             <Button size="sm" asChild>
-              <Link href="/admin/roles/new">
+              <Link href="/c0ns0le/roles/new">
                 <Plus className="size-4" aria-hidden="true" />
                 New role
               </Link>
@@ -102,7 +102,7 @@ export function RolesScreen() {
                 permission="roles.manage"
                 fallback={
                   <Button variant="secondary" size="sm" asChild>
-                    <Link href={`/admin/roles/${role.id}`}>View permissions</Link>
+                    <Link href={`/c0ns0le/roles/${role.id}`}>View permissions</Link>
                   </Button>
                 }
               >
@@ -118,7 +118,7 @@ export function RolesScreen() {
                   </Button>
                 ) : (
                   <Button variant="secondary" size="sm" asChild>
-                    <Link href={`/admin/roles/${role.id}`}>Edit permissions</Link>
+                    <Link href={`/c0ns0le/roles/${role.id}`}>Edit permissions</Link>
                   </Button>
                 )}
 

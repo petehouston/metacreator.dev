@@ -84,7 +84,7 @@ Rules that make this safe:
   settings, because it is effectively arbitrary code execution on the site.
 - Every save is diffed into `activity_log` with the actor.
 - Scripts are injected via Next's `<Script>` with `strategy="afterInteractive"` so they cannot block
-  first paint, and they are never injected into `/admin` or `/dashboard` routes.
+  first paint, and they are never injected into `/c0ns0le` or `/dashboard` routes.
 - A CSP nonce is applied; inline snippets must be nonce-compatible, and the settings UI warns when a
   pasted snippet will be blocked ([21](21-security.md)).
 - Tags load **only after consent** in regions requiring it; the consent state is a first-class

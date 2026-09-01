@@ -59,7 +59,7 @@ export function BillingInvoiceScreen({ id }: { id: number }) {
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/billing/invoices">
+              <Link href="/c0ns0le/billing/invoices">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 All invoices
               </Link>
@@ -287,7 +287,7 @@ export function BillingInvoiceScreen({ id }: { id: number }) {
               <Row label="Account">
                 {invoice.user ? (
                   <Link
-                    href={`/admin/users/${invoice.user.id}`}
+                    href={`/c0ns0le/users/${invoice.user.id}`}
                     className="text-[var(--color-primary)] hover:underline"
                   >
                     {invoice.user.display_name}
@@ -306,7 +306,7 @@ export function BillingInvoiceScreen({ id }: { id: number }) {
               <Row label="Plan">
                 {invoice.plan ? (
                   <Link
-                    href={`/admin/billing/plans/${invoice.plan.id}`}
+                    href={`/c0ns0le/billing/plans/${invoice.plan.id}`}
                     className="text-[var(--color-primary)] hover:underline"
                   >
                     {invoice.plan.name}
@@ -330,7 +330,7 @@ export function BillingInvoiceScreen({ id }: { id: number }) {
               <Row label="Subscription">
                 {invoice.subscription ? (
                   <Link
-                    href="/admin/billing/subscriptions"
+                    href="/c0ns0le/billing/subscriptions"
                     className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:underline"
                   >
                     #{invoice.subscription.id}

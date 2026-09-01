@@ -90,7 +90,7 @@ manual-action risk.
 /blog/category/{slug}               category archive
 /blog/tag/{slug}                    tag archive
 /pricing /about /contact /terms /privacy /cookies
-/dashboard/* /admin/*               noindex
+/dashboard/* /c0ns0le/*             noindex (the staff console is unlisted, see below)
 ```
 
 Rules: lowercase, hyphenated, no dates in post URLs (so posts can be refreshed without changing the
@@ -104,8 +104,11 @@ publication**; a slug edit creates a 301 in the `redirects` table automatically.
 publish events. Only `published`, visible, indexable entities appear. `lastmod` is real. Nothing is
 in a sitemap that returns anything other than 200.
 
-`/robots.txt` disallows `/admin`, `/dashboard`, `/api`, and `?*` search parameters, and points to the
-sitemap index.
+`/robots.txt` disallows `/dashboard`, `/api`, and `?*` search parameters, and points to the
+sitemap index. The staff console at `/c0ns0le` is deliberately **not** listed there, nor in any
+sitemap or feed: a `Disallow` line is a public directory of the paths worth attacking. It stays out
+of the index through `robots: { index: false }` on its own layout, and behind the staff check
+regardless.
 
 ## Performance as SEO
 

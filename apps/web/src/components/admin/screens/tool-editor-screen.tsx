@@ -23,7 +23,7 @@ import { formatNumber } from "@/lib/utils";
 /**
  * One catalog entry, on its own page.
  *
- * A page rather than a panel over the list: `/admin/tools/pdf-merge` survives a
+ * A page rather than a panel over the list: `/c0ns0le/tools/pdf-merge` survives a
  * refresh, can be pasted into a ticket, and is what the back button leaves rather
  * than what it half-closes.
  *
@@ -191,7 +191,7 @@ function ToolForm({
 
     if (result.ok) {
       notify(`${form.name} saved.`);
-      router.push("/admin/tools");
+      router.push("/c0ns0le/tools");
     } else {
       reportError(result.error);
     }
@@ -206,7 +206,7 @@ function ToolForm({
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/tools">
+              <Link href="/c0ns0le/tools">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to tools
               </Link>
@@ -388,7 +388,7 @@ function ToolForm({
               <p className="text-sm text-[var(--color-foreground-muted)]">
                 Leave a window blank to use the site-wide allowance from{" "}
                 <Link
-                  href="/admin/settings"
+                  href="/c0ns0le/settings"
                   className="underline decoration-dotted underline-offset-2"
                 >
                   Settings → Tools
@@ -493,7 +493,7 @@ function ToolForm({
                 <dd className="tabular mt-0.5 font-medium text-[var(--color-foreground)]">
                   {tool.stats.grants ? (
                     <Link
-                      href="/admin/grants"
+                      href="/c0ns0le/grants"
                       className="text-[var(--color-primary)] hover:underline"
                     >
                       {tool.stats.grants}

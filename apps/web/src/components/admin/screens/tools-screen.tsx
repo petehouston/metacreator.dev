@@ -20,7 +20,7 @@ import { formatNumber } from "@/lib/utils";
 /**
  * The catalog, as an admin changes it.
  *
- * The list stays a list: clicking a row navigates to `/admin/tools/<slug>`, where
+ * The list stays a list: clicking a row navigates to `/c0ns0le/tools/<slug>`, where
  * the whole tool is on screen at once and the URL is something that can be shared,
  * refreshed and bookmarked.
  */
@@ -126,7 +126,7 @@ export function ToolsScreen() {
       cell: (row) =>
         row.stats.grants ? (
           <Link
-            href="/admin/grants"
+            href="/c0ns0le/grants"
             className="text-[var(--color-primary)] hover:underline"
             onClick={(event) => event.stopPropagation()}
           >
@@ -165,7 +165,7 @@ export function ToolsScreen() {
         description="Tiering, visibility and catalog copy. Behaviour lives in the runner bound to each tool's key, which is fixed at deploy time."
         actions={
           <Button asChild variant="secondary" size="sm">
-            <Link href="/admin/analytics">Tool analytics</Link>
+            <Link href="/c0ns0le/analytics">Tool analytics</Link>
           </Button>
         }
       />
@@ -225,7 +225,7 @@ export function ToolsScreen() {
           columns={columns}
           rowKey={(row) => row.id}
           loading={loading}
-          onRowClick={(row) => router.push(`/admin/tools/${row.slug}`)}
+          onRowClick={(row) => router.push(`/c0ns0le/tools/${row.slug}`)}
           empty={
             <p className="px-4 py-12 text-center text-sm text-[var(--color-foreground-subtle)]">
               No tool matches those filters.

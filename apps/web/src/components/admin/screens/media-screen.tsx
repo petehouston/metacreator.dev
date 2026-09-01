@@ -32,7 +32,7 @@ const KIND_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
  * produces an inaccessible site one upload at a time, and it is invisible unless
  * something makes it visible.
  *
- * A tile links to `/admin/media/<id>`, where the file is described and, if it comes
+ * A tile links to `/c0ns0le/media/<id>`, where the file is described and, if it comes
  * to it, removed.
  */
 export function MediaScreen() {
@@ -199,7 +199,7 @@ export function MediaScreen() {
               return (
                 <li key={item.id}>
                   <Link
-                    href={`/admin/media/${item.id}`}
+                    href={`/c0ns0le/media/${item.id}`}
                     className="app-card app-card-interactive group block w-full overflow-hidden text-left"
                   >
                     <span className="relative flex aspect-square items-center justify-center overflow-hidden bg-[var(--color-surface-sunken)]">

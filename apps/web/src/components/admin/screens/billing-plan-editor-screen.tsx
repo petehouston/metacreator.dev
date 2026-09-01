@@ -28,7 +28,7 @@ const GATEWAYS = [
  *
  * A page rather than a drawer because a plan is a form of some length — pricing,
  * a feature list, an identifier per gateway — and every one of those decisions
- * deserves the room to be read. It also makes each plan an address: `/admin/billing/
+ * deserves the room to be read. It also makes each plan an address: `/c0ns0le/billing/
  * plans/4` survives a refresh, can be pasted into a ticket, and is what the browser's
  * back button leaves rather than what it half-closes.
  *
@@ -126,7 +126,7 @@ function PlanForm({ plan }: { plan: AdminPlan | null }) {
 
     if (result.ok) {
       notify(isNew ? `${form.name} created.` : `${form.name} saved.`);
-      router.push("/admin/billing/plans");
+      router.push("/c0ns0le/billing/plans");
     } else {
       reportError(result.error);
     }
@@ -145,7 +145,7 @@ function PlanForm({ plan }: { plan: AdminPlan | null }) {
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/billing/plans">
+              <Link href="/c0ns0le/billing/plans">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to plans
               </Link>

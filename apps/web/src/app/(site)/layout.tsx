@@ -15,7 +15,7 @@ import { trackingScripts } from "@/lib/site-settings";
  */
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   // The tags configured under Settings → Tracking & scripts. Read here rather than
-  // in the root layout because that root also wraps `/admin` and the customer
+  // in the root layout because that root also wraps `/c0ns0le` and the customer
   // dashboard, and neither is ever allowed to carry a third-party tag (docs/15).
   const scripts = await trackingScripts();
 

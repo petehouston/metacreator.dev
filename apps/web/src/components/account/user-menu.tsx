@@ -108,7 +108,7 @@ export function UserMenu() {
             </MenuLink>
 
             {user.is_staff && (
-              <MenuLink href="/admin" icon={Shield} onNavigate={() => setOpen(false)}>
+              <MenuLink href="/c0ns0le" icon={Shield} onNavigate={() => setOpen(false)}>
                 Admin
               </MenuLink>
             )}

@@ -194,7 +194,7 @@ function ReleaseForm({
 
     if (result.ok) {
       notify(release ? `“${title}” saved.` : `“${title}” created.`);
-      router.push("/admin/changelog");
+      router.push("/c0ns0le/changelog");
     } else {
       setErrors(result.error.fieldErrors ?? {});
       reportError(result.error);
@@ -213,7 +213,7 @@ function ReleaseForm({
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/changelog">
+              <Link href="/c0ns0le/changelog">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to changelog
               </Link>

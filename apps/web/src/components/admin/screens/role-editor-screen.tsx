@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
  * resource, not a curated set of presets — presets are what force a deploy the
  * first time somebody needs a combination nobody anticipated. That grid is also
  * why this is a page: a hundred-odd checkboxes read badly in a column half the
- * width of the screen, and `/admin/roles/3` is a link a colleague can be sent.
+ * width of the screen, and `/c0ns0le/roles/3` is a link a colleague can be sent.
  */
 export function RoleEditorScreen({ id }: { id?: number }) {
   const isNew = id === undefined;
@@ -57,7 +57,7 @@ export function RoleEditorScreen({ id }: { id?: number }) {
           description="It may have been deleted since this link was made."
           actions={
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/roles">
+              <Link href="/c0ns0le/roles">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to roles
               </Link>
@@ -121,7 +121,7 @@ function RoleForm({ role, catalog }: { role?: AdminRole; catalog: PermissionCata
 
     if (result.ok) {
       notify(role ? `Permissions updated for ${role.name}.` : `The ${name} role was created.`);
-      router.push("/admin/roles");
+      router.push("/c0ns0le/roles");
     } else {
       setFieldError(result.error.fieldErrors?.name?.[0]);
       reportError(result.error);
@@ -141,7 +141,7 @@ function RoleForm({ role, catalog }: { role?: AdminRole; catalog: PermissionCata
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/roles">
+              <Link href="/c0ns0le/roles">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to roles
               </Link>

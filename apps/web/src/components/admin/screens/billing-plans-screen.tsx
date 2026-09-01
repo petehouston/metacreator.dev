@@ -85,7 +85,7 @@ export function BillingPlansScreen() {
         actions={
           <Can permission="plans.create">
             <Button size="sm" asChild>
-              <Link href="/admin/billing/plans/new">
+              <Link href="/c0ns0le/billing/plans/new">
                 <Plus className="size-4" aria-hidden="true" />
                 New plan
               </Link>
@@ -143,7 +143,7 @@ export function BillingPlansScreen() {
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Can permission="plans.update">
                 <Button variant="secondary" size="sm" asChild>
-                  <Link href={`/admin/billing/plans/${plan.id}`}>Edit</Link>
+                  <Link href={`/c0ns0le/billing/plans/${plan.id}`}>Edit</Link>
                 </Button>
 
                 <Button

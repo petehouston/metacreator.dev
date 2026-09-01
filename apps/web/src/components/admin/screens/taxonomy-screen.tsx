@@ -82,7 +82,7 @@ export function TaxonomyScreen() {
           action={
             <Can permission="post_categories.create">
               <Button size="sm" variant="secondary" asChild>
-                <Link href="/admin/taxonomy/categories/new">
+                <Link href="/c0ns0le/taxonomy/categories/new">
                   <Plus className="size-4" aria-hidden="true" />
                   New
                 </Link>
@@ -95,7 +95,7 @@ export function TaxonomyScreen() {
             items={categories.data?.data ?? []}
             loading={categories.loading}
             emptyLabel="No categories yet. Posts can live without one, but the blog reads better with three or four."
-            editHref={(item) => `/admin/taxonomy/categories/${item.slug}`}
+            editHref={(item) => `/c0ns0le/taxonomy/categories/${item.slug}`}
             onDelete={(item) => setDeleting({ kind: "category", item })}
             editPermission="post_categories.update"
             deletePermission="post_categories.delete"
@@ -115,7 +115,7 @@ export function TaxonomyScreen() {
               />
               <Can permission="tags.create">
                 <Button size="sm" variant="secondary" asChild>
-                  <Link href="/admin/taxonomy/tags/new">
+                  <Link href="/c0ns0le/taxonomy/tags/new">
                     <Plus className="size-4" aria-hidden="true" />
                     New
                   </Link>
@@ -133,7 +133,7 @@ export function TaxonomyScreen() {
                 ? "No tags yet. They drive related posts, so a handful goes a long way."
                 : `No tag matches “${tagQuery}”.`
             }
-            editHref={(item) => `/admin/taxonomy/tags/${item.slug}`}
+            editHref={(item) => `/c0ns0le/taxonomy/tags/${item.slug}`}
             onDelete={(item) => setDeleting({ kind: "tag", item })}
             editPermission="tags.update"
             deletePermission="tags.delete"

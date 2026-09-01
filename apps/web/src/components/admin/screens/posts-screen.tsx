@@ -114,7 +114,7 @@ export function PostsScreen() {
         <span className="flex min-w-0 flex-col">
           <span className="flex items-center gap-1.5">
             <Link
-              href={`/admin/posts/${row.id}`}
+              href={`/c0ns0le/posts/${row.id}`}
               onClick={(event) => event.stopPropagation()}
               className="truncate font-medium text-[var(--color-foreground)] hover:text-[var(--color-primary)]"
             >
@@ -210,7 +210,7 @@ export function PostsScreen() {
         description="Everything written, at every stage of its life."
         actions={
           <Can permission="posts.create">
-            <Button size="sm" onClick={() => router.push("/admin/posts/new")}>
+            <Button size="sm" onClick={() => router.push("/c0ns0le/posts/new")}>
               <Plus className="size-4" aria-hidden="true" />
               New post
             </Button>
@@ -271,7 +271,7 @@ export function PostsScreen() {
           onSelectedChange={setSelected}
           sort={sort}
           onSortChange={(next) => setFilters({ sort: next })}
-          onRowClick={(row) => router.push(`/admin/posts/${row.id}`)}
+          onRowClick={(row) => router.push(`/c0ns0le/posts/${row.id}`)}
           empty={
             <div className="px-4 py-12 text-center">
               <span className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-[var(--color-surface-sunken)] text-[var(--color-foreground-subtle)]">
@@ -287,7 +287,7 @@ export function PostsScreen() {
               </p>
               {status !== "trashed" && (
                 <Can permission="posts.create">
-                  <Button size="sm" className="mt-4" onClick={() => router.push("/admin/posts/new")}>
+                  <Button size="sm" className="mt-4" onClick={() => router.push("/c0ns0le/posts/new")}>
                     <Plus className="size-4" aria-hidden="true" />
                     New post
                   </Button>

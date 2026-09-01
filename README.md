@@ -108,7 +108,7 @@ migrations and seeds a demo dataset (admin user, tool catalog, sample posts).
 | Redis | `localhost:6380` |
 
 Seeded admin: `admin@metacreator.dev` / `password` — sign in and open
-[localhost:3000/admin](http://localhost:3000/admin).
+[localhost:3000/c0ns0le](http://localhost:3000/c0ns0le).
 
 Details and troubleshooting: [`docs/19-local-development.md`](docs/19-local-development.md).
 

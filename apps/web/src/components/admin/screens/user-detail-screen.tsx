@@ -93,7 +93,7 @@ export function UserDetailScreen({ id }: { id: string }) {
 
     if (result.ok) {
       notify(`${data.display_name} was deleted.`);
-      router.push("/admin/users");
+      router.push("/c0ns0le/users");
     } else {
       reportError(result.error);
     }
@@ -115,7 +115,7 @@ export function UserDetailScreen({ id }: { id: string }) {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link href="/admin/users">
+        <Link href="/c0ns0le/users">
           <ArrowLeft className="size-4" aria-hidden="true" />
           All users
         </Link>
@@ -280,7 +280,7 @@ export function UserDetailScreen({ id }: { id: string }) {
             action={
               <Can permission="tool_grants.create">
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={`/admin/grants/new?user=${encodeURIComponent(data.email)}`}>
+                  <Link href={`/c0ns0le/grants/new?user=${encodeURIComponent(data.email)}`}>
                     <Sparkles className="size-3.5" aria-hidden="true" />
                     Grant
                   </Link>

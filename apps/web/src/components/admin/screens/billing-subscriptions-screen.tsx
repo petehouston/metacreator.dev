@@ -46,7 +46,7 @@ export function BillingSubscriptionsScreen() {
       cell: (row) =>
         row.user ? (
           <Link
-            href={`/admin/users/${row.user.id}`}
+            href={`/c0ns0le/users/${row.user.id}`}
             className="flex min-w-0 flex-col hover:text-[var(--color-primary)]"
           >
             <span className="truncate font-medium text-[var(--color-foreground)]">

@@ -236,7 +236,7 @@ export function PostEditorScreen({ id }: { id?: string }) {
     }
 
     if (isNew) {
-      router.replace(`/admin/posts/${result.data.post.id}`);
+      router.replace(`/c0ns0le/posts/${result.data.post.id}`);
     }
   }
 
@@ -325,7 +325,7 @@ export function PostEditorScreen({ id }: { id?: string }) {
 
     try {
       window.sessionStorage.setItem(PREVIEW_STORAGE_KEY, JSON.stringify(payload));
-      window.open("/admin/posts/preview", PREVIEW_WINDOW);
+      window.open("/c0ns0le/posts/preview", PREVIEW_WINDOW);
     } catch {
       notify("This browser blocked the preview window or its storage.", "error");
     }
@@ -338,7 +338,7 @@ export function PostEditorScreen({ id }: { id?: string }) {
 
     if (result.ok) {
       notify("Moved to the trash. Recoverable for thirty days.");
-      router.push("/admin/posts");
+      router.push("/c0ns0le/posts");
     } else {
       reportError(result.error);
     }
@@ -354,7 +354,7 @@ export function PostEditorScreen({ id }: { id?: string }) {
     <>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Button asChild variant="ghost" size="sm" className="-ml-2">
-          <Link href="/admin/posts">
+          <Link href="/c0ns0le/posts">
             <ArrowLeft className="size-4" aria-hidden="true" />
             All posts
           </Link>

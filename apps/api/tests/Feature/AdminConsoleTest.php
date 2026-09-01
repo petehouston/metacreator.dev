@@ -62,7 +62,7 @@ it('issues a usable one-time sign-in link for staff', function () {
     $link = MagicLink::query()->where('email', $admin->email)->sole();
 
     expect($link->isUsable())->toBeTrue()
-        ->and($link->redirect_to)->toBe('/admin')
+        ->and($link->redirect_to)->toBe('/c0ns0le')
         ->and($link->expires_at->diffInMinutes(now()))->toBeLessThanOrEqual(15);
 });
 

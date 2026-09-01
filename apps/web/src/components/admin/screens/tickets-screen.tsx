@@ -187,7 +187,7 @@ export function TicketsScreen() {
           columns={columns}
           rowKey={(row) => row.id}
           loading={loading}
-          onRowClick={(row) => router.push(`/admin/tickets/${row.id}`)}
+          onRowClick={(row) => router.push(`/c0ns0le/tickets/${row.id}`)}
           empty={
             <div className="px-4 py-12 text-center">
               <span className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-[var(--color-surface-sunken)] text-[var(--color-foreground-subtle)]">

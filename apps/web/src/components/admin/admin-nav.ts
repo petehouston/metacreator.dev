@@ -54,14 +54,14 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Insight",
     items: [
       {
-        href: "/admin",
+        href: "/c0ns0le",
         label: "Overview",
         icon: Gauge,
         description: "The health of the product in one screen",
         permissions: ["analytics.view"],
       },
       {
-        href: "/admin/analytics",
+        href: "/c0ns0le/analytics",
         label: "Analytics",
         icon: BarChart3,
         description: "Tools, funnel and content performance",
@@ -73,7 +73,7 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Content",
     items: [
       {
-        href: "/admin/posts",
+        href: "/c0ns0le/posts",
         label: "Posts",
         icon: FileText,
         description: "Write, schedule and publish the blog",
@@ -81,21 +81,21 @@ export const adminNavSections: AdminNavSection[] = [
         badgeKey: "posts_draft",
       },
       {
-        href: "/admin/taxonomy",
+        href: "/c0ns0le/taxonomy",
         label: "Categories & tags",
         icon: Tags,
         description: "How the blog is organised",
         permissions: ["post_categories.view_any", "tags.view_any"],
       },
       {
-        href: "/admin/changelog",
+        href: "/c0ns0le/changelog",
         label: "Changelog",
         icon: Rocket,
         description: "What shipped, and when it went public",
         permissions: ["changelog.view_any"],
       },
       {
-        href: "/admin/media",
+        href: "/c0ns0le/media",
         label: "Media",
         icon: Image,
         description: "Every file, with its alt text",
@@ -107,14 +107,14 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Product",
     items: [
       {
-        href: "/admin/tools",
+        href: "/c0ns0le/tools",
         label: "Tools",
         icon: Wrench,
         description: "Tiering, visibility and the catalog",
         permissions: ["tools.view_any"],
       },
       {
-        href: "/admin/grants",
+        href: "/c0ns0le/grants",
         label: "Tool grants",
         icon: Sparkles,
         description: "Who has been comped what, and until when",
@@ -126,14 +126,14 @@ export const adminNavSections: AdminNavSection[] = [
     title: "People",
     items: [
       {
-        href: "/admin/users",
+        href: "/c0ns0le/users",
         label: "Users",
         icon: Users,
         description: "Find anyone, and what they are entitled to",
         permissions: ["users.view_any"],
       },
       {
-        href: "/admin/roles",
+        href: "/c0ns0le/roles",
         label: "Roles & permissions",
         icon: KeyRound,
         description: "Compose exactly the access a job needs",
@@ -149,28 +149,28 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Billing",
     items: [
       {
-        href: "/admin/billing/plans",
+        href: "/c0ns0le/billing/plans",
         label: "Plans",
         icon: Layers,
         description: "What is for sale, and at what price",
         permissions: ["plans.view_any"],
       },
       {
-        href: "/admin/billing/subscriptions",
+        href: "/c0ns0le/billing/subscriptions",
         label: "Subscriptions",
         icon: RefreshCcw,
         description: "Who is paying, and what renews when",
         permissions: ["subscriptions.view_any"],
       },
       {
-        href: "/admin/billing/invoices",
+        href: "/c0ns0le/billing/invoices",
         label: "Invoices",
         icon: Receipt,
         description: "Every charge, refund and outstanding balance",
         permissions: ["invoices.view_any"],
       },
       {
-        href: "/admin/billing/report",
+        href: "/c0ns0le/billing/report",
         label: "Report",
         icon: LineChart,
         description: "Revenue, churn and what is driving both",
@@ -182,7 +182,7 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Support",
     items: [
       {
-        href: "/admin/tickets",
+        href: "/c0ns0le/tickets",
         label: "Tickets",
         icon: Ticket,
         description: "The queue, worst-first",
@@ -190,7 +190,7 @@ export const adminNavSections: AdminNavSection[] = [
         badgeKey: "tickets",
       },
       {
-        href: "/admin/messages",
+        href: "/c0ns0le/messages",
         label: "Contact inbox",
         icon: Inbox,
         description: "Messages from the public form",
@@ -203,21 +203,21 @@ export const adminNavSections: AdminNavSection[] = [
     title: "Platform",
     items: [
       {
-        href: "/admin/newsletter",
+        href: "/c0ns0le/newsletter",
         label: "Newsletter",
         icon: Mail,
         description: "The list, and whether it is syncing",
         permissions: ["newsletter.view"],
       },
       {
-        href: "/admin/settings",
+        href: "/c0ns0le/settings",
         label: "Settings",
         icon: Settings,
         description: "Branding, flags, tracking and providers",
         permissions: ["settings.view"],
       },
       {
-        href: "/admin/activity",
+        href: "/c0ns0le/activity",
         label: "Audit log",
         icon: Activity,
         description: "Who changed what, and when",
@@ -229,9 +229,9 @@ export const adminNavSections: AdminNavSection[] = [
 
 export const adminNavItems: AdminNavItem[] = adminNavSections.flatMap((section) => section.items);
 
-/** `/admin` is a prefix of everything, so it only ever matches exactly. */
+/** `/c0ns0le` is a prefix of everything, so it only ever matches exactly. */
 export function isAdminActive(href: string, pathname: string): boolean {
-  return href === "/admin"
+  return href === "/c0ns0le"
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -246,7 +246,7 @@ export function visibleSections(can: (permission: string) => boolean): AdminNavS
     .filter((section) => section.items.length > 0);
 }
 
-/** Where to send someone who lands on `/admin` without `analytics.view`. */
+/** Where to send someone who lands on `/c0ns0le` without `analytics.view`. */
 export function firstReachable(can: (permission: string) => boolean): AdminNavItem | null {
   return adminNavItems.find((item) => item.permissions.some(can)) ?? null;
 }

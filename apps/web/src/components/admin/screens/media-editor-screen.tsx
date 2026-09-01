@@ -20,7 +20,7 @@ import { formatBytes, formatDate } from "@/lib/utils";
  * One file and its description, on its own page.
  *
  * Alt text is the reason this screen exists, and it is the field most likely to be
- * abandoned half-written. A page keeps it addressable: `/admin/media/med_01J…` can
+ * abandoned half-written. A page keeps it addressable: `/c0ns0le/media/med_01J…` can
  * be pasted into a ticket that says "this image needs a description", which a panel
  * floating over a grid never could.
  */
@@ -65,7 +65,7 @@ function MediaForm({ media }: { media: AdminMedia }) {
 
     if (result.ok) {
       notify("Saved.");
-      router.push("/admin/media");
+      router.push("/c0ns0le/media");
     } else {
       reportError(result.error);
     }
@@ -78,7 +78,7 @@ function MediaForm({ media }: { media: AdminMedia }) {
 
     if (result.ok) {
       notify(`${media.filename} removed from the library.`);
-      router.push("/admin/media");
+      router.push("/c0ns0le/media");
     } else {
       reportError(result.error);
     }
@@ -93,7 +93,7 @@ function MediaForm({ media }: { media: AdminMedia }) {
         actions={
           <>
             <Button variant="secondary" size="sm" asChild>
-              <Link href="/admin/media">
+              <Link href="/c0ns0le/media">
                 <ArrowLeft className="size-4" aria-hidden="true" />
                 Back to library
               </Link>

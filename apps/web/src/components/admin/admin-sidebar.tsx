@@ -63,7 +63,7 @@ export function AdminSidebar({
           </button>
         ) : (
           <Link
-            href="/admin"
+            href="/c0ns0le"
             className="flex min-w-0 items-center gap-2.5"
             aria-label="MetaCreator.Dev admin"
           >

@@ -9,8 +9,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // Authenticated areas and the API carry no ranking value and would waste
-        // crawl budget; search-result URLs create infinite duplicate paths.
-        disallow: ["/admin", "/dashboard", "/api/", "/login", "/register", "/*?q="],
+        // crawl budget; search-result URLs create infinite duplicate paths. The
+        // staff console is deliberately absent: naming it here would publish it.
+        disallow: ["/dashboard", "/api/", "/login", "/register", "/*?q="],
       },
     ],
     sitemap: `${siteConfig.url}/sitemap.xml`,

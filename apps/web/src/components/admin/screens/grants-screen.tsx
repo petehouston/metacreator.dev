@@ -25,7 +25,7 @@ import { formatDate, relativeTime } from "@/lib/utils";
  * revenue leaking out through support conversations, so every grant is listed,
  * attributed to whoever gave it, and expirable.
  *
- * Giving one happens at `/admin/grants/new`, which a user's detail screen deep-links
+ * Giving one happens at `/c0ns0le/grants/new`, which a user's detail screen deep-links
  * with their email already filled in.
  */
 export function GrantsScreen() {
@@ -75,7 +75,7 @@ export function GrantsScreen() {
       cell: (row) =>
         row.user ? (
           <Link
-            href={`/admin/users/${row.user.id}`}
+            href={`/c0ns0le/users/${row.user.id}`}
             className="flex min-w-0 flex-col hover:text-[var(--color-primary)]"
           >
             <span className="truncate font-medium text-[var(--color-foreground)]">
@@ -170,7 +170,7 @@ export function GrantsScreen() {
         actions={
           <Can permission="tool_grants.create">
             <Button size="sm" asChild>
-              <Link href="/admin/grants/new">
+              <Link href="/c0ns0le/grants/new">
                 <Plus className="size-4" aria-hidden="true" />
                 Grant access
               </Link>

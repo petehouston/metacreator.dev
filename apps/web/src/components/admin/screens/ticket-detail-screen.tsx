@@ -80,7 +80,7 @@ export function TicketDetailScreen({ id }: { id: string }) {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link href="/admin/tickets">
+        <Link href="/c0ns0le/tickets">
           <ArrowLeft className="size-4" aria-hidden="true" />
           Queue
         </Link>
@@ -95,7 +95,7 @@ export function TicketDetailScreen({ id }: { id: string }) {
               From{" "}
               {data.requester ? (
                 <Link
-                  href={`/admin/users/${data.requester.id}`}
+                  href={`/c0ns0le/users/${data.requester.id}`}
                   className="text-[var(--color-primary)] underline-offset-4 hover:underline"
                 >
                   {data.requester.display_name}
@@ -328,7 +328,7 @@ export function TicketDetailScreen({ id }: { id: string }) {
           {data.requester && (
             <AdminPanel title="Requester">
               <Link
-                href={`/admin/users/${data.requester.id}`}
+                href={`/c0ns0le/users/${data.requester.id}`}
                 className="flex items-center gap-2.5 hover:text-[var(--color-primary)]"
               >
                 <span
