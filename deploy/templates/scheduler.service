@@ -1,0 +1,29 @@
+# MetaCreator.Dev — Laravel scheduler, one tick.
+# Rendered by deploy/scripts/provision.sh. Edits here are overwritten.
+#
+# Driven by __SCHEDULER_TIMER__ rather than a crontab entry: systemd gives us
+# logs in the journal, a `Type=oneshot` that cannot overlap with itself, and a
+# unit that is removed cleanly when this app is.
+#
+# `schedule:run` is what dispatches blog:publish-scheduled every minute and
+# analytics:rollup every fifteen (see apps/api/routes/console.php).
+
+[Unit]
+Description=MetaCreator.Dev — Laravel scheduler tick
+After=network.target mysql.service redis-server.service
+
+[Service]
+Type=oneshot
+User=__APP_USER__
+Group=__APP_GROUP__
+
+WorkingDirectory=__CURRENT_LINK__/api
+ExecStart=__PHP_BIN__ artisan schedule:run
+
+StandardOutput=append:__SHARED_DIR__/api/storage/logs/scheduler.log
+StandardError=append:__SHARED_DIR__/api/storage/logs/scheduler.log
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+RestrictSUIDSGID=true

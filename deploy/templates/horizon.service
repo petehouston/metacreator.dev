@@ -1,0 +1,41 @@
+# MetaCreator.Dev — Laravel Horizon (queue workers).
+# Rendered by deploy/scripts/provision.sh. Edits here are overwritten.
+#
+# Horizon supervises every queue in config/horizon.php (realtime, mail, tools,
+# media, default, analytics, maintenance) as a single process tree. That is why
+# there is one unit here rather than one per queue.
+
+[Unit]
+Description=MetaCreator.Dev — Laravel Horizon
+After=network.target mysql.service redis-server.service
+Requires=redis-server.service
+
+[Service]
+Type=simple
+User=__APP_USER__
+Group=__APP_GROUP__
+
+WorkingDirectory=__CURRENT_LINK__/api
+ExecStart=__PHP_BIN__ artisan horizon
+
+# `horizon:terminate` lets each worker finish the job in its hand before the
+# process exits, instead of killing it mid-write. deploy.sh calls this, and
+# systemd's SIGTERM does the same thing, so a restart never loses a job.
+ExecStop=__PHP_BIN__ artisan horizon:terminate
+
+Restart=always
+RestartSec=3
+KillSignal=SIGTERM
+# Long enough for the slowest queue's timeout (media, 600s) to drain.
+TimeoutStopSec=620
+
+StandardOutput=append:__SHARED_DIR__/api/storage/logs/horizon.log
+StandardError=append:__SHARED_DIR__/api/storage/logs/horizon.log
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

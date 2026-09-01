@@ -1,0 +1,68 @@
+# syntax=docker/dockerfile:1.7
+#
+# Cross-compiles the Next.js front end for the production droplet, on your Mac.
+#
+# Used only by `deploy/scripts/deploy.sh --local` — it is a BUILD container, not
+# a runtime one. Nothing from this image is deployed; only the standalone bundle
+# it produces is copied out and rsynced to the server.
+#
+# ── Why a container and not just `npm run build` on the Mac ──────────────────
+# The standalone bundle is not pure JavaScript. Next traces `sharp` into it for
+# image optimisation, and sharp ships prebuilt native binaries per platform. A
+# build on an Apple Silicon Mac produces `@img/sharp-darwin-arm64`; the droplet
+# is linux/x64 and would fail the moment `next/image` optimised anything.
+#
+# So the base image mirrors the droplet exactly:
+#   * linux/amd64      — the droplet is x86_64, this Mac is arm64
+#   * bookworm (glibc) — Ubuntu 22.04 is glibc, NOT musl. The repo's own
+#                        docker/web/Dockerfile uses alpine, which would give a
+#                        musl build that cannot run there.
+#   * node 22          — the droplet runs v22.23.2
+#
+# Keep these three in step with the droplet. `deploy/scripts/preflight.sh`
+# prints the droplet's node version; `deploy.sh` verifies the produced bundle
+# contains linux-x64 binaries and refuses to deploy one that does not.
+
+FROM --platform=linux/amd64 node:22-bookworm-slim AS build
+
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Dependencies first, so an edit to source code does not re-resolve the tree.
+#
+# NODE_ENV is deliberately NOT set to production here: `next build` needs the
+# devDependencies (tailwindcss and @tailwindcss/postcss compile the stylesheet,
+# typescript type-checks), and npm skips them entirely when NODE_ENV=production.
+# `--include=dev` says so explicitly rather than relying on the default.
+# `next build` sets NODE_ENV=production for the output on its own.
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev --no-audit --no-fund
+
+COPY . .
+
+# NEXT_PUBLIC_* are inlined into the browser bundle at build time, and the
+# prerender pass calls the API, so both arrive as build arguments. API_INTERNAL
+# points at an SSH tunnel on the host that reaches the droplet's build origin —
+# see the --local flow in deploy/scripts/deploy.sh.
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+ARG API_INTERNAL_URL
+ARG REVALIDATE_SECRET
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+    NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+    API_INTERNAL_URL=$API_INTERNAL_URL \
+    REVALIDATE_SECRET=$REVALIDATE_SECRET
+
+RUN npm run build
+
+# Assemble exactly what the droplet needs, so the deploy script copies one
+# directory out and nothing else. Next deliberately leaves static/ and public/
+# out of the standalone output on the assumption they may go to a CDN; we serve
+# them from the same process, so they are folded in here.
+RUN cp -r .next/static .next/standalone/.next/static \
+ && cp -r public       .next/standalone/public
+
+# A tiny final stage holding only the bundle, so `docker create` + `docker cp`
+# pulls it out without dragging the toolchain along.
+FROM scratch AS bundle
+COPY --from=build /app/.next/standalone /standalone

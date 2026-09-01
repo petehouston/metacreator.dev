@@ -1,0 +1,31 @@
+# Build context exclusions for deploy/Dockerfile.build.
+#
+# BuildKit reads `<dockerfile>.dockerignore` in preference to the context's own
+# .dockerignore, which is why this sits beside the Dockerfile rather than in
+# apps/web.
+#
+# The first two entries are not an optimisation, they are correctness:
+#
+#   node_modules  The Mac's tree is darwin/arm64. `COPY . .` lands AFTER
+#                 `npm ci`, so without this line the host's darwin binaries
+#                 overwrite the container's linux-x64 ones and the build dies on
+#                 `Cannot find module '../lightningcss.linux-x64-gnu.node'`.
+#
+#   .env*         Next reads .env.local automatically. Leaving it in the context
+#                 means a production bundle silently inlines
+#                 NEXT_PUBLIC_API_URL=http://localhost:8080 and the deployed
+#                 site calls the developer's laptop. Every value the build needs
+#                 arrives as an explicit --build-arg instead.
+node_modules
+.env
+.env.*
+
+# Stale build output; the container produces its own.
+.next
+*.tsbuildinfo
+
+.git
+.gitignore
+.idea
+.vscode
+.DS_Store

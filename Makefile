@@ -187,13 +187,40 @@ openapi: ## Regenerate the OpenAPI spec and the typed frontend client
 	@$(WEB) npm run generate:client
 
 # ── Deployment ────────────────────────────────────────────────────────────────
+#
+# Everything below drives deploy/scripts/*, which deploy to the DigitalOcean
+# droplet at 164.92.65.201. That droplet also serves ten unrelated websites, so
+# the scripts are written to touch only this app's own resources. Read
+# deploy/README.md before your first deploy.
 
-.PHONY: deploy rollback provision
-deploy: ## Deploy: make deploy ENV=production REF=v1.0.0
-	@cd deploy/ansible && ansible-playbook -i inventories/$(ENV)/hosts.yml deploy.yml \
-	  --extra-vars "git_ref=$(REF)" --ask-vault-pass
-rollback: ## Roll back: make rollback ENV=production [TO=<release>]
-	@cd deploy/ansible && ansible-playbook -i inventories/$(ENV)/hosts.yml rollback.yml \
-	  $(if $(TO),--extra-vars "rollback_to=$(TO)",) --ask-vault-pass
-provision: ## First-time host provisioning (rarely needed)
-	@cd deploy/ansible && ansible-playbook -i inventories/$(ENV)/hosts.yml provision.yml --ask-vault-pass
+.PHONY: preflight provision deploy deploy-remote deploy-dry rollback releases
+preflight: ## Read-only check that the droplet still matches deploy/config.sh
+	@./deploy/scripts/preflight.sh
+provision: ## One-time host setup (idempotent — safe to re-run)
+	@./deploy/scripts/provision.sh
+deploy: ## Deploy the current working tree (builds locally in Docker)
+	@./deploy/scripts/deploy.sh
+deploy-remote: ## Deploy, building on the droplet instead of here (no Docker needed)
+	@./deploy/scripts/deploy.sh --remote
+deploy-dry: ## Show what a deploy would upload, changing nothing
+	@./deploy/scripts/deploy.sh --dry-run
+rollback: ## Roll back one release, or: make rollback TO=<release>
+	@./deploy/scripts/rollback.sh $(TO)
+releases: ## List releases on the droplet, marking the live one
+	@./deploy/scripts/rollback.sh --list
+
+.PHONY: remote status prod-logs prod-artisan prod-tinker prod-db backup
+remote: ## Remote operations menu (run bare to see every command)
+	@./deploy/scripts/remote.sh $(CMD)
+status: ## Health of the deployment, and of the rest of the droplet
+	@./deploy/scripts/status.sh
+prod-logs: ## Tail production logs: make prod-logs L=laravel F=-f
+	@./deploy/scripts/logs.sh $(or $(L),laravel) $(F)
+prod-artisan: ## Run artisan on production: make prod-artisan CMD="migrate:status"
+	@./deploy/scripts/artisan.sh $(CMD)
+prod-tinker: ## Open tinker against production
+	@./deploy/scripts/artisan.sh tinker
+prod-db: ## Open a MySQL shell on production (this app's database only)
+	@./deploy/scripts/remote.sh db
+backup: ## Dump the production database on the droplet
+	@./deploy/scripts/remote.sh backup-db

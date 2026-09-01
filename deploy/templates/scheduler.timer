@@ -1,0 +1,19 @@
+# MetaCreator.Dev — runs the scheduler every minute.
+# Rendered by deploy/scripts/provision.sh. Edits here are overwritten.
+
+[Unit]
+Description=MetaCreator.Dev — run the Laravel scheduler every minute
+
+[Timer]
+OnCalendar=*:0/1
+# Spread the tick a few seconds off the top of the minute so it does not start
+# in lockstep with every other cron job on this shared droplet.
+RandomizedDelaySec=5
+AccuracySec=1s
+# If the droplet was down at the scheduled moment, run once on boot rather than
+# replaying every missed minute.
+Persistent=false
+Unit=__SCHEDULER_SERVICE__
+
+[Install]
+WantedBy=timers.target

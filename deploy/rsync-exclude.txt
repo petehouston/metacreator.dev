@@ -1,0 +1,65 @@
+# Paths never uploaded to the droplet by deploy/scripts/deploy.sh.
+#
+# Two categories:
+#   1. Things rebuilt on the server from a lockfile (vendor, node_modules, .next).
+#      Uploading a Mac-built vendor/ would ship darwin-compiled artefacts and a
+#      dev-dependency tree; the server installs --no-dev against composer.lock.
+#   2. Things that must NEVER leave this machine, or must never overwrite the
+#      server's own copy — every .env in particular. Production secrets live in
+#      shared/ on the droplet and are symlinked into each release.
+
+# ── Rebuilt on the server ────────────────────────────────────────────────────
+vendor/
+
+# Laravel's compiled package manifest and cached config/routes/views. These are
+# generated FROM the installed vendor tree, and this Mac's tree includes dev
+# packages (laravel/boost, pest, larastan) that the server installs --no-dev.
+# Shipping them makes the server boot a provider list referencing classes that
+# are not there, which fails as an opaque `Class "cache" does not exist`.
+# deploy.sh regenerates all of it on the server instead.
+bootstrap/cache/
+node_modules/
+.next/
+tmp/
+*.tsbuildinfo
+
+# ── Environment: never overwrite the server's ────────────────────────────────
+.env
+.env.*
+
+# ── Local development only ───────────────────────────────────────────────────
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/public/*
+dump.rdb
+*.sqlite
+*.sqlite-journal
+
+# ── PHP tests and tooling: not needed to serve traffic ───────────────────────
+# Safe to drop: nothing in the runtime path loads them.
+tests/
+.phpunit.cache/
+phpunit.xml
+phpstan.neon
+.gitattributes
+
+# NOTE: the front end's test tooling is deliberately NOT excluded.
+# `next build` type-checks the whole project, and apps/web/tsconfig.json includes
+# the `__tests__` files — whose matchers are typed by `vitest.setup.ts`'s import
+# of @testing-library/jest-dom. Excluding that one file makes the production
+# build fail with two dozen TS2339 errors about `toBeInTheDocument`. These files
+# are a few kilobytes and are never loaded at runtime; shipping them is cheaper
+# than maintaining a second tsconfig.
+
+# ── VCS / editors / OS ───────────────────────────────────────────────────────
+.git/
+.gitignore
+.github/
+.idea/
+.vscode/
+.DS_Store
+*.swp
+AGENTS.md
+CLAUDE.md

@@ -77,7 +77,9 @@ metacreator.dev/
 │   ├── web/            Next.js 15 — public site, dashboards, tool UIs
 │   └── compute/        Go service — CPU/IO-bound tool runners
 ├── deploy/
-│   └── ansible/        Idempotent provisioning + deploy for the DO droplet
+│   ├── scripts/        Provision, deploy, rollback and remote ops (live)
+│   ├── templates/      nginx, php-fpm and systemd config, rendered per host
+│   └── ansible/        Superseded — see deploy/README.md before running it
 ├── docker/             Local dev images and service configs
 ├── docs/               The project handbook (start at docs/README.md)
 ├── docker-compose.yml  Local development stack
@@ -135,15 +137,27 @@ that claims something exists, and it lists the known environment gotchas.
 
 ## Deployment
 
-Deploys are Ansible-driven onto an existing DigitalOcean droplet, zero-downtime via symlinked
-releases:
+Production is a **shared** DigitalOcean droplet that also serves ten unrelated
+websites, so deploys are driven by audited shell scripts that only ever touch
+this app's own resources — never Ansible against shared config.
 
 ```bash
-make deploy ENV=production
+make preflight   # read-only check that the host still matches deploy/config.sh
+make deploy      # upload, build, migrate, switch — with automatic rollback
+make status      # health of the app, and of the rest of the droplet
+make rollback    # back one release
 ```
 
-See [`docs/20-deployment.md`](docs/20-deployment.md) for the host layout, secrets handling and
-rollback procedure.
+Run commands against production from your machine:
+
+```bash
+./deploy/scripts/artisan.sh migrate:status
+./deploy/scripts/remote.sh                  # the full operations menu
+```
+
+Everything — first-time setup, the safety model that keeps eleven sites on one
+box, and troubleshooting — is in [`deploy/README.md`](deploy/README.md).
+Rationale is in [`docs/20-deployment.md`](docs/20-deployment.md).
 
 ## License
 

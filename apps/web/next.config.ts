@@ -17,6 +17,22 @@ const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
 ];
 
 const nextConfig: NextConfig = {
+  /**
+   * Bundles the server together with only the dependencies it actually imports,
+   * emitting `.next/standalone/server.js`.
+   *
+   * The production host runs that one file under systemd, so a release ships no
+   * `node_modules` at all — which is what makes keeping five releases on a
+   * droplet shared with ten other sites affordable.
+   *
+   * Next deliberately does not copy `.next/static` or `public/` into the
+   * standalone output, on the assumption they may be served from a CDN.
+   * We serve them from the same process, so `deploy/scripts/deploy.sh` copies
+   * them in after the build. Removing this line would break that step and the
+   * systemd unit's ExecStart path.
+   */
+  output: "standalone",
+
   images: {
     remotePatterns,
     formats: ["image/avif", "image/webp"],

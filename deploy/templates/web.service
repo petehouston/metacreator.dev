@@ -1,0 +1,47 @@
+# MetaCreator.Dev — Next.js front end.
+# Rendered by deploy/scripts/provision.sh. Edits here are overwritten.
+
+[Unit]
+Description=MetaCreator.Dev — Next.js front end
+Documentation=https://__DOMAIN__
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+Group=__APP_GROUP__
+
+# `output: "standalone"` in next.config.ts bundles the server together with just
+# the dependencies it actually imports, so the release directory ships no
+# node_modules at all and this unit runs a single file.
+WorkingDirectory=__CURRENT_LINK__/web/.next/standalone
+ExecStart=/usr/bin/node __CURRENT_LINK__/web/.next/standalone/server.js
+
+Environment=NODE_ENV=production
+Environment=PORT=__WEB_PORT__
+# Loopback only. Nothing reaches the Next server except through nginx, so the
+# renderer is never directly addressable from the internet.
+Environment=HOSTNAME=127.0.0.1
+EnvironmentFile=__SHARED_DIR__/web/.env.production
+
+Restart=always
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+StandardOutput=append:__SHARED_DIR__/api/storage/logs/web.log
+StandardError=append:__SHARED_DIR__/api/storage/logs/web.log
+
+# Hardening. ProtectSystem=full makes /usr and /etc read-only for this process;
+# ProtectHome=read-only keeps it out of other users' home directories.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
