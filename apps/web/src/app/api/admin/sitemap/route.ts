@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   // arrives the old file is still what a crawler would get. So we make that
   // request ourselves before reporting, rather than telling the admin it is done
   // and leaving the work to whoever shows up next.
-  await fetch(new URL("/sitemap.xml", origin(request)), { cache: "no-store" }).catch(
+  await fetch(new URL("/sitemap.xml", selfOrigin()), { cache: "no-store" }).catch(
     () => null,
   );
 
@@ -71,7 +71,9 @@ export async function POST(request: NextRequest) {
 
 async function report(request: NextRequest) {
   try {
-    return NextResponse.json({ data: await buildSitemapReport(origin(request)) });
+    return NextResponse.json({
+      data: await buildSitemapReport(selfOrigin(), publicOrigin(request)),
+    });
   } catch (error) {
     return NextResponse.json(
       {
@@ -100,7 +102,7 @@ async function report(request: NextRequest) {
 async function guard(request: NextRequest): Promise<NextResponse | null> {
   const cookie = request.headers.get("cookie");
 
-  const user = cookie === null ? null : await session(cookie, origin(request));
+  const user = cookie === null ? null : await session(cookie, publicOrigin(request));
 
   if (user === null) {
     return NextResponse.json(
@@ -152,12 +154,55 @@ async function session(cookie: string, from: string): Promise<AuthUser | null> {
 }
 
 /**
- * Where to fetch our own sitemap from.
+ * The origin the browser used to get here.
  *
- * The incoming request's origin, not `siteConfig.url`: on a preview deployment or
- * behind a proxy those differ, and reporting on the canonical host from a machine
- * that is not it would describe someone else's cache.
+ * Sent on to Sanctum as `Origin`, which is how it decides a request may use the
+ * session cookie: only a host in `SANCTUM_STATEFUL_DOMAINS` counts, and in
+ * production that list is the public domain. `request.nextUrl.origin` cannot be
+ * used for this — behind a proxy Next builds it from the address it is *listening*
+ * on (`HOSTNAME`/`PORT`, so `https://127.0.0.1:3100` on the droplet), not from the
+ * host that was asked for. Sanctum sees a host it does not know, treats the caller
+ * as a third party, ignores the cookie and answers "guest" — which is why this
+ * route 401'd in production while working locally, where the listening address
+ * happens to be a stateful domain too.
+ *
+ * So the forwarded host is the answer, and nginx sets both halves of it. The
+ * listening origin remains the fallback for a direct, unproxied request.
  */
-function origin(request: NextRequest): string {
-  return request.nextUrl.origin;
+function publicOrigin(request: NextRequest): string {
+  const host = firstValue(request.headers.get("x-forwarded-host")) ?? request.headers.get("host");
+
+  if (host === null || host === "") return request.nextUrl.origin;
+
+  const proto =
+    firstValue(request.headers.get("x-forwarded-proto")) ??
+    request.nextUrl.protocol.replace(":", "");
+
+  return `${proto}://${host}`;
+}
+
+/**
+ * Where to fetch our own `/sitemap.xml` from: this very server, on loopback.
+ *
+ * Not the public origin — that address resolves to the CDN, so the droplet would
+ * leave for the edge and come back to reach a socket in its own process, and the
+ * report would describe whatever the edge is holding rather than what this renderer
+ * has cached. The screen exists to answer the second question.
+ *
+ * `HOSTNAME`/`PORT` are what the standalone server binds to; a wildcard bind is
+ * dialled on loopback rather than as `0.0.0.0`, which is not an address you connect
+ * to on every platform.
+ */
+function selfOrigin(): string {
+  const host = process.env.HOSTNAME ?? "";
+  const bound = host === "" || host === "0.0.0.0" || host === "::" ? "127.0.0.1" : host;
+
+  return `http://${bound.includes(":") ? `[${bound}]` : bound}:${process.env.PORT ?? "3000"}`;
+}
+
+/** Proxy headers may carry a chain; the client's own value is the first hop. */
+function firstValue(header: string | null): string | null {
+  const value = header?.split(",")[0]?.trim();
+
+  return value === undefined || value === "" ? null : value;
 }

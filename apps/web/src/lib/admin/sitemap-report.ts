@@ -39,12 +39,23 @@ const SECTIONS: { key: string; label: string }[] = [
   { key: "changelog", label: "Changelog" },
 ];
 
-export async function buildSitemapReport(origin: string): Promise<SitemapReport> {
-  const url = new URL("/sitemap.xml", origin).toString();
+/**
+ * @param from    Origin to fetch the file from — this renderer, on loopback, so the
+ *                report describes the cache the screen can actually refresh rather
+ *                than whatever a CDN in front of it is holding.
+ * @param publicOrigin  How that same file is addressed from outside. Only the
+ *                report's `url` uses it: it is what the screen shows and links to,
+ *                and a loopback address there would be neither.
+ */
+export async function buildSitemapReport(
+  from: string,
+  publicOrigin: string,
+): Promise<SitemapReport> {
+  const url = new URL("/sitemap.xml", publicOrigin).toString();
 
   // `no-store` is the whole point: this must read what a crawler would be handed,
   // not a copy this request happens to have cached.
-  const response = await fetch(url, {
+  const response = await fetch(new URL("/sitemap.xml", from), {
     headers: { Accept: "application/xml" },
     cache: "no-store",
   });
