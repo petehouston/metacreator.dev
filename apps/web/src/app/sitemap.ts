@@ -16,6 +16,22 @@ import { siteFeatures } from "@/lib/site-settings";
 const MAX_PAGES = 20;
 
 /**
+ * Regenerate hourly, rather than once per deploy.
+ *
+ * Without this the route is prerendered at build time and never rendered again:
+ * the `revalidate` on each fetch below governs the *data* cache, and a static
+ * route that is never re-rendered never reads it. That is not a theoretical
+ * staleness — posts are published from `marketing/blog` between deploys, and tools
+ * are seeded during one *after* the web bundle has already been built, so both
+ * arrive on a site whose sitemap still describes the previous release.
+ *
+ * An hour is the right granularity for a file crawlers fetch daily at best. The
+ * on-demand route at `/api/revalidate` remains the way to make a publish visible
+ * immediately.
+ */
+export const revalidate = 3600;
+
+/**
  * Every page of a paginated endpoint, not just the first.
  *
  * Asking for `per_page: 100` is a *request*, not a guarantee: each controller caps
