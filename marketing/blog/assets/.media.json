@@ -632,10 +632,40 @@
    "numeric_id": 99,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FQGQJ2G8Z7RCQT0E7V746W.png"
   },
+  "download-bluesky-images": {
+   "id": "med_01M1H44W2NWZ5V6AJHZZMC4QS7",
+   "numeric_id": 119,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44W26944MXN1TVNAY3531.png"
+  },
+  "download-facebook-photos": {
+   "id": "med_01M1H44T53NH684MZGPK7XKG4H",
+   "numeric_id": 117,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44T4HTPD1RY00VZGDCVV2.png"
+  },
+  "download-instagram-photos": {
+   "id": "med_01M1H44S81MQBBA7TJNM82XWA9",
+   "numeric_id": 116,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44S7JY4EZYJBPERZDGFF4.png"
+  },
   "download-pinterest-image": {
    "id": "med_01M1GA2V53N4QT7WT6D5Q351FC",
    "numeric_id": 112,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2V4WG5JCKDKSMB9MMDWK.png"
+  },
+  "download-social-media-images": {
+   "id": "med_01M1H44Q7K7CWJ34P7P3YESA0Q",
+   "numeric_id": 114,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44Q6Y078X3173WAAGD64J.png"
+  },
+  "download-threads-images": {
+   "id": "med_01M1H44V1Y0JYREJ6598VRH0RY",
+   "numeric_id": 118,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44V1G6NF14XTQPK4AH1RS.png"
+  },
+  "download-twitter-images": {
+   "id": "med_01M1H44R5T188JZRP6PEZ2YA10",
+   "numeric_id": 115,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44R5AVCZSVTZK3FZSVJD1.png"
   },
   "download-youtube-thumbnail": {
    "id": "med_01M1FMCYR4NB6ANQWFV264DMSN",
@@ -817,6 +847,11 @@
    "numeric_id": 40,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FNDAGY5C1WSCGWF7ZAP1SZ.png"
   },
+  "instagram-image-link-expired": {
+   "id": "med_01M1H44WZX7XG34ZE92SB1DAAR",
+   "numeric_id": 120,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44WZC1WXREXKWJX01TYMB.png"
+  },
   "instagram-image-sizes": {
    "id": "med_01M1FMD1RDVR7WKQEH39QKNPW4",
    "numeric_id": 6,
@@ -936,6 +971,11 @@
    "id": "med_01M1GA2J52PCPF8FRH5G1CHGQC",
    "numeric_id": 102,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2J4VEXTHRZT5D92HDED4.png"
+  },
+  "social-media-alt-text": {
+   "id": "med_01M1H44XYXCX4SQC7MB6614FCQ",
+   "numeric_id": 121,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44XYB8SJW4RC5RD2VXX4K.png"
   },
   "social-media-benchmarks": {
    "id": "med_01M1FP0HCQCTYF8SM62F7GP8YV",
