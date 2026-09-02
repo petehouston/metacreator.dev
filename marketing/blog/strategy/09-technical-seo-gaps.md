@@ -51,11 +51,18 @@ either). Until then, **the taxonomy is still worth maintaining** - it drives rel
 posts, the admin's own filtering, and it is the data those routes will read on the
 day they exist - but no internal link in a post should point at an archive URL.
 
-**0b. The sitemap caps blog posts at 100.**
-`sitemap.ts` calls `api.blog.list({ per_page: 100 })`. This plan reaches 95 posts in
-six months, so the ceiling arrives during month six and the 101st post is simply
-absent from the sitemap. *Fix:* page the request, or raise the cap. Cheap now,
-annoying to notice later.
+**0b. ~~The sitemap caps blog posts at 100.~~ Fixed, and it was worse than this note
+said.**
+`sitemap.ts` asked for `per_page: 100`, but a `per_page` is a *request*, not a
+guarantee: `BlogController` caps it at **24**. So the ceiling was never at post 101 —
+it was at post 25, and by the time anyone looked, eighty-four published posts were
+absent from the sitemap with nothing failing to say so.
+
+`sitemap.ts` now pages every list through an `allPages()` helper that reads
+`meta.page.last_page` from the first response, with a hard stop at twenty pages. The
+lesson worth keeping: **never trust a `per_page` you did not read back.** Anywhere the
+frontend asks for "all of them", it should either page or assert the total it got
+matches the total the API reported.
 
 **1. No media upload path for post images.**
 `AcceptsFiles` / Spaces uploads are not built, and the featured image can only be

@@ -11,6 +11,42 @@ import { siteFeatures } from "@/lib/site-settings";
  * list comes from the same `public` scope the catalog uses — hidden and draft tools
  * are never included.
  */
+
+/** Nothing here should ever run away; a sitemap is bounded content, not a crawl. */
+const MAX_PAGES = 20;
+
+/**
+ * Every page of a paginated endpoint, not just the first.
+ *
+ * Asking for `per_page: 100` is a *request*, not a guarantee: each controller caps
+ * it, and the blog's cap is 24. Passing a large number and trusting it is how a
+ * sitemap silently stops listing most of the site the moment the catalogue outgrows
+ * one page — which is exactly what happened here, with the posts past the first
+ * twenty-four absent and nothing failing to say so.
+ *
+ * The first response is what tells us how many pages exist, so the rest are fetched
+ * together rather than in a chain of awaits.
+ */
+async function allPages<T>(
+  fetchPage: (page: number) => Promise<{ data: T[]; meta: { page: { last_page: number } } }>,
+): Promise<T[]> {
+  try {
+    const first = await fetchPage(1);
+    const pages = Math.min(first.meta?.page?.last_page ?? 1, MAX_PAGES);
+
+    if (pages <= 1) return first.data;
+
+    const rest = await Promise.all(
+      Array.from({ length: pages - 1 }, (_, index) => fetchPage(index + 2).then((r) => r.data)),
+    );
+
+    return [...first.data, ...rest.flat()];
+  } catch {
+    // Same reasoning as the callers below: a failing API must cost this one list,
+    // never the whole sitemap.
+    return [];
+  }
+}
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
 
@@ -44,11 +80,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // independently for the same reason: when an admin switches the blog off the API
   // 404s, and that should cost the blog URLs, not the tool catalog with them.
   const [tools, categories, posts, postCategories, releases] = await Promise.all([
-    api.tools.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
+    allPages((page) => api.tools.list({ per_page: 100, page })),
     api.tools.categories().catch(() => []),
-    api.blog.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
+    allPages((page) => api.blog.list({ per_page: 100, page })),
     api.blog.categories().catch(() => []),
-    api.changelog.list({ per_page: 100 }).then((r) => r.data).catch(() => []),
+    allPages((page) => api.changelog.list({ per_page: 100, page })),
   ]);
 
   const blogRoutes: MetadataRoute.Sitemap = posts.length > 0

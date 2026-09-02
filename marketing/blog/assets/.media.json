@@ -592,10 +592,20 @@
    "numeric_id": 99,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FQGQJ2G8Z7RCQT0E7V746W.png"
   },
+  "download-pinterest-image": {
+   "id": "med_01M1GA2V53N4QT7WT6D5Q351FC",
+   "numeric_id": 112,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2V4WG5JCKDKSMB9MMDWK.png"
+  },
   "download-youtube-thumbnail": {
    "id": "med_01M1FMCYR4NB6ANQWFV264DMSN",
    "numeric_id": 4,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FMCYQKD0C2A54VZPG5QKDJ.png"
+  },
+  "embed-a-social-media-post": {
+   "id": "med_01M1GA2MKMDZHGS44F3Q666AXW",
+   "numeric_id": 105,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2MKFD8CFTH3CTNWNT97X.png"
   },
   "emoji-in-captions": {
    "id": "med_01M1FQ9BHE33RX5N7HFG1NJ6HD",
@@ -612,6 +622,11 @@
    "numeric_id": 57,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FP3P0V965TF5GQNEX6GZ1Q.png"
   },
+  "expand-a-short-url": {
+   "id": "med_01M1GA2KTQP8YZ1CYWY0EP0G4W",
+   "numeric_id": 104,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2KTJBG6XHJ2XBF8B4X78.png"
+  },
   "facebook-ad-character-limits": {
    "id": "med_01M1FPSN52XS1EN8BVQ1P8RQ6H",
    "numeric_id": 77,
@@ -626,6 +641,31 @@
    "id": "med_01M1FQ03KX99QNAWNKS4024745",
    "numeric_id": 82,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ03KA9RMG4NMJVZY57672.png"
+  },
+  "fake-facebook-post": {
+   "id": "med_01M1GA2Q8H1M52KPZFQJS44NJ2",
+   "numeric_id": 108,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2Q8C566E6NFPX3Y28SZE.png"
+  },
+  "fake-instagram-post": {
+   "id": "med_01M1GA2R96A4B5EEXB6PTB1PV8",
+   "numeric_id": 109,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2R91MDJ7TTWM0XC1X9X3.png"
+  },
+  "fake-social-media-post-generator": {
+   "id": "med_01M1GA2P9Z5AMKHGW7Q2FG930A",
+   "numeric_id": 107,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2P9TPVPA9YTN80V1F0TB.png"
+  },
+  "fake-tiktok-comment": {
+   "id": "med_01M1GA2S7ZKM9K01F8W81X221J",
+   "numeric_id": 110,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2S7T4VGX5GBF7D3BPHRW.png"
+  },
+  "find-hashtags-on-a-post": {
+   "id": "med_01M1GA2T5X351PHW88AQ49499D",
+   "numeric_id": 111,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2T5RCMAEWG5V9AB7H890.png"
   },
   "find-youtube-channel-id": {
    "id": "med_01M1FMCZY63AYN082WMVPRFPWP",
@@ -712,6 +752,11 @@
    "numeric_id": 51,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FNTSBR44AGPPFPX0GQARR9.png"
   },
+  "instagram-embed-code": {
+   "id": "med_01M1GA2NCVK2PPPQQFSB3Y7Q5B",
+   "numeric_id": 106,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2NCP4PM58K1QFHE69V43.png"
+  },
   "instagram-fonts": {
    "id": "med_01M1FP88Q2M50W0EK3RNRBD51E",
    "numeric_id": 59,
@@ -756,6 +801,11 @@
    "id": "med_01M1FP8C31MQS2ZM74EM67HCZ3",
    "numeric_id": 62,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FP8C2G741S99JBF0Y5VRTJ.png"
+  },
+  "link-preview-mobile-vs-desktop": {
+   "id": "med_01M1GA2W5802ZHJHGZGPA966RQ",
+   "numeric_id": 113,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2W52ARMYFEHKW78Y3QD7.png"
   },
   "link-preview-not-showing": {
    "id": "med_01M1FPGXD6PBYY03WW6ZZMZ0T9",
@@ -842,6 +892,11 @@
    "numeric_id": 26,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV3E24J8NE6NWFN32Q0FD.png"
   },
+  "shorten-a-youtube-link": {
+   "id": "med_01M1GA2J52PCPF8FRH5G1CHGQC",
+   "numeric_id": 102,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2J4VEXTHRZT5D92HDED4.png"
+  },
   "social-media-benchmarks": {
    "id": "med_01M1FP0HCQCTYF8SM62F7GP8YV",
    "numeric_id": 55,
@@ -852,10 +907,20 @@
    "numeric_id": 7,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD2SPXJWB4ZE23QR13WDJ.png"
   },
+  "social-media-links": {
+   "id": "med_01M1GA2H9898GYB3C8HHMJJND8",
+   "numeric_id": 101,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2H8MFY8RTTX2GME2DXEK.png"
+  },
   "social-media-safe-zones": {
    "id": "med_01M1FN9D030K64CWFNGD1HJPE1",
    "numeric_id": 37,
    "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9CZGCVC52KWP6AS08SMB.png"
+  },
+  "social-media-short-links": {
+   "id": "med_01M1GA2JY7A4N3PKG0X2C43TCV",
+   "numeric_id": 103,
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2JY1YVZQXXBRN4TRAM6S.png"
   },
   "threads-bio-ideas": {
    "id": "med_01M1FPNN07239JW975D9J7ZP26",
