@@ -20,6 +20,10 @@ final class ProductionSeeder extends Seeder
             PlanSeeder::class,
             ToolCategorySeeder::class,
             ToolCatalogSeeder::class,
+            // After the catalog: it reads tool names back out of the table the
+            // seeder above writes, so a tool and its changelog entry can ship in
+            // the same deploy.
+            ToolReleaseChangelogSeeder::class,
         ]);
     }
 }
