@@ -58,11 +58,21 @@ two-axis rule the tool catalog uses in `docs/07`. The full reasoning is in
 
 ## Current state
 
-- **116 posts written and published** to production, all 15 clusters complete
-- 6 categories and 45 tags live; every post carries a generated featured image
-- Every post points at at least one of the 79 live tools; no orphans
-- `validate_plan.py`: 0 errors. `audit.py`: 116 passing, 0 failing
-- The same 116 posts are published on the local stack for manual testing
+- **133 posts written and published** to production, all 17 clusters complete
+- 6 categories and 48 tags live; every post carries a generated featured image
+- Every post points at at least one of the 92 live tools; no orphans
+- `validate_plan.py`: 0 errors. `audit.py`: 133 passing, 0 failing
+- The same 133 posts are published on the local stack for manual testing
+
+Wave 9 added seventeen posts and two clusters against the thirteen tools the catalog
+gained at the same time. The `snippets` cluster is the first one aimed at a surface that
+is not a social feed - a Google result and an inbox row, both of which truncate on pixel
+width rather than character count, which is the thesis the whole cluster is built on. The
+`twitch` cluster covers the one large streaming platform the catalog had nothing for, and
+whose payout arithmetic is almost entirely published. The remaining spokes went into
+`downloads` (Apple Podcasts and Spotify artwork), `yt-money` (CPM vs RPM, ad breaks,
+advertiser-friendly guidelines), `sizes` (the YouTube banner) and `links` (URL cleaning
+and deep links), with all five host pillars edited the same day to link down to them.
 
 Wave 8 added the `downloads` cluster - eight posts against the five per-platform image
 downloaders the catalog gained at the same time (X, Instagram, Facebook, Threads,

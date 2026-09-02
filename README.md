@@ -32,7 +32,7 @@ what actually exists today — read it before planning work.
 
 | Area | What you get |
 | --- | --- |
-| **Tool platform** | 60+ planned creator tools, a declarative tool registry, per-tool access tiers, rate limits, quotas, per-user grants, usage analytics, async execution via queues |
+| **Tool platform** | 90+ creator tools, a declarative tool registry, per-tool access tiers, rate limits, quotas, per-user grants, usage analytics, async execution via queues |
 | **Content** | WordPress-class blog: block editor (WYSIWYG that matches the front end 1:1), categories, tags, 6 statuses, scheduling, revisions, bulk edit, per-post SEO |
 | **Media** | Central media library with variants, EXIF stripping, alt/caption/SEO metadata, S3-compatible storage (DO Spaces) |
 | **Accounts** | Email+password, magic-link email login, Google OAuth, password reset, profile management |
