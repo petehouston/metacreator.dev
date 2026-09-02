@@ -153,31 +153,13 @@ async function PostGrid({
 
   return (
     <>
-      {/* Six columns rather than three, so a card can take a half or a whole row.
-          The grid is fed a count it does not control - the final page of any
-          listing is rarely a multiple of three - and a 3-up grid renders that as
-          holes in the last row. Widening the leftovers to fill the row instead
-          reads as a deliberate layout at every count. */}
-      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-6">
-        {posts.map((post, index) => {
-          const span = columnSpan(index, posts.length);
-
-          return (
-            <PostCard
-              key={post.slug}
-              post={post}
-              display={display}
-              className={cn(
-                span.sm,
-                span.lg,
-                // A full-width card with a 16:9 image on top would tower over the
-                // row above it; going side-by-side keeps its height level with the
-                // three-up cards around it.
-                span.lg === "lg:col-span-6" && "lg:flex-row lg:[&>div:first-child]:w-1/2",
-              )}
-            />
-          );
-        })}
+      {/* A fixed 3-up grid: every card keeps the same width, including on a
+          final page whose count is not a multiple of three. A short last row
+          leaves its trailing columns empty rather than stretching the cards. */}
+      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <PostCard key={post.slug} post={post} display={display} />
+        ))}
       </div>
 
       {pagination.last_page > 1 && (
@@ -205,9 +187,9 @@ async function PostGrid({
 
 function GridFallback() {
   return (
-    <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-6">
+    <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }, (_, index) => (
-        <PostCardSkeleton key={index} className="sm:col-span-3 lg:col-span-2" />
+        <PostCardSkeleton key={index} />
       ))}
     </div>
   );
@@ -233,26 +215,6 @@ function FilterChip({
       </Badge>
     </Link>
   );
-}
-
-/**
- * How many columns a card takes at each breakpoint, so the last row is always
- * full: two per row from `sm`, three from `lg`, with the one or two leftovers
- * stretched to share the remaining width.
- */
-function columnSpan(index: number, total: number): { sm: string; lg: string } {
-  const isLast = index === total - 1;
-  const remainder = total % 3;
-
-  return {
-    sm: total % 2 === 1 && isLast ? "sm:col-span-6" : "sm:col-span-3",
-    lg:
-      remainder === 1 && isLast
-        ? "lg:col-span-6"
-        : remainder === 2 && index >= total - 2
-          ? "lg:col-span-3"
-          : "lg:col-span-2",
-  };
 }
 
 /**
