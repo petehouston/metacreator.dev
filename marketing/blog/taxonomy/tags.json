@@ -50,6 +50,12 @@
    "description": "Pinterest as a search engine: Pins, boards and Rich Pins."
   },
   {
+   "group": "platform",
+   "slug": "bluesky",
+   "name": "Bluesky",
+   "description": "Posting, images and the open read API behind Bluesky."
+  },
+  {
    "group": "topic",
    "slug": "hashtags",
    "name": "Hashtags",
@@ -258,6 +264,12 @@
    "slug": "mockups",
    "name": "Mock-ups",
    "description": "Drawing a platform's own card for a slide, a deck or a teaching example — and where the line is."
+  },
+  {
+   "group": "topic",
+   "slug": "downloads",
+   "name": "Downloads",
+   "description": "Getting a picture off a platform at the size it was uploaded — what each CDN publishes, and where a signed link stops working."
   }
  ]
 }

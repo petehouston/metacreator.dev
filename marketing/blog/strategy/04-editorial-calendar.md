@@ -23,6 +23,7 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | 5 | Month 5 | 16 | 14,300 | LinkedIn, Facebook & link previews, Pinterest SEO, TikTok payouts & formatting, Writing, scripts & planning, X & Threads posting |
 | 6 | Month 6 | 14 | 12,200 | Handles, links & housekeeping, LinkedIn, Facebook & link previews, Pinterest SEO, Writing, scripts & planning |
 | 7 | Month 7 | 13 | 13,700 | Hashtags & discovery, LinkedIn, Facebook & link previews, Pinterest SEO, Post mock-ups & screenshots, Short links, redirects & embeds |
+| 8 | Month 8 | 8 | 9,300 | Saving images from social platforms |
 
 
 ## Wave 1 - Month 1
@@ -286,3 +287,18 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | # | Post | Primary keyword | Type | Words | Tools it feeds |
 | --- | --- | --- | --- | --- | --- |
 | `PN-07` | [Why Your Link Preview Looks Different on Mobile](/blog/link-preview-mobile-vs-desktop) | link preview mobile | troubleshooting | 1000 | `link-preview-debugger`, `social-media-character-counter` |
+
+## Wave 8 - Month 8
+
+### Saving images from social platforms
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `DL-01` | [How to Download Images From Any Social Platform](/blog/download-social-media-images) **(pillar)** | download social media images | pillar | 1800 | `social-media-image-downloader`, `x-image-downloader`, `instagram-image-downloader` |
+| `DL-02` | [How to Download Images From X (Twitter) at Full Size](/blog/download-twitter-images) | download twitter images | howto | 1100 | `x-image-downloader`, `social-media-image-downloader` |
+| `DL-03` | [How to Download Instagram Photos Without an App](/blog/download-instagram-photos) | download instagram photos | howto | 1100 | `instagram-image-downloader`, `social-media-image-downloader` |
+| `DL-04` | [How to Download Facebook Photos and Page Pictures](/blog/download-facebook-photos) | download facebook photos | howto | 1100 | `facebook-image-downloader`, `social-media-image-downloader` |
+| `DL-05` | [How to Download Images From a Threads Post](/blog/download-threads-images) | download threads images | howto | 1000 | `threads-image-downloader`, `social-media-image-downloader` |
+| `DL-06` | [How to Download Images From a Bluesky Post](/blog/download-bluesky-images) | download bluesky images | howto | 1100 | `bluesky-image-downloader`, `social-media-image-downloader` |
+| `DL-07` | [Why Your Saved Instagram Image Link Expired](/blog/instagram-image-link-expired) | instagram image link expired | troubleshooting | 900 | `instagram-image-downloader`, `facebook-image-downloader`, `threads-image-downloader` |
+| `DL-08` | [How to Write Alt Text for Social Media Images](/blog/social-media-alt-text) | social media alt text | howto | 1200 | `bluesky-image-downloader`, `social-media-image-downloader` |

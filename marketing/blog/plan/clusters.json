@@ -218,6 +218,25 @@
     "fake-youtube-comment-generator"
    ],
    "wave": 7
+  },
+  {
+   "id": "downloads",
+   "name": "Saving images from social platforms",
+   "pillar": "download-social-media-images",
+   "category": "design",
+   "platform": null,
+   "why": "Nine downloader tools now sit behind one intent - somebody wants a picture off a platform that would rather they did not have it. The queries are per-platform, high-volume and evergreen, and each one lands on a page that answers it in a single paste.",
+   "money_pages": [
+    "social-media-image-downloader",
+    "x-image-downloader",
+    "instagram-image-downloader",
+    "facebook-image-downloader",
+    "threads-image-downloader",
+    "bluesky-image-downloader",
+    "pinterest-image-downloader",
+    "youtube-image-downloader"
+   ],
+   "wave": 8
   }
  ]
 }

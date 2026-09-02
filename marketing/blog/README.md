@@ -34,7 +34,7 @@ python3 publish.py ../posts/<slug>.md --apply --status published  # promotes it
 | `plan/clusters.json` | Fourteen clusters, each with the tool pages it feeds | Hand |
 | `plan/posts.json` | **The master map.** One row per planned post | Hand |
 | `plan/keyword-map.csv` | Spreadsheet view of the same thing | **Generated** |
-| `plan/tools-snapshot.json` | The 74 live tools, so the plan cannot reference one that does not exist | Refreshed from the API |
+| `plan/tools-snapshot.json` | The 79 live tools, so the plan cannot reference one that does not exist | Refreshed from the API |
 | `taxonomy/categories.json` | The six blog categories | Hand |
 | `taxonomy/tags.json` | The tag vocabulary | Hand |
 | `briefs/` | One writing brief per planned post | **Generated** |
@@ -58,11 +58,17 @@ two-axis rule the tool catalog uses in `docs/07`. The full reasoning is in
 
 ## Current state
 
-- **108 posts written and published** to production, all 14 clusters complete
-- 6 categories and 43 tags live; every post carries a generated featured image
-- Every post points at at least one of the 74 live tools; no orphans
-- `validate_plan.py`: 0 errors. `audit.py`: 108 passing, 0 failing
-- The same 108 posts are published on the local stack for manual testing
+- **116 posts written and published** to production, all 15 clusters complete
+- 6 categories and 45 tags live; every post carries a generated featured image
+- Every post points at at least one of the 79 live tools; no orphans
+- `validate_plan.py`: 0 errors. `audit.py`: 116 passing, 0 failing
+- The same 116 posts are published on the local stack for manual testing
+
+Wave 8 added the `downloads` cluster - eight posts against the five per-platform image
+downloaders the catalog gained at the same time (X, Instagram, Facebook, Threads,
+Bluesky). The pillar is the map of what each platform publishes; the spokes are the
+per-platform queries, plus the two posts the tools kept raising: why a Meta image link
+expires, and what to do with the alt text you get back from Bluesky.
 
 Wave 7 added thirteen posts and two clusters, written against the twelve tools the
 catalog gained at the same time: the two link shorteners, the link expander, the embed

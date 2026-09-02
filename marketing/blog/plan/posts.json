@@ -7,7 +7,8 @@
   "4": "Month 4",
   "5": "Month 5",
   "6": "Month 6",
-  "7": "Month 7"
+  "7": "Month 7",
+  "8": "Month 8"
  },
  "posts": [
   {
@@ -3128,6 +3129,244 @@
    "status": "planned",
    "published_url": null,
    "notes": "Facebook 88 vs ~65, LinkedIn 100 vs ~60. The debugger now draws both, which is the reason this post exists."
+  },
+  {
+   "id": "DL-01",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "pillar",
+   "slug": "download-social-media-images",
+   "title": "How to Download Images From Any Social Platform",
+   "primary_keyword": "download social media images",
+   "secondary_keywords": [
+    "save images from social media",
+    "social media image downloader"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "downloads",
+    "image-optimization",
+    "guide"
+   ],
+   "tools": [
+    "social-media-image-downloader",
+    "x-image-downloader",
+    "instagram-image-downloader",
+    "pinterest-image-downloader"
+   ],
+   "target_words": 1800,
+   "url": "/blog/download-social-media-images",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The map: what each platform publishes to a link card, which four have a CDN convention worth knowing, and where the signed-URL platforms stop. Links down to every spoke."
+  },
+  {
+   "id": "DL-02",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "download-twitter-images",
+   "title": "How to Download Images From X (Twitter) at Full Size",
+   "primary_keyword": "download twitter images",
+   "secondary_keywords": [
+    "save x images",
+    "twitter image downloader",
+    "pbs.twimg.com orig"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "x",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "x-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1100,
+   "url": "/blog/download-twitter-images",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The name= ladder ending in orig, and the pbs.twimg.com route that works when X answers a post link with an interstitial."
+  },
+  {
+   "id": "DL-03",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "download-instagram-photos",
+   "title": "How to Download Instagram Photos Without an App",
+   "primary_keyword": "download instagram photos",
+   "secondary_keywords": [
+    "save instagram photo",
+    "instagram photo downloader"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "instagram-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1100,
+   "url": "/blog/download-instagram-photos",
+   "status": "planned",
+   "published_url": null,
+   "notes": "What the link card publishes, why the s1080x1080 rewrite advice is dead, and why a carousel often comes back as one slide."
+  },
+  {
+   "id": "DL-04",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "download-facebook-photos",
+   "title": "How to Download Facebook Photos and Page Pictures",
+   "primary_keyword": "download facebook photos",
+   "secondary_keywords": [
+    "facebook profile picture full size",
+    "save facebook photo"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "facebook",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "facebook-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1100,
+   "url": "/blog/download-facebook-photos",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Two routes: the link card for posts, and the public Page-picture endpoint, which is the one that actually gives you a logo at the size it was uploaded."
+  },
+  {
+   "id": "DL-05",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "download-threads-images",
+   "title": "How to Download Images From a Threads Post",
+   "primary_keyword": "download threads images",
+   "secondary_keywords": [
+    "save threads photo",
+    "threads image downloader"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "threads",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "threads-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1000,
+   "url": "/blog/download-threads-images",
+   "status": "planned",
+   "published_url": null,
+   "notes": "threads.com and threads.net both resolve; the igshid on a shared link is a per-share id and is dropped before the fetch."
+  },
+  {
+   "id": "DL-06",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "download-bluesky-images",
+   "title": "How to Download Images From a Bluesky Post",
+   "primary_keyword": "download bluesky images",
+   "secondary_keywords": [
+    "save bluesky image",
+    "bluesky image downloader",
+    "bluesky blob"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "bluesky",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "bluesky-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1100,
+   "url": "/blog/download-bluesky-images",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The one platform with a public read API: every image rather than the first, the alt text, and the blob from the author's own server."
+  },
+  {
+   "id": "DL-07",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "troubleshooting",
+   "slug": "instagram-image-link-expired",
+   "title": "Why Your Saved Instagram Image Link Expired",
+   "primary_keyword": "instagram image link expired",
+   "secondary_keywords": [
+    "cdninstagram url 403",
+    "fbcdn link stopped working"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "downloads",
+    "troubleshooting"
+   ],
+   "tools": [
+    "instagram-image-downloader",
+    "facebook-image-downloader",
+    "threads-image-downloader"
+   ],
+   "target_words": 900,
+   "url": "/blog/instagram-image-link-expired",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The oe= parameter is the expiry, in the open. Explains why a hotlinked image in a doc or a deck dies, and what to do instead."
+  },
+  {
+   "id": "DL-08",
+   "cluster": "downloads",
+   "wave": 8,
+   "archetype": "howto",
+   "slug": "social-media-alt-text",
+   "title": "How to Write Alt Text for Social Media Images",
+   "primary_keyword": "social media alt text",
+   "secondary_keywords": [
+    "instagram alt text",
+    "bluesky alt text",
+    "image description social"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "bluesky",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "bluesky-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1200,
+   "url": "/blog/social-media-alt-text",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Where each platform puts the field, what a good description does, and why carrying the alt across when you reuse someone's image is the part everybody drops."
   }
  ]
 }

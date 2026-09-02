@@ -800,5 +800,55 @@
    "tiktok"
   ],
   "category": "media"
+ },
+ {
+  "slug": "x-image-downloader",
+  "name": "X Image Downloader",
+  "tagline": "Every size of a photo on X, including the original the app never shows.",
+  "tier": "free",
+  "platforms": [
+   "x"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "instagram-image-downloader",
+  "name": "Instagram Image Downloader",
+  "tagline": "The photo behind a post, at the size Instagram publishes it.",
+  "tier": "free",
+  "platforms": [
+   "instagram"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "facebook-image-downloader",
+  "name": "Facebook Image Downloader",
+  "tagline": "Post photos at full size \u2014 and a Page\u2019s picture at the size Facebook stores.",
+  "tier": "free",
+  "platforms": [
+   "facebook"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "threads-image-downloader",
+  "name": "Threads Image Downloader",
+  "tagline": "The picture on a Threads post, at full size, without an account.",
+  "tier": "free",
+  "platforms": [
+   "threads"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "bluesky-image-downloader",
+  "name": "Bluesky Image Downloader",
+  "tagline": "All four images, the alt text, and the file exactly as uploaded.",
+  "tier": "free",
+  "platforms": [
+   "bluesky"
+  ],
+  "category": "media"
  }
 ]

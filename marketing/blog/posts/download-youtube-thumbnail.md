@@ -127,4 +127,6 @@ Research, commentary and linking back are the defensible uses.
 :::
 
 Grab every available resolution at once with the
-[YouTube thumbnail downloader](/tools/youtube-thumbnail-downloader).
+[YouTube thumbnail downloader](/tools/youtube-thumbnail-downloader). For the picture
+behind a post on any other platform, see the
+[guide to downloading social media images](/blog/download-social-media-images).

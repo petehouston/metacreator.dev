@@ -50,10 +50,40 @@
    "numeric_id": 114,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGANZYB8J1Z2VDSZPKD1D.png"
   },
+  "download-bluesky-images": {
+   "id": "med_01M1H3X6EC28AW1P90NAWMKTKD",
+   "numeric_id": 218,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X6E31J9TMB434RKYCTM5.png"
+  },
+  "download-facebook-photos": {
+   "id": "med_01M1H3X67MPAEXX8DA2XD55J95",
+   "numeric_id": 216,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X67A56WEQBE0C69M7ZFN.png"
+  },
+  "download-instagram-photos": {
+   "id": "med_01M1H3X64B5AB4ZXMA8JYF1KMB",
+   "numeric_id": 215,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X641JB4KX3CFXPBK0WP6.png"
+  },
   "download-pinterest-image": {
    "id": "med_01M1G9TER0CKHY936EZ3X3C4WN",
    "numeric_id": 211,
    "url": "http://localhost:3000/media/media/2026/09/01M1G9TEQREQMQ3C0TWABZ4PPJ.png"
+  },
+  "download-social-media-images": {
+   "id": "med_01M1H3X5XYBZT7076DB0M9E6FY",
+   "numeric_id": 213,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X5X1AJSYMF8J17YTZMZX.png"
+  },
+  "download-threads-images": {
+   "id": "med_01M1H3X6B420RXXG56J044R13N",
+   "numeric_id": 217,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X6AVYZH8521GFRX0PNBC.png"
+  },
+  "download-twitter-images": {
+   "id": "med_01M1H3X612J6YKTDY2G4ENGSWZ",
+   "numeric_id": 214,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X60R6Z5VYEZYNFSS68XE.png"
   },
   "download-youtube-thumbnail": {
    "id": "med_01M1FRGAT7RPC0D57AFN01BE7R",
@@ -235,6 +265,11 @@
    "numeric_id": 142,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGE8T4XKDVJF9FETFE2D1.png"
   },
+  "instagram-image-link-expired": {
+   "id": "med_01M1H3X6JBST9WR49H3AA0AAN2",
+   "numeric_id": 219,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X6J3S4F0CNX1EWJP0BP8.png"
+  },
   "instagram-image-sizes": {
    "id": "med_01M1FRGECYVD65XYDK4XWAWB7B",
    "numeric_id": 143,
@@ -354,6 +389,11 @@
    "id": "med_01M1G9TD8DQHXC09FW82WDGSVX",
    "numeric_id": 201,
    "url": "http://localhost:3000/media/media/2026/09/01M1G9TD84BD36WAPPVKY0PPDJ.png"
+  },
+  "social-media-alt-text": {
+   "id": "med_01M1H3X6NMR151D0BHVE4P4TNG",
+   "numeric_id": 220,
+   "url": "http://localhost:3000/media/media/2026/09/01M1H3X6NCX5V3TJF0P3ZF65DW.png"
   },
   "social-media-benchmarks": {
    "id": "med_01M1FRGH248AM08S53P4A1PWAX",

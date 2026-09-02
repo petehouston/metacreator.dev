@@ -106,7 +106,10 @@ is usually much larger than the one the feed shows.
 
 The [social media image downloader](/tools/social-media-image-downloader) reads that tag
 for any public post, on any platform, including every slide of a carousel where the
-platform publishes them.
+platform publishes them. Three other platforms keep a larger copy still, each behind its
+own convention — the
+[guide to downloading social media images](/blog/download-social-media-images) has the
+whole map.
 
 :::faq
 Q: Does this work with video Pins and Idea Pins?

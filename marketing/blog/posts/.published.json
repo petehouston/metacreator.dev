@@ -50,10 +50,40 @@
    "status": "published",
    "url": "http://localhost:8080/blog/creator-glossary"
   },
+  "download-bluesky-images": {
+   "id": "post_01M1H3XCVPVS10QJBJ054WMHXQ",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-bluesky-images"
+  },
+  "download-facebook-photos": {
+   "id": "post_01M1H3XCKS6XTK3736GPRMQBZK",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-facebook-photos"
+  },
+  "download-instagram-photos": {
+   "id": "post_01M1H3XCG7EBK1Q8SYQX78PWCP",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-instagram-photos"
+  },
   "download-pinterest-image": {
    "id": "post_01M1G9TEVG25TP8YT420NDV4JF",
    "status": "published",
    "url": "http://localhost:8080/blog/download-pinterest-image"
+  },
+  "download-social-media-images": {
+   "id": "post_01M1H3XC8R8Z8W87XJEYEZSAYC",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-social-media-images"
+  },
+  "download-threads-images": {
+   "id": "post_01M1H3XCQPZZ73054CAMCHEK27",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-threads-images"
+  },
+  "download-twitter-images": {
+   "id": "post_01M1H3XCCMEGE36B9GQTFXTEN4",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-twitter-images"
   },
   "download-youtube-thumbnail": {
    "id": "post_01M1FQREG2TN6NCYSVFCK2N5NG",
@@ -235,6 +265,11 @@
    "status": "published",
    "url": "http://localhost:8080/blog/instagram-hashtags"
   },
+  "instagram-image-link-expired": {
+   "id": "post_01M1H3XCZBT04Q3RBXHKE3K1VA",
+   "status": "published",
+   "url": "http://localhost:8080/blog/instagram-image-link-expired"
+  },
   "instagram-image-sizes": {
    "id": "post_01M1FQRJ6JHET49HFZS2WD0V3R",
    "status": "published",
@@ -354,6 +389,11 @@
    "id": "post_01M1G9TDBP9SXQ7BP4PDKVV16K",
    "status": "published",
    "url": "http://localhost:8080/blog/shorten-a-youtube-link"
+  },
+  "social-media-alt-text": {
+   "id": "post_01M1H3XD38Y90YNS7GM3SVDSYV",
+   "status": "published",
+   "url": "http://localhost:8080/blog/social-media-alt-text"
   },
   "social-media-benchmarks": {
    "id": "post_01M1FQRN54XNA5WEWAM149568G",
