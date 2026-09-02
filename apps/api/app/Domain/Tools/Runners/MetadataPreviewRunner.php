@@ -14,12 +14,19 @@ use App\Support\Social\LinkDisplay;
 use App\Support\Social\PreviewFrame;
 
 /**
- * The link card debugger — what X, Facebook and LinkedIn will show for a URL.
+ * The link card debugger — what every platform will actually show for a URL.
  *
- * Every platform's own debugger requires you to be logged in and each one shows a
- * different subset. This reads the tags once and draws the card each platform will
- * actually build from them — including the fallbacks they apply when a tag is
- * missing, and the point at which each one cuts the title.
+ * Each platform ships its own debugger, each one requires you to be logged in to
+ * that platform, and each shows a different subset. Checking a link properly means
+ * four logins and four tabs. This fetches the page once and draws the card each
+ * platform builds from the tags it finds — including the fallbacks they apply when
+ * a tag is missing, and the point at which each one cuts the title.
+ *
+ * **Desktop and mobile are drawn separately**, because that is where the platforms
+ * differ most and the desktop crop is the forgiving one: Facebook gives a title 88
+ * characters in the web feed and about 65 on a phone, LinkedIn 100 and about 60. A
+ * debugger that draws only the desktop card is checking the case that was never in
+ * doubt, on the surface where the minority of the taps happen.
  */
 final class MetadataPreviewRunner implements Cacheable, ToolRunner
 {
@@ -72,22 +79,34 @@ final class MetadataPreviewRunner implements Cacheable, ToolRunner
         $card = $this->tag($html, 'name', 'twitter:card');
         $siteName = $this->tag($html, 'property', 'og:site_name');
 
+        // Pinterest only lifts your own title and description onto a Pin when
+        // og:type names a content kind it understands; everything else is a plain
+        // Pin carrying whatever the pinner happened to type.
+        $type = $this->tag($html, 'property', 'og:type');
+        $richPin = in_array($type, ['article', 'product', 'product.item', 'book', 'recipe'], true);
+
         $rows = [
             ['tag' => 'og:title', 'value' => $title ?? '— missing —', 'used_by' => 'Facebook, LinkedIn, X, Slack'],
             ['tag' => 'og:description', 'value' => $description ?? '— missing —', 'used_by' => 'Facebook, Slack'],
             ['tag' => 'og:image', 'value' => $image ?? '— missing —', 'used_by' => 'Every platform'],
             ['tag' => 'twitter:card', 'value' => $card ?? 'summary (default)', 'used_by' => 'X only'],
             ['tag' => 'og:site_name', 'value' => $siteName ?? '— missing —', 'used_by' => 'Facebook, LinkedIn'],
+            ['tag' => 'og:type', 'value' => $type ?? '— missing —', 'used_by' => 'Pinterest Rich Pins'],
             ['tag' => 'canonical', 'value' => $this->canonical($html) ?? '— missing —', 'used_by' => 'Search engines'],
         ];
 
         $domain = LinkDisplay::domain($url);
         $large = $card === 'summary_large_image' || ($card === null && $image !== null);
 
+        // Two rows per platform, because the crop is where the platforms differ
+        // most and the desktop crop is the forgiving one. A title that survives a
+        // 1280px feed is regularly cut in half on a 390px phone, and the phone is
+        // where the majority of the taps come from — so a debugger that only draws
+        // the desktop card is checking the case that was never in doubt.
         $frames = [
             // X drops the description entirely on the large card and shows the domain
             // over the image, which is why a good title matters more there than anywhere.
-            PreviewFrame::make('x', 'X (Twitter)', 'link-card')
+            PreviewFrame::make('x', 'X — Desktop', 'link-card')
                 ->link(
                     domain: $domain,
                     title: $this->clip($title, 70),
@@ -105,7 +124,18 @@ final class MetadataPreviewRunner implements Cacheable, ToolRunner
                     ? 'No twitter:card tag, so X falls back to og:image and the summary card.'
                     : 'twitter:card is “'.$card.'”.'),
 
-            PreviewFrame::make('facebook', 'Facebook', 'link-card')
+            PreviewFrame::make('x', 'X — Mobile', 'link-card')
+                ->link(
+                    domain: $domain,
+                    title: $this->clip($title, 50),
+                    description: $large ? null : $this->clip($description, 80),
+                    style: $large ? 'large' : 'small',
+                    image: $image,
+                )
+                ->status($image === null ? 'danger' : 'ok', $large ? 'Full-width image' : 'Thumbnail beside the text')
+                ->note('The phone app gives the title roughly 50 characters over two lines.'),
+
+            PreviewFrame::make('facebook', 'Facebook — Desktop feed', 'link-card')
                 ->link(
                     domain: mb_strtoupper($domain),
                     title: $this->clip($title, 88),
@@ -118,7 +148,21 @@ final class MetadataPreviewRunner implements Cacheable, ToolRunner
                     : 'Image card, 1.91:1')
                 ->note('Facebook shows roughly 88 characters of the title and 200 of the description.'),
 
-            PreviewFrame::make('linkedin', 'LinkedIn', 'link-card')
+            PreviewFrame::make('facebook', 'Facebook — Mobile feed', 'link-card')
+                ->link(
+                    domain: mb_strtoupper($domain),
+                    title: $this->clip($title, 65),
+                    // The phone app drops to a single description line, and on a
+                    // narrow screen that line is short.
+                    description: $this->clip($description, 80),
+                    style: 'large',
+                    image: $image,
+                )
+                ->status($image === null ? 'danger' : 'ok', 'Image card, 1.91:1')
+                ->note('One line of description on a phone, against three on the desktop feed — write the '
+                    .'first clause so it can stand alone.'),
+
+            PreviewFrame::make('linkedin', 'LinkedIn — Desktop', 'link-card')
                 ->link(
                     domain: $domain,
                     title: $this->clip($title, 100),
@@ -130,7 +174,48 @@ final class MetadataPreviewRunner implements Cacheable, ToolRunner
                     : 'Image card, 1.2:1')
                 ->note('LinkedIn ignores og:description entirely: the title carries the whole card.'),
 
-            PreviewFrame::make('generic', 'Slack, Discord, iMessage', 'link-card')
+            PreviewFrame::make('linkedin', 'LinkedIn — Mobile', 'link-card')
+                ->link(
+                    domain: $domain,
+                    title: $this->clip($title, 60),
+                    style: 'large',
+                    image: $image,
+                )
+                ->status($image === null ? 'warn' : 'ok', 'Image card, 1.2:1')
+                ->note('Still no description, and now about 60 characters of title. LinkedIn is the '
+                    .'platform where a vague title costs the most.'),
+
+            PreviewFrame::make('pinterest', 'Pinterest — Pin closeup', 'link-card')
+                ->link(
+                    domain: $domain,
+                    title: $this->clip($title, 40),
+                    description: $this->clip($description, 500),
+                    style: 'large',
+                    image: $image,
+                )
+                ->status($richPin ? 'ok' : 'warn', $richPin
+                    ? 'Rich Pin metadata found'
+                    : 'No article/product metadata — a plain Pin')
+                ->note($richPin
+                    ? 'og:type is “'.$type.'”, so Pinterest pulls the title and description onto the Pin itself.'
+                    : 'Without og:type set to article or product, Pinterest uses whatever the pinner typed '
+                    .'rather than your title.'),
+
+            PreviewFrame::make('generic', 'WhatsApp & Telegram — Mobile', 'link-card')
+                ->link(
+                    domain: $domain,
+                    title: $this->clip($title, 65),
+                    description: $this->clip($description, 100),
+                    style: 'small',
+                    image: $image,
+                )
+                ->status($image === null ? 'warn' : 'ok', $image === null
+                    ? 'Text-only preview'
+                    : 'Square thumbnail beside the text')
+                ->note('Chat apps fetch the preview once, on the first send, and cache it hard — a fix '
+                    .'published later will not reach a message already sent.'),
+
+            PreviewFrame::make('generic', 'Slack & Discord — Desktop', 'link-card')
                 ->link(
                     domain: $siteName ?? $domain,
                     title: $this->clip($title, 120),

@@ -139,6 +139,14 @@ published well before the event it serves.
 **Followers barely matter.** Distribution is search-driven, so a small account with
 well-optimised Pins competes with a large one.
 
+Two mechanical things worth knowing alongside the strategy. Pinterest serves every Pin
+at four fixed widths and keeps the upload under a path the interface never links to, so
+the image you can right-click is never the one you want —
+[how to download a Pinterest image in full size](/blog/download-pinterest-image). And a
+Pin embedded on your own site keeps its outbound link and its attribution, which a
+screenshot does not: [how to embed a social media
+post](/blog/embed-a-social-media-post).
+
 Pinterest publishes its own guidance for businesses in its
 [help centre](https://help.pinterest.com/en/business), and the writing side of it is
 [writing a Pin description Pinterest can read](/blog/pinterest-pin-description).

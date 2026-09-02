@@ -104,6 +104,42 @@ final class SafeHttpClient
         );
     }
 
+    /**
+     * One hop, with redirects left unfollowed.
+     *
+     * The redirect-following in {@see self::request()} is what every other caller
+     * wants: it hides the chain and hands back the page. A tool whose *subject* is
+     * the chain needs the opposite — each `Location` header, each status code, in
+     * order — and it has to be able to stop when a chain loops or runs long, which
+     * a client following redirects internally gives it no way to do.
+     *
+     * The guard still runs on every URL passed here, so walking a chain by hand is
+     * exactly as safe as letting the client walk it: the caller re-enters this
+     * method for each hop, and each hop is checked before it is fetched.
+     */
+    public static function hop(string $url, float $timeout = 6.0): ?Response
+    {
+        if (! UrlGuard::isPublicHttpUrl($url)) {
+            throw ToolExecutionException::invalidInput(
+                'That URL cannot be fetched. Use a public http(s) address.',
+                ['url' => 'Not a publicly reachable URL.'],
+            );
+        }
+
+        try {
+            return Http::timeout($timeout)
+                ->connectTimeout(min($timeout, 3.0))
+                ->withHeaders([
+                    'User-Agent' => 'MetaCreatorBot/1.0 (+https://metacreator.dev/bot)',
+                    'Accept' => 'text/html,application/xhtml+xml,*/*;q=0.8',
+                ])
+                ->withOptions(['allow_redirects' => false])
+                ->get($url);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
     private static function request(string $url, float $timeout): Response
     {
         if (! UrlGuard::isPublicHttpUrl($url)) {

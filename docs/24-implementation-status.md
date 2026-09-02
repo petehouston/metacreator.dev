@@ -5,7 +5,7 @@ this handbook describes the intended design; this one is the only place that cla
 exists. Keep it honest — a specification that reads as a status report is how a team ends up
 surprised.
 
-Last updated: 2026-08-30.
+Last updated: 2026-09-02.
 
 ## Legend
 
@@ -37,8 +37,8 @@ Last updated: 2026-08-30.
 | Public catalog, search, filters, tool pages | ✅ | Sort now sits above the grid, on the count's row and right-aligned, rather than inside the filter panel: a filter changes *which* tools you see, a sort only their order, and the two do not belong in one box |
 | Per-tool SEO defaults | ✅ | `ToolSeoDefaults` generates a complete, tier-honest payload — title, description, og title/description, focus keyword, card type — for any tool nobody has tuned. Stored overrides win field by field, and a cleared field falls back rather than publishing an empty string ([16](16-seo.md)) |
 | Generated `ToolForm` and result renderers | ✅ | |
-| Tool runners | 🟡 | **62 registered**, each with a catalog row (`ToolServiceProvider::RUNNERS`; the drift test asserts both directions) — every free tool, plus one account tool. What remains of [07](07-tool-catalog.md) is the account and premium tiers, which need providers rather than runners |
-| Custom tool UIs | ✅ | `apps/web/src/tools/custom/`, dispatched on the tool's registry key. One so far: the fake YouTube comment generator, which draws its card on a canvas in the browser so no image is ever uploaded |
+| Tool runners | 🟡 | **76 registered**, each with a catalog row (`ToolServiceProvider::RUNNERS`; the drift test asserts both directions) — every free tool, plus one account tool. **74 are published and visible**; two are seeded as drafts because their upstream stopped serving what they need to a datacentre IP, and the reasoning is in [07](07-tool-catalog.md#built-not-published). What remains of [07](07-tool-catalog.md) is the account and premium tiers, which need providers rather than runners |
+| Custom tool UIs | ✅ | `apps/web/src/tools/custom/`, dispatched on the tool's registry key. Six tools: the fake YouTube comment generator, plus the Facebook, Instagram, X reply, Pinterest and TikTok card generators, which share one schema-driven component (`social-card-generator.tsx`) painting through `social-card.ts`. All draw on a canvas in the browser, so an avatar someone drops in is never uploaded, and all export PNG, JPG, WebP and AVIF at 1×, 2× or 3× |
 | Run recording & telemetry | ✅ | |
 | Run history (`/dashboard/runs`) | ✅ | Windowed by `history_days`; status filter, and a page per run at `/dashboard/runs/{id}` showing the **input it was given and the result it produced**. Both are stored for signed-in members only (`tool_runs.input_payload` / `result_payload`, capped at 64 KB, never for results carrying expiring artifact URLs) — an anonymous run still keeps nothing but its hash |
 | Per-tier run limits, admin-configurable | ✅ | `tools.limits.{free,account,premium}.{daily,weekly,monthly}` — 5 / 20 / unlimited a day by default, week and month off, edited under Settings → Tools (one panel per window). Anonymous is counted per IP via `visitor_hash`; `-1` leaves a window uncounted, `0` closes a tier. The quota wall names the next tier, its allowance and which window ran out, so it can offer the right button and the right wait ([08](08-tool-engine.md)) |

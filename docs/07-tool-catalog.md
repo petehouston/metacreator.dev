@@ -74,6 +74,8 @@ because it is how people search. The heading is a **platform**, not a category.
 | Comment Sentiment Analyzer | 🟣 | P2 | Sentiment + theme clustering over a video's comments |
 | End Screen / Playlist Planner | 🔵 | P3 | Suggests next-video links to maximise session time |
 | Channel Audit Report | 🟣 | P2 | Full PDF audit: branding, SEO, cadence, retention signals |
+| Link Shortener | 🟢 | P2 | Any YouTube link → youtu.be, with the timestamp converted rather than copied |
+| Subtitle Downloader | 🟢 | — | SRT, WebVTT and plain text from a public video — **built, not published** (see below) |
 
 ## 2. Instagram
 
@@ -93,6 +95,8 @@ because it is how people search. The heading is a **platform**, not a category.
 | Fake Follower Checker | 🟣 | P1 | Audience-quality score from engagement distribution |
 | Story Templates Sizer | 🟢 | P3 | Safe-zone overlay export for stories |
 | Competitor Content Analyzer | 🟣 | P2 | Format mix, cadence, top posts, hook patterns |
+| Fake Post Generator | 🟢 | P2 | An Instagram post card drawn on a canvas, with the caption fold shown |
+| Profile Picture Downloader | 🟢 | — | **Built, not published** — Instagram now publishes a 100px avatar only (see below) |
 
 ## 3. TikTok
 
@@ -108,6 +112,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Best Time to Post | 🟣 | P2 | From audience activity |
 | Video Idea Generator | 🔵 | P2 | Format-aware ideas from a niche and a goal |
 | Watermark Remover (own uploads) | 🟣 | P3 | Compute-heavy; own content only |
+| Fake Comment Generator | 🟢 | P2 | A TikTok comment card with the Creator chip, pin marker and heart column |
 
 ## 4. X / Twitter
 
@@ -121,6 +126,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Best Time to Post | 🟣 | P2 | |
 | Hashtag / Topic Analyzer | 🟣 | P3 | |
 | Tweet Screenshot Generator | 🟢 | P1 | Clean, theme-aware image of a post for reuse |
+| Fake Reply Generator | 🟢 | P2 | A reply drawn with the post it answers, thread line included |
 
 ## 5. Facebook
 
@@ -131,6 +137,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Engagement Rate Calculator | 🟢 | P1 | |
 | Audience Size Estimator | 🟣 | P3 | Reach estimate from targeting inputs |
 | Page Audit | 🟣 | P2 | Completeness, cadence, response rate, CTA presence |
+| Fake Post Generator | 🟢 | P2 | A Facebook post card in desktop and mobile widths |
 
 ## 6. LinkedIn
 
@@ -154,6 +161,8 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Board Planner | 🔵 | P2 | Board and section structure from a topic, with naming that indexes |
 | Keyword Research (Pinterest) | 🟣 | P2 | Guided-search expansion and seasonality for a seed keyword |
 | Rich Pin Validator | 🟢 | P3 | Checks the product/article markup a Rich Pin needs |
+| Image Downloader | 🟢 | P1 | Every rendition of a Pin, `/originals/` included |
+| Fake Pin Generator | 🟢 | P2 | A Pin card at 2:3, 1:1 or 1:2.1, with the title fold shown |
 
 ## 8. Threads
 
@@ -225,6 +234,11 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Password / Handle Strength | 🟢 | P3 | |
 | Giveaway Winner Picker | 🟢 | P1 | Auditable random draw with a verifiable seed |
 | Follower Milestone Countdown | 🟢 | P3 | |
+| Link Expander | 🟢 | P1 | Follows a redirect chain hop by hop and names the destination |
+| Social Link Shortener | 🟢 | P2 | First-party short links where one can be derived; a straight answer where not |
+| Hashtag Extractor | 🟢 | P1 | Every hashtag on a public post, from its URL or from pasted text |
+| Embed Code Generator | 🟢 | P1 | Official embed code for twelve platforms, script and iframe forms |
+| Social Image Downloader | 🟢 | P1 | The full-size image behind any public post, carousels included |
 
 ---
 
@@ -232,13 +246,16 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 
 ## What is built
 
-Fifty-nine tools ship in `ToolCatalogSeeder`. **Every 🟢 tool in the tables above is implemented.**
-The category column is the functional category the tool is filed under; the platforms it serves are
+Seventy-six tools ship in `ToolCatalogSeeder`; **seventy-four are published and visible**, and the
+two marked ⛔ are seeded as drafts. **Every 🟢 tool in the tables above is implemented.** The
+category column is the functional category the tool is filed under; the platforms it serves are
 listed separately on the tool itself.
 
 🔑 marks the one tool that needs an operator-supplied API key; everything else runs on public
 page metadata or pure computation. 🖥 marks a tool whose web UI is a custom client-side component
 (docs/08) rather than the generated form — the runner is still the API's implementation of it.
+⛔ marks a tool that is built and tested but seeded unpublished, because its upstream stopped
+serving what it needs — see [Built, not published](#built-not-published).
 
 | Category | Slug | Runner |
 | --- | --- | --- |
@@ -281,6 +298,13 @@ page metadata or pure computation. 🖥 marks a tool whose web UI is a custom cl
 | Media | `tweet-screenshot-generator` | `TweetScreenshotRunner` |
 | Media | `fake-youtube-comment-generator` 🖥 | `YouTubeCommentGeneratorRunner` |
 | Media | `qr-code-generator` | `QrCodeGeneratorRunner` |
+| Media | `fake-facebook-post-generator` 🖥 | `FacebookPostGeneratorRunner` |
+| Media | `fake-instagram-post-generator` 🖥 | `InstagramPostGeneratorRunner` |
+| Media | `fake-x-reply-generator` 🖥 | `XReplyGeneratorRunner` |
+| Media | `fake-pinterest-pin-generator` 🖥 | `PinterestPinGeneratorRunner` |
+| Media | `fake-tiktok-comment-generator` 🖥 | `TikTokCommentGeneratorRunner` |
+| Media | `pinterest-image-downloader` | `PinterestImageDownloaderRunner` |
+| Media | `social-media-image-downloader` | `SocialImageDownloaderRunner` |
 | Analytics | `engagement-rate-calculator` | `EngagementRateCalculatorRunner` |
 | Analytics | `youtube-money-calculator` | `YouTubeMoneyCalculatorRunner` |
 | Analytics | `youtube-partner-program-checker` | `YouTubePartnerProgramCheckerRunner` |
@@ -304,6 +328,30 @@ page metadata or pure computation. 🖥 marks a tool whose web UI is a custom cl
 | Utility | `youtube-handle-availability-checker` | `YouTubeHandleAvailabilityRunner` |
 | Utility | `youtube-citation-generator` | `YouTubeCitationGeneratorRunner` |
 | Utility | `username-availability-checker` | `UsernameAvailabilityRunner` |
+| Utility | `youtube-link-shortener` | `YouTubeLinkShortenerRunner` |
+| Utility | `social-media-link-shortener` | `SocialLinkShortenerRunner` |
+| Utility | `link-expander` | `LinkExpanderRunner` |
+| Utility | `hashtag-extractor` | `HashtagExtractorRunner` |
+| Utility | `social-media-embed-code-generator` | `SocialEmbedCodeGeneratorRunner` |
+| Media | `youtube-subtitle-downloader` ⛔ | `YouTubeSubtitleDownloaderRunner` |
+| Media | `instagram-profile-picture-downloader` ⛔ | `InstagramAvatarDownloaderRunner` |
+
+### Built, not published
+
+Two runners exist, pass their tests, and are seeded with `status = draft` and `is_visible = false`.
+Neither is blocked on us, and neither is a compliance problem — both are cases where a platform
+stopped serving, to a datacentre IP, something it used to publish openly. They are seeded rather
+than deleted because the code is correct and one boolean away from shipping.
+
+| Tool | What happened |
+| --- | --- |
+| `youtube-subtitle-downloader` | The watch page no longer contains `captionTracks` for any user agent, and every InnerTube `player` client answers `UNPLAYABLE` from a datacentre address. Verified from both a development machine's egress and the production droplet. The runner parses both the `json3` and the legacy XML track formats, repairs the overlapping cues auto-captions ship with, and is tested against a fixture — so the day a route opens, the tool ships. |
+| `instagram-profile-picture-downloader` | Instagram now publishes the avatar to link cards at **100×100 only**, and signs the URL so the size segment cannot be rewritten — every `s320`/`s640`/`s1080` rewrite answers 403. 100 pixels is *smaller* than the 150 the profile page itself renders, so the tool cannot honour its own name. Publishing it would be the overclaiming that [16](16-seo.md) exists to prevent. |
+
+The rule this follows is the one in [08](08-tool-engine.md): a tool that would need us to violate a
+platform's terms is not built. A tool that *is* honest but that the platform has walled off is built
+and left unpublished — the distinction matters, because the second one is temporary and the first
+never is.
 
 ### Previews are drawn, not described
 
@@ -321,8 +369,15 @@ platform, rather than as near-duplicate catalog entries:
 - Every platform's **engagement rate calculator** → `engagement-rate-calculator`.
 - Every platform's **character counter**, including the YouTube title counter →
   `social-media-character-counter`.
-- **X card debugger** and **social profile metadata preview** → `link-preview-debugger`, which now
-  draws the X, Facebook, LinkedIn and chat-app cards side by side from one fetch.
+- **X card debugger** and **social profile metadata preview** → `link-preview-debugger`, which draws
+  the X, Facebook, LinkedIn, Pinterest and chat-app cards side by side from one fetch — and draws
+  each of them **twice, desktop and mobile**. That pairing is the point: Facebook gives a title 88
+  characters in the web feed and about 65 on a phone, LinkedIn 100 and about 60, and the phone is
+  where the majority of the taps happen. A debugger that only drew the desktop card would be
+  checking the case that was never in doubt.
+- Every platform's **image downloader** → `social-media-image-downloader`, which reads whatever a
+  page publishes in Open Graph. Pinterest and YouTube keep their own pages, because both have a CDN
+  convention worth encoding that the general tool cannot know about — `/originals/` and `=s0`.
 - Instagram's **font / aesthetic text generator** → `fancy-text-generator`.
 - Threads' and Pinterest's **character counters** → `social-media-character-counter`, which counts
   the Threads post limit and both Pinterest fields alongside every other surface.
@@ -363,6 +418,47 @@ naming the limit.
 **The post screenshot generator** draws whatever text it is given, so a card it produces proves
 nothing about who posted what. It deliberately draws no verification badge, and every run carries a
 warning saying it is a mock-up rather than a screenshot.
+
+### The mock-up card generators
+
+Six tools now draw a platform's card from typed text — the YouTube comment generator and the
+Facebook, Instagram, X reply, Pinterest and TikTok cards. Three rules apply to all of them, and
+they are the reason this family is safe to ship:
+
+1. **No verification badge, on any card, ever.** A badge is the single element that makes a drawn
+   card claim authenticity. There is no legitimate use for a fake one that outweighs the obvious
+   illegitimate ones, so the option does not exist.
+2. **No real photograph in the media slot.** The Instagram and Pinterest cards draw a marked
+   placeholder at the platform's own aspect ratio. Compositing a real image into a real-looking
+   post would make these a forgery kit rather than a mock-up tool; the placeholder still answers
+   the question people actually have, which is where the caption falls. An avatar is the exception,
+   and it is read locally and never uploaded.
+3. **Every run says it is a mock-up.** Twice: once in the runner's warnings and once under the
+   canvas in the web UI.
+
+They share two implementations rather than ten. On the API, `App\Support\Social\CardSvg` holds the
+wrap, escape, avatar and count primitives, and each platform's layout is its own runner — layout is
+exactly what should *not* be abstracted, because the specific arrangement is what makes a card
+recognisable. In the web app, one component (`social-card-generator.tsx`) builds its form from the
+tool's own input schema and paints through `social-card.ts`, so a sixth platform is a layout
+function plus a key in `renderCustomTool`.
+
+### Links: shorten, expand, embed
+
+Four of the new utilities are one family, and the honesty rule is the same across all of them: we
+build what the platform documents, and say plainly where a platform allows nothing to be built.
+
+- **`youtube-link-shortener`** and **`social-media-link-shortener`** construct *first-party* short
+  links — `youtu.be`, `instagr.am`, `redd.it`, `dai.ly`, `flic.kr`, `t.me`, `wa.me`. X's `t.co`,
+  LinkedIn's `lnkd.in`, Pinterest's `pin.it`, Facebook's `fb.me` and TikTok's `vm.tiktok.com` are
+  minted server-side by each platform's own share sheet and cannot be derived from a URL, so the
+  tool says so rather than routing the link through a third-party redirector wearing the platform's
+  name. Both strip per-share tracking ids (`igshid`, `si`, `share_id`) on the way through.
+- **`link-expander`** walks a redirect chain one hop at a time through `SafeHttpClient::hop()`,
+  re-guarding every hop — a shortener that redirects to `169.254.169.254` stops the walk instead of
+  proxying it.
+- **`social-media-embed-code-generator`** builds each platform's documented embed, and the
+  script-free iframe alongside it wherever the platform publishes one.
 
 ## Launch scope
 

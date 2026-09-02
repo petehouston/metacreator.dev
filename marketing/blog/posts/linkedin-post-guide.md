@@ -87,7 +87,10 @@ Whichever you choose, the card comes from the linked page rather than the post:
 [[tool:link-preview-debugger]]
 
 See [Open Graph tags](/blog/open-graph-tags), and when a card is wrong,
-[link preview not showing](/blog/link-preview-not-showing).
+[link preview not showing](/blog/link-preview-not-showing). LinkedIn is the platform
+where this costs the most, because it ignores `og:description` entirely and shows about
+sixty characters of title on a phone — [why your link preview looks different on
+mobile](/blog/link-preview-mobile-vs-desktop) has the numbers per platform.
 
 ## Hashtags and mentions
 

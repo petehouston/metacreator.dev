@@ -88,7 +88,13 @@ never uploaded, and so there is nothing on our side to store or leak.
 
 Those live in `apps/web/src/tools/custom/`, and are dispatched by `renderCustomTool()` in that
 directory's `index.tsx`, keyed on the tool's registry `key` (not its slug, which an admin can
-rewrite). `ToolRunner` renders the returned element in place of the form and the result renderer;
+rewrite). A key may map to a **shared** component: the five mock-up card generators all resolve to
+`social-card-generator.tsx`, which builds its form from the tool's own `input_schema` — the same
+JSON Schema the API validates against — and paints through a layout keyed on the platform. A field
+added to one of those runners therefore appears in its web UI with no frontend change at all, which
+is the generated form's guarantee kept inside a custom one.
+
+`ToolRunner` renders the returned element in place of the form and the result renderer;
 everything around it on the tool page — masthead, access gate, instructions, FAQ, related tools,
 SEO — is untouched, and so is the access check, which still runs first.
 

@@ -31,10 +31,10 @@ python3 publish.py ../posts/<slug>.md --apply --status published  # promotes it
 | --- | --- | --- |
 | `strategy/` | The reasoning: positioning, architecture, keyword method, linking, on-page standard, voice, measurement, technical gaps | Hand |
 | `strategy/04-editorial-calendar.md` | Six-month wave plan | **Generated** |
-| `plan/clusters.json` | Twelve clusters, each with the tool pages it feeds | Hand |
+| `plan/clusters.json` | Fourteen clusters, each with the tool pages it feeds | Hand |
 | `plan/posts.json` | **The master map.** One row per planned post | Hand |
 | `plan/keyword-map.csv` | Spreadsheet view of the same thing | **Generated** |
-| `plan/tools-snapshot.json` | The 62 live tools, so the plan cannot reference one that does not exist | Refreshed from the API |
+| `plan/tools-snapshot.json` | The 74 live tools, so the plan cannot reference one that does not exist | Refreshed from the API |
 | `taxonomy/categories.json` | The six blog categories | Hand |
 | `taxonomy/tags.json` | The tag vocabulary | Hand |
 | `briefs/` | One writing brief per planned post | **Generated** |
@@ -48,7 +48,7 @@ next run will silently discard the edit.
 
 ## The model, in one paragraph
 
-Twelve **clusters**, each with a **pillar** post and a set of **spokes**. One spoke
+Fourteen **clusters**, each with a **pillar** post and a set of **spokes**. One spoke
 owns exactly one primary keyword and one URL; a duplicate keyword is a hard error,
 not a style question. Every post exists to send a reader to a live `/tools/*` page,
 and a planned post with no tool behind it is flagged. **Categories** describe the
@@ -58,11 +58,16 @@ two-axis rule the tool catalog uses in `docs/07`. The full reasoning is in
 
 ## Current state
 
-- **95 posts written and published** to production, all 12 clusters complete
-- 6 categories and 41 tags live; every post carries a generated featured image
-- Every post points at at least one of the 62 live tools; no orphans
-- `validate_plan.py`: 0 errors. `audit.py`: 95 passing, 0 failing
-- The same 95 posts are published on the local stack for manual testing
+- **108 posts written and published** to production, all 14 clusters complete
+- 6 categories and 43 tags live; every post carries a generated featured image
+- Every post points at at least one of the 74 live tools; no orphans
+- `validate_plan.py`: 0 errors. `audit.py`: 108 passing, 0 failing
+- The same 108 posts are published on the local stack for manual testing
+
+Wave 7 added thirteen posts and two clusters, written against the twelve tools the
+catalog gained at the same time: the two link shorteners, the link expander, the embed
+code generator, the hashtag extractor, the two image downloaders and the five mock-up
+card generators.
 
 ### Working locally
 

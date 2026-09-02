@@ -161,6 +161,9 @@ function kindOf(property: JsonSchemaProperty): FieldKind {
   // (`format: "uri"`) is validated by Opis on the server and would reject the bare
   // video ID these same fields are built to accept.
   if (property["x-control"] === "text") return "text";
+  // The mirror case: a comment or caption is a paragraph at any length, and a
+  // 300-character limit would otherwise put it on one line.
+  if (property["x-control"] === "textarea") return "textarea";
   if (property.format === "uri" || property.format === "url") return "text";
   // A date is a date picker, never a paragraph, whatever its length says.
   if (property.format === "date") return "text";

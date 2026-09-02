@@ -35,6 +35,19 @@ const YouTubeCommentGenerator = dynamic(
 );
 
 /**
+ * One workspace for every mock-up card generator.
+ *
+ * The five platforms differ only in which fields they collect and how the card is
+ * painted, and both are described elsewhere — the fields by the tool's own input
+ * schema, the painting by `social-card.ts`. So they share a component rather than
+ * having five near-identical ones, and a sixth platform is a layout plus a key.
+ */
+const SocialCardGenerator = dynamic(() => import("@/tools/custom/social-card-generator"), {
+  ssr: false,
+  loading: () => <CustomToolSkeleton />,
+});
+
+/**
  * This tool's workspace, or null when the generated form should render instead.
  *
  * Returns the element rather than the component type on purpose: handing a
@@ -46,6 +59,12 @@ export function renderCustomTool(tool: ToolDetail): React.ReactNode | null {
   switch (tool.key) {
     case "youtube.comment-generator":
       return <YouTubeCommentGenerator tool={tool} />;
+    case "facebook.post-generator":
+    case "instagram.post-generator":
+    case "x.reply-generator":
+    case "pinterest.pin-generator":
+    case "tiktok.comment-generator":
+      return <SocialCardGenerator tool={tool} />;
     default:
       return null;
   }

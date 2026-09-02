@@ -6,7 +6,8 @@
   "3": "Month 3",
   "4": "Month 4",
   "5": "Month 5",
-  "6": "Month 6"
+  "6": "Month 6",
+  "7": "Month 7"
  },
  "posts": [
   {
@@ -2743,6 +2744,390 @@
    "status": "planned",
    "published_url": null,
    "notes": ""
+  },
+  {
+   "id": "LK-01",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "pillar",
+   "slug": "social-media-links",
+   "title": "Social Media Links: Shorten, Expand and Track Them Properly",
+   "primary_keyword": "social media links",
+   "secondary_keywords": [
+    "social media link shortener",
+    "short link domains"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "short-links",
+    "link-previews",
+    "utm-tracking",
+    "guide"
+   ],
+   "tools": [
+    "social-media-link-shortener",
+    "link-expander",
+    "youtube-link-shortener",
+    "utm-link-builder",
+    "link-preview-debugger"
+   ],
+   "target_words": 1500,
+   "url": "/blog/social-media-links",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Pillar. Maps the whole subject: which platforms have a first-party short domain, what a redirect chain costs, what the tracking parameters in a shared link actually are, and how a link renders once posted."
+  },
+  {
+   "id": "LK-02",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "shorten-a-youtube-link",
+   "title": "How to Shorten a YouTube Link",
+   "primary_keyword": "shorten youtube link",
+   "secondary_keywords": [
+    "youtube link shortener",
+    "youtu.be link"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "short-links",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-link-shortener",
+    "youtube-timestamp-link-builder"
+   ],
+   "target_words": 900,
+   "url": "/blog/shorten-a-youtube-link",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The timestamp conversion is the hook: youtu.be wants bare seconds, a watch page writes 90s, and copying the parameter across silently breaks the start time."
+  },
+  {
+   "id": "LK-03",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "explainer",
+   "slug": "social-media-short-links",
+   "title": "Which Social Platforms Have Their Own Short Link Domain",
+   "primary_keyword": "social media short links",
+   "secondary_keywords": [
+    "t.co",
+    "vm.tiktok.com",
+    "instagr.am"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "short-links",
+    "explainer"
+   ],
+   "tools": [
+    "social-media-link-shortener",
+    "link-expander"
+   ],
+   "target_words": 1100,
+   "url": "/blog/social-media-short-links",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The honest split: derivable from a URL vs minted only by the platform's own share sheet. Names every 'TikTok link shortener' as a third-party redirector."
+  },
+  {
+   "id": "LK-04",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "expand-a-short-url",
+   "title": "How to Expand a Short URL and See Where It Goes",
+   "primary_keyword": "expand short url",
+   "secondary_keywords": [
+    "where does this link go",
+    "check a bitly link"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "short-links",
+    "troubleshooting"
+   ],
+   "tools": [
+    "link-expander",
+    "link-preview-debugger"
+   ],
+   "target_words": 1000,
+   "url": "/blog/expand-a-short-url",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Two audiences in one post: the safety check, and the marketer hunting the hop where UTM parameters are dropped."
+  },
+  {
+   "id": "LK-05",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "embed-a-social-media-post",
+   "title": "How to Embed a Social Media Post on Your Website",
+   "primary_keyword": "embed social media post",
+   "secondary_keywords": [
+    "embed a tweet",
+    "embed code generator"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "embeds",
+    "short-links",
+    "how-to"
+   ],
+   "tools": [
+    "social-media-embed-code-generator",
+    "youtube-embed-code-generator"
+   ],
+   "target_words": 1300,
+   "url": "/blog/embed-a-social-media-post",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Script vs iframe, the consent problem, and why the plain-link fallback is not a consolation prize."
+  },
+  {
+   "id": "LK-06",
+   "cluster": "links",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "instagram-embed-code",
+   "title": "How to Get an Instagram Embed Code",
+   "primary_keyword": "instagram embed code",
+   "secondary_keywords": [
+    "embed instagram post",
+    "instagram iframe embed"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "instagram",
+    "embeds",
+    "how-to"
+   ],
+   "tools": [
+    "social-media-embed-code-generator"
+   ],
+   "target_words": 900,
+   "url": "/blog/instagram-embed-code",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Instagram removed the embed button from the web UI; the permalink form still works. Covers the captioned/uncaptioned switch and the empty-box failure mode."
+  },
+  {
+   "id": "MU-01",
+   "cluster": "mockups",
+   "wave": 7,
+   "archetype": "pillar",
+   "slug": "fake-social-media-post-generator",
+   "title": "Fake Social Media Post Generators: What They Are For",
+   "primary_keyword": "fake social media post generator",
+   "secondary_keywords": [
+    "fake post generator",
+    "social media mockup"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "mockups",
+    "templates",
+    "guide"
+   ],
+   "tools": [
+    "fake-facebook-post-generator",
+    "fake-instagram-post-generator",
+    "fake-x-reply-generator",
+    "fake-tiktok-comment-generator",
+    "fake-pinterest-pin-generator",
+    "fake-youtube-comment-generator"
+   ],
+   "target_words": 1400,
+   "url": "/blog/fake-social-media-post-generator",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Pillar. The legitimate uses, the line, and the three design rules the generators follow — no badge, no composited photo, a warning on every export."
+  },
+  {
+   "id": "MU-02",
+   "cluster": "mockups",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "fake-facebook-post",
+   "title": "How to Make a Fake Facebook Post for a Mock-Up",
+   "primary_keyword": "fake facebook post",
+   "secondary_keywords": [
+    "facebook post generator",
+    "facebook post mockup"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "facebook",
+    "mockups",
+    "how-to"
+   ],
+   "tools": [
+    "fake-facebook-post-generator",
+    "facebook-post-preview"
+   ],
+   "target_words": 900,
+   "url": "/blog/fake-facebook-post",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "MU-03",
+   "cluster": "mockups",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "fake-instagram-post",
+   "title": "How to Make a Fake Instagram Post for a Mock-Up",
+   "primary_keyword": "fake instagram post",
+   "secondary_keywords": [
+    "instagram post generator",
+    "instagram mockup"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "mockups",
+    "captions"
+   ],
+   "tools": [
+    "fake-instagram-post-generator",
+    "instagram-bio-preview"
+   ],
+   "target_words": 900,
+   "url": "/blog/fake-instagram-post",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The caption fold is the reason to use this one over a Figma frame."
+  },
+  {
+   "id": "MU-04",
+   "cluster": "mockups",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "fake-tiktok-comment",
+   "title": "How to Make a Fake TikTok Comment Image",
+   "primary_keyword": "fake tiktok comment",
+   "secondary_keywords": [
+    "tiktok comment generator",
+    "tiktok comment template"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "tiktok",
+    "mockups",
+    "how-to"
+   ],
+   "tools": [
+    "fake-tiktok-comment-generator",
+    "fake-youtube-comment-generator"
+   ],
+   "target_words": 900,
+   "url": "/blog/fake-tiktok-comment",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Comment-as-hook is a format now. Covers the Creator chip, which every other generator gets wrong."
+  },
+  {
+   "id": "HT-06",
+   "cluster": "hashtags",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "find-hashtags-on-a-post",
+   "title": "How to Find the Hashtags on a Post",
+   "primary_keyword": "find hashtags on a post",
+   "secondary_keywords": [
+    "see hashtags on instagram post",
+    "hashtag extractor"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "hashtags",
+    "metadata",
+    "how-to"
+   ],
+   "tools": [
+    "hashtag-extractor",
+    "youtube-tag-extractor",
+    "hashtag-generator"
+   ],
+   "target_words": 1000,
+   "url": "/blog/find-hashtags-on-a-post",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Also draws the tags-vs-hashtags distinction on YouTube, which is the most common confusion in this query family."
+  },
+  {
+   "id": "PI-05",
+   "cluster": "pinterest",
+   "wave": 7,
+   "archetype": "howto",
+   "slug": "download-pinterest-image",
+   "title": "How to Download a Pinterest Image in Full Size",
+   "primary_keyword": "download pinterest image",
+   "secondary_keywords": [
+    "pinterest image downloader",
+    "save a pin"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "pinterest",
+    "image-optimization",
+    "how-to"
+   ],
+   "tools": [
+    "pinterest-image-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 900,
+   "url": "/blog/download-pinterest-image",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The /originals/ path is the whole post: Pinterest never links to it in the UI."
+  },
+  {
+   "id": "PN-07",
+   "cluster": "pro-networks",
+   "wave": 7,
+   "archetype": "troubleshooting",
+   "slug": "link-preview-mobile-vs-desktop",
+   "title": "Why Your Link Preview Looks Different on Mobile",
+   "primary_keyword": "link preview mobile",
+   "secondary_keywords": [
+    "link preview cut off",
+    "og title length mobile"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "link-previews",
+    "metadata",
+    "troubleshooting"
+   ],
+   "tools": [
+    "link-preview-debugger",
+    "social-media-character-counter"
+   ],
+   "target_words": 1000,
+   "url": "/blog/link-preview-mobile-vs-desktop",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Facebook 88 vs ~65, LinkedIn 100 vs ~60. The debugger now draws both, which is the reason this post exists."
   }
  ]
 }

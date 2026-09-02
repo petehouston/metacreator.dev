@@ -80,10 +80,12 @@ export interface JsonSchemaProperty {
   examples?: unknown[];
   format?: string;
   /**
-   * Presentation hint, ignored by validation: forces a single-line control on a
-   * field whose `maxLength` would otherwise make it a textarea. See `kindOf`.
+   * Presentation hint, ignored by validation: overrides the control `kindOf`
+   * would otherwise infer from `maxLength`. `"text"` forces a single line on a
+   * generously sized field; `"textarea"` forces a box on a short one, which a
+   * comment field wants even at 300 characters.
    */
-  "x-control"?: "text";
+  "x-control"?: "text" | "textarea";
 }
 
 export interface JsonSchema {

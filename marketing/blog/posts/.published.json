@@ -50,10 +50,20 @@
    "status": "published",
    "url": "http://localhost:8080/blog/creator-glossary"
   },
+  "download-pinterest-image": {
+   "id": "post_01M1G9TEVG25TP8YT420NDV4JF",
+   "status": "published",
+   "url": "http://localhost:8080/blog/download-pinterest-image"
+  },
   "download-youtube-thumbnail": {
    "id": "post_01M1FQREG2TN6NCYSVFCK2N5NG",
    "status": "published",
    "url": "http://localhost:8080/blog/download-youtube-thumbnail"
+  },
+  "embed-a-social-media-post": {
+   "id": "post_01M1G9TDTDSBT2C51BJP35TFKG",
+   "status": "published",
+   "url": "http://localhost:8080/blog/embed-a-social-media-post"
   },
   "emoji-in-captions": {
    "id": "post_01M1FQREKZVDVVJS9QN8RVCM5M",
@@ -70,6 +80,11 @@
    "status": "published",
    "url": "http://localhost:8080/blog/engagement-rate-by-reach-vs-followers"
   },
+  "expand-a-short-url": {
+   "id": "post_01M1G9TDNHS6GVW6F16BPEQEKA",
+   "status": "published",
+   "url": "http://localhost:8080/blog/expand-a-short-url"
+  },
   "facebook-ad-character-limits": {
    "id": "post_01M1FQRF046XKN95SESYGWJ6RQ",
    "status": "published",
@@ -84,6 +99,31 @@
    "id": "post_01M1FQRF86PSDRBPXEB8TW6FHV",
    "status": "published",
    "url": "http://localhost:8080/blog/facebook-link-preview-not-updating"
+  },
+  "fake-facebook-post": {
+   "id": "post_01M1G9TE95JN6CE15BZNNQ8EVE",
+   "status": "published",
+   "url": "http://localhost:8080/blog/fake-facebook-post"
+  },
+  "fake-instagram-post": {
+   "id": "post_01M1G9TEDQBPJZT6916QWV7D8G",
+   "status": "published",
+   "url": "http://localhost:8080/blog/fake-instagram-post"
+  },
+  "fake-social-media-post-generator": {
+   "id": "post_01M1G9TE4862Z8PYB6E57JPMVT",
+   "status": "published",
+   "url": "http://localhost:8080/blog/fake-social-media-post-generator"
+  },
+  "fake-tiktok-comment": {
+   "id": "post_01M1G9TEJ2GR9TV1G9285F3PE1",
+   "status": "published",
+   "url": "http://localhost:8080/blog/fake-tiktok-comment"
+  },
+  "find-hashtags-on-a-post": {
+   "id": "post_01M1G9TEPKMJQB9THY4FYQG309",
+   "status": "published",
+   "url": "http://localhost:8080/blog/find-hashtags-on-a-post"
   },
   "find-youtube-channel-id": {
    "id": "post_01M1FQRFCA1VQ6J2A23ASTCEP6",
@@ -170,6 +210,11 @@
    "status": "published",
    "url": "http://localhost:8080/blog/instagram-carousel-size"
   },
+  "instagram-embed-code": {
+   "id": "post_01M1G9TDYZPD9R3PBB4J2TGW2X",
+   "status": "published",
+   "url": "http://localhost:8080/blog/instagram-embed-code"
+  },
   "instagram-fonts": {
    "id": "post_01M1FQRHMRMNCASYXKXYAH7A4Z",
    "status": "published",
@@ -214,6 +259,11 @@
    "id": "post_01M1FQRJQJS50WZAF3GGKADZ8A",
    "status": "published",
    "url": "http://localhost:8080/blog/link-in-bio-tracking"
+  },
+  "link-preview-mobile-vs-desktop": {
+   "id": "post_01M1G9TF0XQSV181NKVMRPTHXM",
+   "status": "published",
+   "url": "http://localhost:8080/blog/link-preview-mobile-vs-desktop"
   },
   "link-preview-not-showing": {
    "id": "post_01M1FQRJVMD76MDJ4FNPSCQXDC",
@@ -300,6 +350,11 @@
    "status": "published",
    "url": "http://localhost:8080/blog/search-youtube-comments"
   },
+  "shorten-a-youtube-link": {
+   "id": "post_01M1G9TDBP9SXQ7BP4PDKVV16K",
+   "status": "published",
+   "url": "http://localhost:8080/blog/shorten-a-youtube-link"
+  },
   "social-media-benchmarks": {
    "id": "post_01M1FQRN54XNA5WEWAM149568G",
    "status": "published",
@@ -310,10 +365,20 @@
    "status": "published",
    "url": "http://localhost:8080/blog/social-media-image-sizes"
   },
+  "social-media-links": {
+   "id": "post_01M1G9TD6RMEQCV2RVW5NZAWFB",
+   "status": "published",
+   "url": "http://localhost:8080/blog/social-media-links"
+  },
   "social-media-safe-zones": {
    "id": "post_01M1FQRNE1NEJ972511TV3SGYN",
    "status": "published",
    "url": "http://localhost:8080/blog/social-media-safe-zones"
+  },
+  "social-media-short-links": {
+   "id": "post_01M1G9TDGN0VCX7711WVJSQ8D9",
+   "status": "published",
+   "url": "http://localhost:8080/blog/social-media-short-links"
   },
   "threads-bio-ideas": {
    "id": "post_01M1FQRNJ04Y0ZV6MXS1X88R3X",

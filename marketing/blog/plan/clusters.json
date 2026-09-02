@@ -185,6 +185,39 @@
     "giveaway-winner-picker"
    ],
    "wave": 6
+  },
+  {
+   "id": "links",
+   "name": "Short links, redirects & embeds",
+   "pillar": "social-media-links",
+   "category": "seo",
+   "platform": null,
+   "why": "Five tools land here at once - two shorteners, the expander, the embed generator and the link preview debugger - and the queries are platform-agnostic, evergreen and unusually literal ('shorten youtube link', 'expand short url'). Nobody searching them is browsing: they have a link in the clipboard and a job to finish.",
+   "money_pages": [
+    "youtube-link-shortener",
+    "social-media-link-shortener",
+    "link-expander",
+    "social-media-embed-code-generator",
+    "link-preview-debugger"
+   ],
+   "wave": 7
+  },
+  {
+   "id": "mockups",
+   "name": "Post mock-ups & screenshots",
+   "pillar": "fake-social-media-post-generator",
+   "category": "design",
+   "platform": null,
+   "why": "Six generators now share one workspace, and the query family ('fake instagram post', 'fake tweet') is enormous and almost entirely served by ad-choked single-page sites. The differentiator is not the drawing - it is being the result that tells the reader plainly what these images may and may not be used for.",
+   "money_pages": [
+    "fake-facebook-post-generator",
+    "fake-instagram-post-generator",
+    "fake-x-reply-generator",
+    "fake-tiktok-comment-generator",
+    "fake-pinterest-pin-generator",
+    "fake-youtube-comment-generator"
+   ],
+   "wave": 7
   }
  ]
 }

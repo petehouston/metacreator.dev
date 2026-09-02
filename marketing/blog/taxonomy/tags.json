@@ -246,6 +246,18 @@
    "slug": "comparison",
    "name": "Comparison",
    "description": "Options set side by side on stated criteria."
+  },
+  {
+   "group": "topic",
+   "slug": "short-links",
+   "name": "Short links",
+   "description": "First-party short domains, redirect chains and the tracking parameters platforms attach to a shared link."
+  },
+  {
+   "group": "topic",
+   "slug": "mockups",
+   "name": "Mock-ups",
+   "description": "Drawing a platform's own card for a slide, a deck or a teaching example — and where the line is."
   }
  ]
 }

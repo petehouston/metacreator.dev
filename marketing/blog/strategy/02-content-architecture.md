@@ -12,9 +12,15 @@ CLUSTER            a subject we intend to own          plan/clusters.json
             └─ SECTION  one H2, one question answered
 ```
 
-Twelve clusters exist. A cluster is legitimate only if it has **money pages** - live
+Fourteen clusters exist. A cluster is legitimate only if it has **money pages** - live
 `/tools/*` URLs the cluster is built to feed. A cluster with no tool behind it is a
 blog for its own sake, and we do not have the domain authority to afford one.
+
+The order runs the other way too, and the last two clusters are the demonstration:
+they were created because the catalog grew twelve tools that no existing cluster could
+send a reader to. `validate_plan.py` reports an orphaned tool as a warning for exactly
+this reason - a live tool page with no post pointing at it is a page with no way in
+except a brand search nobody is making yet.
 
 | Cluster | Pillar | Feeds |
 | --- | --- | --- |
@@ -30,6 +36,8 @@ blog for its own sake, and we do not have the domain authority to afford one.
 | Pinterest SEO | `/blog/pinterest-seo` | Pin SEO checker, Pin sizer, Rich Pin validator |
 | Writing, scripts & planning | `/blog/content-calendar-guide` | headline analyzer, readability checker, script timer |
 | Handles, links & housekeeping | `/blog/claim-your-username` | username checker, UTM builder, QR generator |
+| Short links, redirects & embeds | `/blog/social-media-links` | link shorteners, link expander, embed code generator |
+| Post mock-ups & screenshots | `/blog/fake-social-media-post-generator` | the six card generators |
 
 ## One post, one keyword, one URL
 

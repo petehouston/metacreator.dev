@@ -55,8 +55,14 @@ final class ToolCatalogSeeder extends Seeder
                     'tagline' => $definition['tagline'],
                     'description' => $definition['description'],
                     'tier' => $definition['tier'],
-                    'status' => ToolStatus::Published,
-                    'is_visible' => true,
+                    // Almost every row publishes. The exception is a tool whose
+                    // upstream has closed the door on us since it was written —
+                    // see `youtube.subtitle-downloader` below. Seeding it as a
+                    // draft keeps the code, the schema and the tests alive behind
+                    // one flag, rather than deleting work that is correct and
+                    // would light up again the day the block lifts.
+                    'status' => $definition['status'] ?? ToolStatus::Published,
+                    'is_visible' => $definition['visible'] ?? true,
                     'platforms' => $definition['platforms'],
                     // Pulled from the runner: one definition, no drift.
                     'input_schema' => $registry->resolve($definition['key'])->inputSchema(),
@@ -2482,6 +2488,858 @@ final class ToolCatalogSeeder extends Seeder
                         'answer' => 'No publication date was published for that video, which happens on some '
                             .'older and some unlisted uploads. “n.d.” is the correct fallback in every style '
                             .'here; add the date by hand if you can find it on the watch page.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.link-shortener',
+                'slug' => 'youtube-link-shortener',
+                'category' => 'utility',
+                'name' => 'YouTube Link Shortener',
+                'tagline' => 'Turn any YouTube link into a clean youtu.be one, timestamp intact.',
+                'description' => 'Builds YouTube’s own youtu.be short link from a watch page, Shorts link, '
+                    .'embed URL or bare video ID — carrying the timestamp across correctly, keeping or '
+                    .'dropping the playlist, and stripping the tracking id YouTube attaches to a share.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'youtube link shortener',
+                'seo_title' => 'YouTube Link Shortener — Get a Clean youtu.be Link (Free)',
+                'seo_description' => 'Shorten any YouTube URL to youtu.be, with the timestamp carried over '
+                    .'and the tracking parameters removed. Works with Shorts, embeds and playlists.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste any YouTube link. Watch pages, Shorts, embeds, mobile links, '
+                        .'music.youtube.com and a bare 11-character ID all work, and so does a link that '
+                        .'already has a timestamp or a playlist on it.'),
+                    Blocks::heading('Why youtu.be rather than a shortener', 2),
+                    Blocks::paragraph('<strong>youtu.be is YouTube’s own domain.</strong> The link never '
+                        .'expires, needs no account, cannot be rate-limited, and does not stop working '
+                        .'because a shortening service changed its pricing. A bit.ly pointing at a YouTube '
+                        .'video adds a redirect, a tracking hop and a single point of failure, and buys you '
+                        .'nothing a first-party link does not already give you.'),
+                    Blocks::heading('The timestamp trap', 2),
+                    Blocks::paragraph('A watch page writes the timestamp as <code>t=90s</code>. A youtu.be '
+                        .'link wants <code>t=90</code> — bare seconds. Copy the parameter across unchanged, '
+                        .'which is what people do by hand, and the video silently starts from the beginning. '
+                        .'This converts it.'),
+                    Blocks::callout('tip', 'The <code>si</code> parameter YouTube adds when you use its share '
+                        .'button is a per-share tracking id. Forwarding a link that still carries it tells '
+                        .'YouTube who sent it to you. This tool removes it.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90s', 'start' => '',
+                        'keep_playlist' => false],
+                    'note' => 'A watch link with a timestamp — the case that most often breaks.',
+                ],
+                'faq' => [
+                    ['question' => 'Is youtu.be an official YouTube domain?',
+                        'answer' => 'Yes. It is owned and served by YouTube, and it is what the platform’s '
+                            .'own share button produces. It is not a third-party shortener.'],
+                    ['question' => 'Can I shorten a Shorts link?',
+                        'answer' => 'Yes. A Shorts URL and a watch URL point at the same video, so the short '
+                            .'link works for both — and on desktop it opens in the normal player, which is '
+                            .'usually what you want when you are sharing it outside the app.'],
+                    ['question' => 'Why did my playlist disappear?',
+                        'answer' => 'By default the short link points at the video on its own, because that '
+                            .'is almost always what someone sharing from a playlist means. Turn on “Keep the '
+                            .'playlist” to carry it across. Auto-generated mixes (list IDs starting RD or UL) '
+                            .'are never carried, because they are personal to your session and would open '
+                            .'as a dead link for anyone else.'],
+                    ['question' => 'Can I shorten a channel or playlist link?',
+                        'answer' => 'No — youtu.be only serves videos. For a channel, the @handle URL is '
+                            .'already the shortest official form.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.social-link-shortener',
+                'slug' => 'social-media-link-shortener',
+                'category' => 'utility',
+                'name' => 'Social Media Link Shortener',
+                'tagline' => 'The platform’s own short link, where one exists — and a straight answer where it does not.',
+                'description' => 'Builds the first-party short link for YouTube, Instagram, Reddit, '
+                    .'Dailymotion, Flickr, Telegram and WhatsApp, strips the tracking parameters off '
+                    .'anything you paste, and says plainly which platforms only issue short links through '
+                    .'their own share sheet.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube', 'instagram', 'x', 'facebook', 'linkedin', 'pinterest', 'tiktok'],
+                'focus_keyword' => 'social media link shortener',
+                'seo_title' => 'Social Media Link Shortener — First-Party Short Links (Free)',
+                'seo_description' => 'Shorten Instagram, YouTube, Reddit and Telegram links using each '
+                    .'platform’s own domain, with tracking parameters removed. No account, no redirect service.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a post, video, Pin, profile or channel link. The tool works out '
+                        .'which platform it is, builds the platform’s own short link if one can be derived '
+                        .'from the URL, and hands back a cleaned version either way.'),
+                    Blocks::heading('Which platforms actually have one', 2),
+                    Blocks::paragraph('A first-party short link is a different thing from a bit.ly: it is '
+                        .'served by the platform, it never expires, and it cannot be taken down by a '
+                        .'shortening service going out of business. The field splits cleanly in two.'),
+                    Blocks::list([
+                        '<strong>Derivable from the URL</strong> — YouTube <code>youtu.be</code>, Instagram '
+                        .'<code>instagr.am</code>, Reddit <code>redd.it</code>, Dailymotion <code>dai.ly</code>, '
+                        .'Flickr <code>flic.kr</code>, Telegram <code>t.me</code>, WhatsApp <code>wa.me</code>.',
+                        '<strong>Issued by the platform only</strong> — X <code>t.co</code>, LinkedIn '
+                        .'<code>lnkd.in</code>, Pinterest <code>pin.it</code>, Facebook <code>fb.me</code> and '
+                        .'<code>fb.watch</code>, TikTok <code>vm.tiktok.com</code>. These are minted '
+                        .'server-side when the platform’s own share sheet is used, and there is no documented '
+                        .'way to construct one.',
+                    ]),
+                    Blocks::callout('warning', 'Any site offering you a “TikTok link shortener” or an '
+                        .'“X link shortener” is a third-party redirector wearing the platform’s name. Your '
+                        .'link then depends on their server staying up and their analytics staying honest.'),
+                    Blocks::heading('Why the tracking parameters go', 2),
+                    Blocks::paragraph('<code>igshid</code>, <code>si</code> and <code>share_id</code> are '
+                        .'per-share identifiers. A link you were sent, forwarded on with those intact, tells '
+                        .'the platform who forwarded it to whom. Everything removed is listed in the result, '
+                        .'so nothing disappears without you seeing it.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.instagram.com/p/Cxyz1234567/?igshid=MzRlODBiNWFlZA==',
+                        'strip_tracking' => true],
+                    'note' => 'An Instagram post link as the app hands it out, tracking id and all.',
+                ],
+                'faq' => [
+                    ['question' => 'Is instagr.am safe to use?',
+                        'answer' => 'It is Instagram’s own legacy domain and it still redirects to the same '
+                            .'post. It is not, however, what the app’s share sheet produces, so use it where '
+                            .'character count matters and the full instagram.com link where the domain being '
+                            .'instantly recognisable matters more.'],
+                    ['question' => 'Why will you not shorten a TikTok link?',
+                        'answer' => 'Because TikTok will not let anyone but TikTok do it. A vm.tiktok.com '
+                            .'link is generated by the app when you tap Share, and no public method exists '
+                            .'to create one. We would rather say so than hand you a redirect through '
+                            .'somebody else’s server dressed up as a TikTok link.'],
+                    ['question' => 'Do these links track clicks?',
+                        'answer' => 'Not for you. A first-party short link gives you no analytics — that is '
+                            .'the trade for its permanence. If you need click data, add UTM parameters to '
+                            .'the destination with our UTM builder rather than routing through a shortener.'],
+                    ['question' => 'Do short links hurt SEO?',
+                        'answer' => 'A 301 from a platform’s own domain passes authority normally. The '
+                            .'concern people have in mind is chains of third-party redirects, which add '
+                            .'latency and can break — which is the case for using a first-party one.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.link-expander',
+                'slug' => 'link-expander',
+                'category' => 'utility',
+                'name' => 'Link Expander',
+                'tagline' => 'See where a short link really goes — every hop, before you click.',
+                'description' => 'Follows a redirect chain one hop at a time and shows each URL with its '
+                    .'status code, so you can see where a shortened link ends up before opening it, or find '
+                    .'the hop where your campaign parameters are being dropped.',
+                'tier' => ToolTier::Free,
+                'platforms' => [],
+                'focus_keyword' => 'link expander',
+                'seo_title' => 'Link Expander — See Where a Short URL Goes Before You Click',
+                'seo_description' => 'Expand bit.ly, t.co, tinyurl and any redirecting link. Shows every hop '
+                    .'with its status code, the final destination and the tracking parameters attached.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste any link. Short links, tracked campaign URLs, affiliate links '
+                        .'and ordinary pages that happen to redirect all work the same way.'),
+                    Blocks::heading('Two different reasons to use this', 2),
+                    Blocks::list([
+                        '<strong>Before you click.</strong> A shortened link tells you nothing about where it '
+                        .'goes, which is exactly why phishing uses them. Expanding it first is the cheapest '
+                        .'safety check there is.',
+                        '<strong>When your own link misbehaves.</strong> A campaign URL that passes through a '
+                        .'shortener, a redirector and a CMS canonical often loses its UTM parameters '
+                        .'somewhere in the middle. The hop where they vanish is the hop to fix.',
+                    ]),
+                    Blocks::heading('What it cannot see', 2),
+                    Blocks::paragraph('This follows the redirects a <em>server</em> declares — 301, 302, 307 '
+                        .'and friends. A page that redirects with JavaScript or a <code>&lt;meta '
+                        .'refresh&gt;</code> tag will appear here as the final destination, because to any '
+                        .'HTTP client that is what it is. A short link ending on a page that then bounces you '
+                        .'somewhere else in the browser is worth treating as a red flag.'),
+                    Blocks::callout('info', 'Every hop is re-checked before it is fetched, so a link that '
+                        .'redirects to a private or internal address stops the walk instead of being '
+                        .'followed. Nothing is ever loaded in your browser.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://youtu.be/dQw4w9WgXcQ', 'strip_tracking' => true],
+                    'note' => 'A first-party short link, which resolves in a single hop.',
+                ],
+                'faq' => [
+                    ['question' => 'Does expanding a link count as a click?',
+                        'answer' => 'It registers as a request on the shortener, so a click counter will '
+                            .'usually tick over. It does not load the destination page, run its scripts or '
+                            .'accept its cookies.'],
+                    ['question' => 'Is a long redirect chain a problem?',
+                        'answer' => 'On a link you control, yes. Each hop is a full round trip before '
+                            .'anything renders, and mobile networks make that expensive. Three or more is '
+                            .'worth collapsing. On a link somebody sent you, a long chain is more often a '
+                            .'sign of deliberate obfuscation.'],
+                    ['question' => 'It says the host is unreachable.',
+                        'answer' => 'Some services block automated requests outright, and a few only '
+                            .'redirect for browsers they recognise. That is the shortener’s choice, not a '
+                            .'fault in the chain — the answer in that case is that we cannot tell you, which '
+                            .'is more useful than a guess.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.hashtag-extractor',
+                'slug' => 'hashtag-extractor',
+                'category' => 'utility',
+                'name' => 'Hashtag Extractor',
+                'tagline' => 'Pull every hashtag off a post — from its link, or from the caption itself.',
+                'description' => 'Reads the hashtags out of a public post on any platform by fetching the '
+                    .'caption the post publishes for link previews, or straight out of text you paste. '
+                    .'De-duplicates, counts characters and hands the whole set back ready to copy.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram', 'youtube', 'tiktok', 'x', 'linkedin', 'threads', 'pinterest'],
+                'focus_keyword' => 'hashtag extractor',
+                'seo_title' => 'Hashtag Extractor — Get Every Hashtag From a Post URL (Free)',
+                'seo_description' => 'Extract hashtags from an Instagram, YouTube, TikTok, X or LinkedIn '
+                    .'post by pasting its link — or paste the caption directly. Copy the whole set at once.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the link to a public post, or paste the caption text itself and '
+                        .'skip the fetch entirely. Both end in the same list.'),
+                    Blocks::heading('Where the hashtags come from', 2),
+                    Blocks::paragraph('Every platform publishes a post’s caption in its Open Graph tags, '
+                        .'because that is what renders when the post is shared somewhere else. That public '
+                        .'metadata is what this reads — no login, no session, nothing that requires being '
+                        .'signed in to the platform.'),
+                    Blocks::paragraph('The honest consequence: a platform that answers an unauthenticated '
+                        .'request with a sign-in page is reported as exactly that. Instagram and Facebook do '
+                        .'this intermittently even for public posts. When it happens, copy the caption and '
+                        .'paste it in — the extractor works on text with no fetch at all.'),
+                    Blocks::heading('Tags are not hashtags', 2),
+                    Blocks::paragraph('On YouTube the two are different things. <strong>Tags</strong> are '
+                        .'invisible keywords in the upload settings; <strong>hashtags</strong> are part of '
+                        .'the description and show above the title. This tool reads hashtags. For the hidden '
+                        .'keywords, use the YouTube Tag Extractor.'),
+                    Blocks::callout('tip', 'Copying a competitor’s hashtag set wholesale rarely works — '
+                        .'their tags were chosen for their audience size, not yours. Read the set for the '
+                        .'<em>shape</em> of it: how many, how specific, how many are branded.'),
+                ]),
+                'example' => [
+                    'input' => ['source' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'lowercase' => false],
+                    'note' => 'A YouTube video — or paste a caption straight in instead.',
+                ],
+                'faq' => [
+                    ['question' => 'Does it work with Instagram links?',
+                        'answer' => 'When Instagram serves the post’s metadata, yes. It increasingly answers '
+                            .'automated requests with a sign-in page instead, and no tool without a logged-in '
+                            .'session can get past that. Pasting the caption text works every time.'],
+                    ['question' => 'Are hashtags case-sensitive?',
+                        'answer' => 'No. #TravelTips and #traveltips reach the same feed on every major '
+                            .'platform. Case only affects readability — which is a real consideration in a '
+                            .'long multi-word tag, and why the results keep the original spelling by default.'],
+                    ['question' => 'Does it find hashtags in comments?',
+                        'answer' => 'No, only in the post itself. Hashtags placed in the first comment — a '
+                            .'common Instagram habit — are not part of the post’s published metadata.'],
+                    ['question' => 'Non-English hashtags?',
+                        'answer' => 'Yes. Japanese, Arabic, Cyrillic and every other script are matched as '
+                            .'written; an extractor that only understood A–Z would be useless to most of the '
+                            .'world.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.embed-code-generator',
+                'slug' => 'social-media-embed-code-generator',
+                'category' => 'utility',
+                'name' => 'Social Media Embed Code Generator',
+                'tagline' => 'Official embed code for a post from any platform, from its URL alone.',
+                'description' => 'Generates the platform’s own embed code for X, Instagram, TikTok, '
+                    .'Facebook, LinkedIn, Pinterest, Reddit, Threads, YouTube, Vimeo, Dailymotion and '
+                    .'Twitch — in both the documented script form and, where one exists, a script-free '
+                    .'iframe for a CMS that strips JavaScript.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['x', 'instagram', 'tiktok', 'facebook', 'linkedin', 'pinterest', 'youtube'],
+                'focus_keyword' => 'social media embed code generator',
+                'seo_title' => 'Social Media Embed Code Generator — X, Instagram, TikTok & More',
+                'seo_description' => 'Paste a post URL and get the official embed code. Script and iframe '
+                    .'versions for X, Instagram, TikTok, Facebook, LinkedIn, Pinterest, Reddit and Threads.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the URL of a single post, video, Reel or Pin. The tool works '
+                        .'out the platform and builds the embed code that platform documents.'),
+                    Blocks::heading('Script or iframe?', 2),
+                    Blocks::list([
+                        '<strong>Blockquote + script</strong> is what each platform documents. It renders the '
+                        .'real post with avatar, media and live counts, and it loads third-party JavaScript '
+                        .'onto your page to do it.',
+                        '<strong>Iframe</strong>, where the platform publishes one, renders the same post in '
+                        .'a sandbox with no script on your page. Reach for it in a CMS that strips '
+                        .'<code>&lt;script&gt;</code> tags, in AMP, and anywhere a privacy review has to sign '
+                        .'the page off.',
+                    ]),
+                    Blocks::heading('Keep the plain link', 2),
+                    Blocks::paragraph('Every result ends with a plain anchor, and it is not a consolation '
+                        .'prize. An embed that fails to load — blocked script, deleted post, account gone '
+                        .'private — leaves a hole where your quotation was. A linked quotation degrades into '
+                        .'a sentence and a link, which still reads.'),
+                    Blocks::callout('warning', 'Embeds set cookies and see your visitor’s IP address before '
+                        .'they interact with anything. Under GDPR that generally needs consent first, so on '
+                        .'a site with a consent banner, load embeds behind a click-to-load placeholder.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.tiktok.com/@tiktok/video/7106594312292453675',
+                        'width' => 550, 'theme' => 'light', 'parent_domain' => ''],
+                    'note' => 'A TikTok video — you get both the script and the iframe form.',
+                ],
+                'faq' => [
+                    ['question' => 'My X embed renders as plain text.',
+                        'answer' => 'Almost always the anchor. X’s widget reads the URL from the '
+                            .'<code>&lt;a&gt;</code> inside the blockquote, not from the blockquote itself, '
+                            .'and many editors “tidy up” an empty anchor out of existence on save. Paste the '
+                            .'code into a raw HTML block rather than a rich-text one.'],
+                    ['question' => 'Do I need one script tag per embed?',
+                        'answer' => 'No, and you should not. Include each platform’s script once near the '
+                            .'end of the page; every blockquote on the page is picked up by it. The second '
+                            .'code block in each result is the version without the script for exactly this.'],
+                    ['question' => 'Why does my Twitch embed refuse to play?',
+                        'answer' => 'Twitch requires the embed URL to name the domain it is served from, in '
+                            .'a <code>parent</code> parameter, and it needs one for every domain including '
+                            .'localhost. Fill in “Your domain” and the generated code carries it.'],
+                    ['question' => 'The embed became an empty box.',
+                        'answer' => 'The post was deleted, or the account went private. Meta’s embeds in '
+                            .'particular render nothing at all in that case, which is why the plain-link '
+                            .'fallback in every result is worth keeping in your page.'],
+                    ['question' => 'Do embeds slow my page down?',
+                        'answer' => 'Materially, yes — a single X or Instagram embed pulls several hundred '
+                            .'kilobytes of script and does its own network requests. Click-to-load '
+                            .'placeholders solve the performance problem and the consent problem at once.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.subtitle-downloader',
+                'slug' => 'youtube-subtitle-downloader',
+                'category' => 'media',
+                'name' => 'YouTube Subtitle Downloader',
+                'tagline' => 'Save any video’s subtitles as SRT, VTT or plain text.',
+                'description' => 'Reads the caption tracks a public YouTube video publishes and writes them '
+                    .'out as SubRip, WebVTT and clean plain text — with the timings preserved, overlapping '
+                    .'cues repaired, and auto-generated tracks clearly marked as such.',
+                'tier' => ToolTier::Free,
+                // Not published. YouTube stopped serving caption metadata to
+                // datacentre IPs: the watch page omits `captionTracks` entirely and
+                // every InnerTube player client answers UNPLAYABLE, verified from
+                // both the dev machine's egress and the production droplet. The
+                // runner is correct and tested against a fixture, so this is one
+                // boolean away from shipping if that ever changes — but a tool that
+                // fails for every visitor is worse than no tool.
+                'status' => ToolStatus::Draft,
+                'visible' => false,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'youtube subtitle downloader',
+                'seo_title' => 'YouTube Subtitle Downloader — SRT, VTT & Transcript (Free)',
+                'seo_description' => 'Download subtitles from any public YouTube video as SRT, WebVTT or '
+                    .'plain text. Every language the video publishes. No account, no extension.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste any public YouTube link. Leave the language blank for the '
+                        .'video’s default track — a human-written one where the video has one — or set a '
+                        .'two-letter code to pick another. The result lists every language the video '
+                        .'publishes.'),
+                    Blocks::heading('Three formats, for three different jobs', 2),
+                    Blocks::list([
+                        '<strong>SRT</strong> — what every video editor and every social uploader accepts. '
+                        .'This is the one to reach for by default.',
+                        '<strong>WebVTT</strong> — what an HTML5 <code>&lt;track&gt;</code> element needs, and '
+                        .'the only one of the three that survives styling.',
+                        '<strong>Plain text</strong> — the words with the timings stripped and the lines '
+                        .'rejoined into paragraphs, for a summary, a blog draft or a search index.',
+                    ]),
+                    Blocks::heading('Auto-generated tracks', 2),
+                    Blocks::paragraph('Auto-captions are marked, never quietly mixed in with human ones. '
+                        .'They are usable, but on many videos they carry no punctuation at all and they '
+                        .'mis-hear proper nouns constantly. Shipping one as a translation source without '
+                        .'knowing it was a machine transcript is how a caption file ends up quoting somebody '
+                        .'saying something they did not say.'),
+                    Blocks::callout('warning', 'Subtitles are part of the video and belong to its owner. '
+                        .'Use them for accessibility work, translation, research and quotation — not to lift '
+                        .'somebody’s script.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'language' => '',
+                        'include_auto' => true],
+                ],
+                'faq' => [
+                    ['question' => 'It says the video has no subtitles.',
+                        'answer' => 'Either it genuinely has none, or it is private, age-restricted or '
+                            .'members-only — in all of those cases YouTube gives the player nothing to read '
+                            .'and there is nothing to download.'],
+                    ['question' => 'Why do the auto-captions have no full stops?',
+                        'answer' => 'YouTube’s speech recognition adds punctuation on some languages and '
+                            .'videos and not others. Where it does not, the plain-text version falls back to '
+                            .'breaking on a fixed run length rather than inventing sentence boundaries.'],
+                    ['question' => 'Can I download every language at once?',
+                        'answer' => 'One at a time. The result lists every language code the video '
+                            .'publishes, so run it again with a different code for each you need.'],
+                    ['question' => 'What is the difference between SRT and VTT?',
+                        'answer' => 'Mostly the timestamp separator — SRT uses a comma before the '
+                            .'milliseconds, WebVTT a full stop — plus a header line and support for styling '
+                            .'in VTT. Editors want SRT; browsers want VTT.'],
+                    ['question' => 'Are the cue timings exact?',
+                        'answer' => 'They are the timings YouTube published. Auto-generated tracks overlap '
+                            .'by design, because that is how the two-line scroll on screen is produced; those '
+                            .'overlaps are trimmed here so the file is valid SubRip rather than something '
+                            .'half of players silently drop cues from.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.social-image-downloader',
+                'slug' => 'social-media-image-downloader',
+                'category' => 'media',
+                'name' => 'Social Media Image Downloader',
+                'tagline' => 'The full-size image behind a post, not the one the feed shrank.',
+                'description' => 'Pulls the largest image a public post publishes — from Pinterest, '
+                    .'Instagram, Facebook, X, Threads, Tumblr, Reddit or any other page — including every '
+                    .'slide of a carousel, and upgrades it to the original upload where the CDN allows it.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram', 'pinterest', 'facebook', 'x', 'threads'],
+                'focus_keyword' => 'social media image downloader',
+                'seo_title' => 'Social Media Image Downloader — Full-Size Post Images (Free)',
+                'seo_description' => 'Paste a post link and download the full-size image behind it. Works '
+                    .'with Pinterest, Instagram, Facebook, X, Threads, Reddit and any page with Open Graph tags.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the link to any public post, article or profile. The result '
+                        .'lists every image the page publishes, with a download link for each.'),
+                    Blocks::heading('Why not just right-click', 2),
+                    Blocks::paragraph('Right-clicking a photo in a feed saves the copy the feed is showing — '
+                        .'often 640 pixels wide where the upload was two thousand, and re-encoded on the way. '
+                        .'The larger version is published separately, because it is what renders when the '
+                        .'post is shared elsewhere, and that copy is the one worth having.'),
+                    Blocks::heading('Where it stops', 2),
+                    Blocks::paragraph('This reads the metadata a page publishes for link previews. It uses '
+                        .'no login and touches nothing that requires being signed in — which means a private '
+                        .'account, or a platform that answers with a sign-in wall, is reported as exactly '
+                        .'that rather than guessed at.'),
+                    Blocks::callout('warning', 'These images belong to whoever posted them. Downloading one '
+                        .'is not a licence to republish it. Research, moodboards, reference and commentary '
+                        .'are fine; re-uploading somebody’s photograph as your own is not.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.pinterest.com/pin/99360735500167749/'],
+                    'note' => 'A Pin — you also get the original upload, which Pinterest never shows.',
+                ],
+                'faq' => [
+                    ['question' => 'Can it download a whole Instagram carousel?',
+                        'answer' => 'When Instagram publishes all the slides in its metadata, yes. Answering '
+                            .'without a session it frequently publishes only the first, in which case a '
+                            .'carousel comes back as a single image.'],
+                    ['question' => 'The download link stopped working.',
+                        'answer' => 'Meta and several other platforms sign their image URLs and expire them, '
+                            .'usually within a few hours. Save the file rather than bookmarking the link.'],
+                    ['question' => 'I pasted a video link.',
+                        'answer' => 'You get its cover frame. This tool downloads images; it does not '
+                            .'download video.'],
+                    ['question' => 'Is this legal?',
+                        'answer' => 'Downloading a publicly published image for personal reference is '
+                            .'ordinary use of the web. Republishing it, selling it, or passing it off as '
+                            .'your own is a copyright matter regardless of how the file was obtained.'],
+                ],
+            ],
+
+            [
+                'key' => 'instagram.avatar-downloader',
+                'slug' => 'instagram-profile-picture-downloader',
+                'category' => 'media',
+                'name' => 'Instagram Profile Picture Downloader',
+                'tagline' => 'View and save any public Instagram profile photo at full size.',
+                'description' => 'Instagram renders a profile picture at 150 pixels and gives you no way to '
+                    .'open it. This reads the larger copy the profile publishes for link previews, so you '
+                    .'get a usable file instead of a screenshot of a circle.',
+                'tier' => ToolTier::Free,
+                // Not published, for the same reason as the subtitle downloader
+                // below and with the same one-flag path back. Instagram now
+                // publishes the avatar to link cards at 100x100 only, and signs
+                // the URL so the size cannot be rewritten — the `s1080` variant
+                // exists but needs a session we do not have and will not fake.
+                // 100 pixels is smaller than the 150 the profile page itself
+                // renders, so the tool cannot honour its own name.
+                'status' => ToolStatus::Draft,
+                'visible' => false,
+                'platforms' => ['instagram'],
+                'focus_keyword' => 'instagram profile picture downloader',
+                'seo_title' => 'Instagram Profile Picture Downloader — Full Size, Free',
+                'seo_description' => 'Enter any public Instagram username and download the profile photo at '
+                    .'full size. No login, no app, nothing installed.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter a username with or without the @, or paste the whole '
+                        .'instagram.com profile URL.'),
+                    Blocks::heading('Why this is needed at all', 2),
+                    Blocks::paragraph('Instagram renders the avatar at 150 pixels on the web and smaller '
+                        .'again in the app, and there is no “view profile photo” in either. Everybody who '
+                        .'needs one — for a podcast guest card, a press page, a collaboration deck, or just '
+                        .'to see who an account belongs to — ends up screenshotting a small circle and '
+                        .'upscaling it. The larger copy exists; it is published so that a shared profile '
+                        .'link renders a card.'),
+                    Blocks::callout('info', 'Public profiles only. A private account publishes no preview '
+                        .'image, and neither this nor any other tool without a logged-in session can reach '
+                        .'one.'),
+                    Blocks::callout('warning', 'A profile picture is a photograph of a person. Use it to '
+                        .'identify an account — a credit, a guest card, a deck — not as stock imagery, and '
+                        .'never to build a fake account.'),
+                ]),
+                'example' => [
+                    'input' => ['username' => '@instagram'],
+                ],
+                'faq' => [
+                    ['question' => 'Will they know I looked?',
+                        'answer' => 'No. This reads the same public page a link preview reads. There is no '
+                            .'account involved on our side and nothing is recorded on theirs beyond an '
+                            .'ordinary page request.'],
+                    ['question' => 'Can I get a private account’s photo?',
+                        'answer' => 'No. A private profile publishes no preview image at all, which is the '
+                            .'correct behaviour and not something to work around.'],
+                    ['question' => 'The picture is blurry.',
+                        'answer' => 'Instagram publishes one size to link cards, so there is no larger '
+                            .'version to ask for. If it looks soft, that is the resolution the account '
+                            .'uploaded — Instagram compresses avatars hard.'],
+                    ['question' => 'It says Instagram answered with a sign-in page.',
+                        'answer' => 'Instagram does this intermittently even for public profiles, depending '
+                            .'on where the request comes from. Trying again a little later usually works. '
+                            .'Opening the profile in a browser will tell you whether the account is actually '
+                            .'private.'],
+                ],
+            ],
+
+            [
+                'key' => 'pinterest.image-downloader',
+                'slug' => 'pinterest-image-downloader',
+                'category' => 'media',
+                'name' => 'Pinterest Image Downloader',
+                'tagline' => 'Every size of a Pin, including the original Pinterest never shows you.',
+                'description' => 'Pinterest serves each Pin from a width-named directory and keeps the '
+                    .'upload itself under one the interface never links to. This finds the Pin’s file and '
+                    .'hands you all five renditions, original included.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['pinterest'],
+                'focus_keyword' => 'pinterest image downloader',
+                'seo_title' => 'Pinterest Image Downloader — Save Any Pin in Full Size (Free)',
+                'seo_description' => 'Download any public Pin at 236px, 474px, 564px, 736px or the original '
+                    .'upload. Works with pinterest.com links and pin.it short links.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a Pin link. Both the full pinterest.com/pin/… URL and the '
+                        .'pin.it short link from the app’s share sheet work.'),
+                    Blocks::heading('The five sizes', 2),
+                    Blocks::paragraph('Pinterest serves every Pin from a directory named after its width — '
+                        .'236, 474, 564 and 736 pixels — and keeps the file as uploaded under '
+                        .'<code>/originals/</code>. The grid shows you the 236, the closeup the 736, and '
+                        .'nothing in the interface ever links to the original, which is frequently 1000×1500 '
+                        .'or larger. Since all five are the same path under a different prefix, moving '
+                        .'between them needs no guesswork.'),
+                    Blocks::callout('tip', 'Take the original unless you are matching a layout. The '
+                        .'resized versions exist for Pinterest’s own grid, and every one of them has been '
+                        .'through a second round of compression.'),
+                    Blocks::callout('warning', 'Most Pins point at somebody’s product photo or blog image. '
+                        .'Re-pinning through Pinterest itself is what keeps the credit and the link '
+                        .'attached; a downloaded file carries neither.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.pinterest.com/pin/99360735500167749/'],
+                ],
+                'faq' => [
+                    ['question' => 'Does it work with video Pins and Idea Pins?',
+                        'answer' => 'You get the cover frame, not the video. This tool handles images only.'],
+                    ['question' => 'The original is smaller than 736 pixels.',
+                        'answer' => 'Then the Pin was uploaded at that size. <code>/originals/</code> is the '
+                            .'file as uploaded, so it is only larger than the renditions when the upload was.'],
+                    ['question' => 'Can I download a whole board?',
+                        'answer' => 'Not here — one Pin at a time. A board downloader would be a scraper, '
+                            .'which is a different thing from reading one Pin’s public metadata.'],
+                    ['question' => 'Nothing came back for my Pin.',
+                        'answer' => 'Pins on secret boards are not public, and Pinterest answers with a '
+                            .'sign-in page for them. Check the Pin opens in a private browser window.'],
+                ],
+            ],
+
+            [
+                'key' => 'facebook.post-generator',
+                'slug' => 'fake-facebook-post-generator',
+                'category' => 'media',
+                'name' => 'Fake Facebook Post Generator',
+                'tagline' => 'Draw a Facebook post card for a mock-up, with no screenshot to crop.',
+                'description' => 'Renders a Facebook post exactly as the feed draws it — desktop or mobile '
+                    .'width, light or dark, with reactions, comments and shares — as a clean image with no '
+                    .'browser chrome, no sidebar and nobody else’s content in the frame.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['facebook'],
+                'focus_keyword' => 'fake facebook post generator',
+                'seo_title' => 'Fake Facebook Post Generator — Free Mock-Up Maker',
+                'seo_description' => 'Create a realistic Facebook post image for a mock-up, slide or '
+                    .'newsletter. Desktop and mobile layouts, light and dark themes, free download.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Fill in the name, the text and whatever counts the story needs, pick '
+                        .'desktop or mobile, and download the card.'),
+                    Blocks::heading('What it is for', 2),
+                    Blocks::list([
+                        'A slide or blog post about something that was posted, without dragging in a '
+                        .'sidebar, a cookie banner and whoever else was in the feed.',
+                        'A mock-up of a post that has not been written yet, to show a client or a team.',
+                        'A teaching example, where a real post would date instantly.',
+                    ]),
+                    Blocks::heading('What it is not for', 2),
+                    Blocks::paragraph('This draws whatever you type. That makes it a mock-up tool, not an '
+                        .'evidence tool, and the distinction is the whole of the ethics here. A card proves '
+                        .'nothing about who posted what — and presenting one as though it were a screenshot '
+                        .'of a real post, from a real page, is impersonation whatever it was drawn with.'),
+                    Blocks::callout('warning', 'The card deliberately carries no verified badge. The one '
+                        .'thing a drawn post must never be able to claim is that it came from a verified '
+                        .'account.'),
+                ]),
+                'example' => [
+                    'input' => ['name' => 'Riverside Bakery',
+                        'text' => 'We are open again from Saturday. Same sourdough, new oven. 🥖',
+                        'timestamp' => '2h', 'audience' => 'public', 'device' => 'desktop',
+                        'theme' => 'light', 'avatar_url' => '', 'reactions' => 248, 'comments' => 31,
+                        'shares' => 12],
+                ],
+                'faq' => [
+                    ['question' => 'Can I add a photo to the post?',
+                        'answer' => 'Not on purpose. A generator that composited a real image into a '
+                            .'real-looking post would be a forgery kit rather than a mock-up tool. Add the '
+                            .'image in your slide or layout, under the card.'],
+                    ['question' => 'Is this legal to use?',
+                        'answer' => 'Making a mock-up is. Publishing one as though a real person or business '
+                            .'said something they did not is defamation, impersonation, or both, depending on '
+                            .'where you are — and no disclaimer buried in a caption undoes a screenshot '
+                            .'travelling on its own.'],
+                    ['question' => 'Why does the image come out as SVG?',
+                        'answer' => 'It is drawn as vectors, so it is sharp at any size and a fraction of '
+                            .'the weight of a PNG. Every editor, browser and slide tool opens one; if you '
+                            .'need a raster file, export it from there.'],
+                    ['question' => 'What is the difference between desktop and mobile?',
+                        'answer' => 'Width, which changes where the text wraps and how much of it fits '
+                            .'before the eye stops. If the card is going into something people will read on '
+                            .'a phone, draw the mobile one.'],
+                ],
+            ],
+
+            [
+                'key' => 'instagram.post-generator',
+                'slug' => 'fake-instagram-post-generator',
+                'category' => 'media',
+                'name' => 'Fake Instagram Post Generator',
+                'tagline' => 'Mock up an Instagram post, caption fold and all.',
+                'description' => 'Draws an Instagram post the way the feed draws it — square, portrait or '
+                    .'landscape, light or dark — and cuts the caption where Instagram cuts it, so you can '
+                    .'see the sentence that disappears behind “… more”.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram'],
+                'focus_keyword' => 'fake instagram post generator',
+                'seo_title' => 'Fake Instagram Post Generator — Free Post Mock-Up Maker',
+                'seo_description' => 'Create an Instagram post mock-up with username, caption, likes and '
+                    .'comments. Shows where the caption is cut. Desktop and mobile, light and dark.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter the username and caption, choose the post shape, and download '
+                        .'the card. The photo itself is drawn as a marked placeholder at the right aspect '
+                        .'ratio.'),
+                    Blocks::heading('The caption fold', 2),
+                    Blocks::paragraph('Instagram shows roughly the first 125 characters of a caption in the '
+                        .'feed and hides the rest behind “… more”. The card greys the hidden half in place '
+                        .'rather than dropping it, because seeing <em>which sentence</em> gets cut is the '
+                        .'point — a caption whose hook lands at character 140 is a caption nobody reads.'),
+                    Blocks::heading('Why the photo is a placeholder', 2),
+                    Blocks::paragraph('Deliberately. What people are checking is the caption, the username '
+                        .'and the shape; a tool that composited a real photograph into a real-looking post '
+                        .'would be a forgery kit rather than a mock-up tool. Drop your image in behind the '
+                        .'card in whatever you are building.'),
+                    Blocks::callout('warning', 'This draws whatever you type and carries no verified badge. '
+                        .'It is a mock-up, not proof — do not present a card as a screenshot of a post '
+                        .'somebody actually made.'),
+                ]),
+                'example' => [
+                    'input' => ['username' => 'riverside.bakery',
+                        'caption' => 'New oven, same sourdough. Open from Saturday ☀️ #bakery #sourdough',
+                        'location' => 'Bristol, United Kingdom', 'shape' => 'square', 'device' => 'mobile',
+                        'theme' => 'light', 'avatar_url' => '', 'timestamp' => '2 hours ago',
+                        'likes' => 1840, 'comments' => 63],
+                ],
+                'faq' => [
+                    ['question' => 'Can I upload the actual photo?',
+                        'answer' => 'No, by design — see above. The placeholder sits at Instagram’s own '
+                            .'aspect ratio, so dropping your image in behind it lines up exactly.'],
+                    ['question' => 'Does it do Stories or Reels?',
+                        'answer' => 'This draws feed posts. For Story and Reels dimensions, the Story '
+                            .'Template Sizer and the Reels Cover Cropper are the tools you want.'],
+                    ['question' => 'Where exactly does the caption get cut?',
+                        'answer' => 'Around 125 characters, but Instagram varies it slightly by device and '
+                            .'font size, so treat it as a strong guide rather than a hard boundary. Anything '
+                            .'past the fold should be a detail, never the hook.'],
+                    ['question' => 'Can I use this to make a fake account look real?',
+                        'answer' => 'Please do not, and be aware that impersonating a real person or brand '
+                            .'is illegal in most jurisdictions and against Instagram’s terms everywhere.'],
+                ],
+            ],
+
+            [
+                'key' => 'x.reply-generator',
+                'slug' => 'fake-x-reply-generator',
+                'category' => 'media',
+                'name' => 'Fake X Reply Generator',
+                'tagline' => 'Draw a reply on X with the post it is answering, thread line and all.',
+                'description' => 'Renders an exchange on X as a single clean image — the original post, the '
+                    .'thread line, the “Replying to” row and the reply — in all three of X’s themes, with '
+                    .'no browser chrome to crop out.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['x'],
+                'focus_keyword' => 'fake x reply generator',
+                'seo_title' => 'Fake X Reply Generator — Mock Up a Tweet Reply (Free)',
+                'seo_description' => 'Create a realistic X (Twitter) reply image with the original post '
+                    .'above it. Light, Dim and Lights-out themes, desktop and mobile, free download.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Fill in both halves — the original post and the reply — then pick a '
+                        .'theme and a width. The card draws the thread line X draws between them.'),
+                    Blocks::heading('Why the reply, not just the post', 2),
+                    Blocks::paragraph('The single-post screenshot tool already draws one card. A reply is '
+                        .'the more useful picture, because the joke, the correction, the customer-service '
+                        .'exchange and the ratio all only make sense with the parent above them. Cropping '
+                        .'that pair out of a real screenshot — without the sidebar, the compose box and '
+                        .'three unrelated replies — is where the time actually goes.'),
+                    Blocks::heading('The part worth being careful about', 2),
+                    Blocks::paragraph('Both cards are drawn from text you type, and a fabricated '
+                        .'<em>original</em> is the more damaging half of a fake exchange: it puts words in '
+                        .'somebody’s mouth and then shows a reasonable-sounding reply agreeing that they '
+                        .'said it. This is a mock-up tool. It proves nothing.'),
+                    Blocks::callout('warning', 'Neither card carries a verified badge, deliberately. '
+                        .'Presenting a drawn reply as a real exchange between real accounts is '
+                        .'impersonation.'),
+                ]),
+                'example' => [
+                    'input' => ['parent_name' => 'Riverside Bakery', 'parent_handle' => 'riversidebake',
+                        'parent_text' => 'We are closed for two weeks while the oven is replaced.',
+                        'reply_name' => 'Sam', 'reply_handle' => 'samwrites',
+                        'reply_text' => 'Two weeks without your sourdough is a public health issue.',
+                        'device' => 'desktop', 'theme' => 'light', 'parent_timestamp' => '4h',
+                        'reply_timestamp' => '3h', 'replies' => 12, 'reposts' => 34, 'likes' => 890],
+                ],
+                'faq' => [
+                    ['question' => 'Can I add more than one reply?',
+                        'answer' => 'One pair per card. A longer thread is better assembled from several '
+                            .'cards in your layout, where you control the spacing.'],
+                    ['question' => 'Which theme should I use?',
+                        'answer' => 'Whichever matches where the image is going. Light on a white page, '
+                            .'Lights out on a dark slide. Dim is X’s middle theme and reads well on both.'],
+                    ['question' => 'Why is there no verified badge option?',
+                        'answer' => 'Because a badge is the one thing that makes a drawn card claim '
+                            .'authenticity, and there is no legitimate use for a fake one that outweighs '
+                            .'the obvious illegitimate ones.'],
+                    ['question' => 'Does it count characters like X does?',
+                        'answer' => 'It warns you when either post is over 280, which is the free-account '
+                            .'limit. For exact weighted counting — links as a flat 23, CJK as two — use the '
+                            .'Social Media Character Counter.'],
+                ],
+            ],
+
+            [
+                'key' => 'pinterest.pin-generator',
+                'slug' => 'fake-pinterest-pin-generator',
+                'category' => 'media',
+                'name' => 'Fake Pinterest Pin Generator',
+                'tagline' => 'Mock up a Pin card — title, description, source domain and saves.',
+                'description' => 'Draws a Pin the way the closeup draws it, at 2:3, 1:1 or the long 1:2.1 '
+                    .'shape, cutting the title where Pinterest cuts it and showing the source as the bare '
+                    .'domain Pinterest actually displays.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['pinterest'],
+                'focus_keyword' => 'fake pinterest pin generator',
+                'seo_title' => 'Fake Pinterest Pin Generator — Free Pin Mock-Up Maker',
+                'seo_description' => 'Create a Pinterest Pin mock-up with title, description, source domain '
+                    .'and save count. Standard, square and long shapes. Free download, no account.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter the title, description and account, choose a Pin shape, and '
+                        .'download the card. The Pin image is a marked placeholder at the right aspect '
+                        .'ratio.'),
+                    Blocks::heading('Two things this shows that a mock-up in Figma will not', 2),
+                    Blocks::list([
+                        '<strong>Where the title is cut.</strong> Pinterest gives a Pin title around 40 '
+                        .'characters in the closeup. Longer titles are not shortened by Pinterest — they are '
+                        .'truncated, mid-word, wherever they happen to run out.',
+                        '<strong>What the source looks like.</strong> Pinterest shows the bare domain and '
+                        .'nothing else: no path, no page title, no tracking parameters. A carefully built '
+                        .'campaign URL reads as plain “example.com”.',
+                    ]),
+                    Blocks::callout('tip', 'Standard 2:3 is Pinterest’s own recommendation and the shape '
+                        .'that performs. The long 1:2.1 is the tallest Pinterest will show without cropping, '
+                        .'and it dominates a feed — which is a reason to use it sparingly rather than a '
+                        .'reason to use it always.'),
+                    Blocks::callout('warning', 'This draws whatever you type. It is a mock-up, not proof — '
+                        .'do not present a card as a screenshot of a Pin somebody actually published.'),
+                ]),
+                'example' => [
+                    'input' => ['title' => '15 sourdough mistakes to stop making',
+                        'description' => 'Every one of these cost me a loaf before I worked it out.',
+                        'account' => 'Riverside Bakery',
+                        'source_url' => 'https://riversidebakery.example/sourdough-mistakes',
+                        'shape' => 'standard', 'device' => 'desktop', 'theme' => 'light',
+                        'avatar_url' => '', 'saves' => 4200],
+                ],
+                'faq' => [
+                    ['question' => 'Can I put my real Pin image in?',
+                        'answer' => 'Not in the tool. Compose your image behind the card in whatever you '
+                            .'are building — the placeholder sits at Pinterest’s exact aspect ratio, so it '
+                            .'lines up.'],
+                    ['question' => 'How long should a Pin title be?',
+                        'answer' => 'Under 40 characters if you want all of it read in the closeup. '
+                            .'Pinterest allows 100, and the extra 60 are for search rather than for people.'],
+                    ['question' => 'Does the description matter?',
+                        'answer' => 'For search, very much; for the closeup, less than people think — most '
+                            .'of it is behind a tap. Front-load the useful words. The Pin SEO Checker scores '
+                            .'a real one properly.'],
+                ],
+            ],
+
+            [
+                'key' => 'tiktok.comment-generator',
+                'slug' => 'fake-tiktok-comment-generator',
+                'category' => 'media',
+                'name' => 'Fake TikTok Comment Generator',
+                'tagline' => 'Draw a TikTok comment card — Creator chip, pin, hearts and all.',
+                'description' => 'Renders a TikTok comment the way the app draws it, in the dark app theme '
+                    .'or the light web one, with the Creator chip, the pinned marker, the like column and '
+                    .'the reply row — sharp at any size, with no phone frame to crop.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['tiktok'],
+                'focus_keyword' => 'fake tiktok comment generator',
+                'seo_title' => 'Fake TikTok Comment Generator — Free Comment Mock-Up',
+                'seo_description' => 'Create a realistic TikTok comment image with likes, replies, the '
+                    .'Creator chip and the pinned marker. Dark and light themes, free download.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Type the username and the comment, set the counts, and download the '
+                        .'card. Dark is TikTok’s app theme; light is the web comment panel.'),
+                    Blocks::heading('The details other generators get wrong', 2),
+                    Blocks::list([
+                        '<strong>The Creator chip.</strong> TikTok marks the video’s own author with a grey '
+                        .'“Creator” chip after the handle — not a heart, and not in the action row. That is '
+                        .'YouTube’s convention, and using it here is the fastest tell there is.',
+                        '<strong>The age format.</strong> TikTok writes “3h”, never “3 hours ago”. Type it '
+                        .'either way; the card normalises it.',
+                        '<strong>The heart column.</strong> It sits at the right edge with the count under '
+                        .'it, not inline with Reply.',
+                    ]),
+                    Blocks::callout('warning', 'A comment card used as the hook on a video reaches a great '
+                        .'deal further than any correction ever will. Do not put a real person’s handle on '
+                        .'words they did not write.'),
+                ]),
+                'example' => [
+                    'input' => ['username' => 'sam.bakes',
+                        'content' => 'no because the oven reveal actually made me gasp',
+                        'age' => '3h', 'is_creator' => false, 'liked_by_creator' => true, 'pinned' => false,
+                        'device' => 'mobile', 'theme' => 'dark', 'avatar_url' => '', 'likes' => 12400,
+                        'replies' => 48],
+                ],
+                'faq' => [
+                    ['question' => 'Dark or light?',
+                        'answer' => 'Dark, almost always — the TikTok app is dark and that is what people '
+                            .'recognise. The light theme matches the web comment panel, which is what you '
+                            .'want if the card sits on a white page.'],
+                    ['question' => 'Can I add an avatar?',
+                        'answer' => 'The API accepts an image URL. Left blank, the card draws the '
+                            .'username’s initials, which is usually the better choice for a mock-up — an '
+                            .'invented comment attached to a real face is the version that causes trouble.'],
+                    ['question' => 'What does the Creator chip mean?',
+                        'answer' => 'That the comment was left by the account that posted the video. Turn '
+                            .'it on when you are mocking up a creator replying in their own comments.'],
+                    ['question' => 'Is this a screenshot of a real comment?',
+                        'answer' => 'No, and it cannot be. It draws whatever you type, which is exactly why '
+                            .'no card from here should ever be presented as evidence of what somebody said.'],
                 ],
             ],
         ];

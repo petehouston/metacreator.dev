@@ -1117,3 +1117,350 @@ it('tops the list up from the topic when autocomplete has nothing to say', funct
 it('rejects a hashtag topic with nothing to build from', function () {
     runRunner(app(Runners\YouTubeHashtagGeneratorRunner::class), ['topic' => '!!']);
 })->throws(ToolExecutionException::class);
+
+/*
+|--------------------------------------------------------------------------
+| Link tools
+|--------------------------------------------------------------------------
+*/
+
+it('carries a watch-page timestamp onto a youtu.be link in the notation youtu.be reads', function () {
+    $result = runRunner(app(Runners\YouTubeLinkShortenerRunner::class), [
+        // A watch page writes `90s`; youtu.be silently ignores the suffix, which is
+        // the bug this tool exists to stop people shipping.
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90s&si=trackingid',
+    ]);
+
+    expect($result->meta['short_url'])->toBe('https://youtu.be/dQw4w9WgXcQ?t=90')
+        ->and($result->meta['start_seconds'])->toBe(90)
+        ->and($result->meta['removed_parameters'])->toContain('si')
+        ->and(implode(' ', $result->warnings))->toContain('per-share tracking id');
+});
+
+it('drops an auto-generated mix rather than sharing a queue nobody else can open', function () {
+    $result = runRunner(app(Runners\YouTubeLinkShortenerRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ',
+        'keep_playlist' => true,
+    ]);
+
+    expect($result->meta['short_url'])->toBe('https://youtu.be/dQw4w9WgXcQ');
+});
+
+it('builds a first-party short link where one can be derived', function (string $url, string $expected) {
+    $result = runRunner(app(Runners\SocialLinkShortenerRunner::class), ['url' => $url]);
+
+    expect($result->meta['short_url'])->toBe($expected);
+})->with([
+    ['https://www.instagram.com/p/Cxyz1234567/?igshid=abc', 'https://instagr.am/p/Cxyz1234567'],
+    ['https://www.reddit.com/r/bread/comments/1a2b3c/my_first_loaf/', 'https://redd.it/1a2b3c'],
+    ['https://www.dailymotion.com/video/x8abcde', 'https://dai.ly/x8abcde'],
+    ['https://www.youtube.com/shorts/dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ'],
+    // Flickr's base58 alphabet skips 0, O, I and l on purpose.
+    ['https://www.flickr.com/photos/someone/1234567', 'https://flic.kr/p/7jZD'],
+]);
+
+it('says plainly that a platform mints its own short links rather than inventing one', function () {
+    $result = runRunner(app(Runners\SocialLinkShortenerRunner::class), [
+        'url' => 'https://www.tiktok.com/@tiktok/video/7106594312292453675',
+    ]);
+
+    expect($result->meta['short_url'])->toBeNull()
+        ->and($result->summary)->toContain('no short link you can construct')
+        ->and(implode(' ', $result->warnings))->toContain('vm.tiktok.com');
+});
+
+it('strips per-share tracking parameters but keeps a YouTube timestamp', function () {
+    $result = runRunner(app(Runners\SocialLinkShortenerRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42&utm_source=newsletter&fbclid=xyz',
+    ]);
+
+    expect($result->meta['removed_parameters'])->toContain('utm_source')
+        ->and($result->meta['removed_parameters'])->toContain('fbclid')
+        ->and($result->meta['clean_url'])->toContain('t=42');
+});
+
+it('walks a redirect chain one hop at a time and names the destination', function () {
+    // Real, resolvable hosts: the guard checks DNS on every hop before fetching,
+    // so an invented domain is rejected before the fake is ever consulted.
+    Http::fake([
+        'example.com/a' => Http::response('', 301, ['Location' => 'https://www.iana.org/go']),
+        'www.iana.org/go' => Http::response('', 302, ['Location' => 'https://example.net/final?utm_source=x']),
+        'example.net/final*' => Http::response('<html></html>', 200),
+    ]);
+
+    $result = runRunner(app(Runners\LinkExpanderRunner::class), ['url' => 'https://example.com/a']);
+
+    expect($result->meta['hops'])->toBe(2)
+        ->and($result->meta['final_url'])->toBe('https://example.net/final?utm_source=x')
+        ->and($result->meta['clean_url'])->toBe('https://example.net/final')
+        ->and($result->meta['removed_parameters'])->toBe(['utm_source'])
+        ->and($result->data['rows'][0]['status'])->toBe('301');
+});
+
+it('stops a redirect loop instead of following it forever', function () {
+    Http::fake([
+        'example.com/a' => Http::response('', 302, ['Location' => 'https://example.net/b']),
+        'example.net/b' => Http::response('', 302, ['Location' => 'https://example.com/a']),
+    ]);
+
+    $result = runRunner(app(Runners\LinkExpanderRunner::class), ['url' => 'https://example.com/a']);
+
+    expect(implode(' ', $result->warnings))->toContain('loops back on itself');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Hashtags and embeds
+|--------------------------------------------------------------------------
+*/
+
+it('extracts hashtags from pasted text without making a request', function () {
+    Http::fake(); // Any request at all would fail the expectation below.
+
+    $result = runRunner(app(Runners\HashtagExtractorRunner::class), [
+        // Deliberately mixed: a repeat in another case, a non-Latin tag, and a
+        // bare # that is not a tag at all.
+        'source' => 'Morning bake #Sourdough #sourdough #パン # #bread2024',
+    ]);
+
+    $tags = $result->meta['hashtags'];
+
+    expect($tags)->toBe(['#Sourdough', '#パン', '#bread2024'])
+        ->and($result->meta['count'])->toBe(3);
+
+    Http::assertNothingSent();
+});
+
+it('lower-cases hashtags on request, since every platform treats them that way', function () {
+    $result = runRunner(app(Runners\HashtagExtractorRunner::class), [
+        'source' => '#TravelTips #TravelTips', 'lowercase' => true,
+    ]);
+
+    expect($result->meta['hashtags'])->toBe(['#traveltips']);
+});
+
+it('builds the embed each platform documents, and an iframe where one exists', function () {
+    $result = runRunner(app(Runners\SocialEmbedCodeGeneratorRunner::class), [
+        'url' => 'https://www.tiktok.com/@tiktok/video/7106594312292453675?is_from_webapp=1',
+    ]);
+
+    $texts = implode("\n", array_column($result->data['blocks'], 'text'));
+
+    expect($result->meta['platform'])->toBe('tiktok')
+        // The tracking parameter must not be baked into an embed that will sit on
+        // somebody's page for years.
+        ->and($result->meta['clean_url'])->not->toContain('is_from_webapp')
+        ->and($texts)->toContain('class="tiktok-embed"')
+        ->and($texts)->toContain('data-video-id="7106594312292453675"')
+        ->and($texts)->toContain('https://www.tiktok.com/embed/v2/7106594312292453675')
+        ->and($texts)->toContain('View this post on TikTok');
+});
+
+it('digs the activity URN out of a LinkedIn post URL, because the embed path wants it', function () {
+    $result = runRunner(app(Runners\SocialEmbedCodeGeneratorRunner::class), [
+        'url' => 'https://www.linkedin.com/posts/someone_a-post-title-activity-7123456789012345678-abcd',
+    ]);
+
+    expect(implode("\n", array_column($result->data['blocks'], 'text')))
+        ->toContain('urn:li:activity:7123456789012345678');
+});
+
+it('refuses to build an embed for a profile, which is not an embeddable object', function () {
+    expect(fn () => runRunner(app(Runners\SocialEmbedCodeGeneratorRunner::class), [
+        'url' => 'https://x.com/nasa',
+    ]))->toThrow(ToolExecutionException::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Downloaders
+|--------------------------------------------------------------------------
+*/
+
+it('offers every Pinterest rendition by swapping the width directory', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:image" content="https://i.pinimg.com/736x/ab/cd/ef/abcdef.jpg">'
+        .'<meta property="og:title" content="Sourdough mistakes">',
+    )]);
+
+    $result = runRunner(app(Runners\PinterestImageDownloaderRunner::class), [
+        'url' => 'https://www.pinterest.com/pin/99360735500167749/',
+    ]);
+
+    $urls = array_column($result->data['rows'], 'url');
+
+    expect($urls)->toContain('https://i.pinimg.com/236x/ab/cd/ef/abcdef.jpg')
+        // The one the interface never links to, and the reason for the tool.
+        ->and($urls)->toContain('https://i.pinimg.com/originals/ab/cd/ef/abcdef.jpg')
+        ->and($result->meta['original_url'])->toContain('/originals/');
+});
+
+it('returns every slide a carousel publishes, not just the first', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="Three loaves">'
+        .'<meta property="og:image" content="https://cdn.example/1.jpg">'
+        .'<meta property="og:image" content="https://cdn.example/2.jpg">'
+        .'<meta property="og:image" content="https://cdn.example/3.jpg">',
+    )]);
+
+    $result = runRunner(app(Runners\SocialImageDownloaderRunner::class), [
+        'url' => 'https://www.instagram.com/p/Cxyz1234567/',
+    ]);
+
+    expect($result->meta['image_count'])->toBe(3);
+});
+
+it('reports a sign-in wall as a sign-in wall rather than as an empty result', function () {
+    // A 200 carrying a login page is the shape Instagram and Facebook answer with;
+    // "no images found" would be the wrong diagnosis and the wrong advice.
+    Http::fake(['*' => Http::response('<title>Login • Instagram</title>')]);
+
+    expect(fn () => runRunner(app(Runners\InstagramAvatarDownloaderRunner::class), [
+        'username' => '@someone',
+    ]))->toThrow(ToolExecutionException::class, 'sign-in page');
+});
+
+it('rejects an Instagram post link where a profile was asked for', function () {
+    expect(fn () => runRunner(app(Runners\InstagramAvatarDownloaderRunner::class), [
+        'username' => 'https://www.instagram.com/p/Cxyz1234567/',
+    ]))->toThrow(ToolExecutionException::class, 'points at a post');
+});
+
+it('writes subtitles as valid SubRip, trimming the overlap auto-captions ship with', function () {
+    Http::fake([
+        'www.youtube.com/watch*' => Http::response(
+            '<meta property="og:title" content="How to shape a boule">'
+            .'{"captionTracks":[{"baseUrl":"https://www.youtube.com/api/timedtext?v=x","name":'
+            .'{"simpleText":"English"},"languageCode":"en"}],"audioTracks":[]}',
+        ),
+        // Rolling auto-caption timings: cue one is still on screen when cue two starts.
+        'www.youtube.com/api/timedtext*' => Http::response(json_encode(['events' => [
+            ['tStartMs' => 0, 'dDurationMs' => 3000, 'segs' => [['utf8' => 'Start with a cold dough.']]],
+            ['tStartMs' => 1500, 'dDurationMs' => 2500, 'segs' => [['utf8' => 'Then fold it twice.']]],
+        ]])),
+    ]);
+
+    $result = runRunner(app(Runners\YouTubeSubtitleDownloaderRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    ]);
+
+    expect($result->view)->toBe(ResultView::MediaGallery)
+        ->and($result->meta['cue_count'])->toBe(2)
+        ->and($result->meta['auto_generated'])->toBeFalse();
+
+    $srt = base64_decode(explode('base64,', $result->artifacts[0]->url ?? '')[1] ?? '');
+
+    expect($srt)->toStartWith("1\n00:00:00,000 --> 00:00:01,499\nStart with a cold dough.")
+        ->and($srt)->toContain("2\n00:00:01,500 --> 00:00:04,000\nThen fold it twice.");
+
+    // The plain-text version keeps the words and loses the clock.
+    $txt = base64_decode(explode('base64,', $result->artifacts[2]->url ?? '')[1] ?? '');
+
+    expect($txt)->toBe('Start with a cold dough. Then fold it twice.');
+});
+
+it('prefers a human-written caption track over the auto-generated one', function () {
+    Http::fake([
+        'www.youtube.com/watch*' => Http::response(
+            '<meta property="og:title" content="A video">'
+            .'{"captionTracks":[{"baseUrl":"https://www.youtube.com/api/timedtext?v=asr","name":'
+            .'{"simpleText":"English (auto-generated)"},"languageCode":"en","kind":"asr"},'
+            .'{"baseUrl":"https://www.youtube.com/api/timedtext?v=en","name":{"simpleText":"English"},'
+            .'"languageCode":"en"}],"audioTracks":[]}',
+        ),
+        'www.youtube.com/api/timedtext*' => Http::response(json_encode(['events' => [
+            ['tStartMs' => 0, 'dDurationMs' => 1000, 'segs' => [['utf8' => 'Hello.']]],
+        ]])),
+    ]);
+
+    $result = runRunner(app(Runners\YouTubeSubtitleDownloaderRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    ]);
+
+    expect($result->meta['auto_generated'])->toBeFalse()
+        ->and($result->meta['language'])->toBe('en');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Mock-up card generators
+|--------------------------------------------------------------------------
+*/
+
+it('draws a mock-up card and says on every run that it is not evidence', function (string $class, array $input) {
+    $result = runRunner(app($class), $input);
+
+    expect($result->view)->toBe(ResultView::MediaGallery)
+        ->and($result->artifacts)->toHaveCount(1)
+        ->and($result->artifacts[0]->mimeType)->toBe('image/svg+xml');
+
+    $svg = base64_decode(explode('base64,', $result->artifacts[0]->url ?? '')[1] ?? '');
+
+    expect($svg)->toStartWith('<svg xmlns=')
+        ->and($svg)->toEndWith('</svg>')
+        // The single most important property of every one of these tools.
+        ->and(implode(' ', $result->warnings))->toContain('mock-up');
+})->with([
+    'facebook' => [Runners\FacebookPostGeneratorRunner::class,
+        ['name' => 'Riverside Bakery', 'text' => 'Open again from Saturday.', 'reactions' => 1200]],
+    'instagram' => [Runners\InstagramPostGeneratorRunner::class,
+        ['username' => 'riverside.bakery', 'caption' => 'New oven, same sourdough.', 'likes' => 40]],
+    'x reply' => [Runners\XReplyGeneratorRunner::class, [
+        'parent_name' => 'Riverside Bakery', 'parent_handle' => 'riversidebake',
+        'parent_text' => 'Closed for two weeks.', 'reply_name' => 'Sam', 'reply_handle' => 'samwrites',
+        'reply_text' => 'A public health issue.',
+    ]],
+    'pinterest' => [Runners\PinterestPinGeneratorRunner::class,
+        ['title' => '15 sourdough mistakes', 'account' => 'Riverside Bakery', 'saves' => 4200]],
+    'tiktok' => [Runners\TikTokCommentGeneratorRunner::class,
+        ['username' => 'sam.bakes', 'content' => 'the oven reveal', 'likes' => 12400]],
+]);
+
+it('escapes text into the card rather than letting it close the document', function () {
+    $result = runRunner(app(Runners\FacebookPostGeneratorRunner::class), [
+        'name' => 'A & B', 'text' => '</svg><script>alert(1)</script> & more',
+    ]);
+
+    $svg = base64_decode(explode('base64,', $result->artifacts[0]->url ?? '')[1] ?? '');
+
+    expect($svg)->not->toContain('<script>')
+        ->and($svg)->toContain('&amp;')
+        ->and(substr_count($svg, '</svg>'))->toBe(1);
+});
+
+it('greys the half of an Instagram caption the feed hides, rather than dropping it', function () {
+    $caption = str_repeat('a', 120).' THE HOOK THAT GETS CUT';
+
+    $result = runRunner(app(Runners\InstagramPostGeneratorRunner::class), [
+        'username' => 'someone', 'caption' => $caption,
+    ]);
+
+    $svg = base64_decode(explode('base64,', $result->artifacts[0]->url ?? '')[1] ?? '');
+
+    expect($svg)->toContain('class="hidden"')
+        ->and(implode(' ', $result->warnings))->toContain('greyed');
+});
+
+it('normalises a comment age to TikTok’s own shorthand', function (string $typed, string $drawn) {
+    $result = runRunner(app(Runners\TikTokCommentGeneratorRunner::class), [
+        'username' => 'sam', 'content' => 'hi', 'age' => $typed,
+    ]);
+
+    $svg = base64_decode(explode('base64,', $result->artifacts[0]->url ?? '')[1] ?? '');
+
+    expect($svg)->toContain($drawn);
+})->with([
+    // "3 hours ago" under a TikTok comment is the fastest tell there is.
+    ['3 hours ago', '3h'],
+    ['2 days', '2d'],
+    ['5m', '5m'],
+]);
+
+it('warns when a drawn X post is longer than a free account could have sent', function () {
+    $result = runRunner(app(Runners\XReplyGeneratorRunner::class), [
+        'parent_name' => 'A', 'parent_handle' => 'a', 'parent_text' => 'short',
+        'reply_name' => 'B', 'reply_handle' => 'b', 'reply_text' => str_repeat('x', 300),
+    ]);
+
+    expect(implode(' ', $result->warnings))->toContain('subscribed account');
+});

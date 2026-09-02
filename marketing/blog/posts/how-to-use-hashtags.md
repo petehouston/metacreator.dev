@@ -129,6 +129,16 @@ The exception is a genuine community marker that signals belonging to a visitor.
 is a positioning decision rather than a discovery one, and it belongs in
 [bio copy](/blog/instagram-bio-ideas) rather than in a hashtag strategy.
 
+## Reading somebody else's hashtag set
+
+The fastest way to understand a tag strategy is to look at one that is working. Pulling
+the tags off a competitor's post takes seconds — [how to find the hashtags on a
+post](/blog/find-hashtags-on-a-post) covers the mechanics, including the platforms that
+answer with a sign-in wall and what to do instead.
+
+Read the set for its shape rather than copying it. Their tags were chosen for their
+audience size, and a set built around ten-million-post tags will bury a small account.
+
 ## When hashtags stop working
 
 A tag can be broken, restricted or simply dead, and none of that is announced. If posts

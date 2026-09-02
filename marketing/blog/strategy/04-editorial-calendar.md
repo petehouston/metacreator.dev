@@ -22,6 +22,7 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | 4 | Month 4 | 13 | 11,500 | Engagement rate & benchmarks, Instagram formats & profile, TikTok payouts & formatting, X & Threads posting |
 | 5 | Month 5 | 16 | 14,300 | LinkedIn, Facebook & link previews, Pinterest SEO, TikTok payouts & formatting, Writing, scripts & planning, X & Threads posting |
 | 6 | Month 6 | 14 | 12,200 | Handles, links & housekeeping, LinkedIn, Facebook & link previews, Pinterest SEO, Writing, scripts & planning |
+| 7 | Month 7 | 13 | 13,700 | Hashtags & discovery, LinkedIn, Facebook & link previews, Pinterest SEO, Post mock-ups & screenshots, Short links, redirects & embeds |
 
 
 ## Wave 1 - Month 1
@@ -245,3 +246,43 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | --- | --- | --- | --- | --- | --- |
 | `PN-05` | [Facebook Link Preview Not Updating: Clearing the Cache](/blog/facebook-link-preview-not-updating) | facebook link preview not updating | troubleshooting | 800 | `link-preview-debugger`, `facebook-post-preview` |
 | `PN-06` | [Open Graph Tags, in the Order Platforms Read Them](/blog/open-graph-tags) | open graph tags | explainer | 950 | `link-preview-debugger` |
+
+## Wave 7 - Month 7
+
+### Hashtags & discovery
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `HT-06` | [How to Find the Hashtags on a Post](/blog/find-hashtags-on-a-post) | find hashtags on a post | howto | 1000 | `hashtag-extractor`, `youtube-tag-extractor`, `hashtag-generator` |
+
+### Short links, redirects & embeds
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `LK-01` | [Social Media Links: Shorten, Expand and Track Them Properly](/blog/social-media-links) **(pillar)** | social media links | pillar | 1500 | `social-media-link-shortener`, `link-expander`, `youtube-link-shortener` |
+| `LK-02` | [How to Shorten a YouTube Link](/blog/shorten-a-youtube-link) | shorten youtube link | howto | 900 | `youtube-link-shortener`, `youtube-timestamp-link-builder` |
+| `LK-03` | [Which Social Platforms Have Their Own Short Link Domain](/blog/social-media-short-links) | social media short links | explainer | 1100 | `social-media-link-shortener`, `link-expander` |
+| `LK-04` | [How to Expand a Short URL and See Where It Goes](/blog/expand-a-short-url) | expand short url | howto | 1000 | `link-expander`, `link-preview-debugger` |
+| `LK-05` | [How to Embed a Social Media Post on Your Website](/blog/embed-a-social-media-post) | embed social media post | howto | 1300 | `social-media-embed-code-generator`, `youtube-embed-code-generator` |
+| `LK-06` | [How to Get an Instagram Embed Code](/blog/instagram-embed-code) | instagram embed code | howto | 900 | `social-media-embed-code-generator` |
+
+### Post mock-ups & screenshots
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `MU-01` | [Fake Social Media Post Generators: What They Are For](/blog/fake-social-media-post-generator) **(pillar)** | fake social media post generator | pillar | 1400 | `fake-facebook-post-generator`, `fake-instagram-post-generator`, `fake-x-reply-generator` |
+| `MU-02` | [How to Make a Fake Facebook Post for a Mock-Up](/blog/fake-facebook-post) | fake facebook post | howto | 900 | `fake-facebook-post-generator`, `facebook-post-preview` |
+| `MU-03` | [How to Make a Fake Instagram Post for a Mock-Up](/blog/fake-instagram-post) | fake instagram post | howto | 900 | `fake-instagram-post-generator`, `instagram-bio-preview` |
+| `MU-04` | [How to Make a Fake TikTok Comment Image](/blog/fake-tiktok-comment) | fake tiktok comment | howto | 900 | `fake-tiktok-comment-generator`, `fake-youtube-comment-generator` |
+
+### Pinterest SEO
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `PI-05` | [How to Download a Pinterest Image in Full Size](/blog/download-pinterest-image) | download pinterest image | howto | 900 | `pinterest-image-downloader`, `social-media-image-downloader` |
+
+### LinkedIn, Facebook & link previews
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `PN-07` | [Why Your Link Preview Looks Different on Mobile](/blog/link-preview-mobile-vs-desktop) | link preview mobile | troubleshooting | 1000 | `link-preview-debugger`, `social-media-character-counter` |

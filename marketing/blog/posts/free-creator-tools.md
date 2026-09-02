@@ -89,6 +89,34 @@ Every network's rules at once, with an honest **check manually** where a platfor
 automated requests. See
 [username availability](/blog/username-availability).
 
+## Handling links
+
+[[tool:link-expander]]
+
+Three jobs that keep coming up and have nothing to do with writing. Expanding a short
+link before you click it, or to find the hop where your campaign parameters are being
+dropped. Building a **first-party** short link — `youtu.be`, `redd.it`, `instagr.am` —
+rather than routing through a service that can disappear. And getting the embed code a
+platform publishes but hides, which is most of them.
+
+[Social media links](/blog/social-media-links) covers all three, including which
+platforms have a short domain you can build and which only issue one from their own
+share sheet.
+
+## Mocking something up
+
+[[tool:fake-instagram-post-generator]]
+
+Six generators draw a platform's post or comment card from typed text, for a slide, a
+client mock-up or a teaching example. They are mock-up tools rather than evidence
+tools, they draw no verification badge, and they composite no real photograph — the
+reasoning is in [what these generators are
+for](/blog/fake-social-media-post-generator).
+
+The Instagram one earns its place for a second reason: it cuts the caption exactly where
+the feed cuts it, so you can see which sentence disappears behind "more" before you
+publish it.
+
 ## Where free is genuinely enough
 
 For everything above, yes. These are computations over your own inputs — resizing, counting

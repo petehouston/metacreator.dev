@@ -1,5 +1,25 @@
 [
  {
+  "slug": "youtube-search-suggestions",
+  "name": "YouTube Search Suggestions",
+  "tagline": "Real searches, straight from YouTube\u2019s own search box \u2014 no volumes invented.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "youtube-thumbnail-downloader",
+  "name": "YouTube Thumbnail Downloader",
+  "tagline": "Grab every thumbnail size from any YouTube video in one click.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "media"
+ },
+ {
   "slug": "engagement-rate-calculator",
   "name": "Engagement Rate Calculator",
   "tagline": "Work out your engagement rate \u2014 and whether it is actually any good.",
@@ -15,19 +35,49 @@
   "category": "analytics"
  },
  {
-  "slug": "tiktok-money-calculator",
-  "name": "TikTok Money Calculator",
-  "tagline": "What Creator Rewards really pays \u2014 and what a brand deal is worth instead.",
+  "slug": "social-media-character-counter",
+  "name": "Social Media Character Counter",
+  "tagline": "One box, every platform\u2019s limit, and exactly where each one cuts you off.",
   "tier": "free",
   "platforms": [
-   "tiktok"
+   "x",
+   "instagram",
+   "tiktok",
+   "youtube",
+   "linkedin",
+   "facebook"
   ],
-  "category": "analytics"
+  "category": "content"
  },
  {
-  "slug": "youtube-channel-monetization-checker",
-  "name": "YouTube Channel Monetization Checker",
-  "tagline": "Is that channel monetized? Read from its own public page, not guessed.",
+  "slug": "headline-analyzer",
+  "name": "Headline & Title Analyzer",
+  "tagline": "Score a title, and get the specific edits that would improve it.",
+  "tier": "free",
+  "platforms": [
+   "youtube",
+   "instagram",
+   "tiktok",
+   "linkedin"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "fancy-text-generator",
+  "name": "Fancy Text Generator",
+  "tagline": "Bold, italic and script text that survives being pasted into a bio.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "x"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "youtube-money-calculator",
+  "name": "YouTube Money Calculator",
+  "tagline": "Ad revenue by niche and geography \u2014 and what a sponsor would pay for the same views.",
   "tier": "free",
   "platforms": [
    "youtube"
@@ -35,9 +85,73 @@
   "category": "analytics"
  },
  {
-  "slug": "youtube-money-calculator",
-  "name": "YouTube Money Calculator",
-  "tagline": "Ad revenue by niche and geography \u2014 and what a sponsor would pay for the same views.",
+  "slug": "link-preview-debugger",
+  "name": "Link Preview Debugger",
+  "tagline": "What X, Facebook and LinkedIn will show when you share your link.",
+  "tier": "free",
+  "platforms": [
+   "x",
+   "facebook",
+   "linkedin"
+  ],
+  "category": "previews"
+ },
+ {
+  "slug": "social-image-resizer",
+  "name": "Social Image Resizer",
+  "tagline": "One image, cropped to every size the networks actually use.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "facebook",
+   "x",
+   "linkedin",
+   "youtube",
+   "pinterest",
+   "tiktok"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "carousel-splitter",
+  "name": "Carousel Splitter",
+  "tagline": "One wide image, sliced into panels that line up when you swipe.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "linkedin"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "username-availability-checker",
+  "name": "Username Availability Checker",
+  "tagline": "One handle, checked against every network\u2019s rules at once.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "x",
+   "youtube",
+   "pinterest",
+   "threads"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "youtube-metadata-viewer",
+  "name": "YouTube Metadata Viewer",
+  "tagline": "Every field a YouTube video declares about itself, in one table.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "youtube-shadowban-detector",
+  "name": "YouTube Shadowban Detector",
+  "tagline": "Find out whether a setting is suppressing your video \u2014 or whether it just underperformed.",
   "tier": "free",
   "platforms": [
    "youtube"
@@ -55,14 +169,95 @@
   "category": "analytics"
  },
  {
-  "slug": "youtube-shadowban-detector",
-  "name": "YouTube Shadowban Detector",
-  "tagline": "Find out whether a setting is suppressing your video \u2014 or whether it just underperformed.",
+  "slug": "youtube-channel-monetization-checker",
+  "name": "YouTube Channel Monetization Checker",
+  "tagline": "Is that channel monetized? Read from its own public page, not guessed.",
   "tier": "free",
   "platforms": [
    "youtube"
   ],
   "category": "analytics"
+ },
+ {
+  "slug": "x-thread-splitter",
+  "name": "X Thread Splitter",
+  "tagline": "Turn long writing into a thread that breaks in the right places.",
+  "tier": "free",
+  "platforms": [
+   "x"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "hashtag-generator",
+  "name": "Hashtag Generator",
+  "tagline": "Balanced hashtag sets \u2014 mostly niche, where a small account can actually rank.",
+  "tier": "account",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube",
+   "x",
+   "linkedin"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "utm-link-builder",
+  "name": "UTM Link Builder",
+  "tagline": "Consistent campaign links, so your analytics stay readable.",
+  "tier": "free",
+  "platforms": [],
+  "category": "utility"
+ },
+ {
+  "slug": "giveaway-winner-picker",
+  "name": "Giveaway Winner Picker",
+  "tagline": "Draw winners your entrants can verify for themselves.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "x",
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "word-counter",
+  "name": "Word & Character Counter",
+  "tagline": "Words, characters, and how long it takes to read or say out loud.",
+  "tier": "free",
+  "platforms": [],
+  "category": "content"
+ },
+ {
+  "slug": "text-case-converter",
+  "name": "Text Case Converter",
+  "tagline": "Eleven casings at once, each one a click away from your clipboard.",
+  "tier": "free",
+  "platforms": [],
+  "category": "content"
+ },
+ {
+  "slug": "readability-checker",
+  "name": "Readability Checker",
+  "tagline": "Flesch scores, plus the exact sentences making your writing hard work.",
+  "tier": "free",
+  "platforms": [],
+  "category": "content"
+ },
+ {
+  "slug": "script-timer",
+  "name": "Script Timer",
+  "tagline": "How long your script runs, at every pace you might deliver it.",
+  "tier": "free",
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "category": "content"
  },
  {
   "slug": "cta-generator",
@@ -91,291 +286,14 @@
   "category": "content"
  },
  {
-  "slug": "facebook-ad-text-counter",
-  "name": "Facebook Ad Text Counter",
-  "tagline": "Primary text, headline and description \u2014 checked against what actually displays.",
+  "slug": "linkedin-post-preview",
+  "name": "LinkedIn Post Preview",
+  "tagline": "See exactly where \u201c\u2026see more\u201d cuts your post.",
   "tier": "free",
   "platforms": [
-   "facebook",
-   "instagram"
-  ],
-  "category": "content"
- },
- {
-  "slug": "fancy-text-generator",
-  "name": "Fancy Text Generator",
-  "tagline": "Bold, italic and script text that survives being pasted into a bio.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "x"
-  ],
-  "category": "content"
- },
- {
-  "slug": "hashtag-generator",
-  "name": "Hashtag Generator",
-  "tagline": "Balanced hashtag sets \u2014 mostly niche, where a small account can actually rank.",
-  "tier": "account",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube",
-   "x",
    "linkedin"
   ],
-  "category": "content"
- },
- {
-  "slug": "headline-analyzer",
-  "name": "Headline & Title Analyzer",
-  "tagline": "Score a title, and get the specific edits that would improve it.",
-  "tier": "free",
-  "platforms": [
-   "youtube",
-   "instagram",
-   "tiktok",
-   "linkedin"
-  ],
-  "category": "content"
- },
- {
-  "slug": "readability-checker",
-  "name": "Readability Checker",
-  "tagline": "Flesch scores, plus the exact sentences making your writing hard work.",
-  "tier": "free",
-  "platforms": [],
-  "category": "content"
- },
- {
-  "slug": "script-timer",
-  "name": "Script Timer",
-  "tagline": "How long your script runs, at every pace you might deliver it.",
-  "tier": "free",
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "category": "content"
- },
- {
-  "slug": "social-media-character-counter",
-  "name": "Social Media Character Counter",
-  "tagline": "One box, every platform\u2019s limit, and exactly where each one cuts you off.",
-  "tier": "free",
-  "platforms": [
-   "x",
-   "instagram",
-   "tiktok",
-   "youtube",
-   "linkedin",
-   "facebook"
-  ],
-  "category": "content"
- },
- {
-  "slug": "text-case-converter",
-  "name": "Text Case Converter",
-  "tagline": "Eleven casings at once, each one a click away from your clipboard.",
-  "tier": "free",
-  "platforms": [],
-  "category": "content"
- },
- {
-  "slug": "word-counter",
-  "name": "Word & Character Counter",
-  "tagline": "Words, characters, and how long it takes to read or say out loud.",
-  "tier": "free",
-  "platforms": [],
-  "category": "content"
- },
- {
-  "slug": "x-thread-splitter",
-  "name": "X Thread Splitter",
-  "tagline": "Turn long writing into a thread that breaks in the right places.",
-  "tier": "free",
-  "platforms": [
-   "x"
-  ],
-  "category": "content"
- },
- {
-  "slug": "youtube-channel-description-generator",
-  "name": "YouTube Channel Description Generator",
-  "tagline": "An About section that is front-loaded, searchable and finished in a minute.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "content"
- },
- {
-  "slug": "youtube-content-calendar",
-  "name": "YouTube Content Calendar",
-  "tagline": "A publishing schedule that spaces uploads instead of clustering them.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "content"
- },
- {
-  "slug": "youtube-hashtag-generator",
-  "name": "YouTube Hashtag Generator",
-  "tagline": "Twenty-five tags built from what YouTube\u2019s own search box completes.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "content"
- },
- {
-  "slug": "youtube-search-suggestions",
-  "name": "YouTube Search Suggestions",
-  "tagline": "Real searches, straight from YouTube\u2019s own search box \u2014 no volumes invented.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "content"
- },
- {
-  "slug": "carousel-splitter",
-  "name": "Carousel Splitter",
-  "tagline": "One wide image, sliced into panels that line up when you swipe.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "linkedin"
-  ],
-  "category": "media"
- },
- {
-  "slug": "color-palette-extractor",
-  "name": "Color Palette Extractor",
-  "tagline": "The colours already in your work, as hex you can paste.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "pinterest",
-   "youtube"
-  ],
-  "category": "media"
- },
- {
-  "slug": "fake-youtube-comment-generator",
-  "name": "Fake YouTube Comment Generator",
-  "tagline": "A YouTube comment card, drawn instead of screenshotted \u2014 light or dark.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "media"
- },
- {
-  "slug": "image-compressor",
-  "name": "Image Compressor",
-  "tagline": "See the saving and the damage side by side, then pick.",
-  "tier": "free",
-  "platforms": [],
-  "category": "media"
- },
- {
-  "slug": "image-format-converter",
-  "name": "Image Format Converter",
-  "tagline": "PNG, JPEG, WebP and GIF \u2014 with the transparency trap called out.",
-  "tier": "free",
-  "platforms": [],
-  "category": "media"
- },
- {
-  "slug": "pin-image-sizer",
-  "name": "Pin Image Sizer",
-  "tagline": "One image at the three shapes Pinterest distributes.",
-  "tier": "free",
-  "platforms": [
-   "pinterest"
-  ],
-  "category": "media"
- },
- {
-  "slug": "qr-code-generator",
-  "name": "QR Code Generator",
-  "tagline": "Your colours, and an error-correction level that survives being printed.",
-  "tier": "free",
-  "platforms": [],
-  "category": "media"
- },
- {
-  "slug": "reels-cover-cropper",
-  "name": "Reels Cover Cropper",
-  "tagline": "One cover that works on the Reels tab and on your grid.",
-  "tier": "free",
-  "platforms": [
-   "instagram"
-  ],
-  "category": "media"
- },
- {
-  "slug": "social-image-resizer",
-  "name": "Social Image Resizer",
-  "tagline": "One image, cropped to every size the networks actually use.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "facebook",
-   "x",
-   "linkedin",
-   "youtube",
-   "pinterest",
-   "tiktok"
-  ],
-  "category": "media"
- },
- {
-  "slug": "story-templates-sizer",
-  "name": "Story Safe-Zone Sizer",
-  "tagline": "A 1080 \u00d7 1920 export, plus proof of what the app covers.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "facebook",
-   "tiktok",
-   "youtube"
-  ],
-  "category": "media"
- },
- {
-  "slug": "tweet-screenshot-generator",
-  "name": "Post Screenshot Generator",
-  "tagline": "A clean card of a post, drawn instead of screenshotted.",
-  "tier": "free",
-  "platforms": [
-   "x"
-  ],
-  "category": "media"
- },
- {
-  "slug": "youtube-image-downloader",
-  "name": "YouTube Image Downloader",
-  "tagline": "Channel avatars, banners and the auto-generated frames \u2014 every image YouTube publishes.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "media"
- },
- {
-  "slug": "youtube-thumbnail-downloader",
-  "name": "YouTube Thumbnail Downloader",
-  "tagline": "Grab every thumbnail size from any YouTube video in one click.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "media"
+  "category": "previews"
  },
  {
   "slug": "facebook-post-preview",
@@ -388,6 +306,17 @@
   "category": "previews"
  },
  {
+  "slug": "facebook-ad-text-counter",
+  "name": "Facebook Ad Text Counter",
+  "tagline": "Primary text, headline and description \u2014 checked against what actually displays.",
+  "tier": "free",
+  "platforms": [
+   "facebook",
+   "instagram"
+  ],
+  "category": "content"
+ },
+ {
   "slug": "instagram-bio-preview",
   "name": "Instagram Bio Preview",
   "tagline": "What your bio really looks like in the app \u2014 including what gets clipped.",
@@ -398,24 +327,118 @@
   "category": "previews"
  },
  {
-  "slug": "link-preview-debugger",
-  "name": "Link Preview Debugger",
-  "tagline": "What X, Facebook and LinkedIn will show when you share your link.",
+  "slug": "youtube-timestamp-link-builder",
+  "name": "YouTube Timestamp Link Builder",
+  "tagline": "Deep links to exact moments, plus a chapter block that actually works.",
   "tier": "free",
   "platforms": [
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "youtube-tag-extractor",
+  "name": "YouTube Tag Extractor",
+  "tagline": "See the tags on any public video, read from the page itself.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "youtube-channel-id-finder",
+  "name": "YouTube Channel ID Finder",
+  "tagline": "Handle in, UC\u2026 channel ID out \u2014 plus the RSS feed nobody can find.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "tiktok-money-calculator",
+  "name": "TikTok Money Calculator",
+  "tagline": "What Creator Rewards really pays \u2014 and what a brand deal is worth instead.",
+  "tier": "free",
+  "platforms": [
+   "tiktok"
+  ],
+  "category": "analytics"
+ },
+ {
+  "slug": "aspect-ratio-calculator",
+  "name": "Aspect Ratio Calculator",
+  "tagline": "Resize without squashing, and see which platform slot the result fits.",
+  "tier": "free",
+  "platforms": [],
+  "category": "utility"
+ },
+ {
+  "slug": "posting-timezone-converter",
+  "name": "Posting Timezone Converter",
+  "tagline": "One posting time, shown in every market your audience lives in.",
+  "tier": "free",
+  "platforms": [],
+  "category": "utility"
+ },
+ {
+  "slug": "handle-strength-checker",
+  "name": "Handle Strength Checker",
+  "tagline": "Will this username survive being said out loud and typed from memory?",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "tiktok",
    "x",
-   "facebook",
+   "youtube",
    "linkedin"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "follower-milestone-countdown",
+  "name": "Follower Milestone Countdown",
+  "tagline": "When you hit 10k, 100k and the rest \u2014 at your current pace.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube",
+   "x"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "safe-zone-guide",
+  "name": "Safe Zone Guide",
+  "tagline": "Where each app\u2019s buttons will cover your frame, in pixels.",
+  "tier": "free",
+  "platforms": [
+   "tiktok",
+   "instagram",
+   "youtube",
+   "facebook"
   ],
   "category": "previews"
  },
  {
-  "slug": "linkedin-post-preview",
-  "name": "LinkedIn Post Preview",
-  "tagline": "See exactly where \u201c\u2026see more\u201d cuts your post.",
+  "slug": "threads-post-preview",
+  "name": "Threads Post Preview",
+  "tagline": "Your Threads post as the feed draws it, collapse and all.",
   "tier": "free",
   "platforms": [
-   "linkedin"
+   "threads"
+  ],
+  "category": "previews"
+ },
+ {
+  "slug": "threads-bio-preview",
+  "name": "Threads Bio Preview",
+  "tagline": "Your Threads profile as someone sees it after one reply.",
+  "tier": "free",
+  "platforms": [
+   "threads"
   ],
   "category": "previews"
  },
@@ -440,6 +463,85 @@
   "category": "previews"
  },
  {
+  "slug": "image-compressor",
+  "name": "Image Compressor",
+  "tagline": "See the saving and the damage side by side, then pick.",
+  "tier": "free",
+  "platforms": [],
+  "category": "media"
+ },
+ {
+  "slug": "image-format-converter",
+  "name": "Image Format Converter",
+  "tagline": "PNG, JPEG, WebP and GIF \u2014 with the transparency trap called out.",
+  "tier": "free",
+  "platforms": [],
+  "category": "media"
+ },
+ {
+  "slug": "color-palette-extractor",
+  "name": "Color Palette Extractor",
+  "tagline": "The colours already in your work, as hex you can paste.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "pinterest",
+   "youtube"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "reels-cover-cropper",
+  "name": "Reels Cover Cropper",
+  "tagline": "One cover that works on the Reels tab and on your grid.",
+  "tier": "free",
+  "platforms": [
+   "instagram"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "story-templates-sizer",
+  "name": "Story Safe-Zone Sizer",
+  "tagline": "A 1080 \u00d7 1920 export, plus proof of what the app covers.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "facebook",
+   "tiktok",
+   "youtube"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "pin-image-sizer",
+  "name": "Pin Image Sizer",
+  "tagline": "One image at the three shapes Pinterest distributes.",
+  "tier": "free",
+  "platforms": [
+   "pinterest"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "tweet-screenshot-generator",
+  "name": "Post Screenshot Generator",
+  "tagline": "A clean card of a post, drawn instead of screenshotted.",
+  "tier": "free",
+  "platforms": [
+   "x"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "qr-code-generator",
+  "name": "QR Code Generator",
+  "tagline": "Your colours, and an error-correction level that survives being printed.",
+  "tier": "free",
+  "platforms": [],
+  "category": "media"
+ },
+ {
   "slug": "rich-pin-validator",
   "name": "Rich Pin Validator",
   "tagline": "Which tags your page is missing, not just whether it failed.",
@@ -450,121 +552,19 @@
   "category": "previews"
  },
  {
-  "slug": "safe-zone-guide",
-  "name": "Safe Zone Guide",
-  "tagline": "Where each app\u2019s buttons will cover your frame, in pixels.",
+  "slug": "youtube-image-downloader",
+  "name": "YouTube Image Downloader",
+  "tagline": "Channel avatars, banners and the auto-generated frames \u2014 every image YouTube publishes.",
   "tier": "free",
   "platforms": [
-   "tiktok",
-   "instagram",
-   "youtube",
-   "facebook"
-  ],
-  "category": "previews"
- },
- {
-  "slug": "threads-bio-preview",
-  "name": "Threads Bio Preview",
-  "tagline": "Your Threads profile as someone sees it after one reply.",
-  "tier": "free",
-  "platforms": [
-   "threads"
-  ],
-  "category": "previews"
- },
- {
-  "slug": "threads-post-preview",
-  "name": "Threads Post Preview",
-  "tagline": "Your Threads post as the feed draws it, collapse and all.",
-  "tier": "free",
-  "platforms": [
-   "threads"
-  ],
-  "category": "previews"
- },
- {
-  "slug": "aspect-ratio-calculator",
-  "name": "Aspect Ratio Calculator",
-  "tagline": "Resize without squashing, and see which platform slot the result fits.",
-  "tier": "free",
-  "platforms": [],
-  "category": "utility"
- },
- {
-  "slug": "follower-milestone-countdown",
-  "name": "Follower Milestone Countdown",
-  "tagline": "When you hit 10k, 100k and the rest \u2014 at your current pace.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube",
-   "x"
-  ],
-  "category": "utility"
- },
- {
-  "slug": "giveaway-winner-picker",
-  "name": "Giveaway Winner Picker",
-  "tagline": "Draw winners your entrants can verify for themselves.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "x",
    "youtube"
   ],
-  "category": "utility"
+  "category": "media"
  },
  {
-  "slug": "handle-strength-checker",
-  "name": "Handle Strength Checker",
-  "tagline": "Will this username survive being said out loud and typed from memory?",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "x",
-   "youtube",
-   "linkedin"
-  ],
-  "category": "utility"
- },
- {
-  "slug": "posting-timezone-converter",
-  "name": "Posting Timezone Converter",
-  "tagline": "One posting time, shown in every market your audience lives in.",
-  "tier": "free",
-  "platforms": [],
-  "category": "utility"
- },
- {
-  "slug": "username-availability-checker",
-  "name": "Username Availability Checker",
-  "tagline": "One handle, checked against every network\u2019s rules at once.",
-  "tier": "free",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "x",
-   "youtube",
-   "pinterest",
-   "threads"
-  ],
-  "category": "utility"
- },
- {
-  "slug": "utm-link-builder",
-  "name": "UTM Link Builder",
-  "tagline": "Consistent campaign links, so your analytics stay readable.",
-  "tier": "free",
-  "platforms": [],
-  "category": "utility"
- },
- {
-  "slug": "youtube-channel-id-finder",
-  "name": "YouTube Channel ID Finder",
-  "tagline": "Handle in, UC\u2026 channel ID out \u2014 plus the RSS feed nobody can find.",
+  "slug": "youtube-subscribe-link-generator",
+  "name": "YouTube Subscribe Link Generator",
+  "tagline": "A link that opens the subscribe prompt instead of your channel page.",
   "tier": "free",
   "platforms": [
    "youtube"
@@ -572,14 +572,34 @@
   "category": "utility"
  },
  {
-  "slug": "youtube-citation-generator",
-  "name": "YouTube Citation Generator",
-  "tagline": "APA, MLA, Chicago, Harvard and BibTeX, from the video\u2019s own metadata.",
+  "slug": "youtube-channel-description-generator",
+  "name": "YouTube Channel Description Generator",
+  "tagline": "An About section that is front-loaded, searchable and finished in a minute.",
   "tier": "free",
   "platforms": [
    "youtube"
   ],
-  "category": "utility"
+  "category": "content"
+ },
+ {
+  "slug": "youtube-content-calendar",
+  "name": "YouTube Content Calendar",
+  "tagline": "A publishing schedule that spaces uploads instead of clustering them.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "fake-youtube-comment-generator",
+  "name": "Fake YouTube Comment Generator",
+  "tagline": "A YouTube comment card, drawn instead of screenshotted \u2014 light or dark.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "media"
  },
  {
   "slug": "youtube-comment-finder",
@@ -602,26 +622,6 @@
   "category": "utility"
  },
  {
-  "slug": "youtube-handle-availability-checker",
-  "name": "YouTube Handle Availability Checker",
-  "tagline": "A definite yes or no \u2014 YouTube is one of the few platforms that will tell you.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "utility"
- },
- {
-  "slug": "youtube-metadata-viewer",
-  "name": "YouTube Metadata Viewer",
-  "tagline": "Every field a YouTube video declares about itself, in one table.",
-  "tier": "free",
-  "platforms": [
-   "youtube"
-  ],
-  "category": "utility"
- },
- {
   "slug": "youtube-rss-feed-generator",
   "name": "YouTube RSS Feed Generator",
   "tagline": "The feed YouTube publishes for every channel, and links to from nowhere.",
@@ -632,9 +632,19 @@
   "category": "utility"
  },
  {
-  "slug": "youtube-subscribe-link-generator",
-  "name": "YouTube Subscribe Link Generator",
-  "tagline": "A link that opens the subscribe prompt instead of your channel page.",
+  "slug": "youtube-hashtag-generator",
+  "name": "YouTube Hashtag Generator",
+  "tagline": "Twenty-five tags built from what YouTube\u2019s own search box completes.",
+  "tier": "free",
+  "platforms": [
+   "youtube"
+  ],
+  "category": "content"
+ },
+ {
+  "slug": "youtube-handle-availability-checker",
+  "name": "YouTube Handle Availability Checker",
+  "tagline": "A definite yes or no \u2014 YouTube is one of the few platforms that will tell you.",
   "tier": "free",
   "platforms": [
    "youtube"
@@ -642,9 +652,9 @@
   "category": "utility"
  },
  {
-  "slug": "youtube-tag-extractor",
-  "name": "YouTube Tag Extractor",
-  "tagline": "See the tags on any public video, read from the page itself.",
+  "slug": "youtube-citation-generator",
+  "name": "YouTube Citation Generator",
+  "tagline": "APA, MLA, Chicago, Harvard and BibTeX, from the video\u2019s own metadata.",
   "tier": "free",
   "platforms": [
    "youtube"
@@ -652,13 +662,143 @@
   "category": "utility"
  },
  {
-  "slug": "youtube-timestamp-link-builder",
-  "name": "YouTube Timestamp Link Builder",
-  "tagline": "Deep links to exact moments, plus a chapter block that actually works.",
+  "slug": "youtube-link-shortener",
+  "name": "YouTube Link Shortener",
+  "tagline": "Turn any YouTube link into a clean youtu.be one, timestamp intact.",
   "tier": "free",
   "platforms": [
    "youtube"
   ],
   "category": "utility"
+ },
+ {
+  "slug": "social-media-link-shortener",
+  "name": "Social Media Link Shortener",
+  "tagline": "The platform\u2019s own short link, where one exists \u2014 and a straight answer where it does not.",
+  "tier": "free",
+  "platforms": [
+   "youtube",
+   "instagram",
+   "x",
+   "facebook",
+   "linkedin",
+   "pinterest",
+   "tiktok"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "link-expander",
+  "name": "Link Expander",
+  "tagline": "See where a short link really goes \u2014 every hop, before you click.",
+  "tier": "free",
+  "platforms": [],
+  "category": "utility"
+ },
+ {
+  "slug": "hashtag-extractor",
+  "name": "Hashtag Extractor",
+  "tagline": "Pull every hashtag off a post \u2014 from its link, or from the caption itself.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "youtube",
+   "tiktok",
+   "x",
+   "linkedin",
+   "threads",
+   "pinterest"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "social-media-embed-code-generator",
+  "name": "Social Media Embed Code Generator",
+  "tagline": "Official embed code for a post from any platform, from its URL alone.",
+  "tier": "free",
+  "platforms": [
+   "x",
+   "instagram",
+   "tiktok",
+   "facebook",
+   "linkedin",
+   "pinterest",
+   "youtube"
+  ],
+  "category": "utility"
+ },
+ {
+  "slug": "social-media-image-downloader",
+  "name": "Social Media Image Downloader",
+  "tagline": "The full-size image behind a post, not the one the feed shrank.",
+  "tier": "free",
+  "platforms": [
+   "instagram",
+   "pinterest",
+   "facebook",
+   "x",
+   "threads"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "pinterest-image-downloader",
+  "name": "Pinterest Image Downloader",
+  "tagline": "Every size of a Pin, including the original Pinterest never shows you.",
+  "tier": "free",
+  "platforms": [
+   "pinterest"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "fake-facebook-post-generator",
+  "name": "Fake Facebook Post Generator",
+  "tagline": "Draw a Facebook post card for a mock-up, with no screenshot to crop.",
+  "tier": "free",
+  "platforms": [
+   "facebook"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "fake-instagram-post-generator",
+  "name": "Fake Instagram Post Generator",
+  "tagline": "Mock up an Instagram post, caption fold and all.",
+  "tier": "free",
+  "platforms": [
+   "instagram"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "fake-x-reply-generator",
+  "name": "Fake X Reply Generator",
+  "tagline": "Draw a reply on X with the post it is answering, thread line and all.",
+  "tier": "free",
+  "platforms": [
+   "x"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "fake-pinterest-pin-generator",
+  "name": "Fake Pinterest Pin Generator",
+  "tagline": "Mock up a Pin card \u2014 title, description, source domain and saves.",
+  "tier": "free",
+  "platforms": [
+   "pinterest"
+  ],
+  "category": "media"
+ },
+ {
+  "slug": "fake-tiktok-comment-generator",
+  "name": "Fake TikTok Comment Generator",
+  "tagline": "Draw a TikTok comment card \u2014 Creator chip, pin, hearts and all.",
+  "tier": "free",
+  "platforms": [
+   "tiktok"
+  ],
+  "category": "media"
  }
 ]
