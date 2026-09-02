@@ -668,669 +668,1467 @@
  },
  "https://metacreator.dev": {
   "advertiser-friendly-guidelines": {
-   "id": "med_01M1HMDFK305YQAVZFGNMDWVWG",
-   "numeric_id": 134,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDFJT2575MZK2A8EZY03A.png"
+   "id": "med_01M1HR5GVVN1YZEPQP38JE2JST",
+   "numeric_id": 139,
+   "superseded": [
+    {
+     "id": "med_01M1HMDFK305YQAVZFGNMDWVWG",
+     "numeric_id": 134
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5GVMGZ65G6PACT4QSWN2.png"
   },
   "aspect-ratios-explained": {
-   "id": "med_01M1FN9BJ139VTRP7EVR55NZ8H",
-   "numeric_id": 36,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9BHC05QZ4CBKC5AQMEKS.png"
+   "id": "med_01M1HR5JD30SHW54P93FVBJ9TT",
+   "numeric_id": 140,
+   "superseded": [
+    {
+     "id": "med_01M1FN9BJ139VTRP7EVR55NZ8H",
+     "numeric_id": 36
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5JCWE7ZG7VRQF6ASHDH3.png"
   },
   "banned-hashtags": {
-   "id": "med_01M1FNN201K2HKWXAHKTHRMFYW",
-   "numeric_id": 47,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNN1ZK162JW84TN4K0WER9.png"
+   "id": "med_01M1HR5KS4HQSNT6Z401MN31QS",
+   "numeric_id": 141,
+   "superseded": [
+    {
+     "id": "med_01M1FNN201K2HKWXAHKTHRMFYW",
+     "numeric_id": 47
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5KRXQFG3AFR2Z718V7A4.png"
   },
   "best-time-to-post-timezones": {
-   "id": "med_01M1FQGP8MS8HKQHZ8X72QGYN0",
-   "numeric_id": 98,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQGP7ZB0CEV2QWSRDM5HKF.png"
+   "id": "med_01M1HR5NQCEYJX727FJ5HW3G5C",
+   "numeric_id": 142,
+   "superseded": [
+    {
+     "id": "med_01M1FQGP8MS8HKQHZ8X72QGYN0",
+     "numeric_id": 98
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5NQ6MRGFQW2XZJXVDMHW.png"
   },
   "brand-color-palette-from-image": {
-   "id": "med_01M1FN9E3N0T4AWXRP3RG16957",
-   "numeric_id": 38,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9E36PGKS1BCZMQRZTMPM.png"
+   "id": "med_01M1HR5PXBSTXEWFZSHGD3H20E",
+   "numeric_id": 143,
+   "superseded": [
+    {
+     "id": "med_01M1FN9E3N0T4AWXRP3RG16957",
+     "numeric_id": 38
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5PX5RPVQJH7RDN5MBRNZ.png"
   },
   "call-to-action-examples": {
-   "id": "med_01M1FQ791PV14XBXQYX02KZ80E",
-   "numeric_id": 89,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ7911WMQQYNNQ2FYJ69AJ.png"
+   "id": "med_01M1HR5R8KSRWGF5TGGB477W3Q",
+   "numeric_id": 144,
+   "superseded": [
+    {
+     "id": "med_01M1FQ791PV14XBXQYX02KZ80E",
+     "numeric_id": 89
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5R8EZ0F53XNPKZZ29Q7V.png"
   },
   "cite-a-youtube-video": {
-   "id": "med_01M1FMV2DQ4NAKHN46APYE5XAM",
-   "numeric_id": 25,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV2D8MGCT59AT6FPBTK08.png"
+   "id": "med_01M1HR5SJ72H09C92DTNYE5QYY",
+   "numeric_id": 145,
+   "superseded": [
+    {
+     "id": "med_01M1FMV2DQ4NAKHN46APYE5XAM",
+     "numeric_id": 25
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5SJ25HGEP92M09BGGYCS.png"
   },
   "compress-image-for-instagram": {
-   "id": "med_01M1FN994TB3XVPC4GCQBDA66W",
-   "numeric_id": 34,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9943NFVQBTE9ZSENGSNN.png"
+   "id": "med_01M1HR5VGZ7RQJ4RM4CJ6V8B1K",
+   "numeric_id": 146,
+   "superseded": [
+    {
+     "id": "med_01M1FN994TB3XVPC4GCQBDA66W",
+     "numeric_id": 34
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5VGQFZGPCGBM03Y3277Y.png"
   },
   "content-calendar-guide": {
-   "id": "med_01M1FQ3TT6CY1VJNZGZ50ZPCQF",
-   "numeric_id": 84,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ3TSJR2JVW7GC51RWESYH.png"
+   "id": "med_01M1HR5XJXV41WA69DVJAXR1PX",
+   "numeric_id": 147,
+   "superseded": [
+    {
+     "id": "med_01M1FQ3TT6CY1VJNZGZ50ZPCQF",
+     "numeric_id": 84
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5XJPCY2QY470MT92WDX1.png"
   },
   "content-repurposing": {
-   "id": "med_01M1FQ9Y60CGD61KZTQ4PX03XT",
-   "numeric_id": 93,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ9Y5AN4YNCG57610EWNZE.png"
+   "id": "med_01M1HR5Z42P25DK35Z498WZRQZ",
+   "numeric_id": 148,
+   "superseded": [
+    {
+     "id": "med_01M1FQ9Y60CGD61KZTQ4PX03XT",
+     "numeric_id": 93
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR5Z3WKV4CQ7CKN9D6YYJE.png"
   },
   "cpm-vs-rpm": {
-   "id": "med_01M1HMDBES3PRNVJ484YGTYMK5",
-   "numeric_id": 132,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDBEK2FC6FWPX0TYZXFER.png"
+   "id": "med_01M1HR60F0MJJAD7DMMQKHM1WB",
+   "numeric_id": 149,
+   "superseded": [
+    {
+     "id": "med_01M1HMDBES3PRNVJ484YGTYMK5",
+     "numeric_id": 132
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR60ETRKWSXRZMN02BP5AT.png"
   },
   "creator-glossary": {
-   "id": "med_01M1FQGQJT579ZNPDGY9F608BR",
-   "numeric_id": 99,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQGQJ2G8Z7RCQT0E7V746W.png"
+   "id": "med_01M1HR61YXF4R8QRJ4E21132WN",
+   "numeric_id": 150,
+   "superseded": [
+    {
+     "id": "med_01M1FQGQJT579ZNPDGY9F608BR",
+     "numeric_id": 99
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR61YPHXSDXDG512Z14BMC.png"
   },
   "download-bluesky-images": {
-   "id": "med_01M1H44W2NWZ5V6AJHZZMC4QS7",
-   "numeric_id": 119,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44W26944MXN1TVNAY3531.png"
+   "id": "med_01M1HR634B1GXASCAPWAPHN6AJ",
+   "numeric_id": 151,
+   "superseded": [
+    {
+     "id": "med_01M1H44W2NWZ5V6AJHZZMC4QS7",
+     "numeric_id": 119
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6345SV74JVQ2590B7PNG.png"
   },
   "download-facebook-photos": {
-   "id": "med_01M1H44T53NH684MZGPK7XKG4H",
-   "numeric_id": 117,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44T4HTPD1RY00VZGDCVV2.png"
+   "id": "med_01M1HR64XFMVRX84T74XSE73PH",
+   "numeric_id": 152,
+   "superseded": [
+    {
+     "id": "med_01M1H44T53NH684MZGPK7XKG4H",
+     "numeric_id": 117
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR64XAGJ95CCV6NF3WRS90.png"
   },
   "download-instagram-photos": {
-   "id": "med_01M1H44S81MQBBA7TJNM82XWA9",
-   "numeric_id": 116,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44S7JY4EZYJBPERZDGFF4.png"
+   "id": "med_01M1HR66C9DMP580K3N2CNS6R5",
+   "numeric_id": 153,
+   "superseded": [
+    {
+     "id": "med_01M1H44S81MQBBA7TJNM82XWA9",
+     "numeric_id": 116
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR66C2BFNMTMHAN57B1SQ0.png"
   },
   "download-pinterest-image": {
-   "id": "med_01M1GA2V53N4QT7WT6D5Q351FC",
-   "numeric_id": 112,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2V4WG5JCKDKSMB9MMDWK.png"
+   "id": "med_01M1HR67K30ZGRJ3AGA0MQVBRN",
+   "numeric_id": 154,
+   "superseded": [
+    {
+     "id": "med_01M1GA2V53N4QT7WT6D5Q351FC",
+     "numeric_id": 112
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR67JXXTQ64BSHN0DYNRK9.png"
   },
   "download-podcast-cover-art": {
-   "id": "med_01M1HMD6TVXKZQM8MHT9FM7BVB",
-   "numeric_id": 130,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMD6TN538WRNH7Z8H2SK6X.png"
+   "id": "med_01M1HR68SPKSEWNJ82D13SFR6V",
+   "numeric_id": 155,
+   "superseded": [
+    {
+     "id": "med_01M1HMD6TVXKZQM8MHT9FM7BVB",
+     "numeric_id": 130
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR68SHA1WSYEC9T0TVGH7K.png"
   },
   "download-social-media-images": {
-   "id": "med_01M1H44Q7K7CWJ34P7P3YESA0Q",
-   "numeric_id": 114,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44Q6Y078X3173WAAGD64J.png"
+   "id": "med_01M1HR6A3PNZ75WWD3ZTK56W4R",
+   "numeric_id": 156,
+   "superseded": [
+    {
+     "id": "med_01M1H44Q7K7CWJ34P7P3YESA0Q",
+     "numeric_id": 114
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6A3HT3QJMMZH53DPD0TS.png"
   },
   "download-threads-images": {
-   "id": "med_01M1H44V1Y0JYREJ6598VRH0RY",
-   "numeric_id": 118,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44V1G6NF14XTQPK4AH1RS.png"
+   "id": "med_01M1HR6C95GBW18SRW9Q57KVY0",
+   "numeric_id": 157,
+   "superseded": [
+    {
+     "id": "med_01M1H44V1Y0JYREJ6598VRH0RY",
+     "numeric_id": 118
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6C8ZE9H9W6XP7DAHJWCV.png"
   },
   "download-twitter-images": {
-   "id": "med_01M1H44R5T188JZRP6PEZ2YA10",
-   "numeric_id": 115,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44R5AVCZSVTZK3FZSVJD1.png"
+   "id": "med_01M1HR6DYNZJBWG5Y6M3WFCA2Z",
+   "numeric_id": 158,
+   "superseded": [
+    {
+     "id": "med_01M1H44R5T188JZRP6PEZ2YA10",
+     "numeric_id": 115
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6DYETMSTVD7F7FCJ8WJW.png"
   },
   "download-youtube-thumbnail": {
-   "id": "med_01M1FMCYR4NB6ANQWFV264DMSN",
-   "numeric_id": 4,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMCYQKD0C2A54VZPG5QKDJ.png"
+   "id": "med_01M1HR6F51NAMKMVT6TTQ4FYVX",
+   "numeric_id": 159,
+   "superseded": [
+    {
+     "id": "med_01M1FMCYR4NB6ANQWFV264DMSN",
+     "numeric_id": 4
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6F4WRH8KXHJXJ48RBX9K.png"
   },
   "email-preheader-text": {
-   "id": "med_01M1HMCYERETEPRMEX1VCC33B5",
-   "numeric_id": 126,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMCYEHGXECXJ2865QJEHSE.png"
+   "id": "med_01M1HR6HM7P2HYT9DVE9FZFW3V",
+   "numeric_id": 160,
+   "superseded": [
+    {
+     "id": "med_01M1HMCYERETEPRMEX1VCC33B5",
+     "numeric_id": 126
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6HM1N0SPKBC6HNEPDSFM.png"
   },
   "email-subject-line-length": {
-   "id": "med_01M1HMCWF4YYE4MSF2817HMPGM",
-   "numeric_id": 125,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMCWEYR56ZFXT6FE711CR7.png"
+   "id": "med_01M1HR6JW3TCWK2XCSBCAA9R77",
+   "numeric_id": 161,
+   "superseded": [
+    {
+     "id": "med_01M1HMCWF4YYE4MSF2817HMPGM",
+     "numeric_id": 125
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6JVY0YEGJV53BXFPZKPV.png"
   },
   "embed-a-social-media-post": {
-   "id": "med_01M1GA2MKMDZHGS44F3Q666AXW",
-   "numeric_id": 105,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2MKFD8CFTH3CTNWNT97X.png"
+   "id": "med_01M1HR6M84NBNRPCZ8A0CYJH22",
+   "numeric_id": 162,
+   "superseded": [
+    {
+     "id": "med_01M1GA2MKMDZHGS44F3Q666AXW",
+     "numeric_id": 105
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6M7XYW4HX9AHBC02QCJS.png"
   },
   "emoji-in-captions": {
-   "id": "med_01M1FQ9BHE33RX5N7HFG1NJ6HD",
-   "numeric_id": 91,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ9BGPEYAV4YHF0PPT2ANX.png"
+   "id": "med_01M1HR6NB4JCEWVE3F4PR5PHT7",
+   "numeric_id": 163,
+   "superseded": [
+    {
+     "id": "med_01M1FQ9BHE33RX5N7HFG1NJ6HD",
+     "numeric_id": 91
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6NAYA96JES0QXP471FNN.png"
   },
   "engagement-rate": {
-   "id": "med_01M1FNK0QHG2W68ZQDJG8VH0M2",
-   "numeric_id": 42,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNK0Q02ZPC5M9GZ0W4BG53.png"
+   "id": "med_01M1HR6PEPM68W846Q1252FCBZ",
+   "numeric_id": 164,
+   "superseded": [
+    {
+     "id": "med_01M1FNK0QHG2W68ZQDJG8VH0M2",
+     "numeric_id": 42
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6PEGCMNB8DQ9AZ3NGJCT.png"
   },
   "engagement-rate-by-reach-vs-followers": {
-   "id": "med_01M1FP3P1DJWTS3446S5Q29FSN",
-   "numeric_id": 57,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP3P0V965TF5GQNEX6GZ1Q.png"
+   "id": "med_01M1HR6QMJCVQK7Q11YD706F1F",
+   "numeric_id": 165,
+   "superseded": [
+    {
+     "id": "med_01M1FP3P1DJWTS3446S5Q29FSN",
+     "numeric_id": 57
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6QMCYH9E35H7J5V4JX0K.png"
   },
   "expand-a-short-url": {
-   "id": "med_01M1GA2KTQP8YZ1CYWY0EP0G4W",
-   "numeric_id": 104,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2KTJBG6XHJ2XBF8B4X78.png"
+   "id": "med_01M1HR6RVGE5Z3SN8D7FS4FY24",
+   "numeric_id": 166,
+   "superseded": [
+    {
+     "id": "med_01M1GA2KTQP8YZ1CYWY0EP0G4W",
+     "numeric_id": 104
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6RV9ZSSV6AQ6BY9ZQ7WQ.png"
   },
   "facebook-ad-character-limits": {
-   "id": "med_01M1FPSN52XS1EN8BVQ1P8RQ6H",
-   "numeric_id": 77,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPSN4HMHG6MPV8ZAPKNEB0.png"
+   "id": "med_01M1HR6T0J8AFVM1XN0C0QZ8G4",
+   "numeric_id": 167,
+   "superseded": [
+    {
+     "id": "med_01M1FPSN52XS1EN8BVQ1P8RQ6H",
+     "numeric_id": 77
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6T0C5GMSZVV0044SF6FZ.png"
   },
   "facebook-image-sizes": {
-   "id": "med_01M1FMJJV0X444S14K88MS3C7Q",
-   "numeric_id": 21,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMJJTCE98Q7ZCXQY59Q3PX.png"
+   "id": "med_01M1HR6V6RD6ERR6RMYWGTF0BT",
+   "numeric_id": 168,
+   "superseded": [
+    {
+     "id": "med_01M1FMJJV0X444S14K88MS3C7Q",
+     "numeric_id": 21
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6V6GN79D3Q2QJJJVFZV6.png"
   },
   "facebook-link-preview-not-updating": {
-   "id": "med_01M1FQ03KX99QNAWNKS4024745",
-   "numeric_id": 82,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ03KA9RMG4NMJVZY57672.png"
+   "id": "med_01M1HR6W8RKYPJ9ATYR47G8DMG",
+   "numeric_id": 169,
+   "superseded": [
+    {
+     "id": "med_01M1FQ03KX99QNAWNKS4024745",
+     "numeric_id": 82
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6W8JZ04Y29M8DK4802S3.png"
   },
   "fake-facebook-post": {
-   "id": "med_01M1GA2Q8H1M52KPZFQJS44NJ2",
-   "numeric_id": 108,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2Q8C566E6NFPX3Y28SZE.png"
+   "id": "med_01M1HR6XDFVJ37V7Q383R6S9C9",
+   "numeric_id": 170,
+   "superseded": [
+    {
+     "id": "med_01M1GA2Q8H1M52KPZFQJS44NJ2",
+     "numeric_id": 108
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6XD991F6E0DB5FY94DG3.png"
   },
   "fake-instagram-post": {
-   "id": "med_01M1GA2R96A4B5EEXB6PTB1PV8",
-   "numeric_id": 109,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2R91MDJ7TTWM0XC1X9X3.png"
+   "id": "med_01M1HR6YRRRMKNRZYWYNSP64DE",
+   "numeric_id": 171,
+   "superseded": [
+    {
+     "id": "med_01M1GA2R96A4B5EEXB6PTB1PV8",
+     "numeric_id": 109
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR6YRGC3RH43G9XJX6HWBS.png"
   },
   "fake-social-media-post-generator": {
-   "id": "med_01M1GA2P9Z5AMKHGW7Q2FG930A",
-   "numeric_id": 107,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2P9TPVPA9YTN80V1F0TB.png"
+   "id": "med_01M1HR70416F3SVKCYRZPM0B96",
+   "numeric_id": 172,
+   "superseded": [
+    {
+     "id": "med_01M1GA2P9Z5AMKHGW7Q2FG930A",
+     "numeric_id": 107
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR703VHZPSB2XK54H93ETC.png"
   },
   "fake-tiktok-comment": {
-   "id": "med_01M1GA2S7ZKM9K01F8W81X221J",
-   "numeric_id": 110,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2S7T4VGX5GBF7D3BPHRW.png"
+   "id": "med_01M1HR71QRV8C4B5NNPGTJK0EV",
+   "numeric_id": 173,
+   "superseded": [
+    {
+     "id": "med_01M1GA2S7ZKM9K01F8W81X221J",
+     "numeric_id": 110
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR71QJMTP4GN4ZDWAMME0H.png"
   },
   "find-hashtags-on-a-post": {
-   "id": "med_01M1GA2T5X351PHW88AQ49499D",
-   "numeric_id": 111,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2T5RCMAEWG5V9AB7H890.png"
+   "id": "med_01M1HR72YHJ6WCXV2VKEK1MCAW",
+   "numeric_id": 174,
+   "superseded": [
+    {
+     "id": "med_01M1GA2T5X351PHW88AQ49499D",
+     "numeric_id": 111
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR72YA3J5PRE6KC42DQN31.png"
   },
   "find-youtube-channel-id": {
-   "id": "med_01M1FMCZY63AYN082WMVPRFPWP",
-   "numeric_id": 5,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMCZXEABBF0DTFAY106T8J.png"
+   "id": "med_01M1HR7452KHX7SHQEB9RNFWSG",
+   "numeric_id": 175,
+   "superseded": [
+    {
+     "id": "med_01M1FMCZY63AYN082WMVPRFPWP",
+     "numeric_id": 5
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR744SZ81YTG6CBN3JQPNK.png"
   },
   "first-1000-subscribers": {
-   "id": "med_01M1FNQEWB9BD28JBQ6XGPN05Q",
-   "numeric_id": 49,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNQEVQS99TJ6XSR7DB9QX8.png"
+   "id": "med_01M1HR75W3MBA81TTY25Y6WV1D",
+   "numeric_id": 176,
+   "superseded": [
+    {
+     "id": "med_01M1FNQEWB9BD28JBQ6XGPN05Q",
+     "numeric_id": 49
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR75VW2ZM4F9G4W9EV3DF3.png"
   },
   "free-creator-tools": {
-   "id": "med_01M1FQJ9APKY8WHYZM79H4FR2Z",
-   "numeric_id": 100,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQJ99YHBNVHATFHGC58DZ4.png"
+   "id": "med_01M1HR770Y3A91KMEPWHNP2ERZ",
+   "numeric_id": 177,
+   "superseded": [
+    {
+     "id": "med_01M1FQJ9APKY8WHYZM79H4FR2Z",
+     "numeric_id": 100
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR770QQK8Y4HV74G3JD04V.png"
   },
   "giveaway-winner-picker": {
-   "id": "med_01M1FQEJEM9DBQY15ZNPG6HM68",
-   "numeric_id": 97,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQEJE25X1Y4FRC4Z125YRV.png"
+   "id": "med_01M1HR78WGB0M0WQ3KNZY5WEGT",
+   "numeric_id": 178,
+   "superseded": [
+    {
+     "id": "med_01M1FQEJEM9DBQY15ZNPG6HM68",
+     "numeric_id": 97
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR78WAHATQXSNZ7FV9G9WY.png"
   },
   "good-engagement-rate-instagram": {
-   "id": "med_01M1FNK1YSGPHGA1FRYJ3JQ62W",
-   "numeric_id": 43,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNK1YBMKG6PRQZM2GBPPSK.png"
+   "id": "med_01M1HR7A308M8V0FSN95R9KSF6",
+   "numeric_id": 179,
+   "superseded": [
+    {
+     "id": "med_01M1FNK1YSGPHGA1FRYJ3JQ62W",
+     "numeric_id": 43
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7A2R0C5QS53J2Y3FP5SR.png"
   },
   "good-engagement-rate-tiktok": {
-   "id": "med_01M1FNK342TTP22YSV7CWYA4Z7",
-   "numeric_id": 44,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNK33FMH4MKW7H33A1PXGC.png"
+   "id": "med_01M1HR7B0JM5SSFGGYSF2K7TR3",
+   "numeric_id": 180,
+   "superseded": [
+    {
+     "id": "med_01M1FNK342TTP22YSV7CWYA4Z7",
+     "numeric_id": 44
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7B0D6GB5QDJ1VRQDKPSW.png"
   },
   "good-engagement-rate-youtube": {
-   "id": "med_01M1FP3MNKAF5FDFR17CZC0CA1",
-   "numeric_id": 56,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP3MN2FVE5P0D510WXMHK1.png"
+   "id": "med_01M1HR7C8FQZ9EXFCJEH53ENJD",
+   "numeric_id": 181,
+   "superseded": [
+    {
+     "id": "med_01M1FP3MNKAF5FDFR17CZC0CA1",
+     "numeric_id": 56
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7C858645ZBDQ4KGS6VP6.png"
   },
   "google-search-snippet": {
-   "id": "med_01M1HMCPN4QNKJ09QA9PTZ7FKR",
-   "numeric_id": 122,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMCPMC66C345NTGPPX84SD.png"
+   "id": "med_01M1HR7DX4TBHM7CN48A7NKQ4X",
+   "numeric_id": 182,
+   "superseded": [
+    {
+     "id": "med_01M1HMCPN4QNKJ09QA9PTZ7FKR",
+     "numeric_id": 122
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7DWZHYTM0W1MMZXBPCM4.png"
   },
   "how-much-do-twitch-streamers-make": {
-   "id": "med_01M1HMD264BMW5WN56QJ3W30FP",
-   "numeric_id": 128,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMD25YVBG55DHV46SCEXXB.png"
+   "id": "med_01M1HR7G5327NACJMW84B1NFAW",
+   "numeric_id": 183,
+   "superseded": [
+    {
+     "id": "med_01M1HMD264BMW5WN56QJ3W30FP",
+     "numeric_id": 128
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7G4XJQJFZJPJ0V0RTM4S.png"
   },
   "how-much-do-youtubers-make": {
-   "id": "med_01M1FN941FFFKRA9EAC8N9QDYJ",
-   "numeric_id": 30,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN940W2YFZ2F8K31BSF5PP.png"
+   "id": "med_01M1HR7HKSC60NQ24CKJFP7GKR",
+   "numeric_id": 184,
+   "superseded": [
+    {
+     "id": "med_01M1FN941FFFKRA9EAC8N9QDYJ",
+     "numeric_id": 30
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7HKMY8AMKGZ3Q8YKJJCE.png"
   },
   "how-much-does-tiktok-pay": {
-   "id": "med_01M1FPD3AKRASDVTFBMWWBPNH5",
-   "numeric_id": 64,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPD39ZD4TD5R9TGCZ1YCDR.png"
+   "id": "med_01M1HR7JR0498KJX6V0STSKPJG",
+   "numeric_id": 185,
+   "superseded": [
+    {
+     "id": "med_01M1FPD3AKRASDVTFBMWWBPNH5",
+     "numeric_id": 64
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7JQVH729PE0MAMEE4F3P.png"
   },
   "how-much-to-charge-instagram-post": {
-   "id": "med_01M1HMDQD3F0EX7B9RZ2R35Z4T",
-   "numeric_id": 138,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDQCW0Q6DFJS8M3SHQTXA.png"
+   "id": "med_01M1HR7MDANZK76SBGW8X6PQMX",
+   "numeric_id": 186,
+   "superseded": [
+    {
+     "id": "med_01M1HMDQD3F0EX7B9RZ2R35Z4T",
+     "numeric_id": 138
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7MD5KAKF9BZCSZYER8GQ.png"
   },
   "how-to-post-on-x": {
-   "id": "med_01M1FPEHH85DRMFTTNG0NKENT1",
-   "numeric_id": 65,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPEHGP9GAC0YDW9N9WB3KB.png"
+   "id": "med_01M1HR7NN7ETQ6X7K6K17SJ6SW",
+   "numeric_id": 187,
+   "superseded": [
+    {
+     "id": "med_01M1FPEHH85DRMFTTNG0NKENT1",
+     "numeric_id": 65
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7NN1FMTF65G8KGG7ZRRY.png"
   },
   "how-to-see-tags-on-a-youtube-video": {
-   "id": "med_01M1FK6JR7G1ZY96GFGM53DW4R",
-   "numeric_id": 2,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FK6JQPTRQTKXR8PA8TQ8T1.png"
+   "id": "med_01M1HR7QAT9ZN6EXCTV8PSRDDX",
+   "numeric_id": 188,
+   "superseded": [
+    {
+     "id": "med_01M1FK6JR7G1ZY96GFGM53DW4R",
+     "numeric_id": 2
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7QAMQFYXZEXYG29RVGRS.png"
   },
   "how-to-use-hashtags": {
-   "id": "med_01M1FND95V2AVGQMNTPY6B7SB9",
-   "numeric_id": 39,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FND954CTXYYTPFGVYWFR87.png"
+   "id": "med_01M1HR7RPCVW311NWWCPN4TBC8",
+   "numeric_id": 189,
+   "superseded": [
+    {
+     "id": "med_01M1FND95V2AVGQMNTPY6B7SB9",
+     "numeric_id": 39
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7RP738BR39DAH8ATW4XZ.png"
   },
   "how-to-write-a-twitter-thread": {
-   "id": "med_01M1FPGW979Z68TCBCWMW1VWPQ",
-   "numeric_id": 67,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPGW8QK621CTP984FFGHZM.png"
+   "id": "med_01M1HR7SZAE3WJC6EDBWWJ0MES",
+   "numeric_id": 190,
+   "superseded": [
+    {
+     "id": "med_01M1FPGW979Z68TCBCWMW1VWPQ",
+     "numeric_id": 67
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7SZ5Y7HZ8WSFJJZ6XH3Y.png"
   },
   "how-to-write-headlines": {
-   "id": "med_01M1FQ3VZTB4FVH88H541BJHCK",
-   "numeric_id": 85,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ3VZ561V8G2HXVA2KD6ZR.png"
+   "id": "med_01M1HR7VKQ19H40MD7KSDWKFG0",
+   "numeric_id": 191,
+   "superseded": [
+    {
+     "id": "med_01M1FQ3VZTB4FVH88H541BJHCK",
+     "numeric_id": 85
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7VKJYVM9KM9F0H5X86AA.png"
   },
   "instagram-bio-ideas": {
-   "id": "med_01M1FP0G4EVDQDKGH3Q3K1Y5Y9",
-   "numeric_id": 54,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP0G3WVRH35ZD4WWSSN6Y9.png"
+   "id": "med_01M1HR7WY6C07XBCJ7614QFHXX",
+   "numeric_id": 192,
+   "superseded": [
+    {
+     "id": "med_01M1FP0G4EVDQDKGH3Q3K1Y5Y9",
+     "numeric_id": 54
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7WXZ6FZQARQZJE176S5P.png"
   },
   "instagram-caption-length": {
-   "id": "med_01M1FP89YE3SQB0THDPWS4GM41",
-   "numeric_id": 60,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP89XZXHZJEJRFQRRBSG51.png"
+   "id": "med_01M1HR7ZC3MDVK90JZZEGTTSG2",
+   "numeric_id": 193,
+   "superseded": [
+    {
+     "id": "med_01M1FP89YE3SQB0THDPWS4GM41",
+     "numeric_id": 60
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR7ZBXBBR7NT3XQA9GVSMH.png"
   },
   "instagram-carousel-size": {
-   "id": "med_01M1FNTSCBE2AX55KJ87TXSZBA",
-   "numeric_id": 51,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNTSBR44AGPPFPX0GQARR9.png"
+   "id": "med_01M1HR80XTJFMJ4STH90S16FQZ",
+   "numeric_id": 194,
+   "superseded": [
+    {
+     "id": "med_01M1FNTSCBE2AX55KJ87TXSZBA",
+     "numeric_id": 51
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR80XM9FBJJ334XGAV2P3Y.png"
   },
   "instagram-embed-code": {
-   "id": "med_01M1GA2NCVK2PPPQQFSB3Y7Q5B",
-   "numeric_id": 106,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2NCP4PM58K1QFHE69V43.png"
+   "id": "med_01M1HR82CA15BGQJTSG8FWB0S7",
+   "numeric_id": 195,
+   "superseded": [
+    {
+     "id": "med_01M1GA2NCVK2PPPQQFSB3Y7Q5B",
+     "numeric_id": 106
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR82C56447DMWY3J7EDWHW.png"
   },
   "instagram-fonts": {
-   "id": "med_01M1FP88Q2M50W0EK3RNRBD51E",
-   "numeric_id": 59,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP88PK8H4WY3GVVPBM3QBJ.png"
+   "id": "med_01M1HR84AYWM1H9PPG3YGXCTCQ",
+   "numeric_id": 196,
+   "superseded": [
+    {
+     "id": "med_01M1FP88Q2M50W0EK3RNRBD51E",
+     "numeric_id": 59
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR84AQ0XQ6574A5XS97MFT.png"
   },
   "instagram-giveaway-rules": {
-   "id": "med_01M1FP8B0NEJFXGVBQN3F4N077",
-   "numeric_id": 61,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP8B069SP2DM9A3QWZM1MJ.png"
+   "id": "med_01M1HR86766ZE0807W26FXPPEC",
+   "numeric_id": 197,
+   "superseded": [
+    {
+     "id": "med_01M1FP8B0NEJFXGVBQN3F4N077",
+     "numeric_id": 61
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR867190JDG0GC5WY6F61Y.png"
   },
   "instagram-growth-guide": {
-   "id": "med_01M1FNTR05DB82J185XD2QSXMG",
-   "numeric_id": 50,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNTQZHFXCAYBW99W895446.png"
+   "id": "med_01M1HR87B6BF0AGYCYXC6Q5NF2",
+   "numeric_id": 198,
+   "superseded": [
+    {
+     "id": "med_01M1FNTR05DB82J185XD2QSXMG",
+     "numeric_id": 50
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR87B2K4ZPTFKJ0XW2JT2F.png"
   },
   "instagram-hashtags": {
-   "id": "med_01M1FNDAHTTSFHHF42NX92Y8R7",
-   "numeric_id": 40,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNDAGY5C1WSCGWF7ZAP1SZ.png"
+   "id": "med_01M1HR88H3FHE63G5VDF8YYR1D",
+   "numeric_id": 199,
+   "superseded": [
+    {
+     "id": "med_01M1FNDAHTTSFHHF42NX92Y8R7",
+     "numeric_id": 40
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR88GY0F76RYP4TQN9AKSM.png"
   },
   "instagram-image-link-expired": {
-   "id": "med_01M1H44WZX7XG34ZE92SB1DAAR",
-   "numeric_id": 120,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44WZC1WXREXKWJX01TYMB.png"
+   "id": "med_01M1HR8AERX6P91A7HGRRDARNZ",
+   "numeric_id": 200,
+   "superseded": [
+    {
+     "id": "med_01M1H44WZX7XG34ZE92SB1DAAR",
+     "numeric_id": 120
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8AEK9CC670YRD27XV273.png"
   },
   "instagram-image-sizes": {
-   "id": "med_01M1FMD1RDVR7WKQEH39QKNPW4",
-   "numeric_id": 6,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD1QREK7XE133FNJ2PHXZ.png"
+   "id": "med_01M1HR8CC2ZG1ZHJ8SAR04YNSJ",
+   "numeric_id": 201,
+   "superseded": [
+    {
+     "id": "med_01M1FMD1RDVR7WKQEH39QKNPW4",
+     "numeric_id": 6
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8CBVQFH9MK7Z095CDM4B.png"
   },
   "instagram-reels-cover-size": {
-   "id": "med_01M1FP0DC8AQ9C9Y7RZZ38GZXZ",
-   "numeric_id": 52,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP0DBQYBN7JP54CKWJ10NK.png"
+   "id": "med_01M1HR8DHZ5KAQCXYKNB361TGB",
+   "numeric_id": 202,
+   "superseded": [
+    {
+     "id": "med_01M1FP0DC8AQ9C9Y7RZZ38GZXZ",
+     "numeric_id": 52
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8DHT8PRNKAYP60B3ARA5.png"
   },
   "instagram-story-size": {
-   "id": "med_01M1FP0EQ6V1ENVS5Z72R6SH6W",
-   "numeric_id": 53,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP0EPKNC2JBJWA14ZCF5GJ.png"
+   "id": "med_01M1HR8F4W583YBDC9HX4TMVRB",
+   "numeric_id": 203,
+   "superseded": [
+    {
+     "id": "med_01M1FP0EQ6V1ENVS5Z72R6SH6W",
+     "numeric_id": 53
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8F4QMR6333ZTDRDACFB6.png"
   },
   "is-a-youtube-channel-monetized": {
-   "id": "med_01M1FN96SGS4387JNEZJTRM7E3",
-   "numeric_id": 32,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN96S11TNVYJE33XQCQHT7.png"
+   "id": "med_01M1HR8GDS3R4MFYYRDTHZXVQN",
+   "numeric_id": 204,
+   "superseded": [
+    {
+     "id": "med_01M1FN96SGS4387JNEZJTRM7E3",
+     "numeric_id": 32
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8GDKHGSKGNDR8EK0MD77.png"
   },
   "link-in-bio-tracking": {
-   "id": "med_01M1FP8C31MQS2ZM74EM67HCZ3",
-   "numeric_id": 62,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP8C2G741S99JBF0Y5VRTJ.png"
+   "id": "med_01M1HR8HQPR0PR735TTXW8ZAH1",
+   "numeric_id": 205,
+   "superseded": [
+    {
+     "id": "med_01M1FP8C31MQS2ZM74EM67HCZ3",
+     "numeric_id": 62
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8HQFCNNJD9TSX2NDSJPP.png"
   },
   "link-preview-mobile-vs-desktop": {
-   "id": "med_01M1GA2W5802ZHJHGZGPA966RQ",
-   "numeric_id": 113,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2W52ARMYFEHKW78Y3QD7.png"
+   "id": "med_01M1HR8JTNDZ6XG148RKT29KF4",
+   "numeric_id": 206,
+   "superseded": [
+    {
+     "id": "med_01M1GA2W5802ZHJHGZGPA966RQ",
+     "numeric_id": 113
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8JTG7VNX4ASK42Z95XBV.png"
   },
   "link-preview-not-showing": {
-   "id": "med_01M1FPGXD6PBYY03WW6ZZMZ0T9",
-   "numeric_id": 68,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPGXCH2VJR7KQKQA6M3455.png"
+   "id": "med_01M1HR8PNP5AJTBETZBFDY7ZC0",
+   "numeric_id": 207,
+   "superseded": [
+    {
+     "id": "med_01M1FPGXD6PBYY03WW6ZZMZ0T9",
+     "numeric_id": 68
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8PNHMDF2CPYB5TTTCHWB.png"
   },
   "linkedin-carousel": {
-   "id": "med_01M1FPSKY3DYY48KA6BQY924P6",
-   "numeric_id": 76,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPSKXMQV7WMFQWZFPA758H.png"
+   "id": "med_01M1HR8QY9P6F3MXNHE4MW8GWN",
+   "numeric_id": 208,
+   "superseded": [
+    {
+     "id": "med_01M1FPSKY3DYY48KA6BQY924P6",
+     "numeric_id": 76
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8QY4KVJ85K2QDQDMMBY4.png"
   },
   "linkedin-hashtags": {
-   "id": "med_01M1FNK4BM3FHPTPJEFVWDZK6Y",
-   "numeric_id": 45,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNK4B60EY8YAPR1K2K34ZH.png"
+   "id": "med_01M1HR8S9XFBA4AB16JPEGQCM5",
+   "numeric_id": 209,
+   "superseded": [
+    {
+     "id": "med_01M1FNK4BM3FHPTPJEFVWDZK6Y",
+     "numeric_id": 45
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8S9QES4SXXYFB0N3ZED0.png"
   },
   "linkedin-image-sizes": {
-   "id": "med_01M1FMJHRPMH0J4AFBGPPQMFGC",
-   "numeric_id": 20,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMJHR2FW20C2122S75NTPD.png"
+   "id": "med_01M1HR8TWND5R0399QE1NYE350",
+   "numeric_id": 210,
+   "superseded": [
+    {
+     "id": "med_01M1FMJHRPMH0J4AFBGPPQMFGC",
+     "numeric_id": 20
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8TWHKW6N1VMRJKJV09VJ.png"
   },
   "linkedin-post-guide": {
-   "id": "med_01M1FPSH5XKGQC1Z6NN7FS1XQ0",
-   "numeric_id": 74,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPSH57QKVB9X5AE0YRAVZC.png"
+   "id": "med_01M1HR8VYYHH8YQJ8EXRQW6RT0",
+   "numeric_id": 211,
+   "superseded": [
+    {
+     "id": "med_01M1FPSH5XKGQC1Z6NN7FS1XQ0",
+     "numeric_id": 74
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8VYRBP6ZCRNZ7X5Y3G2H.png"
   },
   "linkedin-see-more": {
-   "id": "med_01M1FPSJJMKNR7GK6GM6S6HZ0Z",
-   "numeric_id": 75,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPSJJ2E1BJA5YCCGTM2AF5.png"
+   "id": "med_01M1HR8X7VW47DCX357FP5WVDA",
+   "numeric_id": 212,
+   "superseded": [
+    {
+     "id": "med_01M1FPSJJMKNR7GK6GM6S6HZ0Z",
+     "numeric_id": 75
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8X7N9R27J4RB9NP1K6CK.png"
   },
   "meta-description-length": {
-   "id": "med_01M1HMCTWNM89EZRWK4334RPRJ",
-   "numeric_id": 124,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMCTWEW9D7KF3NFY15JBC3.png"
+   "id": "med_01M1HR8YC43AGCRYVK6GD36JJW",
+   "numeric_id": 213,
+   "superseded": [
+    {
+     "id": "med_01M1HMCTWNM89EZRWK4334RPRJ",
+     "numeric_id": 124
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8YBX6X3KKXZQ20DSCXX9.png"
   },
   "open-graph-tags": {
-   "id": "med_01M1FQ04SBVE6QSYKCT58653H1",
-   "numeric_id": 83,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ04RP3KMVBVNP5FNSDMTN.png"
+   "id": "med_01M1HR8ZKW1TVH9FXM7J3T6BN7",
+   "numeric_id": 214,
+   "superseded": [
+    {
+     "id": "med_01M1FQ04SBVE6QSYKCT58653H1",
+     "numeric_id": 83
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR8ZKK925GBXKBW8N57XJB.png"
   },
   "pinterest-board-strategy": {
-   "id": "med_01M1FQ02B77VQN5ZSXS8S1ZW2E",
-   "numeric_id": 81,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ02AR8KJZG5Q4BBQKYJFQ.png"
+   "id": "med_01M1HR91P3GFP72EQ2393JEMS6",
+   "numeric_id": 215,
+   "superseded": [
+    {
+     "id": "med_01M1FQ02B77VQN5ZSXS8S1ZW2E",
+     "numeric_id": 81
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR91NYTA0XCDJK3DX586M5.png"
   },
   "pinterest-pin-description": {
-   "id": "med_01M1FPW6JDM07B87V7PPSP1CFY",
-   "numeric_id": 79,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPW6HXF701PHYVRP521ABV.png"
+   "id": "med_01M1HR93GB0DCW6PNB1MCS2JQW",
+   "numeric_id": 216,
+   "superseded": [
+    {
+     "id": "med_01M1FPW6JDM07B87V7PPSP1CFY",
+     "numeric_id": 79
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR93G6NSK3Y1CD7M8E9F9M.png"
   },
   "pinterest-pin-size": {
-   "id": "med_01M1FN97YJ245XAKMKRFVS4YRD",
-   "numeric_id": 33,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN97XZ16FS87XW5AG3NNQB.png"
+   "id": "med_01M1HR952R48P09NK8MSW1EXYF",
+   "numeric_id": 217,
+   "superseded": [
+    {
+     "id": "med_01M1FN97YJ245XAKMKRFVS4YRD",
+     "numeric_id": 33
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR952JPQ3KCG3EDYZ6G6N0.png"
   },
   "pinterest-seo": {
-   "id": "med_01M1FPW5E8208EBC0JCXRDDTNW",
-   "numeric_id": 78,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPW5DPVFRDRYC5Q56NCJ55.png"
+   "id": "med_01M1HR96K744948JVZH6WZ0494",
+   "numeric_id": 218,
+   "superseded": [
+    {
+     "id": "med_01M1FPW5E8208EBC0JCXRDDTNW",
+     "numeric_id": 78
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR96K1X48E0Q5R0XCNZM87.png"
   },
   "qr-code-generator-for-bio": {
-   "id": "med_01M1FQEH544ZGA8AXV689EQ2NF",
-   "numeric_id": 96,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQEH4JD6W4XFZDR6Z7HZ19.png"
+   "id": "med_01M1HR988PJP47F640K8CRDEMB",
+   "numeric_id": 219,
+   "superseded": [
+    {
+     "id": "med_01M1FQEH544ZGA8AXV689EQ2NF",
+     "numeric_id": 96
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR988HKBM2W60H12SVVQ4M.png"
   },
   "readability-score": {
-   "id": "med_01M1FQ515MSPYPZD1PXD2BPZD1",
-   "numeric_id": 87,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ514ZEHX8GN6PMR9RXF9G.png"
+   "id": "med_01M1HR99S1Z2ATJN3QADV4QY5Y",
+   "numeric_id": 220,
+   "superseded": [
+    {
+     "id": "med_01M1FQ515MSPYPZD1PXD2BPZD1",
+     "numeric_id": 87
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR99RXKPG6FVZZHN1KPCFB.png"
   },
   "remove-tracking-parameters-from-url": {
-   "id": "med_01M1HMDKCNNR3NSY6VG2B3DT10",
-   "numeric_id": 136,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDKCE5EP49JJT5REJKX1T.png"
+   "id": "med_01M1HR9B248JDEDPVE6XPVDAP7",
+   "numeric_id": 221,
+   "superseded": [
+    {
+     "id": "med_01M1HMDKCNNR3NSY6VG2B3DT10",
+     "numeric_id": 136
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9B1Z48TRPY6YBA9AVX2G.png"
   },
   "rich-pins-not-working": {
-   "id": "med_01M1FQ00Z16TA5N92MKPH5STJ8",
-   "numeric_id": 80,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ00YDXQB84KV1Y2R2ESSS.png"
+   "id": "med_01M1HR9C6KMTCA6H73WYZ4ZT60",
+   "numeric_id": 222,
+   "superseded": [
+    {
+     "id": "med_01M1FQ00Z16TA5N92MKPH5STJ8",
+     "numeric_id": 80
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9C6ERW057X3JTM3P54FG.png"
   },
   "rpm-vs-cpm": {
-   "id": "med_01M1FN95GVZB7GVA12F2SAAXWT",
-   "numeric_id": 31,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN95G7NT528JCQD0R1SSYE.png"
+   "id": "med_01M1HR9D8A98S7H8QKHP71Q342",
+   "numeric_id": 223,
+   "superseded": [
+    {
+     "id": "med_01M1FN95GVZB7GVA12F2SAAXWT",
+     "numeric_id": 31
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9D83ZMS6PPM34K1A5KDH.png"
   },
   "screenshot-a-tweet": {
-   "id": "med_01M1FPNHJ17YNVWGM5ADDWPBXW",
-   "numeric_id": 71,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPNHGPNZ2JZ311Z7J64A8W.png"
+   "id": "med_01M1HR9EV5MDTCWW0JXEDGFYHM",
+   "numeric_id": 224,
+   "superseded": [
+    {
+     "id": "med_01M1FPNHJ17YNVWGM5ADDWPBXW",
+     "numeric_id": 71
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9ETZF6K1529VPZDFX3D6.png"
   },
   "search-youtube-comments": {
-   "id": "med_01M1FMV3EGJ2KMNSWNE1XAC8Z2",
-   "numeric_id": 26,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV3E24J8NE6NWFN32Q0FD.png"
+   "id": "med_01M1HR9FXP0ZPT5B0531F2XPQ0",
+   "numeric_id": 225,
+   "superseded": [
+    {
+     "id": "med_01M1FMV3EGJ2KMNSWNE1XAC8Z2",
+     "numeric_id": 26
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9FXFKPT8769QH4ZDKZ1F.png"
   },
   "shorten-a-youtube-link": {
-   "id": "med_01M1GA2J52PCPF8FRH5G1CHGQC",
-   "numeric_id": 102,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2J4VEXTHRZT5D92HDED4.png"
+   "id": "med_01M1HR9H34JKFY26G0N6ZMJTCP",
+   "numeric_id": 226,
+   "superseded": [
+    {
+     "id": "med_01M1GA2J52PCPF8FRH5G1CHGQC",
+     "numeric_id": 102
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9H2ZKYXYAQ0PX09NA3AZ.png"
   },
   "social-media-alt-text": {
-   "id": "med_01M1H44XYXCX4SQC7MB6614FCQ",
-   "numeric_id": 121,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1H44XYB8SJW4RC5RD2VXX4K.png"
+   "id": "med_01M1HR9JBJ9Z6CD5A7KNV79DKB",
+   "numeric_id": 227,
+   "superseded": [
+    {
+     "id": "med_01M1H44XYXCX4SQC7MB6614FCQ",
+     "numeric_id": 121
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9JBCWV7G0Z6D1BDM069D.png"
   },
   "social-media-benchmarks": {
-   "id": "med_01M1FP0HCQCTYF8SM62F7GP8YV",
-   "numeric_id": 55,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP0HC6E3ARMYGGENJXDM3D.png"
+   "id": "med_01M1HR9M05NS24YQE7RHBP8RQE",
+   "numeric_id": 228,
+   "superseded": [
+    {
+     "id": "med_01M1FP0HCQCTYF8SM62F7GP8YV",
+     "numeric_id": 55
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9KZZ1ZMWCNTC5VSPP445.png"
   },
   "social-media-deep-links": {
-   "id": "med_01M1HMDN7HQCDYVAQEPHJ9HNCQ",
-   "numeric_id": 137,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDN7A944KGKR118NWSQQB.png"
+   "id": "med_01M1HR9P68M6AVM450H39B7568",
+   "numeric_id": 229,
+   "superseded": [
+    {
+     "id": "med_01M1HMDN7HQCDYVAQEPHJ9HNCQ",
+     "numeric_id": 137
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9P62AF8FVA8WMM1TXSFW.png"
   },
   "social-media-image-sizes": {
-   "id": "med_01M1FMD2TEVHQS6WTDVS1RED8X",
-   "numeric_id": 7,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD2SPXJWB4ZE23QR13WDJ.png"
+   "id": "med_01M1HR9R1FKSXV1NQDP210Q1MZ",
+   "numeric_id": 230,
+   "superseded": [
+    {
+     "id": "med_01M1FMD2TEVHQS6WTDVS1RED8X",
+     "numeric_id": 7
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9R1APBTRK0RC28TH1NC7.png"
   },
   "social-media-links": {
-   "id": "med_01M1GA2H9898GYB3C8HHMJJND8",
-   "numeric_id": 101,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2H8MFY8RTTX2GME2DXEK.png"
+   "id": "med_01M1HR9THYXQRFXF70G6WZSB98",
+   "numeric_id": 231,
+   "superseded": [
+    {
+     "id": "med_01M1GA2H9898GYB3C8HHMJJND8",
+     "numeric_id": 101
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9THQ6YE8RZE2W4VB4XYW.png"
   },
   "social-media-safe-zones": {
-   "id": "med_01M1FN9D030K64CWFNGD1HJPE1",
-   "numeric_id": 37,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9CZGCVC52KWP6AS08SMB.png"
+   "id": "med_01M1HR9WMVEXPA6G9CT07VA9QE",
+   "numeric_id": 232,
+   "superseded": [
+    {
+     "id": "med_01M1FN9D030K64CWFNGD1HJPE1",
+     "numeric_id": 37
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9WMNE1A0M5S144W9Z60V.png"
   },
   "social-media-short-links": {
-   "id": "med_01M1GA2JY7A4N3PKG0X2C43TCV",
-   "numeric_id": 103,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1GA2JY1YVZQXXBRN4TRAM6S.png"
+   "id": "med_01M1HR9YMYRGTYA3ASQMD18T19",
+   "numeric_id": 233,
+   "superseded": [
+    {
+     "id": "med_01M1GA2JY7A4N3PKG0X2C43TCV",
+     "numeric_id": 103
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9YMPM2H19DFFD87ACSCC.png"
   },
   "spotify-cover-art-size": {
-   "id": "med_01M1HMD98HQP06Y4PYVDB8QT3S",
-   "numeric_id": 131,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMD98AWQDMECA95GAQP4QA.png"
+   "id": "med_01M1HR9ZQZ3S3X457R9303Y5RS",
+   "numeric_id": 234,
+   "superseded": [
+    {
+     "id": "med_01M1HMD98HQP06Y4PYVDB8QT3S",
+     "numeric_id": 131
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HR9ZQS266RR1E1B3YMT91C.png"
   },
   "threads-bio-ideas": {
-   "id": "med_01M1FPNN07239JW975D9J7ZP26",
-   "numeric_id": 73,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPNMZ7WTWJSMN8KP87TAGT.png"
+   "id": "med_01M1HRA17A2RWKDB9RMF1N7Y5M",
+   "numeric_id": 235,
+   "superseded": [
+    {
+     "id": "med_01M1FPNN07239JW975D9J7ZP26",
+     "numeric_id": 73
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA172GFANVG0AZ1G4MAZE.png"
   },
   "threads-character-limit": {
-   "id": "med_01M1FPNK3JB2W10JHHYGACVQH0",
-   "numeric_id": 72,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPNK2MY6Q9WQ4XRGAC36J4.png"
+   "id": "med_01M1HRA2DMY7YNN7MTR378DWG7",
+   "numeric_id": 236,
+   "superseded": [
+    {
+     "id": "med_01M1FPNK3JB2W10JHHYGACVQH0",
+     "numeric_id": 72
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA2DF0NZGNZ8CVFHVDQ1E.png"
   },
   "tiktok-caption-length": {
-   "id": "med_01M1FPNE6TPBF7YKB4K6F6R85K",
-   "numeric_id": 69,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPNE5HBBYEQVBHXVQVYP6B.png"
+   "id": "med_01M1HRA3H344MT1QHZCRFRBM28",
+   "numeric_id": 237,
+   "superseded": [
+    {
+     "id": "med_01M1FPNE6TPBF7YKB4K6F6R85K",
+     "numeric_id": 69
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA3GWM5YT16KK93N3JR89.png"
   },
   "tiktok-growth-guide": {
-   "id": "med_01M1FPD23QAN7HP59G0GTP5QNW",
-   "numeric_id": 63,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPD2394A4T8T8T5RMG4G5R.png"
+   "id": "med_01M1HRA5EG856EKF61GGYRCZ4K",
+   "numeric_id": 238,
+   "superseded": [
+    {
+     "id": "med_01M1FPD23QAN7HP59G0GTP5QNW",
+     "numeric_id": 63
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA5EA7AYTAYTX3DQFX5S2.png"
   },
   "tiktok-hashtags": {
-   "id": "med_01M1FNDBSP36P3004ZTVEKC7YJ",
-   "numeric_id": 41,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNDBS4EQEPHTEDT5DG57HZ.png"
+   "id": "med_01M1HRA6QF38WCN0257R8TQ676",
+   "numeric_id": 239,
+   "superseded": [
+    {
+     "id": "med_01M1FNDBSP36P3004ZTVEKC7YJ",
+     "numeric_id": 41
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA6Q9H6JTSG5Q6NBCP9J3.png"
   },
   "tiktok-username-ideas": {
-   "id": "med_01M1FPNFX9BG2VZCFQNG3ZRG32",
-   "numeric_id": 70,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPNFWK5Z8PARKVGA0RCTCP.png"
+   "id": "med_01M1HRA7SCJY5Y9M5TV6AS8527",
+   "numeric_id": 240,
+   "superseded": [
+    {
+     "id": "med_01M1FPNFX9BG2VZCFQNG3ZRG32",
+     "numeric_id": 70
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA7S5DQSMG69ZVV0KHQH5.png"
   },
   "tiktok-video-size": {
-   "id": "med_01M1FMJFE8ZENZVXZ3CB7HW3H2",
-   "numeric_id": 18,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMJFDJ5WV3EMGJJXPVSCCA.png"
+   "id": "med_01M1HRA97Y9HNWKDM14FY8CEXX",
+   "numeric_id": 241,
+   "superseded": [
+    {
+     "id": "med_01M1FMJFE8ZENZVXZ3CB7HW3H2",
+     "numeric_id": 18
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRA97QF01XYV2PG4NY053R.png"
   },
   "title-case-rules": {
-   "id": "med_01M1FQ9A90QW39S1D9Q9F80Q5P",
-   "numeric_id": 90,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ9A8E16VWWMDV45E45AT6.png"
+   "id": "med_01M1HRABR3JYK0W7SZ67HKY86S",
+   "numeric_id": 242,
+   "superseded": [
+    {
+     "id": "med_01M1FQ9A90QW39S1D9Q9F80Q5P",
+     "numeric_id": 90
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRABQX76VPNW80KBNWD64Y.png"
   },
   "title-tag-length": {
-   "id": "med_01M1HMCRSM427DXMS5ENNFJZM0",
-   "numeric_id": 123,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMCRSDG7DYAYCP77WNAB1G.png"
+   "id": "med_01M1HRAD4JPZGEV78R9N9EDG90",
+   "numeric_id": 243,
+   "superseded": [
+    {
+     "id": "med_01M1HMCRSM427DXMS5ENNFJZM0",
+     "numeric_id": 123
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAD4APNVHMVSQJADS8F2K.png"
   },
   "twitch-monetization": {
-   "id": "med_01M1HMD0B6B16T431HA7EW75B0",
-   "numeric_id": 127,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMD0AXV8BFSEKDFMBW2A5H.png"
+   "id": "med_01M1HRAEJBCMPC15W67A0Z7VVW",
+   "numeric_id": 244,
+   "superseded": [
+    {
+     "id": "med_01M1HMD0B6B16T431HA7EW75B0",
+     "numeric_id": 127
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAEJ5FCAT8KBDHQXBFG70.png"
   },
   "twitch-profile-picture-size": {
-   "id": "med_01M1HMD4K0TCET6NX5JPT40H9X",
-   "numeric_id": 129,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMD4JS58BXRS95BP8W40TV.png"
+   "id": "med_01M1HRAG42WKQQTV5F9ZEV9RXP",
+   "numeric_id": 245,
+   "superseded": [
+    {
+     "id": "med_01M1HMD4K0TCET6NX5JPT40H9X",
+     "numeric_id": 129
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAG3X6KV7H96KKYWBFFDZ.png"
   },
   "twitter-character-limit": {
-   "id": "med_01M1FPEJT845GF869B6YKARQ2X",
-   "numeric_id": 66,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FPEJSP9DBCJKJXJF69PA3X.png"
+   "id": "med_01M1HRAHA228X4F3J5SV2YM6WS",
+   "numeric_id": 246,
+   "superseded": [
+    {
+     "id": "med_01M1FPEJT845GF869B6YKARQ2X",
+     "numeric_id": 66
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAH9WEPA9CR8QQK01CQAV.png"
   },
   "twitter-image-size": {
-   "id": "med_01M1FMJGGPPYP8ZE88MD3K4QFS",
-   "numeric_id": 19,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMJGG15B3AYXYG2TNQKK5D.png"
+   "id": "med_01M1HRAJF2YCVZRGNCSXD9GRBM",
+   "numeric_id": 247,
+   "superseded": [
+    {
+     "id": "med_01M1FMJGGPPYP8ZE88MD3K4QFS",
+     "numeric_id": 19
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAJEXDCJVY3ARTRM4S7HW.png"
   },
   "username-availability": {
-   "id": "med_01M1FQCB76X0PNPEKWFGYP6EBQ",
-   "numeric_id": 94,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQCB6PKSD3NWTCEAZQGGBX.png"
+   "id": "med_01M1HRAKHSQ89TH4M6RD90JFDS",
+   "numeric_id": 248,
+   "superseded": [
+    {
+     "id": "med_01M1FQCB76X0PNPEKWFGYP6EBQ",
+     "numeric_id": 94
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAKHJ18RZ420CVFZ9MTQZ.png"
   },
   "utm-parameters-for-creators": {
-   "id": "med_01M1FQCCEDKCABSK4WJ12ZPF06",
-   "numeric_id": 95,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQCCDTJKYDSVEC93WQKDGH.png"
+   "id": "med_01M1HRAMJFHNWT4PJQTB0D35N7",
+   "numeric_id": 249,
+   "superseded": [
+    {
+     "id": "med_01M1FQCCEDKCABSK4WJ12ZPF06",
+     "numeric_id": 95
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAMJ9XK771KTJV9D9VTJZ.png"
   },
   "vanity-metrics": {
-   "id": "med_01M1FP3QA0JGARDMEQA5A00ZY5",
-   "numeric_id": 58,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FP3Q9BV0Y7MSW57YMPMCSS.png"
+   "id": "med_01M1HRAP41KZD3AKCV40KNPHXY",
+   "numeric_id": 250,
+   "superseded": [
+    {
+     "id": "med_01M1FP3QA0JGARDMEQA5A00ZY5",
+     "numeric_id": 58
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAP3RP3G788Q1W65MG3XK.png"
   },
   "webp-vs-jpeg-vs-png": {
-   "id": "med_01M1FN9A95P3XJ7FDBSWS92G79",
-   "numeric_id": 35,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN9A8KJ21CJF8NH0BG00P2.png"
+   "id": "med_01M1HRAQHN4CKTNTW12D0BKHCM",
+   "numeric_id": 251,
+   "superseded": [
+    {
+     "id": "med_01M1FN9A95P3XJ7FDBSWS92G79",
+     "numeric_id": 35
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAQHFT7SXQ025RYWVSN0G.png"
   },
   "words-per-minute-speaking": {
-   "id": "med_01M1FQ77D59SGC6KDDJ7F346S8",
-   "numeric_id": 88,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FQ77CFB2FA4845QK2AESHD.png"
+   "id": "med_01M1HRARS9WVYM3WGZ4SAT9YKD",
+   "numeric_id": 252,
+   "superseded": [
+    {
+     "id": "med_01M1FQ77D59SGC6KDDJ7F346S8",
+     "numeric_id": 88
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRARS1Z4YH7M8J2S483RX9.png"
   },
   "youtube-ad-breaks": {
-   "id": "med_01M1HMDDRP8Y01YJJEAJRHA6X2",
-   "numeric_id": 133,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDDRG1MWX0YH17X4FSGXB.png"
+   "id": "med_01M1HRAT3HAT6WQRX47BYC0VSV",
+   "numeric_id": 253,
+   "superseded": [
+    {
+     "id": "med_01M1HMDDRP8Y01YJJEAJRHA6X2",
+     "numeric_id": 133
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAT3AM27D7FCGF18RNCZ1.png"
   },
   "youtube-banner-size": {
-   "id": "med_01M1HMDH9M49MZ3N7FXZTW8RDA",
-   "numeric_id": 135,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1HMDH9FSJ7WG9JSK69M22PY.png"
+   "id": "med_01M1HRAW867SWD8D4V7T39X315",
+   "numeric_id": 254,
+   "superseded": [
+    {
+     "id": "med_01M1HMDH9M49MZ3N7FXZTW8RDA",
+     "numeric_id": 135
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAW7Z49FZYGQCPM65QD70.png"
   },
   "youtube-channel-description": {
-   "id": "med_01M1FMV5NWEBTGR3VH91E0S0HX",
-   "numeric_id": 28,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV5NA4N367HEH49Q8Q2T0.png"
+   "id": "med_01M1HRAXGFGB4VZCTBJ4G7VQTG",
+   "numeric_id": 255,
+   "superseded": [
+    {
+     "id": "med_01M1FMV5NWEBTGR3VH91E0S0HX",
+     "numeric_id": 28
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAXG64A2F218HKD98W06S.png"
   },
   "youtube-description-template": {
-   "id": "med_01M1FMD3Y7BRCWCQZD7T47QQK9",
-   "numeric_id": 8,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD3XNYQJFX9RJJYFZ76ZM.png"
+   "id": "med_01M1HRAYQW08QSPE2C2VFH3JS7",
+   "numeric_id": 256,
+   "superseded": [
+    {
+     "id": "med_01M1FMD3Y7BRCWCQZD7T47QQK9",
+     "numeric_id": 8
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRAYQMH8NTA3N9QE6A01KV.png"
   },
   "youtube-embed-code": {
-   "id": "med_01M1FMD523D14V2XYTYEJH6MTZ",
-   "numeric_id": 9,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD51HDA7BN3XCP9DFHTJN.png"
+   "id": "med_01M1HRB0QXN5FVGQF0DAGTB09G",
+   "numeric_id": 257,
+   "superseded": [
+    {
+     "id": "med_01M1FMD523D14V2XYTYEJH6MTZ",
+     "numeric_id": 9
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB0QPAE91010M17TVQFH6.png"
   },
   "youtube-handles": {
-   "id": "med_01M1FMV1BEC56893626WJB7706",
-   "numeric_id": 24,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV1AZCZT2K17N6SYFF2CS.png"
+   "id": "med_01M1HRB22Q8HS5MNC2Z89FD6QK",
+   "numeric_id": 258,
+   "superseded": [
+    {
+     "id": "med_01M1FMV1BEC56893626WJB7706",
+     "numeric_id": 24
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB22G7EXMWK80YB6VVPXX.png"
   },
   "youtube-hashtags": {
-   "id": "med_01M1FMD65Q16FDFV6Y7BVBWPCV",
-   "numeric_id": 10,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD6566TAFFFJ46BEWZZYM.png"
+   "id": "med_01M1HRB36ZK8370M4RANMEK5DV",
+   "numeric_id": 259,
+   "superseded": [
+    {
+     "id": "med_01M1FMD65Q16FDFV6Y7BVBWPCV",
+     "numeric_id": 10
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB36RV3X5PC2C2RW5JV06.png"
   },
   "youtube-keyword-research": {
-   "id": "med_01M1FMD76AX5P8J1NXM0707429",
-   "numeric_id": 11,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD75T1KT8E8FF41TM28NB.png"
+   "id": "med_01M1HRB4Y9N4PZ8G733PKEH7XT",
+   "numeric_id": 260,
+   "superseded": [
+    {
+     "id": "med_01M1FMD76AX5P8J1NXM0707429",
+     "numeric_id": 11
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB4Y2AWVREC0ECX4R5Z4Q.png"
   },
   "youtube-monetization-requirements": {
-   "id": "med_01M1FN92HBHC8ZF67BTA4FSX3G",
-   "numeric_id": 29,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FN92GP5NMR8P1WY2KN6NMD.png"
+   "id": "med_01M1HRB74VAJ7HDGF5XDA1375F",
+   "numeric_id": 261,
+   "superseded": [
+    {
+     "id": "med_01M1FN92HBHC8ZF67BTA4FSX3G",
+     "numeric_id": 29
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB74PTAKDE1M9HJBYJB5N.png"
   },
   "youtube-rss-feed": {
-   "id": "med_01M1FMTYXX95VG0J4X64P22Z5M",
-   "numeric_id": 22,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMTYXFQZ3TT8BJBR0841C9.png"
+   "id": "med_01M1HRB8C4D75V9G4T2YZA8V91",
+   "numeric_id": 262,
+   "superseded": [
+    {
+     "id": "med_01M1FMTYXX95VG0J4X64P22Z5M",
+     "numeric_id": 22
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB8BWRNB1X7HY4HM28G15.png"
   },
   "youtube-seo": {
-   "id": "med_01M1FMD88MSNM5H9B9HDE3X2ZE",
-   "numeric_id": 12,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD884Q5EXY4SFE5HZF7X5.png"
+   "id": "med_01M1HRB9QH15T1K0V4S08SXYTN",
+   "numeric_id": 263,
+   "superseded": [
+    {
+     "id": "med_01M1FMD88MSNM5H9B9HDE3X2ZE",
+     "numeric_id": 12
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRB9QB2J0RSMJ9Z3CGAB1G.png"
   },
   "youtube-shorts-monetization": {
-   "id": "med_01M1FNQDFY0F2DKYVTXM1SA62B",
-   "numeric_id": 48,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FNQDFDW4QJSYG1K71V3QWG.png"
+   "id": "med_01M1HRBB4KQ958TCSC561QP38R",
+   "numeric_id": 264,
+   "superseded": [
+    {
+     "id": "med_01M1FNQDFY0F2DKYVTXM1SA62B",
+     "numeric_id": 48
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBB4A4VZR9GAHNWBH9062.png"
   },
   "youtube-subscribe-link": {
-   "id": "med_01M1FMV04Q80H05C7BJPXAGQ91",
-   "numeric_id": 23,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV04A0BN5SEJ6162K6XHJ.png"
+   "id": "med_01M1HRBCVDMY4A3NA2VPG1EYED",
+   "numeric_id": 265,
+   "superseded": [
+    {
+     "id": "med_01M1FMV04Q80H05C7BJPXAGQ91",
+     "numeric_id": 23
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBCV7ZYC3C7V2VZ37RGCP.png"
   },
   "youtube-thumbnail-size": {
-   "id": "med_01M1FMD9H8EKHEJCEPAE6F5PR0",
-   "numeric_id": 13,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMD9GQZ196S1VCGXF9KY2A.png"
+   "id": "med_01M1HRBDZGY316Y22CY8Y7GZF8",
+   "numeric_id": 266,
+   "superseded": [
+    {
+     "id": "med_01M1FMD9H8EKHEJCEPAE6F5PR0",
+     "numeric_id": 13
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBDZ91MFQ6WMW9X2JB4Q2.png"
   },
   "youtube-timestamp-links": {
-   "id": "med_01M1FMDASK9ZZJ8PHWQB5H6X7R",
-   "numeric_id": 14,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMDAS1SYNMEY7B9YEB6WM3.png"
+   "id": "med_01M1HRBFEJAD6MQVDXV4ENY1XG",
+   "numeric_id": 267,
+   "superseded": [
+    {
+     "id": "med_01M1FMDASK9ZZJ8PHWQB5H6X7R",
+     "numeric_id": 14
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBFEBQN2K71X0WR77E1JE.png"
   },
   "youtube-title-length": {
-   "id": "med_01M1FMDC322T5J2W2R6ZDD9XSE",
-   "numeric_id": 15,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMDC2B4ZZQ1VEKJ9G79GJG.png"
+   "id": "med_01M1HRBGRT1V2JD005CJP0BB92",
+   "numeric_id": 268,
+   "superseded": [
+    {
+     "id": "med_01M1FMDC322T5J2W2R6ZDD9XSE",
+     "numeric_id": 15
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBGRK86X1YHQQFF1NP56R.png"
   },
   "youtube-upload-schedule": {
-   "id": "med_01M1FMV4K1NV5RNSG4XQM7CFTS",
-   "numeric_id": 27,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMV4JJED889RD7CP8HDMGN.png"
+   "id": "med_01M1HRBHWP2BSNJXS04WJ5EP8R",
+   "numeric_id": 269,
+   "superseded": [
+    {
+     "id": "med_01M1FMV4K1NV5RNSG4XQM7CFTS",
+     "numeric_id": 27
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBHWH705GXS4BSMB3D4GC.png"
   },
   "youtube-video-metadata": {
-   "id": "med_01M1FMDD6GSM6DTWA6VC8HQWN7",
-   "numeric_id": 16,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMDD5XZ2JPG5ARPHW6AS56.png"
+   "id": "med_01M1HRBKZ1WG0YNXQX9AERV3YF",
+   "numeric_id": 270,
+   "superseded": [
+    {
+     "id": "med_01M1FMDD6GSM6DTWA6VC8HQWN7",
+     "numeric_id": 16
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBKYTZ1NN154P6FFMCCCM.png"
   },
   "youtube-video-not-showing-in-search": {
-   "id": "med_01M1FMDE7EBM0M0FB8Q2QB2SXE",
-   "numeric_id": 17,
-   "url": "https://metacreator.dev/storage/media/2026/09/01M1FMDE6W6PY1NGGERGEW57BX.png"
+   "id": "med_01M1HRBNW6TA6BCMJF945K7T3C",
+   "numeric_id": 271,
+   "superseded": [
+    {
+     "id": "med_01M1FMDE7EBM0M0FB8Q2QB2SXE",
+     "numeric_id": 17
+    }
+   ],
+   "url": "https://metacreator.dev/storage/media/2026/09/01M1HRBNVZB5B1TWW7Y2FV8RV3.png"
   }
  }
 }

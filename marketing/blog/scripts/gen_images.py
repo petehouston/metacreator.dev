@@ -34,15 +34,27 @@ INK_2 = (17, 26, 43)
 PAPER = (246, 248, 252)
 MUTED = (150, 163, 186)
 
-FONTS = {
-    "bold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-    "regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
-    "black": "/System/Library/Fonts/Supplemental/Arial Black.ttf",
+# DM Sans is the site's own typeface (apps/web/src/app/layout.tsx), so the cards
+# now read as the same publication as the page they sit on. The variable file is
+# vendored under assets/fonts rather than pulled from a system path, so generation
+# works the same on a Mac, in CI, and in Docker. SIL OFL - see the OFL.txt beside it.
+FONT_FILE = ROOT / "assets" / "fonts" / "DMSans-Variable.ttf"
+
+# (weight, optical size). DM Sans carries an opsz axis: 40 is the display end,
+# which tightens spacing and sharpens the joins at headline sizes - what a title
+# wants, and wrong for the small footer text, which stays nearer the text end.
+AXES = {
+    "black": (900, 40),
+    "bold": (700, 24),
+    "regular": (400, 14),
 }
 
 
 def font(kind: str, size: int) -> ImageFont.FreeTypeFont:
-    return ImageFont.truetype(FONTS[kind], size)
+    f = ImageFont.truetype(str(FONT_FILE), size)
+    weight, opsz = AXES[kind]
+    f.set_variation_by_axes([opsz, weight])
+    return f
 
 
 def hex_rgb(value: str) -> tuple[int, int, int]:
