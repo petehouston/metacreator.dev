@@ -358,6 +358,26 @@ else
         cp -r ${RELEASE_DIR}/web/public       ${RELEASE_DIR}/web/.next/standalone/public"
     ok "static assets and public/ copied into the standalone bundle"
 
+    # The optimised-image cache is shared state, like uploads and .env.
+    #
+    # next/image encodes on demand and writes the result under
+    # .next/cache/images. That directory lives inside the release, so without
+    # this link every deploy threw the whole cache away and the next visitor to
+    # /blog paid for a fresh encode of every card — which is the deploy-shaped
+    # half of "images take seconds to load". The source images are ULID-named
+    # and therefore immutable, so an entry stays valid across releases and there
+    # is nothing to invalidate.
+    #
+    # Only `cache/images` is shared, not `cache/`: the fetch cache alongside it
+    # is keyed to the build that produced it, and sharing that between releases
+    # would let a new release serve data its predecessor cached.
+    remote "set -e
+        install -d -m 2775 ${SHARED_DIR}/web/image-cache
+        install -d -m 2775 ${RELEASE_DIR}/web/.next/standalone/.next/cache
+        rm -rf ${RELEASE_DIR}/web/.next/standalone/.next/cache/images
+        ln -sfn ${SHARED_DIR}/web/image-cache ${RELEASE_DIR}/web/.next/standalone/.next/cache/images"
+    ok "image cache linked to shared ($(remote "du -sh ${SHARED_DIR}/web/image-cache 2>/dev/null | cut -f1" || echo empty))"
+
     # node_modules is 400+ MB and the standalone bundle already contains
     # everything the server imports. Dropping it keeps five retained releases
     # affordable.

@@ -62,7 +62,50 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns,
-    formats: ["image/avif", "image/webp"],
+
+    /**
+     * WebP only — AVIF is deliberately not offered.
+     *
+     * `formats` is a preference order, and the optimiser encodes on demand, on the
+     * first request for each (image, width, quality) combination. AVIF is the far
+     * better format on paper and the wrong trade here: encoding it costs roughly an
+     * order of magnitude more CPU than WebP, and this app shares a droplet with ten
+     * other sites. A blog grid asks for a dozen images at once, so twelve AVIF
+     * encodes queue up behind each other on a box that has other work to do — which
+     * is what made a cold `/blog` take seconds per card.
+     *
+     * The saving those seconds bought was small: featured images are 14-20 kB to
+     * begin with, so AVIF was reclaiming a couple of kB per card. WebP encodes fast
+     * enough to be unnoticeable and is supported everywhere AVIF is.
+     */
+    formats: ["image/webp"],
+
+    /**
+     * How long an optimised image stays on disk before it is re-encoded.
+     *
+     * The default is measured in minutes, on the assumption that the source at a
+     * given URL may change. Ours cannot: `MediaController::store()` names every
+     * upload with a fresh ULID, so replacing an image produces a new URL and the
+     * old entry is simply never requested again. That makes the cache safe to keep
+     * for a year, and it turns re-encoding from something that happens all day into
+     * something that happens once per image.
+     *
+     * This is also the `max-age` sent to the browser, so it fixes the repeat visit
+     * as well as the origin's workload.
+     */
+    minimumCacheTTL: 31_536_000,
+
+    /**
+     * The widths the optimiser will actually produce.
+     *
+     * Every distinct width is a separate encode and a separate cache entry, and the
+     * default list is wide enough to cover layouts this app does not have. These
+     * are the sizes the grid and the article header actually request via `sizes`;
+     * trimming the list means a cold cache is filled by a handful of encodes rather
+     * than one per breakpoint in the default set.
+     */
+    deviceSizes: [640, 750, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 256, 384],
 
     /**
      * Next 16 refuses to optimise an image whose host resolves to a private IP,

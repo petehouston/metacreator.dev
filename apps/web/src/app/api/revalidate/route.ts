@@ -28,9 +28,13 @@ export async function POST(request: Request) {
   const tags = body.tags ?? [];
   const paths = body.paths ?? [];
 
-  // "max" = stale-while-revalidate: viewers keep getting the old page instantly
-  // while the new one renders in the background, so a publish never causes a stall.
-  for (const tag of tags) revalidateTag(tag, "max");
+  // `{ expire: 0 }` rather than a stale-while-revalidate profile. The two differ on
+  // exactly the case this endpoint exists for: with stale-while-revalidate the
+  // first visitor after a publish still gets the *old* page while the new one
+  // renders behind them, so an editor who saves and reloads sees no change and
+  // concludes publishing is broken. Expiring outright costs that one visitor a
+  // render and makes the update immediate, which is the trade this route wants.
+  for (const tag of tags) revalidateTag(tag, { expire: 0 });
   for (const path of paths) revalidatePath(path);
 
   return NextResponse.json({

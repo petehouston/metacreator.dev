@@ -85,6 +85,7 @@ step "1. Directory tree"
 remote "sudo install -d -m 2775 -o ${APP_USER} -g ${APP_GROUP} \
     ${DEPLOY_ROOT} ${RELEASES_DIR} ${SHARED_DIR} ${BIN_DIR} \
     ${SHARED_DIR}/api ${SHARED_DIR}/web \
+    ${SHARED_DIR}/web/image-cache \
     ${SHARED_DIR}/api/storage \
     ${SHARED_DIR}/api/storage/app \
     ${SHARED_DIR}/api/storage/app/public \

@@ -100,10 +100,17 @@ queue and the client polls / subscribes — see [08 — Tool engine](08-tool-eng
 ```
 Next.js request → generateMetadata() → GET /api/v1/content/posts/{slug} (ISR, tag-revalidated)
                                      → renders blocks with the SAME renderer the editor uses
-Publishing a post → Laravel event → POST /api/revalidate (signed) → Next revalidateTag('post:slug')
+Publishing a post → model observer → POST /api/revalidate (signed) → Next revalidateTag('post:slug')
 ```
 
 This tag-based revalidation is what makes ISR safe: content is static until the CMS says otherwise.
+
+The trigger is an Eloquent observer, not a call inside the save path — `FrontendCacheServiceProvider`
+registers one per publishable model. A post reaches the public site through the editor, a bulk
+status change, the scheduled-publish command and the seeders, and an observer is the only place
+that catches all of them without each caller remembering to. Tags are collected per request and
+sent once, after the response is flushed, so a bulk edit is one call and a front end that is down
+slows nothing and fails no save — it just falls back to the timed revalidation.
 
 ## Data flow rules
 

@@ -68,11 +68,11 @@ Go 1.24, standard library plus:
 | Error tracking | Sentry | Both apps, release-tagged |
 | Local dev | Docker Compose | [19](19-local-development.md) |
 | Deployment | Ansible | [20](20-deployment.md) |
-| CI | GitHub Actions | Lint → static analysis → tests → build → deploy on tag |
+| CI | None (local gates) | `make lint`, `make analyse`, `make test` run locally before a deploy; there is no hosted CI |
 
 ## Version policy
 
 - Pin exact versions in lockfiles; allow caret ranges in manifests.
-- Dependabot/Renovate opens weekly grouped PRs; patch updates auto-merge on green CI, minors are
-  reviewed, majors get an issue and a dedicated branch.
+- Dependency updates are reviewed by hand: patch updates go in freely, minors are reviewed, majors
+  get a dedicated branch.
 - Any dependency that has not been released in 18 months is a candidate for removal at review time.

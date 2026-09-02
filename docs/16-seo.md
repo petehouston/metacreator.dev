@@ -107,10 +107,9 @@ anything other than 200. The 50,000-URL ceiling is where an index becomes necess
 screen below says how close we are.
 
 The file is a cached route with `revalidate = 3600`, so it re-renders on the first request after
-each hour expires — not on a timer of its own, and not once per deploy. On-demand invalidation via
-`/api/revalidate` exists for publish events but **nothing currently calls it**: the API declares
-`REVALIDATE_URL` and `REVALIDATE_SECRET` in its `.env` and never reads them. Until that is wired
-up, an hour is the worst-case lag between publishing and being crawlable.
+each hour expires — not on a timer of its own, and not once per deploy. That hour is now only the
+fallback: publishing also invalidates the route on demand, so being crawlable is immediate and the
+timer only matters for changes that never went through Eloquent.
 
 **Admin → Sitemap** (`/c0ns0le/sitemap`, `settings.view`) is what makes that lag visible rather
 than something you find out about from Search Console. It fetches the served file, diffs it against
