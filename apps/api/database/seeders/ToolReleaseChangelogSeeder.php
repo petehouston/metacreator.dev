@@ -40,9 +40,9 @@ final class ToolReleaseChangelogSeeder extends Seeder
     /**
      * One entry per day the catalog grew, oldest first.
      *
-     * `slug` is the release's URL and its idempotency key: re-running this seeder
-     * updates the release of that name in place rather than adding a second copy,
-     * which is what makes it safe on every deploy.
+     * `slug` is the release's URL and its idempotency key: a day whose slug is
+     * already in the table is skipped entirely, so this is safe on every deploy
+     * and never overwrites an edit made in the admin.
      *
      * @var list<array<string, mixed>>
      */
@@ -120,9 +120,27 @@ final class ToolReleaseChangelogSeeder extends Seeder
     public function run(): void
     {
         $author = User::query()->orderBy('id')->first();
+        $created = 0;
 
         foreach (self::DAYS as $day) {
             $release = ChangelogRelease::query()->firstOrNew(['slug' => $day['slug']]);
+
+            // Seed once, then never touch it again.
+            //
+            // This runs on every deploy, and a release is editable in the admin —
+            // so rewriting the row here would silently undo an editor's work the
+            // next time anyone deployed. It happened within two minutes of the
+            // first seeding: the launch date was corrected by hand, and a re-run
+            // would have put the seeded value straight back.
+            //
+            // The cost is that fixing a typo below no longer reaches a day that
+            // has already shipped; that is the right trade, because the admin can
+            // fix it in ten seconds and cannot defend against being overwritten.
+            if ($release->exists) {
+                continue;
+            }
+
+            $created++;
 
             $release->fill([
                 'version' => $day['version'] ?? null,
@@ -136,18 +154,11 @@ final class ToolReleaseChangelogSeeder extends Seeder
                 'is_major' => $day['is_major'] ?? false,
             ]);
 
-            // Only on create. Re-attributing an existing release on every deploy
-            // would overwrite whoever edited it in the admin since.
-            if (! $release->exists && $author !== null) {
+            if ($author !== null) {
                 $release->author_id = $author->id;
             }
 
             $release->save();
-
-            // Rebuilt rather than merged: `sort_order` is positional, so appending a
-            // tool to a day that already seeded would otherwise leave the old rows
-            // interleaved with the new ones in an order nobody chose.
-            $release->items()->delete();
 
             $sort = 0;
 
@@ -175,7 +186,9 @@ final class ToolReleaseChangelogSeeder extends Seeder
             }
         }
 
-        $this->command?->info('Seeded '.count(self::DAYS).' tool-release entries.');
+        $this->command?->info($created === 0
+            ? 'Tool-release changelog already up to date.'
+            : 'Published '.$created.' new tool-release '.($created === 1 ? 'entry' : 'entries').'.');
     }
 
     /**
