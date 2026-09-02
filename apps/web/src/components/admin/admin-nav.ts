@@ -9,6 +9,7 @@ import {
   Layers,
   LineChart,
   Mail,
+  Map,
   Receipt,
   RefreshCcw,
   Rocket,
@@ -208,6 +209,13 @@ export const adminNavSections: AdminNavSection[] = [
         icon: Mail,
         description: "The list, and whether it is syncing",
         permissions: ["newsletter.view"],
+      },
+      {
+        href: "/c0ns0le/sitemap",
+        label: "Sitemap",
+        icon: Map,
+        description: "What search engines are being told the site contains",
+        permissions: ["settings.view"],
       },
       {
         href: "/c0ns0le/settings",

@@ -99,13 +99,27 @@ publication**; a slug edit creates a 301 in the `redirects` table automatically.
 
 ## Sitemaps
 
-`/sitemap.xml` is an index referencing `/sitemap-tools.xml`, `/sitemap-posts.xml`,
-`/sitemap-categories.xml`, `/sitemap-pages.xml`. Generated from the API, cached, and revalidated on
-publish events. Only `published`, visible, indexable entities appear. `lastmod` is real. Nothing is
-in a sitemap that returns anything other than 200.
+`/sitemap.xml` is one flat `urlset`, not an index: at a few hundred URLs, splitting it into
+per-type children would be four files to keep in step for no crawler's benefit. It is generated
+from the API by `lib/sitemap-entries.ts` and rendered by `app/sitemap.ts`. Only `published`,
+visible, indexable entities appear. `lastmod` is real. Nothing is in a sitemap that returns
+anything other than 200. The 50,000-URL ceiling is where an index becomes necessary, and the admin
+screen below says how close we are.
+
+The file is a cached route with `revalidate = 3600`, so it re-renders on the first request after
+each hour expires — not on a timer of its own, and not once per deploy. On-demand invalidation via
+`/api/revalidate` exists for publish events but **nothing currently calls it**: the API declares
+`REVALIDATE_URL` and `REVALIDATE_SECRET` in its `.env` and never reads them. Until that is wired
+up, an hour is the worst-case lag between publishing and being crawlable.
+
+**Admin → Sitemap** (`/c0ns0le/sitemap`, `settings.view`) is what makes that lag visible rather
+than something you find out about from Search Console. It fetches the served file, diffs it against
+a fresh run of the same generator, and shows what is missing, what is stale and how old the render
+is. "Refresh now" expires the underlying data caches, invalidates the route and re-renders it in
+the same request.
 
 `/robots.txt` disallows `/dashboard`, `/api`, and `?*` search parameters, and points to the
-sitemap index. The staff console at `/c0ns0le` is deliberately **not** listed there, nor in any
+sitemap. The staff console at `/c0ns0le` is deliberately **not** listed there, nor in any
 sitemap or feed: a `Disallow` line is a public directory of the paths worth attacking. It stays out
 of the index through `robots: { index: false }` on its own layout, and behind the staff check
 regardless.

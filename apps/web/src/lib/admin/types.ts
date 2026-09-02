@@ -697,3 +697,61 @@ export interface AdminChangelogRelease {
   author: { id: string; display_name: string } | null;
   updated_at: string | null;
 }
+
+// ── Sitemap ──────────────────────────────────────────────────────────────────
+//
+// Unlike everything above, these do not come from the Laravel API: `/sitemap.xml`
+// is rendered by this app, so its report is assembled by the Next route handler at
+// `app/api/admin/sitemap`. They live here anyway, because from a screen's point of
+// view "an admin payload" is the same idea either way.
+
+/** One `<url>` as the served file actually lists it. */
+export interface SitemapEntry {
+  loc: string;
+  /** The path plus query, which is what makes a row scannable in a table. */
+  path: string;
+  lastmod: string | null;
+  changefreq: string | null;
+  priority: number | null;
+}
+
+export interface SitemapSection {
+  key: string;
+  label: string;
+  /** URLs of this kind in the file crawlers are being served. */
+  served: number;
+  /** URLs of this kind the generator would emit right now. */
+  expected: number;
+}
+
+export interface SitemapIssue {
+  level: "info" | "warning" | "danger";
+  message: string;
+}
+
+export interface SitemapReport {
+  url: string;
+  fetched_at: string;
+  /** HTTP status of the fetch of our own `/sitemap.xml`. */
+  status: number;
+  bytes: number;
+  served_total: number;
+  expected_total: number;
+  /**
+   * When the served file was rendered.
+   *
+   * Derived from the home page's `<lastmod>`, which the generator stamps with the
+   * render time — the sitemap format has nowhere else to put one.
+   */
+  generated_at: string | null;
+  age_seconds: number | null;
+  /** The route's `revalidate`, so the screen can say what "automatic" means. */
+  revalidate_seconds: number;
+  sections: SitemapSection[];
+  /** In the file but no longer generated — a crawler is being sent at these. */
+  stale: string[];
+  /** Generated but not in the file — published content crawlers cannot see yet. */
+  missing: string[];
+  issues: SitemapIssue[];
+  entries: SitemapEntry[];
+}

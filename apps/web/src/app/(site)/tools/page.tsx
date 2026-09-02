@@ -1,3 +1,4 @@
+import { ArrowUp } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -33,7 +34,7 @@ export default async function ToolsPage({ searchParams }: PageProps<"/tools">) {
   ]);
 
   return (
-    <div className="mx-auto w-full max-w-[80rem] px-4 py-12 sm:px-6 lg:py-16">
+    <div id="top" className="mx-auto w-full max-w-[80rem] px-4 py-12 sm:px-6 lg:py-16">
       <header className="flex flex-col gap-3">
         <p className="eyebrow">The catalog</p>
         <h1 className="text-heading-1 text-balance sm:text-display-lg">Creator tools</h1>
@@ -64,6 +65,21 @@ export default async function ToolsPage({ searchParams }: PageProps<"/tools">) {
           if it keeps happening.
         </p>
       )}
+
+      {/* A bare `<a>`, not a scroll handler and not `<Link>`: `html` already carries
+          `scroll-behavior: smooth`, which the reduced-motion block in globals.css
+          turns off for anyone who asked for that, and the router has no business
+          in a same-page hash. Being a real link also means it works before
+          hydration, which is the whole point at the foot of a page this long. */}
+      <div className="mt-12 flex justify-center">
+        <a
+          href="#top"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-foreground-muted)] underline-offset-4 transition-colors hover:text-[var(--color-foreground)] hover:underline"
+        >
+          <ArrowUp className="size-4" aria-hidden="true" />
+          Back to top
+        </a>
+      </div>
     </div>
   );
 }

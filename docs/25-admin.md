@@ -36,6 +36,7 @@ that filtering protects anything. Every route re-checks server-side.
 | Tickets | `/c0ns0le/tickets` | `tickets.view_any` | The queue, worst-first |
 | Contact inbox | `/c0ns0le/messages` | `tickets.view_any` | The public form's inbox |
 | Newsletter | `/c0ns0le/newsletter` | `newsletter.view` | The list and its provider sync |
+| Sitemap | `/c0ns0le/sitemap` | `settings.view` | What `/sitemap.xml` is serving, how stale it is, and a button to re-render it |
 | Settings | `/c0ns0le/settings` | `settings.view` | A section rail: general, blog, accounts, payments, SEO, tracking, email, newsletter |
 | Audit log | `/c0ns0le/activity` | `activity_log.view` | Who changed what |
 

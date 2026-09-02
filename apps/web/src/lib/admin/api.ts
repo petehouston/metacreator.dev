@@ -10,7 +10,13 @@
  * silently unfiltered list rather than an error.
  */
 
-import { apiData, apiFetch, type ApiResult } from "@/lib/http";
+import {
+  apiData,
+  apiFetch,
+  NETWORK_FAILURE,
+  type ApiFailure,
+  type ApiResult,
+} from "@/lib/http";
 import type { ChangelogMeta, ChangeTypeOption, Paginated } from "@/lib/types";
 import type {
   ActivityEntry,
@@ -37,6 +43,7 @@ import type {
   MailTestResult,
   PermissionCatalog,
   SettingsPayload,
+  SitemapReport,
   Taxonomy,
   ToolAnalytics,
   ToolGrant,
@@ -226,7 +233,58 @@ export const adminApi = {
   },
 
   activity: (params: Params) => list<ActivityEntry>("/activity", params),
+
+  /**
+   * The one endpoint here that is not the Laravel API.
+   *
+   * `/sitemap.xml` is rendered by this app from its own cache, so only this app can
+   * say what is currently in it. The route handler at `app/api/admin/sitemap`
+   * re-checks the caller's permission against the API before answering.
+   */
+  sitemap: {
+    get: () => local<SitemapReport>("/api/admin/sitemap"),
+    refresh: () => local<SitemapReport>("/api/admin/sitemap", "POST"),
+  },
 };
+
+/**
+ * A same-origin call to one of this app's own route handlers.
+ *
+ * Deliberately not `apiFetch`: that one is aimed at the API's host and primes
+ * Sanctum's CSRF cookie, neither of which applies here. The error envelope is kept
+ * identical so `LoadError` and `useAdminResource` do not need to know the
+ * difference.
+ */
+async function local<T>(path: string, method: "GET" | "POST" = "GET"): Promise<ApiResult<T>> {
+  let response: Response;
+
+  try {
+    response = await fetch(path, {
+      method,
+      headers: { Accept: "application/json" },
+      credentials: "include",
+    });
+  } catch {
+    return { ok: false, error: NETWORK_FAILURE };
+  }
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: T; error?: ApiFailure }
+    | null;
+
+  if (!response.ok || !payload?.data) {
+    return {
+      ok: false,
+      error: payload?.error ?? {
+        code: "server.error",
+        message: "Something went wrong. Please try again.",
+        status: response.status,
+      },
+    };
+  }
+
+  return { ok: true, data: payload.data };
+}
 
 function query(params: Params): string {
   const search = new URLSearchParams();

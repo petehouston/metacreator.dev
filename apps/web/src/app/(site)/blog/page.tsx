@@ -145,33 +145,22 @@ async function PostGrid({
 
   const { page: pagination } = response.meta;
 
-  // Only the first page of an unfiltered listing gets a lead post: on page three of
-  // a tag archive there is no editorial reason for one post to dominate.
-  const isLanding = pagination.current === 1 && !query && !category && !tag;
-  const lead = isLanding ? response.data[0] : null;
-  const rest = isLanding ? response.data.slice(1) : response.data;
+  // Every page reads the same. Page one used to pull its first post out into a
+  // full-width lead, which made the landing page a different shape from every
+  // other page of the same listing - and, because the lead was simply whatever
+  // sorted first, gave one post that prominence without anyone choosing it.
+  const posts = response.data;
 
   return (
     <>
-      {lead ? (
-        <div className="mt-10">
-          <PostCard
-            post={lead}
-            featured
-            display={display}
-            className="lg:flex-row lg:[&>div:first-child]:w-1/2"
-          />
-        </div>
-      ) : null}
-
       {/* Six columns rather than three, so a card can take a half or a whole row.
-          The grid is fed a count it does not control - one short when a lead post
-          is pulled out, or on the final page of any listing - and a 3-up grid
-          renders that as holes in the last row. Widening the leftovers to fill the
-          row instead reads as a deliberate layout at every count. */}
-      <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-6", lead ? "mt-6" : "mt-10")}>
-        {rest.map((post, index) => {
-          const span = columnSpan(index, rest.length);
+          The grid is fed a count it does not control - the final page of any
+          listing is rarely a multiple of three - and a 3-up grid renders that as
+          holes in the last row. Widening the leftovers to fill the row instead
+          reads as a deliberate layout at every count. */}
+      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-6">
+        {posts.map((post, index) => {
+          const span = columnSpan(index, posts.length);
 
           return (
             <PostCard
@@ -182,7 +171,8 @@ async function PostGrid({
                 span.sm,
                 span.lg,
                 // A full-width card with a 16:9 image on top would tower over the
-                // row above it; the lead post's side-by-side shape keeps it level.
+                // row above it; going side-by-side keeps its height level with the
+                // three-up cards around it.
                 span.lg === "lg:col-span-6" && "lg:flex-row lg:[&>div:first-child]:w-1/2",
               )}
             />
