@@ -411,8 +411,17 @@ ok "storage symlink in place"
 # ─────────────────────────────────────────────────────────────────────────────
 step "9. Permissions"
 # nginx (www-data) must read the release; the app must write only to storage.
+#
+# The chgrp needs sudo. The deploy user is not a member of ${APP_GROUP}, so an
+# unprivileged `chgrp -R` fails on every path it owns - and because that failure
+# used to be swallowed by `2>/dev/null || true`, the release looked fine while
+# `api/public` stayed group-owned by the deploy user at mode 750. nginx (www-data)
+# then had no permission on the document root, so every static file it serves
+# itself - which in practice means everything under /storage/ - returned 404 while
+# PHP and the Next proxy carried on working. That is a difficult symptom to read
+# backwards, so the chgrp is no longer allowed to fail quietly.
+remote_sudo "chgrp -R ${APP_GROUP} ${RELEASE_DIR}"
 remote "set -e
-    chgrp -R ${APP_GROUP} ${RELEASE_DIR} 2>/dev/null || true
     chmod -R u=rwX,g=rX,o= ${RELEASE_DIR}
     # Only files this user owns. php-fpm's master runs as root and owns its own
     # php-fpm-error.log / php-fpm-slow.log inside this directory; a blanket

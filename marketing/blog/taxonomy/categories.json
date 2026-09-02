@@ -1,0 +1,47 @@
+{
+ "_comment": "Blog categories = the JOB a post does. Platform is a TAG, never a category - the same two-axis rule docs/07 applies to the tool catalog. Names are one word each - a chip is read at a glance, and an ampersand in a chip is noise. Six is the cap: a seventh category means a post has two plausible homes, and split archives never rank.",
+ "categories": [
+  {
+   "slug": "growth",
+   "name": "Growth",
+   "description": "How reach actually works on each network - what the ranking systems reward, what suppresses a post, and the levers a creator controls.",
+   "accent_color": "#2F6BFF",
+   "sort_order": 10
+  },
+  {
+   "slug": "seo",
+   "name": "Search",
+   "description": "Getting found through search: YouTube search, Pinterest, hashtags, titles, descriptions and the metadata that decides whether a piece surfaces at all.",
+   "accent_color": "#00A97F",
+   "sort_order": 20
+  },
+  {
+   "slug": "content",
+   "name": "Content",
+   "description": "Hooks, captions, titles, scripts and calls to action - the writing that carries a post, with the limits every platform imposes on it.",
+   "accent_color": "#7C5CFF",
+   "sort_order": 30
+  },
+  {
+   "slug": "design",
+   "name": "Design",
+   "description": "Image sizes, safe zones, thumbnails, compression and formats: making one asset work everywhere without being cropped, crushed or covered by UI.",
+   "accent_color": "#FF6B57",
+   "sort_order": 40
+  },
+  {
+   "slug": "analytics",
+   "name": "Analytics",
+   "description": "Which numbers mean something, how to calculate them correctly, and what a good one looks like at your follower count.",
+   "accent_color": "#0EA5E9",
+   "sort_order": 50
+  },
+  {
+   "slug": "monetization",
+   "name": "Money",
+   "description": "Payouts, programme thresholds, sponsorship pricing and the arithmetic behind creator income - with the assumptions stated, not hidden.",
+   "accent_color": "#F0B429",
+   "sort_order": 60
+  }
+ ]
+}

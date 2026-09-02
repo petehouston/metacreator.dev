@@ -11,18 +11,35 @@ import { ApiRequestError } from "@/lib/api";
 import { blogDisplay, type BlogDisplay } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Blog — Playbooks and analysis for creators",
-  description:
-    "Practical guides on growing, analysing and producing content across YouTube, Instagram, TikTok and X. Written by people who ship, not by an SEO farm.",
-  alternates: { canonical: "/blog" },
-  openGraph: {
-    title: `Blog | ${siteConfig.name}`,
-    description: "Playbooks and analysis for creators, across every major platform.",
-    url: `${siteConfig.url}/blog`,
-    type: "website",
-  },
-};
+const DESCRIPTION =
+  "Practical guides on growing, analysing and producing content across YouTube, Instagram, TikTok and X. Written by people who ship, not by an SEO farm.";
+
+/**
+ * Pagination is a path segment — `/blog`, `/blog/2`, `/blog/3` — rewritten onto
+ * this route's `?page=` in next.config.ts. The canonical must therefore point at
+ * the path form, or every page but the first would self-canonicalise to `/blog`
+ * and drop its posts out of the index.
+ */
+export async function generateMetadata({ searchParams }: PageProps<"/blog">): Promise<Metadata> {
+  const page = pageNumber(single((await searchParams).paged));
+  const path = page > 1 ? `/blog/${page}` : "/blog";
+  const title =
+    page > 1
+      ? `Blog — Page ${page}`
+      : "Blog — Playbooks and analysis for creators";
+
+  return {
+    title,
+    description: DESCRIPTION,
+    alternates: { canonical: path },
+    openGraph: {
+      title: `${title} | ${siteConfig.name}`,
+      description: "Playbooks and analysis for creators, across every major platform.",
+      url: `${siteConfig.url}${path}`,
+      type: "website",
+    },
+  };
+}
 
 export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
   const params = await searchParams;
@@ -30,7 +47,12 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
   const query = single(params.q);
   const category = single(params.category);
   const tag = single(params.tag);
-  const page = Number(single(params.page) ?? 1);
+
+  // Set by the `/blog/{n}` rewrite. A leftover `?page=` from the query-string
+  // pagination this route used to have is deliberately not read: next.config.ts
+  // has already redirected those to the path form, and the redirect carries the
+  // stale param along to the destination.
+  const page = pageNumber(single(params.paged));
 
   // The blog can be switched off in admin settings, in which case the API 404s
   // every route in the group and these pages must disappear too.
@@ -142,10 +164,30 @@ async function PostGrid({
         </div>
       ) : null}
 
-      <div className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", lead ? "mt-6" : "mt-10")}>
-        {rest.map((post) => (
-          <PostCard key={post.slug} post={post} display={display} />
-        ))}
+      {/* Six columns rather than three, so a card can take a half or a whole row.
+          The grid is fed a count it does not control - one short when a lead post
+          is pulled out, or on the final page of any listing - and a 3-up grid
+          renders that as holes in the last row. Widening the leftovers to fill the
+          row instead reads as a deliberate layout at every count. */}
+      <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-6", lead ? "mt-6" : "mt-10")}>
+        {rest.map((post, index) => {
+          const span = columnSpan(index, rest.length);
+
+          return (
+            <PostCard
+              key={post.slug}
+              post={post}
+              display={display}
+              className={cn(
+                span.sm,
+                span.lg,
+                // A full-width card with a 16:9 image on top would tower over the
+                // row above it; the lead post's side-by-side shape keeps it level.
+                span.lg === "lg:col-span-6" && "lg:flex-row lg:[&>div:first-child]:w-1/2",
+              )}
+            />
+          );
+        })}
       </div>
 
       {pagination.last_page > 1 && (
@@ -173,9 +215,9 @@ async function PostGrid({
 
 function GridFallback() {
   return (
-    <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-6">
       {Array.from({ length: 6 }, (_, index) => (
-        <PostCardSkeleton key={index} />
+        <PostCardSkeleton key={index} className="sm:col-span-3 lg:col-span-2" />
       ))}
     </div>
   );
@@ -203,18 +245,55 @@ function FilterChip({
   );
 }
 
-function buildHref(params: Record<string, string | number | undefined>): string {
+/**
+ * How many columns a card takes at each breakpoint, so the last row is always
+ * full: two per row from `sm`, three from `lg`, with the one or two leftovers
+ * stretched to share the remaining width.
+ */
+function columnSpan(index: number, total: number): { sm: string; lg: string } {
+  const isLast = index === total - 1;
+  const remainder = total % 3;
+
+  return {
+    sm: total % 2 === 1 && isLast ? "sm:col-span-6" : "sm:col-span-3",
+    lg:
+      remainder === 1 && isLast
+        ? "lg:col-span-6"
+        : remainder === 2 && index >= total - 2
+          ? "lg:col-span-3"
+          : "lg:col-span-2",
+  };
+}
+
+/**
+ * Page one is `/blog`; every other page is `/blog/{n}`. Filters stay in the query
+ * string - they combine freely, and only one of them can own the path.
+ */
+function buildHref(params: {
+  q?: string;
+  category?: string;
+  tag?: string;
+  page?: number;
+}): string {
+  const { page, ...filters } = params;
   const search = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== "" && value !== 1) {
-      search.set(key, String(value));
+  for (const [key, value] of Object.entries(filters)) {
+    if (value !== undefined && value !== "") {
+      search.set(key, value);
     }
   }
 
+  const path = page !== undefined && page > 1 ? `/blog/${page}` : "/blog";
   const query = search.toString();
 
-  return query ? `/blog?${query}` : "/blog";
+  return query ? `${path}?${query}` : path;
+}
+
+function pageNumber(value: string | undefined): number {
+  const parsed = Number(value);
+
+  return Number.isInteger(parsed) && parsed >= 1 ? parsed : 1;
 }
 
 function single(value: string | string[] | undefined): string | undefined {

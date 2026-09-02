@@ -1,0 +1,251 @@
+{
+ "_comment": "Tags are the second axis. `group` is planning metadata only - it is stripped before the API call, because the tags table has name/slug/description and nothing else. Rules: every post carries exactly one platform tag per platform it covers, one-to-three topic tags, and at most one format tag. A tag with fewer than three posts is a thin archive; docs/16 noindexes those, so do not invent tags outside this file.",
+ "tags": [
+  {
+   "group": "platform",
+   "slug": "youtube",
+   "name": "YouTube",
+   "description": "Guides, tools and benchmarks for YouTube creators."
+  },
+  {
+   "group": "platform",
+   "slug": "instagram",
+   "name": "Instagram",
+   "description": "Reels, carousels, stories and the Instagram numbers that matter."
+  },
+  {
+   "group": "platform",
+   "slug": "tiktok",
+   "name": "TikTok",
+   "description": "Short-form growth, payouts and formatting for TikTok."
+  },
+  {
+   "group": "platform",
+   "slug": "x",
+   "name": "X (Twitter)",
+   "description": "Posts, threads, cards and limits on X."
+  },
+  {
+   "group": "platform",
+   "slug": "threads",
+   "name": "Threads",
+   "description": "Formatting, limits and reach on Threads."
+  },
+  {
+   "group": "platform",
+   "slug": "linkedin",
+   "name": "LinkedIn",
+   "description": "Posts, documents and profile discovery on LinkedIn."
+  },
+  {
+   "group": "platform",
+   "slug": "facebook",
+   "name": "Facebook",
+   "description": "Pages, feed posts and ad copy on Facebook."
+  },
+  {
+   "group": "platform",
+   "slug": "pinterest",
+   "name": "Pinterest",
+   "description": "Pinterest as a search engine: Pins, boards and Rich Pins."
+  },
+  {
+   "group": "topic",
+   "slug": "hashtags",
+   "name": "Hashtags",
+   "description": "Choosing, counting and placing hashtags per network."
+  },
+  {
+   "group": "topic",
+   "slug": "thumbnails",
+   "name": "Thumbnails",
+   "description": "Thumbnail design, sizing and click-through."
+  },
+  {
+   "group": "topic",
+   "slug": "engagement-rate",
+   "name": "Engagement Rate",
+   "description": "Calculating engagement rate and reading it honestly."
+  },
+  {
+   "group": "topic",
+   "slug": "monetization",
+   "name": "Monetization",
+   "description": "Programme thresholds, payouts and eligibility."
+  },
+  {
+   "group": "topic",
+   "slug": "image-sizes",
+   "name": "Image Sizes",
+   "description": "Current dimensions and aspect ratios per placement."
+  },
+  {
+   "group": "topic",
+   "slug": "safe-zones",
+   "name": "Safe Zones",
+   "description": "Where platform UI covers your frame."
+  },
+  {
+   "group": "topic",
+   "slug": "captions",
+   "name": "Captions",
+   "description": "Caption structure, length and the fold."
+  },
+  {
+   "group": "topic",
+   "slug": "hooks",
+   "name": "Hooks",
+   "description": "Opening lines that decide whether anything else is read."
+  },
+  {
+   "group": "topic",
+   "slug": "titles",
+   "name": "Titles & Headlines",
+   "description": "Titles that survive truncation and still earn the click."
+  },
+  {
+   "group": "topic",
+   "slug": "bio",
+   "name": "Bios & Profiles",
+   "description": "Profile copy, links and handles."
+  },
+  {
+   "group": "topic",
+   "slug": "usernames",
+   "name": "Usernames",
+   "description": "Handle availability, rules and claiming a name."
+  },
+  {
+   "group": "topic",
+   "slug": "metadata",
+   "name": "Metadata",
+   "description": "Tags, descriptions and the fields a platform reads."
+  },
+  {
+   "group": "topic",
+   "slug": "link-previews",
+   "name": "Link Previews",
+   "description": "Open Graph, cards and why a link renders wrong."
+  },
+  {
+   "group": "topic",
+   "slug": "posting-schedule",
+   "name": "Posting Schedule",
+   "description": "Cadence, timing and planning calendars."
+  },
+  {
+   "group": "topic",
+   "slug": "repurposing",
+   "name": "Repurposing",
+   "description": "One asset, many placements."
+  },
+  {
+   "group": "topic",
+   "slug": "shorts",
+   "name": "Short-form Video",
+   "description": "Shorts, Reels and TikToks as a format."
+  },
+  {
+   "group": "topic",
+   "slug": "youtube-seo",
+   "name": "YouTube SEO",
+   "description": "Ranking inside YouTube search and suggested."
+  },
+  {
+   "group": "topic",
+   "slug": "pinterest-seo",
+   "name": "Pinterest SEO",
+   "description": "Keywords, boards and Rich Pins on Pinterest."
+  },
+  {
+   "group": "topic",
+   "slug": "reach-issues",
+   "name": "Reach Problems",
+   "description": "Suppression, shadowbans and posts that go nowhere."
+  },
+  {
+   "group": "topic",
+   "slug": "analytics-basics",
+   "name": "Analytics Basics",
+   "description": "Reading the numbers a platform gives you."
+  },
+  {
+   "group": "topic",
+   "slug": "utm-tracking",
+   "name": "Link Tracking",
+   "description": "UTMs, campaign naming and attribution for creators."
+  },
+  {
+   "group": "topic",
+   "slug": "image-optimization",
+   "name": "Image Optimisation",
+   "description": "Formats, compression and quality trade-offs."
+  },
+  {
+   "group": "topic",
+   "slug": "embeds",
+   "name": "Embeds",
+   "description": "Putting social content on your own site correctly."
+  },
+  {
+   "group": "topic",
+   "slug": "giveaways",
+   "name": "Giveaways",
+   "description": "Running a draw that holds up to scrutiny."
+  },
+  {
+   "group": "topic",
+   "slug": "brand-assets",
+   "name": "Brand Assets",
+   "description": "Colour, consistency and reusable brand pieces."
+  },
+  {
+   "group": "topic",
+   "slug": "scripts",
+   "name": "Scripts & Timing",
+   "description": "Word counts, reading speed and runtime."
+  },
+  {
+   "group": "format",
+   "slug": "how-to",
+   "name": "How-to",
+   "description": "Step-by-step, one job per guide."
+  },
+  {
+   "group": "format",
+   "slug": "guide",
+   "name": "Guide",
+   "description": "The long, linked overview of a subject."
+  },
+  {
+   "group": "format",
+   "slug": "benchmarks",
+   "name": "Benchmarks",
+   "description": "Reference numbers with their source and date."
+  },
+  {
+   "group": "format",
+   "slug": "templates",
+   "name": "Templates",
+   "description": "Something to copy and fill in."
+  },
+  {
+   "group": "format",
+   "slug": "explainer",
+   "name": "Explainer",
+   "description": "Why a thing works the way it does."
+  },
+  {
+   "group": "format",
+   "slug": "troubleshooting",
+   "name": "Troubleshooting",
+   "description": "It is broken; here is the ordered set of causes."
+  },
+  {
+   "group": "format",
+   "slug": "comparison",
+   "name": "Comparison",
+   "description": "Options set side by side on stated criteria."
+  }
+ ]
+}

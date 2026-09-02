@@ -1,0 +1,5 @@
+# Live admin session cookie - never commit
+.cookie
+.env
+.cookie.local
+.venv/

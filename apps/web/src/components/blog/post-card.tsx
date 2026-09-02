@@ -151,9 +151,15 @@ export function PostCard({
   );
 }
 
-export function PostCardSkeleton({ featured = false }: { featured?: boolean }) {
+export function PostCardSkeleton({
+  featured = false,
+  className,
+}: {
+  featured?: boolean;
+  className?: string;
+}) {
   return (
-    <div className="panel overflow-hidden">
+    <div className={cn("panel overflow-hidden", className)}>
       <div className={cn("animate-pulse bg-[var(--color-surface-sunken)]", featured ? "aspect-[2/1]" : "aspect-[16/9]")} />
       <div className="flex flex-col gap-3 p-5">
         <div className="h-3 w-24 animate-pulse rounded bg-[var(--color-surface-sunken)]" />

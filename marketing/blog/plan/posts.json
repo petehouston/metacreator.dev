@@ -1,0 +1,2748 @@
+{
+ "_comment": "Master content map. One row = one post = one primary keyword = one URL. Nothing is written that is not a row here, and no row exists without a tool page it can send a reader to. `wave` is the month it is written in; `archetype` picks the template in templates/. Edit this file, then re-run scripts/gen_briefs.py and scripts/gen_calendar.py - never edit the generated files by hand.",
+ "waves": {
+  "1": "Month 1",
+  "2": "Month 2",
+  "3": "Month 3",
+  "4": "Month 4",
+  "5": "Month 5",
+  "6": "Month 6"
+ },
+ "posts": [
+  {
+   "id": "YT-01",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "pillar",
+   "slug": "youtube-seo",
+   "title": "YouTube SEO: How Videos Actually Get Found",
+   "primary_keyword": "youtube seo",
+   "secondary_keywords": [
+    "youtube seo tips",
+    "how to rank youtube videos"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "youtube-seo",
+    "metadata",
+    "guide"
+   ],
+   "tools": [
+    "youtube-search-suggestions",
+    "youtube-tag-extractor",
+    "youtube-hashtag-generator",
+    "social-media-character-counter"
+   ],
+   "target_words": 1200,
+   "url": "/blog/youtube-seo",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-02",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "how-to-see-tags-on-a-youtube-video",
+   "title": "How to See the Tags on Any YouTube Video",
+   "primary_keyword": "youtube video tags",
+   "secondary_keywords": [
+    "how to see tags on youtube",
+    "youtube tag viewer"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "metadata",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-tag-extractor",
+    "youtube-metadata-viewer"
+   ],
+   "target_words": 800,
+   "url": "/blog/how-to-see-tags-on-a-youtube-video",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-03",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "youtube-title-length",
+   "title": "YouTube Title Length: Where Your Title Gets Cut Off",
+   "primary_keyword": "youtube title length",
+   "secondary_keywords": [
+    "youtube title character limit",
+    "youtube title truncation"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "youtube",
+    "titles",
+    "explainer"
+   ],
+   "tools": [
+    "social-media-character-counter",
+    "headline-analyzer"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-title-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-04",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "youtube-keyword-research",
+   "title": "Free YouTube Keyword Research Using Autocomplete",
+   "primary_keyword": "youtube keyword research",
+   "secondary_keywords": [
+    "youtube keyword tool free",
+    "find youtube keywords"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "youtube-seo",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-search-suggestions",
+    "youtube-hashtag-generator"
+   ],
+   "target_words": 950,
+   "url": "/blog/youtube-keyword-research",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-05",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "templates",
+   "slug": "youtube-description-template",
+   "title": "A YouTube Description Template That Earns Its Space",
+   "primary_keyword": "youtube description template",
+   "secondary_keywords": [
+    "youtube description ideas",
+    "what to put in youtube description"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "youtube",
+    "metadata",
+    "templates"
+   ],
+   "tools": [
+    "youtube-channel-description-generator",
+    "youtube-timestamp-link-builder",
+    "utm-link-builder"
+   ],
+   "target_words": 950,
+   "url": "/blog/youtube-description-template",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-06",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "youtube-hashtags",
+   "title": "How Many Hashtags to Use on YouTube (and Where)",
+   "primary_keyword": "youtube hashtags",
+   "secondary_keywords": [
+    "how many hashtags youtube",
+    "youtube hashtag limit"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "hashtags",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-hashtag-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-07",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "youtube-timestamp-links",
+   "title": "How to Make a YouTube Timestamp Link (and Add Chapters)",
+   "primary_keyword": "youtube timestamp link",
+   "secondary_keywords": [
+    "youtube chapters",
+    "link to a time in youtube"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "metadata",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-timestamp-link-builder"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-timestamp-links",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-08",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "find-youtube-channel-id",
+   "title": "How to Find a YouTube Channel ID",
+   "primary_keyword": "youtube channel id",
+   "secondary_keywords": [
+    "find channel id",
+    "youtube channel id finder"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "metadata",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-channel-id-finder",
+    "youtube-rss-feed-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/find-youtube-channel-id",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-09",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "troubleshooting",
+   "slug": "youtube-video-not-showing-in-search",
+   "title": "YouTube Video Not Showing in Search: 5 Settings",
+   "primary_keyword": "youtube video not showing in search",
+   "secondary_keywords": [
+    "youtube shadowban",
+    "video not appearing youtube"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "youtube",
+    "reach-issues",
+    "troubleshooting"
+   ],
+   "tools": [
+    "youtube-shadowban-detector",
+    "youtube-metadata-viewer"
+   ],
+   "target_words": 950,
+   "url": "/blog/youtube-video-not-showing-in-search",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-10",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "youtube-video-metadata",
+   "title": "YouTube Video Metadata: Every Field a Video Declares",
+   "primary_keyword": "youtube video metadata",
+   "secondary_keywords": [
+    "youtube metadata viewer",
+    "youtube video data"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "metadata",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-metadata-viewer",
+    "youtube-tag-extractor"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-video-metadata",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-11",
+   "cluster": "yt-seo",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "youtube-embed-code",
+   "title": "YouTube Embed Code: Responsive and Privacy-Friendly",
+   "primary_keyword": "youtube embed code",
+   "secondary_keywords": [
+    "embed youtube video responsive",
+    "youtube nocookie embed"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "embeds",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-embed-code-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-embed-code",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-12",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "youtube-rss-feed",
+   "title": "How to Get the RSS Feed for a YouTube Channel",
+   "primary_keyword": "youtube rss feed",
+   "secondary_keywords": [
+    "youtube channel rss",
+    "subscribe to youtube by rss"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "youtube",
+    "embeds",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-rss-feed-generator",
+    "youtube-channel-id-finder"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-rss-feed",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-13",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "youtube-subscribe-link",
+   "title": "YouTube Subscribe Link: One Click, One URL",
+   "primary_keyword": "youtube subscribe link",
+   "secondary_keywords": [
+    "sub_confirmation=1",
+    "youtube subscribe button link"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "youtube",
+    "bio",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-subscribe-link-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-subscribe-link",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-14",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "youtube-handles",
+   "title": "YouTube Handles: Rules, Availability and Changing Yours",
+   "primary_keyword": "youtube handle",
+   "secondary_keywords": [
+    "youtube handle availability",
+    "change youtube handle"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "youtube",
+    "usernames",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-handle-availability-checker",
+    "username-availability-checker",
+    "handle-strength-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-handles",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-15",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "cite-a-youtube-video",
+   "title": "How to Cite a YouTube Video (APA, MLA, Chicago)",
+   "primary_keyword": "how to cite a youtube video",
+   "secondary_keywords": [
+    "youtube citation apa",
+    "cite a video mla"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "youtube",
+    "metadata",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-citation-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/cite-a-youtube-video",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-16",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "search-youtube-comments",
+   "title": "How to Search the Comments on a YouTube Video",
+   "primary_keyword": "search youtube comments",
+   "secondary_keywords": [
+    "find a comment on youtube",
+    "youtube comment search"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "youtube",
+    "analytics-basics",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-comment-finder",
+    "fake-youtube-comment-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/search-youtube-comments",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-17",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "templates",
+   "slug": "youtube-upload-schedule",
+   "title": "A YouTube Upload Schedule You Can Actually Keep",
+   "primary_keyword": "youtube upload schedule",
+   "secondary_keywords": [
+    "how often to post on youtube",
+    "youtube content calendar"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "youtube",
+    "posting-schedule",
+    "templates"
+   ],
+   "tools": [
+    "youtube-content-calendar"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-upload-schedule",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YT-18",
+   "cluster": "yt-seo",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "youtube-channel-description",
+   "title": "YouTube Channel Description: The First 150 Characters",
+   "primary_keyword": "youtube channel description",
+   "secondary_keywords": [
+    "youtube about section",
+    "channel description ideas"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "youtube",
+    "bio",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-channel-description-generator",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-channel-description",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-01",
+   "cluster": "yt-money",
+   "wave": 2,
+   "archetype": "pillar",
+   "slug": "youtube-monetization-requirements",
+   "title": "YouTube Monetization Requirements, Checked Against Your Channel",
+   "primary_keyword": "youtube monetization requirements",
+   "secondary_keywords": [
+    "youtube partner program requirements",
+    "1000 subscribers 4000 hours"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "guide"
+   ],
+   "tools": [
+    "youtube-partner-program-checker",
+    "youtube-money-calculator",
+    "follower-milestone-countdown"
+   ],
+   "target_words": 1200,
+   "url": "/blog/youtube-monetization-requirements",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-02",
+   "cluster": "yt-money",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "how-much-do-youtubers-make",
+   "title": "How Much Do YouTubers Make? The Arithmetic, Not the Anecdote",
+   "primary_keyword": "how much do youtubers make",
+   "secondary_keywords": [
+    "youtube money calculator",
+    "youtube earnings per 1000 views"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-money-calculator"
+   ],
+   "target_words": 950,
+   "url": "/blog/how-much-do-youtubers-make",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-03",
+   "cluster": "yt-money",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "rpm-vs-cpm",
+   "title": "RPM vs CPM: Which Number Is Your Income",
+   "primary_keyword": "rpm vs cpm",
+   "secondary_keywords": [
+    "what is rpm youtube",
+    "youtube cpm explained"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-money-calculator"
+   ],
+   "target_words": 800,
+   "url": "/blog/rpm-vs-cpm",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-04",
+   "cluster": "yt-money",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "is-a-youtube-channel-monetized",
+   "title": "Is a YouTube Channel Monetized? How to Tell",
+   "primary_keyword": "is a youtube channel monetized",
+   "secondary_keywords": [
+    "check if channel is monetized",
+    "youtube monetization checker"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-channel-monetization-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/is-a-youtube-channel-monetized",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-05",
+   "cluster": "yt-money",
+   "wave": 3,
+   "archetype": "explainer",
+   "slug": "youtube-shorts-monetization",
+   "title": "YouTube Shorts Monetization, and Why the RPM Is Lower",
+   "primary_keyword": "youtube shorts monetization",
+   "secondary_keywords": [
+    "shorts rpm",
+    "do shorts make money"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "shorts",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-money-calculator",
+    "youtube-partner-program-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-shorts-monetization",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "YM-06",
+   "cluster": "yt-money",
+   "wave": 3,
+   "archetype": "explainer",
+   "slug": "first-1000-subscribers",
+   "title": "How Long 1,000 Subscribers Takes, at Your Growth Rate",
+   "primary_keyword": "1000 subscribers",
+   "secondary_keywords": [
+    "how long to get 1000 subscribers",
+    "youtube milestone"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "youtube",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "follower-milestone-countdown",
+    "youtube-partner-program-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/first-1000-subscribers",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-01",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "pillar",
+   "slug": "social-media-image-sizes",
+   "title": "Social Media Image Sizes: One Reference for Everything",
+   "primary_keyword": "social media image sizes",
+   "secondary_keywords": [
+    "social media dimensions",
+    "image size guide"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "image-sizes",
+    "safe-zones",
+    "guide"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "safe-zone-guide",
+    "aspect-ratio-calculator"
+   ],
+   "target_words": 1200,
+   "url": "/blog/social-media-image-sizes",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-02",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "instagram-image-sizes",
+   "title": "Instagram Image Size for Every Placement",
+   "primary_keyword": "instagram image size",
+   "secondary_keywords": [
+    "instagram post size",
+    "instagram reel dimensions"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "reels-cover-cropper",
+    "story-templates-sizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-image-sizes",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-03",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "youtube-thumbnail-size",
+   "title": "YouTube Thumbnail Size, and the Part Nobody Sees",
+   "primary_keyword": "youtube thumbnail size",
+   "secondary_keywords": [
+    "youtube thumbnail dimensions",
+    "thumbnail safe area"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "youtube",
+    "thumbnails",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "safe-zone-guide",
+    "youtube-thumbnail-downloader"
+   ],
+   "target_words": 800,
+   "url": "/blog/youtube-thumbnail-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-04",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "howto",
+   "slug": "download-youtube-thumbnail",
+   "title": "How to Download a YouTube Thumbnail",
+   "primary_keyword": "download youtube thumbnail",
+   "secondary_keywords": [
+    "youtube thumbnail downloader",
+    "get youtube thumbnail image"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "youtube",
+    "thumbnails",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-thumbnail-downloader",
+    "youtube-image-downloader"
+   ],
+   "target_words": 800,
+   "url": "/blog/download-youtube-thumbnail",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-05",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "tiktok-video-size",
+   "title": "TikTok Video Size and the Safe Zone That Eats Your Text",
+   "primary_keyword": "tiktok video size",
+   "secondary_keywords": [
+    "tiktok dimensions",
+    "tiktok safe zone"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "tiktok",
+    "image-sizes",
+    "safe-zones",
+    "explainer"
+   ],
+   "tools": [
+    "safe-zone-guide",
+    "social-image-resizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/tiktok-video-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-06",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "twitter-image-size",
+   "title": "Twitter Image Sizes for X, and How the Card Crops Them",
+   "primary_keyword": "twitter image size",
+   "secondary_keywords": [
+    "x image dimensions",
+    "twitter card image size"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "x",
+    "image-sizes",
+    "link-previews",
+    "explainer"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "link-preview-debugger"
+   ],
+   "target_words": 800,
+   "url": "/blog/twitter-image-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-07",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "linkedin-image-sizes",
+   "title": "LinkedIn Image and Document Sizes",
+   "primary_keyword": "linkedin image size",
+   "secondary_keywords": [
+    "linkedin post image dimensions",
+    "linkedin carousel size"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "linkedin",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "carousel-splitter"
+   ],
+   "target_words": 800,
+   "url": "/blog/linkedin-image-sizes",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-08",
+   "cluster": "sizes",
+   "wave": 1,
+   "archetype": "explainer",
+   "slug": "facebook-image-sizes",
+   "title": "Facebook Image Sizes That Survive the Feed",
+   "primary_keyword": "facebook image size",
+   "secondary_keywords": [
+    "facebook post dimensions",
+    "facebook cover photo size"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "facebook",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "facebook-post-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/facebook-image-sizes",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-09",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "pinterest-pin-size",
+   "title": "Pinterest Pin Size: 2:3, and When to Break It",
+   "primary_keyword": "pinterest pin size",
+   "secondary_keywords": [
+    "pin dimensions",
+    "pinterest image size"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "pinterest",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "pin-image-sizer",
+    "pinterest-pin-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/pinterest-pin-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-10",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "compress-image-for-instagram",
+   "title": "How to Compress an Image for Instagram Without Damage",
+   "primary_keyword": "compress image for instagram",
+   "secondary_keywords": [
+    "reduce image size for social",
+    "image compressor"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "image-optimization",
+    "how-to"
+   ],
+   "tools": [
+    "image-compressor",
+    "image-format-converter"
+   ],
+   "target_words": 800,
+   "url": "/blog/compress-image-for-instagram",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-11",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "comparison",
+   "slug": "webp-vs-jpeg-vs-png",
+   "title": "WebP vs JPEG vs PNG vs AVIF for Social and Web",
+   "primary_keyword": "webp vs jpeg",
+   "secondary_keywords": [
+    "best image format for web",
+    "png or jpg"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "image-optimization",
+    "comparison"
+   ],
+   "tools": [
+    "image-format-converter",
+    "image-compressor"
+   ],
+   "target_words": 950,
+   "url": "/blog/webp-vs-jpeg-vs-png",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-12",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "aspect-ratios-explained",
+   "title": "Aspect Ratio for Creators: 16:9, 9:16, 4:5 and 1:1",
+   "primary_keyword": "aspect ratio",
+   "secondary_keywords": [
+    "9:16 aspect ratio",
+    "aspect ratio calculator"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "aspect-ratio-calculator",
+    "social-image-resizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/aspect-ratios-explained",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-13",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "social-media-safe-zones",
+   "title": "Safe Zones on Social Media: Where the UI Covers You",
+   "primary_keyword": "safe zone social media",
+   "secondary_keywords": [
+    "tiktok safe zone",
+    "instagram story safe area"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "safe-zones",
+    "image-sizes",
+    "explainer"
+   ],
+   "tools": [
+    "safe-zone-guide",
+    "story-templates-sizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/social-media-safe-zones",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "SZ-14",
+   "cluster": "sizes",
+   "wave": 2,
+   "archetype": "howto",
+   "slug": "brand-color-palette-from-image",
+   "title": "Build a Brand Color Palette From One Image",
+   "primary_keyword": "brand color palette from image",
+   "secondary_keywords": [
+    "color palette generator from photo",
+    "extract colors from image"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "brand-assets",
+    "how-to"
+   ],
+   "tools": [
+    "color-palette-extractor"
+   ],
+   "target_words": 800,
+   "url": "/blog/brand-color-palette-from-image",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-01",
+   "cluster": "engagement",
+   "wave": 3,
+   "archetype": "pillar",
+   "slug": "engagement-rate",
+   "title": "Engagement Rate: Every Formula, and Which One to Use",
+   "primary_keyword": "engagement rate",
+   "secondary_keywords": [
+    "how to calculate engagement rate",
+    "engagement rate formula"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "engagement-rate",
+    "analytics-basics",
+    "guide"
+   ],
+   "tools": [
+    "engagement-rate-calculator"
+   ],
+   "target_words": 1200,
+   "url": "/blog/engagement-rate",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-02",
+   "cluster": "engagement",
+   "wave": 3,
+   "archetype": "benchmarks",
+   "slug": "good-engagement-rate-instagram",
+   "title": "What Counts as a Good Instagram Engagement Rate",
+   "primary_keyword": "good engagement rate instagram",
+   "secondary_keywords": [
+    "average instagram engagement rate",
+    "instagram engagement benchmark"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "instagram",
+    "engagement-rate",
+    "benchmarks"
+   ],
+   "tools": [
+    "engagement-rate-calculator"
+   ],
+   "target_words": 950,
+   "url": "/blog/good-engagement-rate-instagram",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-03",
+   "cluster": "engagement",
+   "wave": 3,
+   "archetype": "benchmarks",
+   "slug": "good-engagement-rate-tiktok",
+   "title": "What Counts as a Good TikTok Engagement Rate",
+   "primary_keyword": "good engagement rate tiktok",
+   "secondary_keywords": [
+    "tiktok average engagement",
+    "tiktok benchmark"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "tiktok",
+    "engagement-rate",
+    "benchmarks"
+   ],
+   "tools": [
+    "engagement-rate-calculator"
+   ],
+   "target_words": 800,
+   "url": "/blog/good-engagement-rate-tiktok",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-04",
+   "cluster": "engagement",
+   "wave": 4,
+   "archetype": "benchmarks",
+   "slug": "good-engagement-rate-youtube",
+   "title": "Engagement Rate on YouTube, and the Metrics That Beat It",
+   "primary_keyword": "youtube engagement rate",
+   "secondary_keywords": [
+    "good youtube engagement rate",
+    "youtube like ratio"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "youtube",
+    "engagement-rate",
+    "benchmarks"
+   ],
+   "tools": [
+    "engagement-rate-calculator"
+   ],
+   "target_words": 800,
+   "url": "/blog/good-engagement-rate-youtube",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-05",
+   "cluster": "engagement",
+   "wave": 4,
+   "archetype": "comparison",
+   "slug": "engagement-rate-by-reach-vs-followers",
+   "title": "Engagement by Reach vs by Followers: Why Your Number Moved",
+   "primary_keyword": "engagement rate by reach",
+   "secondary_keywords": [
+    "engagement rate by followers",
+    "er reach formula"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "engagement-rate",
+    "analytics-basics",
+    "comparison"
+   ],
+   "tools": [
+    "engagement-rate-calculator"
+   ],
+   "target_words": 800,
+   "url": "/blog/engagement-rate-by-reach-vs-followers",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ER-06",
+   "cluster": "engagement",
+   "wave": 4,
+   "archetype": "explainer",
+   "slug": "vanity-metrics",
+   "title": "Vanity Metrics: What Looks Like Progress and Is Not",
+   "primary_keyword": "vanity metrics",
+   "secondary_keywords": [
+    "social media metrics that matter",
+    "creator kpis"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "analytics-basics",
+    "explainer"
+   ],
+   "tools": [
+    "engagement-rate-calculator",
+    "utm-link-builder"
+   ],
+   "target_words": 800,
+   "url": "/blog/vanity-metrics",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "HT-01",
+   "cluster": "hashtags",
+   "wave": 2,
+   "archetype": "pillar",
+   "slug": "how-to-use-hashtags",
+   "title": "How to Use Hashtags on Each Network (They Are Not the Same)",
+   "primary_keyword": "how to use hashtags",
+   "secondary_keywords": [
+    "hashtag strategy",
+    "hashtags 2026"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "hashtags",
+    "guide"
+   ],
+   "tools": [
+    "hashtag-generator",
+    "youtube-hashtag-generator"
+   ],
+   "target_words": 1200,
+   "url": "/blog/how-to-use-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "HT-02",
+   "cluster": "hashtags",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "instagram-hashtags",
+   "title": "How Many Instagram Hashtags, and Where to Put Them",
+   "primary_keyword": "instagram hashtags",
+   "secondary_keywords": [
+    "how many hashtags on instagram",
+    "instagram hashtag limit"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "instagram",
+    "hashtags",
+    "explainer"
+   ],
+   "tools": [
+    "hashtag-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "HT-03",
+   "cluster": "hashtags",
+   "wave": 2,
+   "archetype": "explainer",
+   "slug": "tiktok-hashtags",
+   "title": "TikTok Hashtags: Volume Is Not the Point",
+   "primary_keyword": "tiktok hashtags",
+   "secondary_keywords": [
+    "best tiktok hashtags",
+    "how many hashtags tiktok"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "tiktok",
+    "hashtags",
+    "explainer"
+   ],
+   "tools": [
+    "hashtag-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/tiktok-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "HT-04",
+   "cluster": "hashtags",
+   "wave": 3,
+   "archetype": "explainer",
+   "slug": "linkedin-hashtags",
+   "title": "LinkedIn Hashtags: Three, and Why More Hurts",
+   "primary_keyword": "linkedin hashtags",
+   "secondary_keywords": [
+    "how many hashtags linkedin",
+    "linkedin hashtag strategy"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "linkedin",
+    "hashtags",
+    "explainer"
+   ],
+   "tools": [
+    "hashtag-generator",
+    "linkedin-post-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/linkedin-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "HT-05",
+   "cluster": "hashtags",
+   "wave": 3,
+   "archetype": "troubleshooting",
+   "slug": "banned-hashtags",
+   "title": "Banned, Broken and Dead Hashtags: How to Spot One",
+   "primary_keyword": "banned hashtags",
+   "secondary_keywords": [
+    "broken hashtags instagram",
+    "hashtag not working"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "hashtags",
+    "reach-issues",
+    "troubleshooting"
+   ],
+   "tools": [
+    "hashtag-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/banned-hashtags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-01",
+   "cluster": "instagram",
+   "wave": 3,
+   "archetype": "pillar",
+   "slug": "instagram-growth-guide",
+   "title": "Instagram Growth: The Formats, the Numbers and the Fixes",
+   "primary_keyword": "instagram growth",
+   "secondary_keywords": [
+    "how to grow on instagram",
+    "instagram strategy"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "instagram",
+    "guide"
+   ],
+   "tools": [
+    "engagement-rate-calculator",
+    "carousel-splitter",
+    "reels-cover-cropper",
+    "instagram-bio-preview"
+   ],
+   "target_words": 1200,
+   "url": "/blog/instagram-growth-guide",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-02",
+   "cluster": "instagram",
+   "wave": 3,
+   "archetype": "howto",
+   "slug": "instagram-carousel-size",
+   "title": "Instagram Carousel Size, and How to Cut a Seamless One",
+   "primary_keyword": "instagram carousel size",
+   "secondary_keywords": [
+    "seamless carousel instagram",
+    "split image for carousel"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "image-sizes",
+    "how-to"
+   ],
+   "tools": [
+    "carousel-splitter",
+    "social-image-resizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-carousel-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-03",
+   "cluster": "instagram",
+   "wave": 3,
+   "archetype": "howto",
+   "slug": "instagram-reels-cover-size",
+   "title": "Instagram Reels Cover Size: One Image, Two Crops",
+   "primary_keyword": "instagram reels cover size",
+   "secondary_keywords": [
+    "reels cover dimensions",
+    "reel thumbnail size"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "image-sizes",
+    "how-to"
+   ],
+   "tools": [
+    "reels-cover-cropper",
+    "social-image-resizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-reels-cover-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-04",
+   "cluster": "instagram",
+   "wave": 3,
+   "archetype": "explainer",
+   "slug": "instagram-story-size",
+   "title": "Instagram Story Size and the Zones You Cannot Use",
+   "primary_keyword": "instagram story size",
+   "secondary_keywords": [
+    "story dimensions",
+    "instagram story safe zone"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "instagram",
+    "image-sizes",
+    "safe-zones",
+    "explainer"
+   ],
+   "tools": [
+    "story-templates-sizer",
+    "safe-zone-guide"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-story-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-05",
+   "cluster": "instagram",
+   "wave": 3,
+   "archetype": "templates",
+   "slug": "instagram-bio-ideas",
+   "title": "Instagram Bio Ideas That Fit in 150 Characters",
+   "primary_keyword": "instagram bio ideas",
+   "secondary_keywords": [
+    "instagram bio template",
+    "bio for instagram"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "instagram",
+    "bio",
+    "templates"
+   ],
+   "tools": [
+    "instagram-bio-preview",
+    "fancy-text-generator",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-bio-ideas",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-06",
+   "cluster": "instagram",
+   "wave": 4,
+   "archetype": "howto",
+   "slug": "instagram-fonts",
+   "title": "Fonts for Instagram Bios That Do Not Break Screen Readers",
+   "primary_keyword": "instagram fonts",
+   "secondary_keywords": [
+    "fancy text instagram",
+    "instagram bio fonts"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "instagram",
+    "bio",
+    "how-to"
+   ],
+   "tools": [
+    "fancy-text-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-fonts",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-07",
+   "cluster": "instagram",
+   "wave": 4,
+   "archetype": "explainer",
+   "slug": "instagram-caption-length",
+   "title": "Instagram Caption Length and Where the Fold Lands",
+   "primary_keyword": "instagram caption length",
+   "secondary_keywords": [
+    "instagram caption limit",
+    "how long should a caption be"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "instagram",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "social-media-character-counter",
+    "instagram-bio-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-caption-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-08",
+   "cluster": "instagram",
+   "wave": 4,
+   "archetype": "howto",
+   "slug": "instagram-giveaway-rules",
+   "title": "Instagram Giveaway Rules That Hold Up",
+   "primary_keyword": "instagram giveaway rules",
+   "secondary_keywords": [
+    "how to pick a giveaway winner",
+    "giveaway rules template"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "instagram",
+    "giveaways",
+    "how-to"
+   ],
+   "tools": [
+    "giveaway-winner-picker"
+   ],
+   "target_words": 800,
+   "url": "/blog/instagram-giveaway-rules",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "IG-09",
+   "cluster": "instagram",
+   "wave": 4,
+   "archetype": "howto",
+   "slug": "link-in-bio-tracking",
+   "title": "Knowing Which Post Sent the Click: Link-in-Bio Tracking",
+   "primary_keyword": "link in bio tracking",
+   "secondary_keywords": [
+    "utm for instagram bio",
+    "track instagram link clicks"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "instagram",
+    "utm-tracking",
+    "how-to"
+   ],
+   "tools": [
+    "utm-link-builder",
+    "qr-code-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/link-in-bio-tracking",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "TT-01",
+   "cluster": "tiktok",
+   "wave": 4,
+   "archetype": "pillar",
+   "slug": "tiktok-growth-guide",
+   "title": "TikTok Growth: What the For You Page Rewards",
+   "primary_keyword": "tiktok growth",
+   "secondary_keywords": [
+    "how to grow on tiktok",
+    "tiktok algorithm"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "tiktok",
+    "guide"
+   ],
+   "tools": [
+    "tiktok-money-calculator",
+    "engagement-rate-calculator",
+    "safe-zone-guide"
+   ],
+   "target_words": 1200,
+   "url": "/blog/tiktok-growth-guide",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "TT-02",
+   "cluster": "tiktok",
+   "wave": 4,
+   "archetype": "explainer",
+   "slug": "how-much-does-tiktok-pay",
+   "title": "How Much Does TikTok Pay, Per 1,000 Views?",
+   "primary_keyword": "how much does tiktok pay",
+   "secondary_keywords": [
+    "tiktok money calculator",
+    "tiktok creator fund payout"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "tiktok",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "tiktok-money-calculator",
+    "engagement-rate-calculator"
+   ],
+   "target_words": 950,
+   "url": "/blog/how-much-does-tiktok-pay",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "TT-03",
+   "cluster": "tiktok",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "tiktok-caption-length",
+   "title": "TikTok Caption Length and What Fits Above the Fold",
+   "primary_keyword": "tiktok caption length",
+   "secondary_keywords": [
+    "tiktok character limit",
+    "tiktok caption limit"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "tiktok",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/tiktok-caption-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "TT-04",
+   "cluster": "tiktok",
+   "wave": 5,
+   "archetype": "howto",
+   "slug": "tiktok-username-ideas",
+   "title": "TikTok Username Ideas You Can Actually Claim",
+   "primary_keyword": "tiktok username ideas",
+   "secondary_keywords": [
+    "tiktok username availability",
+    "good tiktok usernames"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "tiktok",
+    "usernames",
+    "how-to"
+   ],
+   "tools": [
+    "username-availability-checker",
+    "handle-strength-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/tiktok-username-ideas",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-01",
+   "cluster": "x-threads",
+   "wave": 4,
+   "archetype": "pillar",
+   "slug": "how-to-post-on-x",
+   "title": "How to Post on X and Threads: Limits, Threads, Cards",
+   "primary_keyword": "how to post on x",
+   "secondary_keywords": [
+    "x character limit",
+    "threads vs twitter"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "x",
+    "threads",
+    "guide"
+   ],
+   "tools": [
+    "social-media-character-counter",
+    "x-thread-splitter",
+    "link-preview-debugger",
+    "threads-post-preview"
+   ],
+   "target_words": 1200,
+   "url": "/blog/how-to-post-on-x",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-02",
+   "cluster": "x-threads",
+   "wave": 4,
+   "archetype": "explainer",
+   "slug": "twitter-character-limit",
+   "title": "The Twitter Character Limit on X, Counted Properly",
+   "primary_keyword": "twitter character limit",
+   "secondary_keywords": [
+    "x character limit",
+    "how many characters in a tweet"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "x",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/twitter-character-limit",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-03",
+   "cluster": "x-threads",
+   "wave": 4,
+   "archetype": "howto",
+   "slug": "how-to-write-a-twitter-thread",
+   "title": "How to Write a Twitter Thread That Reads Well",
+   "primary_keyword": "how to write a twitter thread",
+   "secondary_keywords": [
+    "thread splitter",
+    "x thread tips"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "x",
+    "hooks",
+    "how-to"
+   ],
+   "tools": [
+    "x-thread-splitter",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/how-to-write-a-twitter-thread",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-04",
+   "cluster": "x-threads",
+   "wave": 4,
+   "archetype": "troubleshooting",
+   "slug": "link-preview-not-showing",
+   "title": "Link Preview Not Showing: The Ordered List of Causes",
+   "primary_keyword": "link preview not showing",
+   "secondary_keywords": [
+    "twitter card not working",
+    "og image not updating"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "x",
+    "facebook",
+    "linkedin",
+    "link-previews",
+    "troubleshooting"
+   ],
+   "tools": [
+    "link-preview-debugger"
+   ],
+   "target_words": 950,
+   "url": "/blog/link-preview-not-showing",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-05",
+   "cluster": "x-threads",
+   "wave": 5,
+   "archetype": "howto",
+   "slug": "screenshot-a-tweet",
+   "title": "How to Screenshot a Tweet, Honestly",
+   "primary_keyword": "how to screenshot a tweet",
+   "secondary_keywords": [
+    "tweet screenshot generator",
+    "tweet as image"
+   ],
+   "funnel": "TOFU",
+   "category": "design",
+   "tags": [
+    "x",
+    "brand-assets",
+    "how-to"
+   ],
+   "tools": [
+    "tweet-screenshot-generator"
+   ],
+   "target_words": 800,
+   "url": "/blog/screenshot-a-tweet",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-06",
+   "cluster": "x-threads",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "threads-character-limit",
+   "title": "The Threads 500-Character Limit and the Chain Split",
+   "primary_keyword": "threads character limit",
+   "secondary_keywords": [
+    "threads post length",
+    "threads limit"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "threads",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "threads-post-preview",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/threads-character-limit",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "XT-07",
+   "cluster": "x-threads",
+   "wave": 5,
+   "archetype": "templates",
+   "slug": "threads-bio-ideas",
+   "title": "Threads Bio Ideas: What People See After One Reply",
+   "primary_keyword": "threads bio ideas",
+   "secondary_keywords": [
+    "threads bio",
+    "threads profile"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "threads",
+    "bio",
+    "templates"
+   ],
+   "tools": [
+    "threads-bio-preview",
+    "username-availability-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/threads-bio-ideas",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-01",
+   "cluster": "pro-networks",
+   "wave": 5,
+   "archetype": "pillar",
+   "slug": "linkedin-post-guide",
+   "title": "LinkedIn Post Length, Formats and Reach",
+   "primary_keyword": "linkedin post",
+   "secondary_keywords": [
+    "how to post on linkedin",
+    "linkedin post length"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "linkedin",
+    "guide"
+   ],
+   "tools": [
+    "linkedin-post-preview",
+    "carousel-splitter",
+    "social-media-character-counter"
+   ],
+   "target_words": 1200,
+   "url": "/blog/linkedin-post-guide",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-02",
+   "cluster": "pro-networks",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "linkedin-see-more",
+   "title": "Where LinkedIn Puts See More, and What to Do About It",
+   "primary_keyword": "linkedin see more",
+   "secondary_keywords": [
+    "linkedin character limit",
+    "linkedin post length"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "linkedin",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "linkedin-post-preview",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/linkedin-see-more",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-03",
+   "cluster": "pro-networks",
+   "wave": 5,
+   "archetype": "howto",
+   "slug": "linkedin-carousel",
+   "title": "LinkedIn Carousel: A Document Post That Reads on a Phone",
+   "primary_keyword": "linkedin carousel",
+   "secondary_keywords": [
+    "linkedin document post",
+    "linkedin pdf post size"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "linkedin",
+    "image-sizes",
+    "how-to"
+   ],
+   "tools": [
+    "carousel-splitter",
+    "social-image-resizer"
+   ],
+   "target_words": 800,
+   "url": "/blog/linkedin-carousel",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-04",
+   "cluster": "pro-networks",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "facebook-ad-character-limits",
+   "title": "Facebook Ad Character Limits: Text, Headline, Description",
+   "primary_keyword": "facebook ad character limit",
+   "secondary_keywords": [
+    "facebook ad text length",
+    "primary text limit"
+   ],
+   "funnel": "BOFU",
+   "category": "content",
+   "tags": [
+    "facebook",
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "facebook-ad-text-counter",
+    "facebook-post-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/facebook-ad-character-limits",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-05",
+   "cluster": "pro-networks",
+   "wave": 6,
+   "archetype": "troubleshooting",
+   "slug": "facebook-link-preview-not-updating",
+   "title": "Facebook Link Preview Not Updating: Clearing the Cache",
+   "primary_keyword": "facebook link preview not updating",
+   "secondary_keywords": [
+    "facebook debugger",
+    "clear facebook link cache"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "facebook",
+    "link-previews",
+    "troubleshooting"
+   ],
+   "tools": [
+    "link-preview-debugger",
+    "facebook-post-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/facebook-link-preview-not-updating",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PN-06",
+   "cluster": "pro-networks",
+   "wave": 6,
+   "archetype": "explainer",
+   "slug": "open-graph-tags",
+   "title": "Open Graph Tags, in the Order Platforms Read Them",
+   "primary_keyword": "open graph tags",
+   "secondary_keywords": [
+    "og tags",
+    "meta tags for social sharing"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "link-previews",
+    "explainer"
+   ],
+   "tools": [
+    "link-preview-debugger"
+   ],
+   "target_words": 950,
+   "url": "/blog/open-graph-tags",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PI-01",
+   "cluster": "pinterest",
+   "wave": 5,
+   "archetype": "pillar",
+   "slug": "pinterest-seo",
+   "title": "Pinterest SEO: It Is a Search Engine Wearing a Feed",
+   "primary_keyword": "pinterest seo",
+   "secondary_keywords": [
+    "pinterest keywords",
+    "how to rank on pinterest"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "pinterest",
+    "pinterest-seo",
+    "guide"
+   ],
+   "tools": [
+    "pinterest-pin-seo-checker",
+    "pin-image-sizer",
+    "pinterest-pin-preview"
+   ],
+   "target_words": 1200,
+   "url": "/blog/pinterest-seo",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PI-02",
+   "cluster": "pinterest",
+   "wave": 5,
+   "archetype": "howto",
+   "slug": "pinterest-pin-description",
+   "title": "Writing a Pin Description Pinterest Can Read",
+   "primary_keyword": "pinterest pin description",
+   "secondary_keywords": [
+    "pin description ideas",
+    "pinterest description keywords"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "pinterest",
+    "pinterest-seo",
+    "how-to"
+   ],
+   "tools": [
+    "pinterest-pin-seo-checker",
+    "pinterest-pin-preview"
+   ],
+   "target_words": 800,
+   "url": "/blog/pinterest-pin-description",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PI-03",
+   "cluster": "pinterest",
+   "wave": 6,
+   "archetype": "troubleshooting",
+   "slug": "rich-pins-not-working",
+   "title": "Rich Pins Not Working: What Is Missing From Your Markup",
+   "primary_keyword": "rich pins not working",
+   "secondary_keywords": [
+    "validate rich pins",
+    "rich pin validator"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "pinterest",
+    "pinterest-seo",
+    "troubleshooting"
+   ],
+   "tools": [
+    "rich-pin-validator",
+    "link-preview-debugger"
+   ],
+   "target_words": 800,
+   "url": "/blog/rich-pins-not-working",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "PI-04",
+   "cluster": "pinterest",
+   "wave": 6,
+   "archetype": "explainer",
+   "slug": "pinterest-board-strategy",
+   "title": "Pinterest Board Strategy: Boards and Sections That Index",
+   "primary_keyword": "pinterest board strategy",
+   "secondary_keywords": [
+    "pinterest board names",
+    "how to organize pinterest boards"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "pinterest",
+    "pinterest-seo",
+    "explainer"
+   ],
+   "tools": [
+    "pinterest-pin-seo-checker"
+   ],
+   "target_words": 800,
+   "url": "/blog/pinterest-board-strategy",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-01",
+   "cluster": "content-ops",
+   "wave": 5,
+   "archetype": "pillar",
+   "slug": "content-calendar-guide",
+   "title": "A Content Calendar That Survives Contact With a Week",
+   "primary_keyword": "content calendar",
+   "secondary_keywords": [
+    "social media content calendar",
+    "content planning"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "posting-schedule",
+    "repurposing",
+    "guide"
+   ],
+   "tools": [
+    "youtube-content-calendar",
+    "script-timer",
+    "headline-analyzer"
+   ],
+   "target_words": 1200,
+   "url": "/blog/content-calendar-guide",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-02",
+   "cluster": "content-ops",
+   "wave": 5,
+   "archetype": "howto",
+   "slug": "how-to-write-headlines",
+   "title": "How to Write Headlines That Are Not a Guess",
+   "primary_keyword": "how to write headlines",
+   "secondary_keywords": [
+    "headline analyzer",
+    "headline formulas"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "titles",
+    "how-to"
+   ],
+   "tools": [
+    "headline-analyzer",
+    "social-media-character-counter"
+   ],
+   "target_words": 950,
+   "url": "/blog/how-to-write-headlines",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-03",
+   "cluster": "content-ops",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "readability-score",
+   "title": "Readability Score: What It Is Worth for Social Copy",
+   "primary_keyword": "readability score",
+   "secondary_keywords": [
+    "flesch kincaid",
+    "readability checker"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "readability-checker",
+    "word-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/readability-score",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-04",
+   "cluster": "content-ops",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "words-per-minute-speaking",
+   "title": "Words Per Minute Speaking: Script Length by Runtime",
+   "primary_keyword": "words per minute speaking",
+   "secondary_keywords": [
+    "script length for video",
+    "video script word count"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "scripts",
+    "shorts",
+    "explainer"
+   ],
+   "tools": [
+    "script-timer",
+    "word-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/words-per-minute-speaking",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-05",
+   "cluster": "content-ops",
+   "wave": 6,
+   "archetype": "templates",
+   "slug": "call-to-action-examples",
+   "title": "Call to Action Examples That Do Not Read as Commands",
+   "primary_keyword": "call to action examples",
+   "secondary_keywords": [
+    "cta examples social media",
+    "cta generator"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "hooks",
+    "templates"
+   ],
+   "tools": [
+    "cta-generator",
+    "headline-analyzer"
+   ],
+   "target_words": 800,
+   "url": "/blog/call-to-action-examples",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-06",
+   "cluster": "content-ops",
+   "wave": 6,
+   "archetype": "explainer",
+   "slug": "title-case-rules",
+   "title": "Title Case, Sentence Case, and Which One Ranks",
+   "primary_keyword": "title case",
+   "secondary_keywords": [
+    "title case converter",
+    "capitalization rules"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "titles",
+    "explainer"
+   ],
+   "tools": [
+    "text-case-converter",
+    "headline-analyzer"
+   ],
+   "target_words": 800,
+   "url": "/blog/title-case-rules",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-07",
+   "cluster": "content-ops",
+   "wave": 6,
+   "archetype": "explainer",
+   "slug": "emoji-in-captions",
+   "title": "Emoji in Captions: Accessibility, Counting and Taste",
+   "primary_keyword": "emoji in captions",
+   "secondary_keywords": [
+    "emoji social media",
+    "how emoji count characters"
+   ],
+   "funnel": "TOFU",
+   "category": "content",
+   "tags": [
+    "captions",
+    "explainer"
+   ],
+   "tools": [
+    "emoji-picker",
+    "social-media-character-counter"
+   ],
+   "target_words": 800,
+   "url": "/blog/emoji-in-captions",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "CO-08",
+   "cluster": "content-ops",
+   "wave": 6,
+   "archetype": "howto",
+   "slug": "content-repurposing",
+   "title": "Content Repurposing: One Video, a Fortnight of Posts",
+   "primary_keyword": "content repurposing",
+   "secondary_keywords": [
+    "repurpose video content",
+    "one video many posts"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "repurposing",
+    "shorts",
+    "how-to",
+    "scripts"
+   ],
+   "tools": [
+    "script-timer",
+    "social-image-resizer",
+    "safe-zone-guide"
+   ],
+   "target_words": 950,
+   "url": "/blog/content-repurposing",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ID-01",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "pillar",
+   "slug": "username-availability",
+   "title": "Username Availability Across Every Network at Once",
+   "primary_keyword": "username availability",
+   "secondary_keywords": [
+    "check username availability",
+    "social media handle checker"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "usernames",
+    "guide"
+   ],
+   "tools": [
+    "username-availability-checker",
+    "handle-strength-checker"
+   ],
+   "target_words": 1200,
+   "url": "/blog/username-availability",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ID-02",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "howto",
+   "slug": "utm-parameters-for-creators",
+   "title": "UTM Parameters for Creators, Without the Spreadsheet Mess",
+   "primary_keyword": "utm parameters",
+   "secondary_keywords": [
+    "utm builder",
+    "how to use utm codes"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "utm-tracking",
+    "how-to"
+   ],
+   "tools": [
+    "utm-link-builder"
+   ],
+   "target_words": 950,
+   "url": "/blog/utm-parameters-for-creators",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ID-03",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "howto",
+   "slug": "qr-code-generator-for-bio",
+   "title": "QR Code Generator for a Bio Link That Still Scans",
+   "primary_keyword": "qr code generator",
+   "secondary_keywords": [
+    "qr code for instagram bio",
+    "make a qr code free"
+   ],
+   "funnel": "TOFU",
+   "category": "growth",
+   "tags": [
+    "bio",
+    "how-to"
+   ],
+   "tools": [
+    "qr-code-generator",
+    "utm-link-builder"
+   ],
+   "target_words": 800,
+   "url": "/blog/qr-code-generator-for-bio",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ID-04",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "howto",
+   "slug": "giveaway-winner-picker",
+   "title": "Giveaway Winner Picker: A Draw Nobody Can Argue With",
+   "primary_keyword": "giveaway winner picker",
+   "secondary_keywords": [
+    "random winner picker",
+    "comment picker"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "giveaways",
+    "how-to"
+   ],
+   "tools": [
+    "giveaway-winner-picker"
+   ],
+   "target_words": 800,
+   "url": "/blog/giveaway-winner-picker",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "ID-05",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "explainer",
+   "slug": "best-time-to-post-timezones",
+   "title": "Best Time to Post, When Your Audience Is in Four Time Zones",
+   "primary_keyword": "best time to post",
+   "secondary_keywords": [
+    "posting time zones",
+    "when to post on social media"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "posting-schedule",
+    "explainer"
+   ],
+   "tools": [
+    "posting-timezone-converter",
+    "engagement-rate-calculator"
+   ],
+   "target_words": 800,
+   "url": "/blog/best-time-to-post-timezones",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "AU-01",
+   "cluster": "engagement",
+   "wave": 3,
+   "archetype": "benchmarks",
+   "slug": "social-media-benchmarks",
+   "title": "Social Media Benchmarks: Engagement, Cadence, Length",
+   "primary_keyword": "social media benchmarks",
+   "secondary_keywords": [
+    "creator benchmarks",
+    "average engagement by platform"
+   ],
+   "funnel": "MOFU",
+   "category": "analytics",
+   "tags": [
+    "engagement-rate",
+    "benchmarks",
+    "analytics-basics"
+   ],
+   "tools": [
+    "engagement-rate-calculator",
+    "script-timer"
+   ],
+   "target_words": 950,
+   "url": "/blog/social-media-benchmarks",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "AU-02",
+   "cluster": "content-ops",
+   "wave": 5,
+   "archetype": "explainer",
+   "slug": "creator-glossary",
+   "title": "The Creator Metrics Glossary",
+   "primary_keyword": "creator glossary",
+   "secondary_keywords": [
+    "social media terms",
+    "creator terminology"
+   ],
+   "funnel": "TOFU",
+   "category": "analytics",
+   "tags": [
+    "analytics-basics",
+    "guide"
+   ],
+   "tools": [
+    "engagement-rate-calculator",
+    "utm-link-builder"
+   ],
+   "target_words": 950,
+   "url": "/blog/creator-glossary",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  },
+  {
+   "id": "AU-03",
+   "cluster": "identity",
+   "wave": 6,
+   "archetype": "comparison",
+   "slug": "free-creator-tools",
+   "title": "The Free Tools a Creator Actually Needs",
+   "primary_keyword": "free creator tools",
+   "secondary_keywords": [
+    "free social media tools",
+    "best free tools for creators"
+   ],
+   "funnel": "BOFU",
+   "category": "growth",
+   "tags": [
+    "guide",
+    "comparison"
+   ],
+   "tools": [
+    "social-image-resizer",
+    "engagement-rate-calculator",
+    "username-availability-checker",
+    "link-preview-debugger",
+    "hashtag-generator"
+   ],
+   "target_words": 950,
+   "url": "/blog/free-creator-tools",
+   "status": "planned",
+   "published_url": null,
+   "notes": ""
+  }
+ ]
+}

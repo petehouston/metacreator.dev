@@ -25,7 +25,19 @@ x-api-base: &api-base
     MAIL_HOST: mailpit
     MAIL_PORT: 1025
     COMPUTE_URL: http://compute:8090
+    # Uploads go to MinIO locally, mirroring Spaces in production. The `local`
+    # disk is deliberately not used: it writes to storage/app/private, which is
+    # unreachable by design, and its url() is a relative /storage path that the
+    # browser resolves against the Next frontend on :3000 rather than the API.
+    FILESYSTEM_DISK: s3
     AWS_ENDPOINT: http://minio:9000
+    # The endpoint above is how the API reaches MinIO inside the compose network.
+    # AWS_URL is the public address of the same bucket: the frontend's `/media`
+    # rewrite, which proxies to MinIO. It has to be one address that works for the
+    # browser *and* for next/image's server-side fetch, and the frontend's own
+    # origin is the only one that does. Without it, Storage::url() emits
+    # http://minio:9000/... which resolves nowhere outside Docker.
+    AWS_URL: http://localhost:${WEB_PORT:-3000}/media
     AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minio}
     AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minio123}
     AWS_BUCKET: ${MEDIA_BUCKET:-metacreator-media}
@@ -55,6 +67,9 @@ services:
       NEXT_PUBLIC_APP_URL: http://localhost:${WEB_PORT:-3000}
       NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8080}
       API_INTERNAL_URL: http://api:8080
+      # Media is proxied through this app so that one URL works for both the
+      # browser and next/image's server-side fetch. See next.config.ts.
+      MEDIA_UPSTREAM: http://minio:9000/${MEDIA_BUCKET:-metacreator-media}
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:-local-revalidate-secret}
     depends_on:
       api:

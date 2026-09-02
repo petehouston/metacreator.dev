@@ -1,0 +1,190 @@
+{
+ "_comment": "Twelve clusters. A cluster = one pillar page + its spokes, and it exists only if it has a money page to point at. `money_pages` are the /tools/* URLs the cluster is built to feed; `pillar` is the slug of the post every spoke links up to.",
+ "clusters": [
+  {
+   "id": "yt-seo",
+   "name": "YouTube SEO & metadata",
+   "pillar": "youtube-seo",
+   "category": "seo",
+   "platform": "youtube",
+   "why": "The catalog is 23 YouTube tools deep - by far the strongest topical claim the site can make. Every YouTube query we win also lifts the tool pages beneath it.",
+   "money_pages": [
+    "youtube-tag-extractor",
+    "youtube-search-suggestions",
+    "youtube-hashtag-generator",
+    "youtube-metadata-viewer",
+    "youtube-channel-description-generator",
+    "social-media-character-counter"
+   ],
+   "wave": 1
+  },
+  {
+   "id": "yt-money",
+   "name": "YouTube monetization",
+   "pillar": "youtube-monetization-requirements",
+   "category": "monetization",
+   "platform": "youtube",
+   "why": "Highest commercial intent on the site and four calculators sitting behind it. People searching payout numbers convert to a calculator run on the first visit.",
+   "money_pages": [
+    "youtube-money-calculator",
+    "youtube-partner-program-checker",
+    "youtube-channel-monetization-checker",
+    "follower-milestone-countdown"
+   ],
+   "wave": 2
+  },
+  {
+   "id": "sizes",
+   "name": "Image sizes & safe zones",
+   "pillar": "social-media-image-sizes",
+   "category": "design",
+   "platform": null,
+   "why": "The single largest evergreen query family in the creator space, refreshed rather than rewritten every year, and it maps onto the resizer, the safe-zone guide and every per-platform cropper.",
+   "money_pages": [
+    "social-image-resizer",
+    "safe-zone-guide",
+    "aspect-ratio-calculator",
+    "image-compressor",
+    "image-format-converter"
+   ],
+   "wave": 1
+  },
+  {
+   "id": "engagement",
+   "name": "Engagement rate & benchmarks",
+   "pillar": "engagement-rate",
+   "category": "analytics",
+   "platform": null,
+   "why": "One tool serves six platforms, so one cluster can rank for six query sets. Benchmarks earn links, which is how a young domain gets authority at all.",
+   "money_pages": [
+    "engagement-rate-calculator",
+    "follower-milestone-countdown"
+   ],
+   "wave": 3
+  },
+  {
+   "id": "hashtags",
+   "name": "Hashtags & discovery",
+   "pillar": "how-to-use-hashtags",
+   "category": "seo",
+   "platform": null,
+   "why": "Perennial, per-platform, and the questions are factual (how many, where, which) - exactly the shape we can answer better than a listicle farm.",
+   "money_pages": [
+    "youtube-hashtag-generator",
+    "hashtag-generator",
+    "youtube-search-suggestions"
+   ],
+   "wave": 2
+  },
+  {
+   "id": "instagram",
+   "name": "Instagram formats & profile",
+   "pillar": "instagram-growth-guide",
+   "category": "growth",
+   "platform": "instagram",
+   "why": "Eight tools cover the format problems - carousels, Reels covers, story safe zones, bio previews - which are the queries with an obvious tool answer.",
+   "money_pages": [
+    "carousel-splitter",
+    "reels-cover-cropper",
+    "instagram-bio-preview",
+    "story-templates-sizer",
+    "fancy-text-generator"
+   ],
+   "wave": 3
+  },
+  {
+   "id": "tiktok",
+   "name": "TikTok payouts & formatting",
+   "pillar": "tiktok-growth-guide",
+   "category": "growth",
+   "platform": "tiktok",
+   "why": "Thin tool coverage but very high query volume; the money calculator and the safe-zone guide carry it until the premium TikTok tools ship.",
+   "money_pages": [
+    "tiktok-money-calculator",
+    "safe-zone-guide",
+    "engagement-rate-calculator"
+   ],
+   "wave": 4
+  },
+  {
+   "id": "x-threads",
+   "name": "X & Threads posting",
+   "pillar": "how-to-post-on-x",
+   "category": "content",
+   "platform": "x",
+   "why": "Character limits, thread splitting and link cards are precise technical questions with precise tool answers - the cheapest kind of ranking to defend.",
+   "money_pages": [
+    "x-thread-splitter",
+    "social-media-character-counter",
+    "link-preview-debugger",
+    "tweet-screenshot-generator",
+    "threads-post-preview"
+   ],
+   "wave": 4
+  },
+  {
+   "id": "pro-networks",
+   "name": "LinkedIn, Facebook & link previews",
+   "pillar": "linkedin-post-guide",
+   "category": "content",
+   "platform": "linkedin",
+   "why": "Lower volume, far lower competition, and the audience has budget. The link-preview debugger serves all three networks from one page.",
+   "money_pages": [
+    "linkedin-post-preview",
+    "facebook-ad-text-counter",
+    "facebook-post-preview",
+    "link-preview-debugger",
+    "carousel-splitter"
+   ],
+   "wave": 5
+  },
+  {
+   "id": "pinterest",
+   "name": "Pinterest SEO",
+   "pillar": "pinterest-seo",
+   "category": "seo",
+   "platform": "pinterest",
+   "why": "Pinterest is a search engine, so its users already think in keywords - and four dedicated tools mean we can answer with a checker rather than an opinion.",
+   "money_pages": [
+    "pinterest-pin-seo-checker",
+    "pin-image-sizer",
+    "pinterest-pin-preview",
+    "rich-pin-validator"
+   ],
+   "wave": 5
+  },
+  {
+   "id": "content-ops",
+   "name": "Writing, scripts & planning",
+   "pillar": "content-calendar-guide",
+   "category": "content",
+   "platform": null,
+   "why": "Middle-of-funnel glue: it links every platform cluster together and gives the utility tools (counters, timers, converters) a reason to be linked from prose.",
+   "money_pages": [
+    "headline-analyzer",
+    "readability-checker",
+    "script-timer",
+    "word-counter",
+    "cta-generator",
+    "youtube-content-calendar"
+   ],
+   "wave": 5
+  },
+  {
+   "id": "identity",
+   "name": "Handles, links & housekeeping",
+   "pillar": "username-availability",
+   "category": "growth",
+   "platform": null,
+   "why": "Low-competition utility queries with immediate tool payoff, and the UTM builder pulls in the marketer audience that shares and links.",
+   "money_pages": [
+    "username-availability-checker",
+    "handle-strength-checker",
+    "utm-link-builder",
+    "qr-code-generator",
+    "giveaway-winner-picker"
+   ],
+   "wave": 6
+  }
+ ]
+}
