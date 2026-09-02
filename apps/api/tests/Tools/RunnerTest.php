@@ -1464,3 +1464,132 @@ it('warns when a drawn X post is longer than a free account could have sent', fu
 
     expect(implode(' ', $result->warnings))->toContain('subscribed account');
 });
+
+it('climbs X’s size ladder to the original upload', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="A photo">'
+        .'<meta property="og:image" content="https://pbs.twimg.com/media/Abc123.jpg?format=jpg&name=medium">',
+    )]);
+
+    $result = runRunner(app(Runners\XImageDownloaderRunner::class), [
+        'url' => 'https://x.com/MrBeast/status/2086107642720649428',
+    ]);
+
+    $urls = array_column($result->data['rows'], 'url');
+
+    expect($urls)->toContain('https://pbs.twimg.com/media/Abc123?format=jpg&name=small')
+        // The row nothing in the interface links to, and the reason for the tool.
+        ->and($urls)->toContain('https://pbs.twimg.com/media/Abc123?format=jpg&name=orig');
+});
+
+it('derives X’s ladder from a pasted CDN link without fetching anything', function () {
+    // No Http::fake at all: a request here would fail the test, which is the point —
+    // this is the route that still works when X answers a post link with a wall.
+    $result = runRunner(app(Runners\XImageDownloaderRunner::class), [
+        'url' => 'https://pbs.twimg.com/media/Abc123.png:large',
+    ]);
+
+    expect(array_column($result->data['rows'], 'url'))
+        ->toContain('https://pbs.twimg.com/media/Abc123?format=png&name=orig');
+});
+
+it('reads the expiry Meta stamps into an image URL and says how long is left', function () {
+    $expiry = dechex(time() + 7200);
+
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="A post">'
+        .'<meta property="og:image" content="https://scontent.cdninstagram.com/v/t51/1.jpg'
+        .'?_nc_ht=scontent.cdninstagram.com&oh=00_AfAbc&oe='.$expiry.'">',
+    )]);
+
+    $result = runRunner(app(Runners\InstagramImageDownloaderRunner::class), [
+        'url' => 'https://www.instagram.com/p/Cxyz1234567/',
+    ]);
+
+    expect($result->data['rows'][0]['expires'])->toContain('2 hours')
+        ->and(implode(' ', $result->warnings))->toContain('signed and expires');
+});
+
+it('refuses an Instagram story rather than pretending it can read one', function () {
+    expect(fn () => runRunner(app(Runners\InstagramImageDownloaderRunner::class), [
+        'url' => 'https://www.instagram.com/stories/someone/3210987654321/',
+    ]))->toThrow(ToolExecutionException::class, 'Stories are not public');
+});
+
+it('accepts a threads.net link as readily as a threads.com one', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="A thread">'
+        .'<meta property="og:image" content="https://scontent.cdninstagram.com/v/t51/2.jpg">',
+    )]);
+
+    $result = runRunner(app(Runners\ThreadsImageDownloaderRunner::class), [
+        'url' => 'https://www.threads.net/@someone/post/C2QBoRaRmvo',
+    ]);
+
+    expect($result->meta['image_count'])->toBe(1);
+});
+
+it('routes a Facebook Page link to the picture endpoint and names the stored copy', function () {
+    Http::fake(['graph.facebook.com/*' => Http::response([
+        'data' => ['url' => 'https://scontent.xx.fbcdn.net/v/logo.png', 'width' => 800,
+            'height' => 800, 'is_silhouette' => false],
+    ])]);
+
+    $result = runRunner(app(Runners\FacebookImageDownloaderRunner::class), [
+        'url' => 'https://www.facebook.com/NASA',
+    ]);
+
+    expect($result->meta['mode'])->toBe('profile-picture')
+        ->and(array_column($result->data['rows'], 'image'))->toContain('Original upload');
+});
+
+it('does not offer a Facebook Page picture that is only the default silhouette', function () {
+    Http::fake(['graph.facebook.com/*' => Http::response([
+        'data' => ['url' => 'https://scontent.xx.fbcdn.net/v/blank.png', 'is_silhouette' => true],
+    ])]);
+
+    expect(fn () => runRunner(app(Runners\FacebookImageDownloaderRunner::class), [
+        'url' => 'https://www.facebook.com/SomePageWithNoPicture',
+    ]))->toThrow(ToolExecutionException::class, 'silhouette');
+});
+
+it('returns every Bluesky image with its alt text, and the blob behind each one', function () {
+    Http::fake([
+        'public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle*' => Http::response([
+            'did' => 'did:plc:abcdefghijklmnopqrstuvwx',
+        ]),
+        'public.api.bsky.app/xrpc/app.bsky.feed.getPostThread*' => Http::response([
+            'thread' => ['post' => ['embed' => ['images' => [
+                ['fullsize' => 'https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:abcdefghijklmnopqrstuvwx/'
+                    .'bafkreiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@jpeg',
+                    'alt' => 'A loaf of bread, scored down the middle.',
+                    'aspectRatio' => ['width' => 2000, 'height' => 1500]],
+                ['fullsize' => 'https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:abcdefghijklmnopqrstuvwx/'
+                    .'bafkreibbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb@jpeg',
+                    'alt' => ''],
+            ]]]],
+        ]),
+        'plc.directory/*' => Http::response(['service' => [
+            ['type' => 'AtprotoPersonalDataServer', 'serviceEndpoint' => 'https://shard.example.host'],
+        ]]),
+    ]);
+
+    $result = runRunner(app(Runners\BlueskyImageDownloaderRunner::class), [
+        'url' => 'https://bsky.app/profile/someone.bsky.social/post/3l6oveex3ii2l',
+    ]);
+
+    $urls = array_column($result->data['rows'], 'url');
+
+    expect($result->meta['image_count'])->toBe(2)
+        // Both images, not just the one a link card would have named.
+        ->and($result->data['rows'][0]['alt'])->toContain('loaf of bread')
+        ->and($result->data['rows'][0]['dimensions'])->toBe('2000 × 1500')
+        // The file as uploaded, from the server the identity document names.
+        ->and(implode(' ', $urls))->toContain('https://shard.example.host/xrpc/com.atproto.sync.getBlob');
+});
+
+it('says plainly when a Bluesky link points at a profile rather than a post', function () {
+    expect(fn () => runRunner(app(Runners\BlueskyImageDownloaderRunner::class), [
+        'url' => 'https://bsky.app/profile/someone.bsky.social',
+    ]))->toThrow(ToolExecutionException::class, 'not to a single post');
+});

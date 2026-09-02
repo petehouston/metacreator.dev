@@ -68,7 +68,7 @@ final class SocialEmbedCodeGeneratorRunner implements Cacheable, ToolRunner
                         .'Facebook, LinkedIn, Pinterest, Reddit, Threads, YouTube, Vimeo, Dailymotion or Twitch.',
                     'minLength' => 6,
                     'maxLength' => 900,
-                    'examples' => ['https://x.com/NASA/status/1234567890123456789'],
+                    'examples' => ['https://x.com/MrBeast/status/2086107642720649428'],
                 ],
                 'width' => [
                     'type' => 'integer',
@@ -106,7 +106,7 @@ final class SocialEmbedCodeGeneratorRunner implements Cacheable, ToolRunner
         if ($identity['host'] === null) {
             throw ToolExecutionException::invalidInput(
                 'That is not a URL we can read. Paste the whole link, including the domain.',
-                ['url' => 'Expected a link such as https://x.com/NASA/status/1234567890123456789'],
+                ['url' => 'Expected a link such as https://x.com/MrBeast/status/2086107642720649428'],
             );
         }
 

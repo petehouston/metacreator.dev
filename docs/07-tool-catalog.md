@@ -96,6 +96,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Story Templates Sizer | 🟢 | P3 | Safe-zone overlay export for stories |
 | Competitor Content Analyzer | 🟣 | P2 | Format mix, cadence, top posts, hook patterns |
 | Fake Post Generator | 🟢 | P2 | An Instagram post card drawn on a canvas, with the caption fold shown |
+| Image Downloader | 🟢 | P1 | A post's photo at the size Instagram publishes, with the link's expiry |
 | Profile Picture Downloader | 🟢 | — | **Built, not published** — Instagram now publishes a 100px avatar only (see below) |
 
 ## 3. TikTok
@@ -127,6 +128,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Hashtag / Topic Analyzer | 🟣 | P3 | |
 | Tweet Screenshot Generator | 🟢 | P1 | Clean, theme-aware image of a post for reuse |
 | Fake Reply Generator | 🟢 | P2 | A reply drawn with the post it answers, thread line included |
+| Image Downloader | 🟢 | P1 | Every rendition of a photo on a post, `name=orig` included |
 
 ## 5. Facebook
 
@@ -138,6 +140,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Audience Size Estimator | 🟣 | P3 | Reach estimate from targeting inputs |
 | Page Audit | 🟣 | P2 | Completeness, cadence, response rate, CTA presence |
 | Fake Post Generator | 🟢 | P2 | A Facebook post card in desktop and mobile widths |
+| Image Downloader | 🟢 | P1 | A post's picture, or a Page's own picture at the size Facebook stores |
 
 ## 6. LinkedIn
 
@@ -172,6 +175,7 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Bio Preview | 🟢 | P2 | Profile header as someone sees it after a single reply |
 | Crosspost Checker | 🔵 | P2 | One draft checked against Threads, X and Bluesky limits at once |
 | Reply Prompt Generator | 🔵 | P3 | Openers that earn replies, which is the signal Threads ranks on |
+| Image Downloader | 🟢 | P1 | The picture on a public post, with the signed link's remaining life |
 
 ## 9. Content (`content`)
 
@@ -207,6 +211,7 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Thumbnail Text Legibility Check | 🟣 | P2 | Contrast and size check at real feed dimensions |
 | Watermark Applier | 🔵 | P3 | Batch watermarking |
 | QR Code Generator | 🟢 | P2 | Branded, error-corrected QR to any URL |
+| Bluesky Image Downloader | 🟢 | P1 | Every image on a post, its alt text, and the blob as uploaded |
 
 ## 11. Analytics & growth (`analytics`)
 
@@ -246,7 +251,7 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 
 ## What is built
 
-Seventy-six tools ship in `ToolCatalogSeeder`; **seventy-four are published and visible**, and the
+Eighty-one tools ship in `ToolCatalogSeeder`; **seventy-nine are published and visible**, and the
 two marked ⛔ are seeded as drafts. **Every 🟢 tool in the tables above is implemented.** The
 category column is the functional category the tool is filed under; the platforms it serves are
 listed separately on the tool itself.
@@ -304,6 +309,11 @@ serving what it needs — see [Built, not published](#built-not-published).
 | Media | `fake-pinterest-pin-generator` 🖥 | `PinterestPinGeneratorRunner` |
 | Media | `fake-tiktok-comment-generator` 🖥 | `TikTokCommentGeneratorRunner` |
 | Media | `pinterest-image-downloader` | `PinterestImageDownloaderRunner` |
+| Media | `x-image-downloader` | `XImageDownloaderRunner` |
+| Media | `instagram-image-downloader` | `InstagramImageDownloaderRunner` |
+| Media | `facebook-image-downloader` | `FacebookImageDownloaderRunner` |
+| Media | `threads-image-downloader` | `ThreadsImageDownloaderRunner` |
+| Media | `bluesky-image-downloader` | `BlueskyImageDownloaderRunner` |
 | Media | `social-media-image-downloader` | `SocialImageDownloaderRunner` |
 | Analytics | `engagement-rate-calculator` | `EngagementRateCalculatorRunner` |
 | Analytics | `youtube-money-calculator` | `YouTubeMoneyCalculatorRunner` |
@@ -375,9 +385,16 @@ platform, rather than as near-duplicate catalog entries:
   characters in the web feed and about 65 on a phone, LinkedIn 100 and about 60, and the phone is
   where the majority of the taps happen. A debugger that only drew the desktop card would be
   checking the case that was never in doubt.
-- Every platform's **image downloader** → `social-media-image-downloader`, which reads whatever a
-  page publishes in Open Graph. Pinterest and YouTube keep their own pages, because both have a CDN
-  convention worth encoding that the general tool cannot know about — `/originals/` and `=s0`.
+- The **image downloaders are no longer consolidated**, and the rule that replaced the old one is
+  worth stating: a platform gets its own page when there is something true about *that* platform's
+  images that `social-media-image-downloader` cannot know. Seven now qualify. Pinterest has
+  `/originals/`, YouTube has `=s0`, and X has a `name=` ladder ending in `orig` — three CDN
+  conventions the general tool would be guessing at. Bluesky has a public read API, which returns
+  every image on a post with its alt text and the blob as uploaded, where a link card names one.
+  Instagram, Facebook and Threads share Meta's signed URLs, so all three read the expiry out of the
+  link and say how long is left — and Facebook adds a second route entirely, its public Page-picture
+  endpoint, which answers with measured dimensions rather than inferred ones. The general tool stays
+  where it is for every other platform and for any page at all.
 - Instagram's **font / aesthetic text generator** → `fancy-text-generator`.
 - Threads' and Pinterest's **character counters** → `social-media-character-counter`, which counts
   the Threads post limit and both Pinterest fields alongside every other surface.

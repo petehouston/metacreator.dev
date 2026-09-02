@@ -23,6 +23,7 @@ export const platforms = [
   { key: "linkedin", label: "LinkedIn" },
   { key: "threads", label: "Threads" },
   { key: "pinterest", label: "Pinterest" },
+  { key: "bluesky", label: "Bluesky" },
 ] as const;
 
 /**

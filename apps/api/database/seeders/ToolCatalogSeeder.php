@@ -3051,6 +3051,294 @@ final class ToolCatalogSeeder extends Seeder
             ],
 
             [
+                'key' => 'x.image-downloader',
+                'slug' => 'x-image-downloader',
+                'category' => 'media',
+                'name' => 'X Image Downloader',
+                'tagline' => 'Every size of a photo on X, including the original the app never shows.',
+                'description' => 'X serves each uploaded photo at a named size and the timeline asks for a '
+                    .'middling one. This finds the file and hands you the whole ladder, up to the original '
+                    .'upload — from a post link, or from an image link you already have.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['x'],
+                'focus_keyword' => 'x image downloader',
+                'seo_title' => 'X Image Downloader — Save Twitter Photos in Full Size (Free)',
+                'seo_description' => 'Download any photo from a public X (Twitter) post at original size. '
+                    .'Paste the post link, or a pbs.twimg.com image link, and get every rendition.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a post link — x.com or the older twitter.com, both work. If X '
+                        .'will not answer, open the photo in a tab, copy its address, and paste that '
+                        .'instead: the sizes come from the address itself, so that route always works.'),
+                    Blocks::heading('The size ladder', 2),
+                    Blocks::paragraph('X keeps one file per photo and picks a rendition with a '
+                        .'<code>name</code> parameter on the URL: <code>thumb</code>, <code>small</code>, '
+                        .'<code>medium</code>, <code>large</code>, <code>4096x4096</code> and '
+                        .'<code>orig</code>. The timeline asks for a middling one, so saving the picture '
+                        .'from the timeline saves that. <code>orig</code> is the file as uploaded, and '
+                        .'nothing in the interface links to it.'),
+                    Blocks::callout('tip', 'Take the original unless you are matching a layout. Every '
+                        .'other row on the ladder has been resized and re-compressed by X on the way to '
+                        .'your screen.'),
+                    Blocks::heading('Where it stops', 2),
+                    Blocks::paragraph('This reads the card tags X publishes for other sites. It uses no '
+                        .'login and touches nothing that requires being signed in — so a protected account '
+                        .'is reported as unreachable rather than guessed at, and a video post has no still '
+                        .'to hand back.'),
+                    Blocks::callout('warning', 'The photo belongs to whoever posted it. Research, '
+                        .'reference, moodboards and commentary are ordinary use; re-uploading somebody’s '
+                        .'picture as your own is not.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://x.com/MrBeast/status/2086107642720649428'],
+                    'note' => 'A post link. The last row is the upload itself.',
+                ],
+                'faq' => [
+                    ['question' => 'X answered with a sign-in page. Now what?',
+                        'answer' => 'Open the photo in a browser where you are signed in, copy the '
+                            .'<code>pbs.twimg.com</code> address, and paste that here. The ladder is '
+                            .'derived from the address, so no fetch is needed and nothing can wall it.'],
+                    ['question' => 'What is the difference between large and orig?',
+                        'answer' => '<code>large</code> fits the photo inside 2048 pixels; '
+                            .'<code>orig</code> is the file as uploaded, at whatever size that was. When '
+                            .'the upload was smaller than 2048, the two are the same picture.'],
+                    ['question' => 'Can it download a video or a GIF?',
+                        'answer' => 'No. This tool handles photos. A video post publishes a poster frame '
+                            .'on a different host, and that host has no size ladder.'],
+                    ['question' => 'Do old twitter.com links still work?',
+                        'answer' => 'Yes, and so does the older <code>.jpg:large</code> image URL form. '
+                            .'Both are normalised onto the current one before anything is read.'],
+                ],
+            ],
+
+            [
+                'key' => 'instagram.image-downloader',
+                'slug' => 'instagram-image-downloader',
+                'category' => 'media',
+                'name' => 'Instagram Image Downloader',
+                'tagline' => 'The photo behind a post, at the size Instagram publishes it.',
+                'description' => 'Pulls the image a public Instagram post publishes to link cards — larger '
+                    .'than the copy the feed renders — and reads the expiry out of the link, so you know '
+                    .'how long you have before saving it stops being possible.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram'],
+                'focus_keyword' => 'instagram image downloader',
+                'seo_title' => 'Instagram Image Downloader — Save Post Photos Free',
+                'seo_description' => 'Paste a public Instagram post or reel link and download the '
+                    .'full-size photo behind it. No account, no app, no sign-in.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a public post or reel link — the <code>/p/…</code> or '
+                        .'<code>/reel/…</code> address from the share sheet. Tracking parameters are '
+                        .'stripped before anything is fetched, because the one Instagram adds to a shared '
+                        .'link identifies whoever shared it with you.'),
+                    Blocks::heading('The link expires, the file does not', 2),
+                    Blocks::paragraph('Instagram signs every image URL and stamps an expiry into it. That '
+                        .'is why the result shows how much life each link has left: a link with two hours '
+                        .'on it is a file to save now, not a link to bookmark. Once the signature is '
+                        .'stale the address answers 403 and there is no way to refresh it except reading '
+                        .'the post again.'),
+                    Blocks::heading('Why you cannot ask for a bigger one', 2),
+                    Blocks::paragraph('The advice that circulates about editing the size segment of an '
+                        .'Instagram image URL — swapping in <code>s1080x1080</code> — no longer works. The '
+                        .'signature covers the whole path, so an edited link is an invalid link. What '
+                        .'comes back here is the largest copy Instagram publishes.'),
+                    Blocks::callout('warning', 'These photos belong to whoever posted them. Research, '
+                        .'moodboards, reference and commentary are ordinary use; reposting somebody’s '
+                        .'photograph as your own is not, and a credit in the caption is not a licence.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.instagram.com/p/Cxyz1234567/'],
+                ],
+                'faq' => [
+                    ['question' => 'It says Instagram answered with a sign-in page.',
+                        'answer' => 'Instagram increasingly walls signed-out requests, including for posts '
+                            .'that are public when you are logged in. Check the post opens in a private '
+                            .'browser window — if it does not, nothing signed-out can reach it, and this '
+                            .'tool never signs in on your behalf.'],
+                    ['question' => 'I got one image from a ten-slide carousel.',
+                        'answer' => 'Instagram publishes only the first slide to a link card when it '
+                            .'answers without a session. That is Instagram’s limit rather than a failed '
+                            .'read. Open the slide you want in the app, share it, and paste that link.'],
+                    ['question' => 'Can it download stories?',
+                        'answer' => 'No. A story is served to signed-in viewers and then it is gone; '
+                            .'there is nothing public to read, so the tool says so instead of pretending.'],
+                    ['question' => 'Can it download the profile picture?',
+                        'answer' => 'Not usefully. Instagram publishes avatars to link cards at 100×100 '
+                            .'and signs them, which is smaller than the profile page itself renders — so '
+                            .'a tool for it would not be able to honour its own name.'],
+                ],
+            ],
+
+            [
+                'key' => 'facebook.image-downloader',
+                'slug' => 'facebook-image-downloader',
+                'category' => 'media',
+                'name' => 'Facebook Image Downloader',
+                'tagline' => 'Post photos at full size — and a Page’s picture at the size Facebook stores.',
+                'description' => 'Two routes in one tool: a post link gives you the picture behind it with '
+                    .'the link’s expiry read out of the URL, and a Page link goes to Facebook’s own public '
+                    .'endpoint for the profile picture at every size it will serve.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['facebook'],
+                'focus_keyword' => 'facebook image downloader',
+                'seo_title' => 'Facebook Image Downloader — Photos & Page Pictures (Free)',
+                'seo_description' => 'Download the photo behind a public Facebook post, or any Page’s '
+                    .'profile picture at full size. No account and no extension needed.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste either kind of link. A post, photo or video link gives you '
+                        .'the picture that post publishes. A Page link gives you that Page’s profile '
+                        .'picture instead.'),
+                    Blocks::heading('Page pictures come from Facebook’s own endpoint', 2),
+                    Blocks::paragraph('Facebook serves any Page’s profile picture without a login, at a '
+                        .'size you ask for, and answers with the dimensions it actually has. So the sizes '
+                        .'in the result are measured rather than guessed, and the last row is the copy '
+                        .'Facebook stores rather than the small default the endpoint hands out.'),
+                    Blocks::heading('Posts are a harder read', 2),
+                    Blocks::paragraph('Facebook answers signed-out requests with a sign-in page far more '
+                        .'often than the other platforms here, including for posts that are public when '
+                        .'you are logged in. When that happens the result says so, because "Facebook '
+                        .'declined" and "the post has no image" are different problems with different '
+                        .'answers.'),
+                    Blocks::callout('warning', 'A Page’s profile picture is usually a logo, and a logo is '
+                        .'usually a trademark. Fine in a mock-up, a slide or a comparison; not fine on '
+                        .'anything that implies the brand endorsed you.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.facebook.com/NASA'],
+                    'note' => 'A Page link — you get the profile picture at every size Facebook serves.',
+                ],
+                'faq' => [
+                    ['question' => 'Can it get a personal profile’s picture?',
+                        'answer' => 'No. The endpoint behind the Page route is for Pages. A personal '
+                            .'profile’s picture is shown to the people it is shared with, and this tool '
+                            .'does not sign in to become one of them.'],
+                    ['question' => 'A twelve-photo album came back as one image.',
+                        'answer' => 'A post publishes one picture to its link card no matter how many it '
+                            .'contains. Open the individual photo, copy that link, and paste it here.'],
+                    ['question' => 'The download link expired.',
+                        'answer' => 'Facebook signs its image URLs with an expiry, which is why the result '
+                            .'shows how long each one has left. Save the file; a saved link goes stale.'],
+                    ['question' => 'Does it work with fb.watch and share links?',
+                        'answer' => 'Yes. Both are followed to wherever they land before anything is '
+                            .'read, so the short link from the share sheet is fine to paste.'],
+                ],
+            ],
+
+            [
+                'key' => 'threads.image-downloader',
+                'slug' => 'threads-image-downloader',
+                'category' => 'media',
+                'name' => 'Threads Image Downloader',
+                'tagline' => 'The picture on a Threads post, at full size, without an account.',
+                'description' => 'Reads a public Threads post and hands back the image it publishes, with '
+                    .'the signed link’s remaining life next to it. Both threads.com and the older '
+                    .'threads.net addresses work, and the per-share tracking parameter is dropped first.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['threads'],
+                'focus_keyword' => 'threads image downloader',
+                'seo_title' => 'Threads Image Downloader — Save Post Images Free',
+                'seo_description' => 'Paste a public Threads post link and download the image behind it '
+                    .'at full size. Works with threads.com and threads.net links. No sign-in.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a public Threads post link. Both the current threads.com '
+                        .'address and the older threads.net one work — they are normalised before '
+                        .'anything is fetched.'),
+                    Blocks::heading('Why the link has a countdown on it', 2),
+                    Blocks::paragraph('Threads runs on the same image infrastructure as Instagram, which '
+                        .'means every image URL is signed and expires. The result reads that expiry out '
+                        .'of the URL and shows it, because it changes what you should do next: save the '
+                        .'file, rather than keeping the link and finding it dead later.'),
+                    Blocks::heading('What comes back', 2),
+                    Blocks::paragraph('The image the post publishes to link cards. A post carrying a set '
+                        .'of pictures publishes the first one, so a set can come back as a single image — '
+                        .'that is the card, not a failed read.'),
+                    Blocks::callout('warning', 'The picture belongs to whoever posted it. Reference, '
+                        .'moodboards and commentary are ordinary use; reposting it as your own is not.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.threads.com/@zuck/post/C2QBoRaRmvo'],
+                ],
+                'faq' => [
+                    ['question' => 'Do threads.net links still work?',
+                        'answer' => 'Yes. Threads moved to threads.com and both are in circulation, so '
+                            .'both are accepted and normalised.'],
+                    ['question' => 'Nothing came back for my post.',
+                        'answer' => 'Threads posts are text by default, so a post with no picture has '
+                            .'nothing to hand back. If the post does have one, check it opens in a '
+                            .'private browser window — a private profile is not public.'],
+                    ['question' => 'Can I ask for a larger copy?',
+                        'answer' => 'No, and no tool can. The signature on the URL covers the size '
+                            .'segment, so an edited address is an invalid address. What comes back is the '
+                            .'largest copy Threads publishes.'],
+                    ['question' => 'Why is the tracking parameter removed?',
+                        'answer' => 'The <code>igshid</code> Threads adds to a shared link is a per-share '
+                            .'identifier. Fetching a link with it attached would tell Meta who forwarded '
+                            .'the post to you, which is nobody’s business here.'],
+                ],
+            ],
+
+            [
+                'key' => 'bluesky.image-downloader',
+                'slug' => 'bluesky-image-downloader',
+                'category' => 'media',
+                'name' => 'Bluesky Image Downloader',
+                'tagline' => 'All four images, the alt text, and the file exactly as uploaded.',
+                'description' => 'Bluesky keeps a public read API open, so a post’s images can be asked '
+                    .'for rather than inferred from a link card. You get every image on the post, the alt '
+                    .'text the author wrote, and the original upload from the author’s own server.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['bluesky'],
+                'focus_keyword' => 'bluesky image downloader',
+                'seo_title' => 'Bluesky Image Downloader — Every Image, Full Size (Free)',
+                'seo_description' => 'Download every image on a public Bluesky post at original size, '
+                    .'with the alt text. Uses the public AT Protocol read API. No account needed.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a post link — the <code>bsky.app/profile/…/post/…</code> '
+                        .'address in the bar when you open a post.'),
+                    Blocks::heading('Why this one gives you more', 2),
+                    Blocks::paragraph('Every other platform in this category has to be read through the '
+                        .'tags it publishes for link cards, and a link card names one image. Bluesky is '
+                        .'built to be read: AT Protocol keeps an unauthenticated read API open so other '
+                        .'clients can work, and asking it directly returns the whole post.'),
+                    Blocks::list([
+                        'Every image, up to the four a post can carry — not just the first.',
+                        'The alt text, which is the author’s own writing and the thing most worth '
+                        .'carrying across when you quote a post somewhere else.',
+                        'The blob: the file exactly as uploaded, from the server that holds it, rather '
+                        .'than the re-encoded copy the app’s CDN serves.',
+                    ]),
+                    Blocks::heading('Where it stops', 2),
+                    Blocks::paragraph('Public posts only. An account that has asked to be excluded from '
+                        .'logged-out views is not served by the public read API, and this tool does not '
+                        .'sign in to get around that.'),
+                    Blocks::callout('warning', 'The images belong to whoever posted them — and so does '
+                        .'the alt text. If you carry the picture across, carry the description with it.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l'],
+                    'note' => 'The original-upload row is the file itself, from the author’s server.',
+                ],
+                'faq' => [
+                    ['question' => 'What is the difference between full size and original upload?',
+                        'answer' => 'Full size is Bluesky’s re-encoded copy, served from its CDN. The '
+                            .'original upload is the file the author posted, fetched from their own '
+                            .'server by its content hash — the same bytes, nothing re-compressed.'],
+                    ['question' => 'Why does the alt text matter?',
+                        'answer' => 'Bluesky prompts for it and its users write it, so it is frequently a '
+                            .'real caption rather than a bare description. It is also the only part of an '
+                            .'image post that a screen reader can read, so dropping it when you repost '
+                            .'the picture makes the copy worse for the people who need it most.'],
+                    ['question' => 'It could not find my post.',
+                        'answer' => 'Check the link points at a single post rather than a profile, and '
+                            .'that the post has not been deleted. Handles change hands, so a link copied '
+                            .'a long time ago may name an account that no longer exists.'],
+                    ['question' => 'Does it work with quote posts?',
+                        'answer' => 'It returns the images on the post you linked to, not the images on '
+                            .'the post it quotes. Those belong to a different author and have their own '
+                            .'link — paste that one if it is what you want.'],
+                ],
+            ],
+
+            [
                 'key' => 'facebook.post-generator',
                 'slug' => 'fake-facebook-post-generator',
                 'category' => 'media',
