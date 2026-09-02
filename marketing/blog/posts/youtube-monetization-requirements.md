@@ -191,6 +191,26 @@ Neither is mysterious, and both are visible in Studio rather than hidden. If a v
 is earning nothing, check its monetization icon before concluding anything about the
 algorithm.
 
+## Once you are in: the three things that move the number
+
+Acceptance is the beginning of the arithmetic rather than the end of it, and three
+posts cover what actually moves a monetized channel's income.
+
+**Understand the two figures in Studio.** CPM and RPM are not two versions of one
+number, and the gap between them is mostly unmonetized views rather than YouTube's cut —
+which matters because one of those is fixed and the other is not.
+[CPM vs RPM](/blog/cpm-vs-rpm) has the identity and what each term is worth.
+
+**Place your ad breaks by hand.** Mid-rolls need an eight-minute video, and after that
+the placement is an editing decision. Automatic placement optimises for revenue rather
+than for your edit, which is how an ad lands between a question and its answer:
+[where to put ad breaks](/blog/youtube-ad-breaks).
+
+**Know what limits ads before you record.** The advertiser-friendly categories are
+published, the opening of a video is weighted hardest, and context decides the rest.
+[Advertiser-friendly guidelines](/blog/advertiser-friendly-guidelines) covers what is
+real and what is folklore.
+
 ## A word on the order to do this in
 
 Chasing the thresholds directly is the least effective route to them. Channels that

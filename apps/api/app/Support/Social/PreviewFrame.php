@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Social;
 
 use App\Domain\Tools\Data\ToolResult;
+use App\Support\Text\TextWidth;
 
 /**
  * One platform mock-up, described in data.
@@ -31,7 +32,7 @@ final class PreviewFrame
     /**
      * @param  string  $platform  Styling token: facebook, instagram, linkedin, x, threads, pinterest, generic.
      * @param  string  $surface  What is being drawn, e.g. "Mobile feed".
-     * @param  string  $kind  post | profile | channel | link-card | pin | safe-zone
+     * @param  string  $kind  post | profile | channel | link-card | pin | safe-zone | serp | inbox
      */
     public static function make(string $platform, string $surface, string $kind = 'post'): self
     {
@@ -72,10 +73,95 @@ final class PreviewFrame
         return $this;
     }
 
-    /** A placeholder for the image or video, drawn at the aspect ratio the platform uses. */
-    public function media(string $aspect, ?string $label = null): self
+    /**
+     * The image or video slot.
+     *
+     * With no `$url` this is a placeholder drawn at the platform's aspect ratio,
+     * which is all a preview of *your unpublished draft* can honestly show. With
+     * one it is that picture — the thumbnail on the page under test, the artwork a
+     * podcast publishes — because once a real image exists, drawing a grey box
+     * beside a verdict about it is withholding the evidence.
+     */
+    public function media(string $aspect, ?string $label = null, ?string $url = null): self
     {
-        $this->frame['media'] = array_filter(['aspect' => $aspect, 'label' => $label]);
+        $this->frame['media'] = array_filter([
+            'aspect' => $aspect,
+            'label' => $label,
+            'url' => $url,
+        ], fn ($value) => $value !== null && $value !== '');
+
+        return $this;
+    }
+
+    /**
+     * The real width, in CSS pixels, of the surface being drawn.
+     *
+     * A fold is a width, so a frame that models one is only honest at the width it
+     * was measured at: Google's desktop result column is 600 px and its phone
+     * column is not, and a preview that draws both in whatever space the grid
+     * happens to give it has quietly discarded the fact it exists to show. The
+     * renderer lays the frame out at this width and scales the whole thing down to
+     * fit its column, so the proportions survive a narrow screen.
+     */
+    public function device(int $width, ?string $label = null): self
+    {
+        $this->frame['device'] = array_filter([
+            'width' => $width,
+            'label' => $label,
+        ], fn ($value) => $value !== null && $value !== '');
+
+        return $this;
+    }
+
+    /**
+     * The frame's own headline — a search result's blue link, a subject line — split
+     * at its fold the way {@see self::body()} splits the text under it.
+     *
+     * Pre-split rather than measured here, because these surfaces cut on pixel
+     * width rather than on a character count and the measuring belongs to whoever
+     * knows the font size ({@see TextWidth}).
+     */
+    public function headline(string $visible, string $hidden = '', string $moreLabel = '…'): self
+    {
+        $this->frame['heading'] = self::split($visible, $hidden, $moreLabel);
+
+        return $this;
+    }
+
+    /** {@see self::body()}, for a body that was already split on width. */
+    public function bodyParts(string $visible, string $hidden = '', string $moreLabel = '…'): self
+    {
+        $this->frame['body'] = self::split($visible, $hidden, $moreLabel);
+
+        return $this;
+    }
+
+    /**
+     * A layout variant within a kind.
+     *
+     * An inbox row is stacked on a phone and run on one line in a desktop client,
+     * and that difference is a fact about the client rather than about the width it
+     * happens to be drawn at — so it is named here instead of being inferred from
+     * the pixel count downstream.
+     */
+    public function variant(string $variant): self
+    {
+        $this->frame['variant'] = $variant;
+
+        return $this;
+    }
+
+    /**
+     * The identity line above a search result: site name, favicon and the crumb
+     * trail Google draws in place of the raw URL.
+     */
+    public function search(string $site, string $url, ?string $favicon = null): self
+    {
+        $this->frame['search'] = array_filter([
+            'site' => $site,
+            'url' => $url,
+            'favicon' => $favicon,
+        ], fn ($value) => $value !== null && $value !== '');
 
         return $this;
     }
@@ -184,6 +270,20 @@ final class PreviewFrame
     public function toArray(): array
     {
         return $this->frame;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function split(string $visible, string $hidden, string $moreLabel): array
+    {
+        return [
+            'visible' => $visible,
+            'hidden' => $hidden,
+            'full' => $visible.$hidden,
+            'more_label' => $moreLabel,
+            'characters' => PostLength::graphemeCount($visible.$hidden),
+        ];
     }
 
     private static function initials(string $name): string

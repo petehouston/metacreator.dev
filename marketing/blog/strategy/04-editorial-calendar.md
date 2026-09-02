@@ -6,7 +6,7 @@ Six waves, one per month. A wave is a batch, not a drip: search engines reward a
 site that covers a subject completely far faster than one that publishes the same
 number of posts scattered across ten subjects.
 
-**Cadence.** 4 posts a week sustained, published Tuesday and Thursday
+**Cadence.** 5 posts a week sustained, published Tuesday and Thursday
 mornings, with the pillar of each wave going out first so its spokes have something
 to link up to on day one.
 
@@ -24,6 +24,7 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | 6 | Month 6 | 14 | 12,200 | Handles, links & housekeeping, LinkedIn, Facebook & link previews, Pinterest SEO, Writing, scripts & planning |
 | 7 | Month 7 | 13 | 13,700 | Hashtags & discovery, LinkedIn, Facebook & link previews, Pinterest SEO, Post mock-ups & screenshots, Short links, redirects & embeds |
 | 8 | Month 8 | 8 | 9,300 | Saving images from social platforms |
+| 9 | Month 9 | 17 | 22,700 | Image sizes & safe zones, Instagram formats & profile, Saving images from social platforms, Search snippets & subject lines, Short links, redirects & embeds, Twitch payouts & assets, YouTube monetization |
 
 
 ## Wave 1 - Month 1
@@ -302,3 +303,57 @@ smaller complete one, so cut scope inside a wave before you cut the linking pass
 | `DL-06` | [How to Download Images From a Bluesky Post](/blog/download-bluesky-images) | download bluesky images | howto | 1100 | `bluesky-image-downloader`, `social-media-image-downloader` |
 | `DL-07` | [Why Your Saved Instagram Image Link Expired](/blog/instagram-image-link-expired) | instagram image link expired | troubleshooting | 900 | `instagram-image-downloader`, `facebook-image-downloader`, `threads-image-downloader` |
 | `DL-08` | [How to Write Alt Text for Social Media Images](/blog/social-media-alt-text) | social media alt text | howto | 1200 | `bluesky-image-downloader`, `social-media-image-downloader` |
+
+## Wave 9 - Month 9
+
+### Saving images from social platforms
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `DL-09` | [How to Download Podcast Cover Art at Full Size](/blog/download-podcast-cover-art) | podcast cover art download | howto | 1100 | `apple-podcasts-artwork-downloader`, `social-media-image-downloader` |
+| `DL-10` | [Spotify Cover Art Size: Why 640px Is the Ceiling](/blog/spotify-cover-art-size) | spotify cover art size | explainer | 1100 | `spotify-cover-art-downloader`, `image-format-converter` |
+
+### Instagram formats & profile
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `IG-09` | [How Much to Charge for a Sponsored Instagram Post](/blog/how-much-to-charge-instagram-post) | how much to charge for instagram post | howto | 1500 | `instagram-money-calculator`, `engagement-rate-calculator`, `social-media-character-counter` |
+
+### Short links, redirects & embeds
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `LK-06` | [How to Remove Tracking Parameters From a Link](/blog/remove-tracking-parameters-from-url) | remove tracking parameters from url | howto | 1400 | `social-media-url-cleaner`, `link-expander`, `utm-link-builder` |
+| `LK-07` | [Social Media Deep Links: Open a Link in the App, Not the Browser](/blog/social-media-deep-links) | social media deep link | howto | 1300 | `app-deep-link-builder`, `social-media-url-cleaner`, `qr-code-generator` |
+
+### Image sizes & safe zones
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `SZ-09` | [YouTube Banner Size: The 1546x423 That Decides Everything](/blog/youtube-banner-size) | youtube banner size | explainer | 1300 | `youtube-banner-safe-area`, `social-image-resizer`, `safe-zone-guide` |
+
+### Search snippets & subject lines
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `SN-01` | [How Google Builds a Search Snippet](/blog/google-search-snippet) **(pillar)** | google search snippet | pillar | 1600 | `google-serp-preview`, `link-preview-debugger`, `social-media-character-counter` |
+| `SN-02` | [Title Tag Length: How Long Should a Title Be in Pixels?](/blog/title-tag-length) | title tag length | explainer | 1300 | `google-serp-preview`, `headline-analyzer` |
+| `SN-03` | [Meta Description Length: What Google Actually Shows](/blog/meta-description-length) | meta description length | explainer | 1200 | `google-serp-preview`, `link-preview-debugger` |
+| `SN-04` | [Email Subject Line Length: Where Each Inbox Cuts It](/blog/email-subject-line-length) | email subject line length | explainer | 1300 | `email-subject-line-preview`, `social-media-character-counter` |
+| `SN-05` | [Preheader Text: The Half of Your Email Preview Nobody Writes](/blog/email-preheader-text) | preheader text | howto | 1100 | `email-subject-line-preview` |
+
+### Twitch payouts & assets
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `TW-01` | [Twitch Monetization: How Streamers Actually Get Paid](/blog/twitch-monetization) **(pillar)** | twitch monetization | pillar | 1700 | `twitch-money-calculator`, `engagement-rate-calculator` |
+| `TW-02` | [How Much Do Twitch Streamers Make?](/blog/how-much-do-twitch-streamers-make) | how much do twitch streamers make | benchmarks | 1500 | `twitch-money-calculator`, `cpm-to-rpm-calculator` |
+| `TW-03` | [Twitch Profile Picture Size (and How to Get the Full-Size One)](/blog/twitch-profile-picture-size) | twitch profile picture size | howto | 1100 | `twitch-image-downloader`, `social-image-resizer` |
+
+### YouTube monetization
+
+| # | Post | Primary keyword | Type | Words | Tools it feeds |
+| --- | --- | --- | --- | --- | --- |
+| `YM-05` | [CPM vs RPM on YouTube, and What the Gap Costs You](/blog/cpm-vs-rpm) | cpm vs rpm | explainer | 1400 | `cpm-to-rpm-calculator`, `youtube-money-calculator` |
+| `YM-06` | [Where to Put Ad Breaks in a YouTube Video](/blog/youtube-ad-breaks) | youtube ad breaks | howto | 1300 | `youtube-ad-break-planner`, `youtube-timestamp-link-builder` |
+| `YM-07` | [Advertiser-Friendly Guidelines: What Actually Limits Ads](/blog/advertiser-friendly-guidelines) | advertiser friendly guidelines | explainer | 1500 | `youtube-advertiser-friendly-checker`, `headline-analyzer` |

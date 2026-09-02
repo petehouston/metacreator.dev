@@ -181,6 +181,18 @@ you were protecting.
 
 [[tool:image-compressor]]
 
+## The banner that is cropped four ways
+
+Channel art is the one asset where the upload size and the design size are different
+numbers, and where getting that wrong is invisible until somebody opens the channel on a
+phone.
+
+You upload 2560×1440. A television shows all of it, a desktop browser shows a 2560×423
+strip, a tablet 1855×423, and a phone 1546×423 — which is 17% of the file. Everything
+that has to be read belongs in that smallest window, and everything outside it is
+decoration for a device almost nobody browses on.
+[YouTube banner size](/blog/youtube-banner-size) draws all four crops.
+
 ## Which sizes are worth memorising
 
 Almost none. If you retain three numbers, make them these:

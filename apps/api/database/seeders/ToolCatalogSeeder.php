@@ -3630,6 +3630,791 @@ final class ToolCatalogSeeder extends Seeder
                             .'no card from here should ever be presented as evidence of what somebody said.'],
                 ],
             ],
+
+            [
+                'key' => 'seo.serp-preview',
+                'slug' => 'google-serp-preview',
+                'category' => 'previews',
+                'name' => 'Google SERP Snippet Preview',
+                'tagline' => 'See your title and description as a Google result — on a desktop and a phone.',
+                'description' => 'Draws your title tag and meta description as Google draws them, measuring '
+                    .'the fold in pixels rather than characters, on both the 600-pixel desktop column and '
+                    .'the narrower phone one. The part that gets cut is greyed out in place.',
+                'tier' => ToolTier::Free,
+                'platforms' => [],
+                'featured' => true,
+                'focus_keyword' => 'google serp preview',
+                'seo_title' => 'Google SERP Preview — Test Your Title and Meta Description (Free)',
+                'seo_description' => 'Preview a title tag and meta description as a Google result on '
+                    .'desktop and mobile. Measured in pixels, not characters, so the fold is real.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the title tag and meta description you plan to publish. Both '
+                        .'are drawn immediately as a desktop result and as a phone result, with anything '
+                        .'past the fold greyed out rather than deleted — seeing the sentence that gets cut '
+                        .'is the point.'),
+                    Blocks::heading('Why character counts are wrong', 2),
+                    Blocks::paragraph('Google truncates on <strong>pixel width</strong>, in a fixed column. '
+                        .'A title of “Will It Fit? A Guide” and one of “illinois trivia night” are eleven '
+                        .'and twenty-one characters, and the shorter one is wider. Every “keep it under 60 '
+                        .'characters” rule is a rounding of the real constraint, and it is wrong in both '
+                        .'directions — capitals and W’s blow through it, while an i-heavy title has room to '
+                        .'spare.'),
+                    Blocks::heading('The phone result is the one to design for', 2),
+                    Blocks::paragraph('A phone gives the title a second line and the snippet a third, in a '
+                        .'much narrower column. That is more total room and a far earlier first-line break, '
+                        .'so a title whose first four words are generic reads as generic on the surface '
+                        .'where most of the clicks happen.'),
+                    Blocks::callout('tip', 'Front-load the phrase somebody typed. Whatever survives the '
+                        .'first line is what the result is competing on.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'title' => 'YouTube Thumbnail Downloader — Get Any Video Thumbnail in HD (Free)',
+                        'description' => 'Download any YouTube thumbnail in maxres, HQ, MQ and SD. Works '
+                            .'with watch links, Shorts, embeds and share URLs. Free, no account needed.',
+                        'url' => 'https://metacreator.dev/tools/youtube-thumbnail-downloader',
+                    ],
+                    'note' => 'A title that fits the desktop column and is cut on a phone.',
+                ],
+                'faq' => [
+                    ['question' => 'Will Google actually show what I typed?',
+                        'answer' => 'Often, but not always. Google rewrites titles it judges unhelpful and '
+                            .'replaces the meta description whenever a passage on the page answers the '
+                            .'query better. This shows what you submitted, which is the half you control.'],
+                    ['question' => 'What pixel limits does this use?',
+                        'answer' => 'The result column rather than a single number: roughly 600 pixels on '
+                            .'desktop with one line for the title and two for the snippet, and a narrower '
+                            .'phone column with an extra line for each. Widths are measured with Arial '
+                            .'metrics at the sizes Google renders.'],
+                    ['question' => 'Does the URL matter?',
+                        'answer' => 'Only for the crumb trail. Google has not shown a raw URL in a result '
+                            .'for years — it draws the site name and the path segments, which is what this '
+                            .'draws too.'],
+                    ['question' => 'Should I write to fill the whole description?',
+                        'answer' => 'No. Write the promise the first paragraph keeps, and stop. A '
+                            .'description padded to hit a width reads as padding, and the last clause is '
+                            .'the one at risk of being cut anyway.'],
+                ],
+            ],
+
+            [
+                'key' => 'content.email-subject-preview',
+                'slug' => 'email-subject-line-preview',
+                'category' => 'previews',
+                'name' => 'Email Subject Line Preview',
+                'tagline' => 'Your subject and preheader as four inboxes will actually draw them.',
+                'description' => 'Renders a subject line and its preview text as a Gmail row on desktop and '
+                    .'mobile, an Apple Mail row on an iPhone and an Outlook list row — each clamped to the '
+                    .'width that client really gives it, with the cut shown in place.',
+                'tier' => ToolTier::Free,
+                'platforms' => [],
+                'focus_keyword' => 'email subject line preview',
+                'seo_title' => 'Email Subject Line Preview — Gmail, Apple Mail & Outlook',
+                'seo_description' => 'See where your subject line is cut in Gmail, Apple Mail and Outlook, '
+                    .'on desktop and mobile, with the preheader drawn beside it. Free, no signup.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Type the subject and the preheader — the first text in the email '
+                        .'body, which every client draws beside or under the subject. Four inbox rows are '
+                        .'drawn at the widths those clients actually use.'),
+                    Blocks::heading('The preheader is half the preview', 2),
+                    Blocks::paragraph('Leave it empty and the client fills the space itself, with whatever '
+                        .'your first line of HTML happens to be — usually “View this email in your browser”. '
+                        .'That is a quarter of your inbox real estate spent on nothing, and it is the most '
+                        .'common unforced error in email.'),
+                    Blocks::heading('Why the same subject fits in one client and not another', 2),
+                    Blocks::paragraph('An inbox is a list of fixed-width rows. Gmail on the desktop pays '
+                        .'for the sender column and the date first and gives the subject what is left, so '
+                        .'it is the tightest surface here. Apple Mail on a phone is the most generous, with '
+                        .'two lines of preheader under the subject. A character count cannot express any of '
+                        .'that, which is why this measures width.'),
+                    Blocks::callout('tip', 'Put the promise in the first thirty characters. That is the '
+                        .'only part every inbox on this list agrees to show.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'subject' => 'The three metrics I actually watch (and the four I ignore)',
+                        'preheader' => 'Plus the spreadsheet I use to track them every Sunday.',
+                        'sender' => 'MetaCreator',
+                    ],
+                    'note' => 'A subject that survives a phone and is cut on a desktop Gmail row.',
+                ],
+                'faq' => [
+                    ['question' => 'How many characters should a subject line be?',
+                        'answer' => 'That is the wrong unit. A subject is clamped by the width of the '
+                            .'column it lands in, and the same character count fits or does not depending '
+                            .'on which letters you used. Aim to land the promise inside the first thirty '
+                            .'characters and check the widths here.'],
+                    ['question' => 'Are these widths exact?',
+                        'answer' => 'They are each client’s default window at its default density. A '
+                            .'maximised desktop window gives the subject more room; a split reading pane '
+                            .'gives it less. Treat the last few pixels as a margin, not a line.'],
+                    ['question' => 'Do emoji help?',
+                        'answer' => 'They earn attention and they cost width — an emoji is drawn at full '
+                            .'width, so it is one of the widest characters you can spend. Some corporate '
+                            .'filters strip them entirely, so never let one carry meaning your words do '
+                            .'not repeat.'],
+                    ['question' => 'What about the from name?',
+                        'answer' => 'It is drawn here because it competes for the same row, and on a phone '
+                            .'it is read before the subject. A recognisable sender name does more for the '
+                            .'open rate than any subject line trick.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.banner-safe-area',
+                'slug' => 'youtube-banner-safe-area',
+                'category' => 'previews',
+                'name' => 'YouTube Banner Safe Area Preview',
+                'tagline' => 'One banner, four crops — and the 1546×423 window that decides the design.',
+                'description' => 'Draws a 2560×1440 channel banner with each device’s crop shaded over it: '
+                    .'television, desktop, tablet and phone. Paste your image URL to see your own artwork '
+                    .'under the crops, measured against YouTube’s canvas.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'youtube banner safe area',
+                'seo_title' => 'YouTube Banner Safe Area Preview — 2560×1440 Channel Art Checker',
+                'seo_description' => 'See exactly what a YouTube banner shows on TV, desktop, tablet and '
+                    .'mobile. The 1546×423 safe area drawn to scale, with your own image under it.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a direct link to the image you plan to upload — or to a '
+                        .'channel’s existing banner — and each device’s crop is drawn over it to scale. '
+                        .'Leave the field blank to see the geometry on its own.'),
+                    Blocks::heading('The numbers', 2),
+                    Blocks::list([
+                        '<strong>Upload 2560 × 1440.</strong> That is YouTube’s canvas, and the file has to '
+                        .'come in under 6 MB.',
+                        '<strong>Television shows all of it.</strong> The only surface that does.',
+                        '<strong>Desktop shows 2560 × 423</strong> — a strip through the middle.',
+                        '<strong>Tablet shows 1855 × 423.</strong>',
+                        '<strong>Phones show 1546 × 423</strong>, which is 17% of the file you uploaded.',
+                    ]),
+                    Blocks::heading('Design the smallest window first', 2),
+                    Blocks::paragraph('Every element that has to be read — the channel name, the face, the '
+                        .'upload schedule — belongs inside the 1546 × 423 centre. Everything outside it is '
+                        .'décor for a device almost nobody is using. Designing outward from that rectangle '
+                        .'is the whole trick, and designing inward from 2560 is why so many channels have a '
+                        .'wordmark cut in half on a phone.'),
+                    Blocks::callout('warning', 'A photographic banner at 2560×1440 usually has to be '
+                        .'exported as a JPEG to clear the 6 MB limit. A PNG of that size rarely does.'),
+                ]),
+                'example' => [
+                    'input' => ['image_url' => ''],
+                    'note' => 'Run it empty first to see the four crops, then paste your own image.',
+                ],
+                'faq' => [
+                    ['question' => 'What size should a YouTube banner be?',
+                        'answer' => '2560 × 1440 pixels, under 6 MB. That is the upload canvas; every '
+                            .'device then crops it, and the smallest crop — 1546 × 423 on phones — is the '
+                            .'one that decides where your text can go.'],
+                    ['question' => 'Why does my banner look cut off on mobile?',
+                        'answer' => 'Because it is. A phone shows a 1546 × 423 window from the centre of a '
+                            .'2560 × 1440 file, discarding 83% of it. Anything you placed outside that '
+                            .'window was never going to appear.'],
+                    ['question' => 'Can I upload a smaller image?',
+                        'answer' => 'YouTube will accept it and scale it up, which is what makes a banner '
+                            .'look soft on a television while looking acceptable on a phone. Export at '
+                            .'2560 × 1440 and the problem does not arise.'],
+                    ['question' => 'Does the tool store my image?',
+                        'answer' => 'No. It fetches the URL to measure the file’s dimensions and draws the '
+                            .'crops over that same URL. Nothing is uploaded to us and nothing is kept.'],
+                ],
+            ],
+
+            [
+                'key' => 'podcasts.apple-artwork-downloader',
+                'slug' => 'apple-podcasts-artwork-downloader',
+                'category' => 'media',
+                'name' => 'Apple Podcasts Artwork Downloader',
+                'tagline' => 'Podcast cover art at 3000×3000 — the size it was submitted, not the 600 the page gives you.',
+                'description' => 'Reads Apple’s own public directory record for any show or episode and '
+                    .'returns the artwork at every size Apple serves, up to the 3000×3000 original the '
+                    .'publisher uploaded.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['apple-podcasts'],
+                'focus_keyword' => 'apple podcasts artwork downloader',
+                'seo_title' => 'Apple Podcasts Artwork Downloader — Get Cover Art at 3000×3000',
+                'seo_description' => 'Download any podcast’s cover art from Apple Podcasts at full '
+                    .'3000×3000 resolution, plus every smaller size. Works for shows and episodes.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a podcasts.apple.com link — to a show or to a single episode — '
+                        .'or just the numeric ID from one. The artwork comes back at five sizes, largest '
+                        .'last.'),
+                    Blocks::heading('Where the 3000 comes from', 2),
+                    Blocks::paragraph('Apple’s directory record hands out a URL ending in '
+                        .'<code>600x600bb.jpg</code>. The size is part of the path rather than a signature, '
+                        .'so the same file is served at any size by substitution — and Apple’s own '
+                        .'submission rules require artwork of 3000 × 3000, which means that rendition '
+                        .'exists for every show in the directory. Ask for more than 3000 and Apple hands '
+                        .'back the 3000 anyway; there is nothing larger behind it.'),
+                    Blocks::heading('Episode art is not show art', 2),
+                    Blocks::paragraph('A link copied from an episode carries an <code>?i=</code> id, and an '
+                        .'episode that ships its own cover has different artwork from the show it belongs '
+                        .'to. Paste the episode link and you get the episode’s picture; paste the show link '
+                        .'and you get the show’s.'),
+                    Blocks::callout('info', 'Artwork belongs to the publisher. Use it for a directory '
+                        .'listing, a review, a link card or your own reference — not as the face of '
+                        .'something you publish.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'],
+                    'note' => 'A show link. Try an episode link and watch the artwork change.',
+                ],
+                'faq' => [
+                    ['question' => 'Does this need an Apple account or an API key?',
+                        'answer' => 'No. Apple’s Search API is public and unauthenticated; the tool asks it '
+                            .'the same question the Podcasts app asks.'],
+                    ['question' => 'Is 3000 × 3000 really the original?',
+                        'answer' => 'It is the largest Apple serves, and it is the size Apple requires '
+                            .'publishers to submit. Requesting 4000 returns the 3000 — there is no bigger '
+                            .'file to find.'],
+                    ['question' => 'Why is the show not found?',
+                        'answer' => 'Shows are removed from the directory when their feed goes dead, while '
+                            .'the old link keeps working. If the lookup finds nothing, the show is no '
+                            .'longer listed.'],
+                    ['question' => 'Can I get the podcast’s RSS feed too?',
+                        'answer' => 'The feed URL comes back in the run’s metadata, because Apple’s record '
+                            .'carries it. It is the fastest way to find a show’s real feed from an Apple '
+                            .'link.'],
+                ],
+            ],
+
+            [
+                'key' => 'spotify.cover-art-downloader',
+                'slug' => 'spotify-cover-art-downloader',
+                'category' => 'media',
+                'name' => 'Spotify Cover Art Downloader',
+                'tagline' => 'Album, artist and playlist art at 640 — and an honest answer about why there is no bigger one.',
+                'description' => 'Reads Spotify’s public oEmbed record for any link and returns the cover at '
+                    .'every rendition Spotify publishes, up to its 640×640 ceiling — with the size of a '
+                    .'one-off cover measured rather than guessed.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['spotify'],
+                'focus_keyword' => 'spotify cover art downloader',
+                'seo_title' => 'Spotify Cover Art Downloader — Album & Playlist Art (Free)',
+                'seo_description' => 'Download Spotify album, artist and playlist cover art at every size '
+                    .'Spotify publishes, up to 640×640. Paste any track, album or artist link.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste any open.spotify.com link — a track, album, artist, playlist, '
+                        .'show or episode — or the <code>spotify:album:…</code> URI the desktop app copies '
+                        .'from its share menu.'),
+                    Blocks::heading('640 is the ceiling, and that is the whole story', 2),
+                    Blocks::paragraph('Pinterest keeps an <code>/originals/</code> copy; Apple Podcasts '
+                        .'keeps a 3000. <strong>Spotify keeps neither.</strong> Album and artist images are '
+                        .'published at 640, 300 and 64 pixels, and 640 is the largest that exists. Every '
+                        .'result promising “HD Spotify cover art” is upscaling this same file and charging '
+                        .'you attention for it.'),
+                    Blocks::heading('How the sizes are reached', 2),
+                    Blocks::paragraph('Spotify’s image URLs are a fixed prefix followed by the image’s own '
+                        .'id, and the prefix <em>is</em> the size. Swapping it moves between renditions with '
+                        .'no second request — the same trick the Pinterest downloader uses on width '
+                        .'directories. A playlist mosaic or a podcast cover is served as one rendition '
+                        .'only, so that row is fetched and measured instead of assumed.'),
+                    Blocks::callout('info', 'Cover art is the copyright of the label, artist or publisher. '
+                        .'Use it for a playlist you are describing, a review or a link card.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://open.spotify.com/album/4aawyAB9vmqN3uQ7FjRGTy'],
+                    'note' => 'An album link, which is also what a track link resolves to.',
+                ],
+                'faq' => [
+                    ['question' => 'Can I get Spotify cover art in HD or 4K?',
+                        'answer' => 'No, and nobody can. Spotify publishes album and artist images at a '
+                            .'maximum of 640 × 640. Any larger file you are offered elsewhere was upscaled '
+                            .'from this one.'],
+                    ['question' => 'Does this work for podcasts and playlists?',
+                        'answer' => 'Yes, but those are served as a single rendition rather than a ladder, '
+                            .'so the tool fetches that one image and reports its measured size instead of '
+                            .'offering sizes that do not exist.'],
+                    ['question' => 'Do I need a Spotify account?',
+                        'answer' => 'No. The tool uses Spotify’s public oEmbed endpoint, which needs no '
+                            .'token and is the same route a link card uses.'],
+                    ['question' => 'What happens to the ?si= on my link?',
+                        'answer' => 'It is dropped before anything is fetched. That parameter is a '
+                            .'per-share id identifying the session the link was copied from, and there is '
+                            .'no reason for it to travel with a request about an album cover.'],
+                ],
+            ],
+
+            [
+                'key' => 'twitch.image-downloader',
+                'slug' => 'twitch-image-downloader',
+                'category' => 'media',
+                'name' => 'Twitch Image Downloader',
+                'tagline' => 'Profile pictures, clip stills and VOD thumbnails — every size checked before it is offered.',
+                'description' => 'Takes a Twitch channel, clip or VOD and returns its image at every size '
+                    .'Twitch actually serves, up to the 600×600 avatar the page never shows you. Each '
+                    .'candidate is fetched and measured, so every link in the table works.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['twitch'],
+                'focus_keyword' => 'twitch profile picture downloader',
+                'seo_title' => 'Twitch Profile Picture Downloader — Avatars, Clips & VOD Stills',
+                'seo_description' => 'Download a Twitch profile picture at up to 600×600, plus clip and '
+                    .'VOD thumbnails. Paste a channel name or link. Every size verified, free.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste a channel link, a clip, a VOD — or just the channel name on '
+                        .'its own. What comes back depends on what the link points at.'),
+                    Blocks::heading('Why the page gives you 300 and Twitch keeps 600', 2),
+                    Blocks::paragraph('Twitch names the dimensions in the path: an avatar is '
+                        .'<code>…-profile_image-300x300.png</code>, and the number is the rendition rather '
+                        .'than a signed parameter. The link card always publishes the 300, so a general '
+                        .'image downloader reading <code>og:image</code> can only ever hand you that one — '
+                        .'while the 600 sits at a URL nobody advertises.'),
+                    Blocks::heading('Nothing here is guessed', 2),
+                    Blocks::paragraph('Every candidate size is fetched and measured before it appears in '
+                        .'the table. Twitch stops at 600 for avatars — 900 and 1200 answer 404 — and clip '
+                        .'and VOD stills are kept at whichever sizes Twitch chose for that item, so two '
+                        .'clips can offer different ladders. A row exists because a request for it came '
+                        .'back with an image.'),
+                    Blocks::callout('info', 'A channel’s art belongs to the streamer. Use it for a raid '
+                        .'graphic you have permission for, a thumbnail credit, or your own reference.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.twitch.tv/shroud'],
+                    'note' => 'A channel link. Try a clip URL to see the still ladder instead.',
+                ],
+                'faq' => [
+                    ['question' => 'What is the largest Twitch profile picture?',
+                        'answer' => '600 × 600. Twitch stores that size and serves 300, 150, 70, 50 and 28 '
+                            .'below it. URLs asking for anything larger answer 404 — there is no bigger '
+                            .'file behind them.'],
+                    ['question' => 'Why did my VOD link return nothing?',
+                        'answer' => 'Twitch serves its own logo in place of a thumbnail for a deleted VOD, '
+                            .'a sub-only VOD and a channel that does not exist. The tool recognises that '
+                            .'image and tells you rather than handing you the Twitch logo.'],
+                    ['question' => 'Can I download the clip video itself?',
+                        'answer' => 'No. This tool handles images — the avatar, the clip still, the VOD '
+                            .'thumbnail. Downloading somebody’s clip is a different question with a '
+                            .'different answer, and it is not one we build for.'],
+                    ['question' => 'Does it work with a bare channel name?',
+                        'answer' => 'Yes. Type the name and the tool builds the channel URL itself.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.url-cleaner',
+                'slug' => 'social-media-url-cleaner',
+                'category' => 'utility',
+                'name' => 'Social Media URL Cleaner',
+                'tagline' => 'Strip the tracking off a link — and see what each parameter was telling somebody.',
+                'description' => 'Removes utm tags, click ids and per-share identifiers from any link, names '
+                    .'every one it drops, and keeps the parameters that change what the link does — '
+                    .'YouTube’s timestamp and playlist among them.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube', 'instagram', 'tiktok', 'x', 'facebook', 'linkedin', 'threads', 'pinterest'],
+                'featured' => true,
+                'focus_keyword' => 'url cleaner',
+                'seo_title' => 'URL Cleaner — Remove Tracking Parameters From Any Link (Free)',
+                'seo_description' => 'Remove utm tags, fbclid, igshid, si and other tracking from any URL. '
+                    .'See what each parameter identifies, and keep the ones the link needs.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the link you were sent. The cleaned version comes back first, '
+                        .'followed by every parameter that was removed and what it was for.'),
+                    Blocks::heading('Some of these identify a person', 2),
+                    Blocks::paragraph('Tidiness is the usual argument for stripping trackers, and it is the '
+                        .'weakest one. <code>igshid</code> is minted per share, so a forwarded Instagram '
+                        .'link carries the fact that it came from you. <code>mc_eid</code> is a Mailchimp '
+                        .'<em>subscriber</em> id — paste a newsletter link into a group chat with that '
+                        .'attached and every click is recorded against your subscription. '
+                        .'<code>si</code> does the same job on a YouTube or Spotify share.'),
+                    Blocks::heading('What it will not remove', 2),
+                    Blocks::paragraph('YouTube’s <code>t</code> is a timestamp and its <code>list</code> is '
+                        .'a playlist. A cleaner that drops those has broken the link it was asked to fix, '
+                        .'so they are kept, listed, and the reason is given. You can turn that off, and the '
+                        .'tool will warn you what it cost.'),
+                    Blocks::callout('info', 'Removing a campaign tag does not hide the visit from the '
+                        .'destination site. It stops the link naming which campaign, share or subscriber '
+                        .'produced it.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s&si=aBcDeFgHiJkL&utm_source=newsletter',
+                        'keep_timestamps' => true,
+                    ],
+                    'note' => 'The timestamp survives; the share id and the campaign tag do not.',
+                ],
+                'faq' => [
+                    ['question' => 'What is igshid on an Instagram link?',
+                        'answer' => 'A share id, generated when somebody taps Share. It identifies the '
+                            .'account the link was copied from, which is why forwarding a link with it '
+                            .'attached passes that along.'],
+                    ['question' => 'Is it safe to remove these?',
+                        'answer' => 'For the reader, yes — the link still goes exactly where it went. For '
+                            .'a marketer, removing your own utm tags means the visit lands in your '
+                            .'analytics as direct traffic, so clean links you were sent rather than links '
+                            .'you are sending.'],
+                    ['question' => 'Why did it keep some parameters?',
+                        'answer' => 'Because they change what the link does. YouTube’s t, list, start and '
+                            .'end are kept by default and shown in their own group with the reason.'],
+                    ['question' => 'Does this work on links that are not social?',
+                        'answer' => 'Yes. Most of these parameters come from ads and email, so any URL is '
+                            .'accepted.'],
+                ],
+            ],
+
+            [
+                'key' => 'utility.deep-link-builder',
+                'slug' => 'app-deep-link-builder',
+                'category' => 'utility',
+                'name' => 'App Deep Link Builder',
+                'tagline' => 'The link that opens the app instead of the browser — and when each kind really works.',
+                'description' => 'Turns an ordinary profile or post link into the universal link and, where '
+                    .'the platform has a long-established one, the scheme URI — with the failure mode of '
+                    .'each stated rather than implied.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram', 'x', 'youtube', 'facebook', 'pinterest', 'linkedin'],
+                'focus_keyword' => 'app deep link generator',
+                'seo_title' => 'App Deep Link Generator — Open Instagram, X & YouTube in the App',
+                'seo_description' => 'Build a link that opens a profile or post inside the app. Universal '
+                    .'links and scheme URIs for Instagram, X, YouTube, Facebook, Pinterest and more.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste the ordinary web link to the profile, video, post or Pin. Both '
+                        .'kinds of deep link come back, labelled, along with an HTML snippet for the one '
+                        .'you should actually put on a page.'),
+                    Blocks::heading('Universal links versus scheme URIs', 2),
+                    Blocks::paragraph('A <strong>universal link</strong> is the ordinary https URL. Both '
+                        .'iOS and Android let an app claim its own domain, so tapping '
+                        .'<code>https://instagram.com/nasa</code> opens Instagram when it is installed and '
+                        .'the website when it is not. It cannot fail, which is why it belongs in a bio, a '
+                        .'newsletter and every button on a web page.'),
+                    Blocks::paragraph('A <strong>scheme URI</strong> — <code>instagram://user?username=nasa'
+                        .'</code> — addresses the app directly and does nothing at all when the app is '
+                        .'missing. No error, no fallback, a tap that looks broken. It belongs inside your '
+                        .'own app, not on a public page.'),
+                    Blocks::heading('Where a scheme is not offered', 2),
+                    Blocks::paragraph('Some platforms have no long-established scheme for a given object. '
+                        .'Rather than invent a URI that silently opens nothing, the tool says so. A deep '
+                        .'link you cannot test is worse than no deep link at all.'),
+                    Blocks::callout('warning', 'Schemes are set by the app, not by a standard, and can be '
+                        .'retired in a release. Test any scheme URI on a real device before it goes on '
+                        .'something you print.'),
+                ]),
+                'example' => [
+                    'input' => ['url' => 'https://www.instagram.com/nasa/'],
+                    'note' => 'A profile link, which is the case with the best scheme support.',
+                ],
+                'faq' => [
+                    ['question' => 'Which link should I put in my bio?',
+                        'answer' => 'The universal link, always. It opens the app for people who have it '
+                            .'and the website for everyone else, which is exactly what a public link has '
+                            .'to do.'],
+                    ['question' => 'Why does my instagram:// link do nothing on desktop?',
+                        'answer' => 'Because there is no Instagram app to hand it to. A scheme URI is only '
+                            .'meaningful on a device with the app installed, and it fails silently '
+                            .'everywhere else.'],
+                    ['question' => 'Is the X scheme still twitter://?',
+                        'answer' => 'Yes. The app kept its original scheme through the rename, which is one '
+                            .'of the more common reasons a hand-written X deep link fails.'],
+                    ['question' => 'Does the tool strip tracking from the link?',
+                        'answer' => 'Yes. A deep link carrying somebody’s share id is a deep link that '
+                            .'identifies them, so the tracking comes off before anything is built.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.ad-break-planner',
+                'slug' => 'youtube-ad-break-planner',
+                'category' => 'utility',
+                'name' => 'YouTube Ad Break Planner',
+                'tagline' => 'Mid-roll timestamps snapped to your chapters, so an ad never lands mid-sentence.',
+                'description' => 'Takes a video length and your chapter list and places ad breaks on the '
+                    .'nearest real cut, keeping clear of the opening and the final minute — and tells you '
+                    .'plainly when a video is too short for mid-rolls at all.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'youtube ad break placement',
+                'seo_title' => 'YouTube Ad Break Planner — Where to Place Mid-Rolls (Free)',
+                'seo_description' => 'Get mid-roll timestamps snapped to your chapters, spaced the way you '
+                    .'choose, with the 8-minute rule applied. Paste a length and a chapter list.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter the video’s length as it reads in your timeline, then paste '
+                        .'your chapters exactly as they go in the description. Every break is placed on the '
+                        .'nearest chapter boundary within forty-five seconds of where the pacing wanted it.'),
+                    Blocks::heading('The eight-minute rule', 2),
+                    Blocks::paragraph('YouTube will not place a mid-roll in a video under eight minutes. '
+                        .'That single published threshold is why so much of the platform runs to eight '
+                        .'minutes and ten seconds. Below it, pre-roll and post-roll are still available — '
+                        .'and stretching an edit to clear the line is a trade worth making on purpose '
+                        .'rather than by accident.'),
+                    Blocks::heading('Why manual placement is worth two minutes', 2),
+                    Blocks::paragraph('Automatic placement optimises for revenue, not for your edit, which '
+                        .'is how an ad ends up between a question and its answer. The cost of a badly '
+                        .'placed break is not the ad; it is the viewer who does not come back after it.'),
+                    Blocks::callout('tip', 'A break every four minutes or less will raise your ad count and '
+                        .'lower the share of viewers who reach the end. On a video people watch for the '
+                        .'ending, that trade loses.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'duration' => '22:40',
+                        'chapters' => "0:00 The setup\n2:15 What everyone gets wrong\n7:40 The method\n"
+                            ."13:05 A worked example\n18:30 What to do first",
+                        'spacing_minutes' => 6,
+                        'include_pre_roll' => true,
+                    ],
+                    'note' => 'Watch each slot move to the chapter beside it.',
+                ],
+                'faq' => [
+                    ['question' => 'How long must a video be for mid-roll ads?',
+                        'answer' => 'Eight minutes. That is YouTube’s published threshold, and it applies '
+                            .'to the video’s length, not its watch time. Under it you get pre-roll and '
+                            .'post-roll only.'],
+                    ['question' => 'How many mid-rolls should I run?',
+                        'answer' => 'Fewer than the maximum. Spacing is an editorial decision this tool '
+                            .'leaves to you, and it warns when your spacing implies a break every four '
+                            .'minutes or less.'],
+                    ['question' => 'Why does it refuse to place a break near the end?',
+                        'answer' => 'A break in the final minute buys almost nothing and costs you the end '
+                            .'screen, which is the most valuable real estate on the video.'],
+                    ['question' => 'Do I have to use chapters?',
+                        'answer' => 'No, but the tool is much better with them. Without chapters it can '
+                            .'only space the breaks evenly; with them it lands each one on a cut you '
+                            .'already made.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.cpm-rpm-converter',
+                'slug' => 'cpm-to-rpm-calculator',
+                'category' => 'analytics',
+                'name' => 'CPM to RPM Calculator',
+                'tagline' => 'The two numbers in Studio that nobody keeps straight, converted both ways.',
+                'description' => 'Converts between playback CPM and RPM using the two facts that separate '
+                    .'them — the share of views that carried an ad, and YouTube’s published 55% revenue '
+                    .'split — and shows which of the two gaps is costing you more.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'cpm to rpm',
+                'seo_title' => 'CPM to RPM Calculator — Convert YouTube Earnings Both Ways',
+                'seo_description' => 'Convert YouTube CPM to RPM and back, using your monetized playback '
+                    .'rate and the 55% revenue share. See exactly where the difference goes.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Pick a direction, enter the figure from Studio, and set your '
+                        .'monetized playback rate — Revenue → Monetized playbacks, divided by views. For '
+                        .'most channels it lands between 30% and 60%.'),
+                    Blocks::heading('They are not two versions of the same number', 2),
+                    Blocks::paragraph('<strong>CPM</strong> is what an advertiser pays for a thousand ad '
+                        .'impressions: gross, before YouTube’s cut, measured against <em>monetized '
+                        .'playbacks</em>. <strong>RPM</strong> is what reaches your account per thousand '
+                        .'<em>views</em>, after the cut, across every revenue source. A channel with a $14 '
+                        .'CPM and a $4 RPM has not been cheated — two thirds of its views carried no ad, '
+                        .'and then YouTube took its 45%.'),
+                    Blocks::heading('The identity', 2),
+                    Blocks::code('RPM = CPM × monetized playback rate × revenue share', 'text'),
+                    Blocks::paragraph('Which is why the tool asks for both. The interesting output is the '
+                        .'comparison at the bottom: the money lost to unmonetized views is almost always '
+                        .'larger than YouTube’s share, and unlike the split, it is a number you can move.'),
+                    Blocks::callout('warning', 'Shorts do not use this identity. Their revenue comes from a '
+                        .'pool split after music licensing, so a Shorts RPM cannot be reached from a CPM.'),
+                ]),
+                'example' => [
+                    'input' => ['direction' => 'cpm_to_rpm', 'amount' => 14.5, 'monetized_rate' => 40,
+                        'revenue_share' => 55, 'monthly_views' => 250000],
+                    'note' => 'A typical mid-size channel’s numbers.',
+                ],
+                'faq' => [
+                    ['question' => 'Why is my RPM so much lower than my CPM?',
+                        'answer' => 'Two reasons multiplied together: only a fraction of your views carried '
+                            .'an ad at all, and you keep 55% of what those ads paid. At a 40% monetized '
+                            .'rate the two together leave you 22% of the advertiser’s money.'],
+                    ['question' => 'Which number should I quote?',
+                        'answer' => 'RPM, always, when you are talking about your own earnings — it is what '
+                            .'you actually made per thousand views. CPM is an advertiser’s number and it '
+                            .'flatters you.'],
+                    ['question' => 'Is the 55% split accurate?',
+                        'answer' => 'It is YouTube’s published creator share for watch-page ads on '
+                            .'long-form video. The field is editable because other products split '
+                            .'differently.'],
+                    ['question' => 'Where do I find my monetized playback rate?',
+                        'answer' => 'YouTube Studio → Analytics → Revenue. Divide monetized playbacks by '
+                            .'views for the same period.'],
+                ],
+            ],
+
+            [
+                'key' => 'instagram.money-calculator',
+                'slug' => 'instagram-money-calculator',
+                'category' => 'analytics',
+                'name' => 'Instagram Money Calculator',
+                'tagline' => 'What to charge for a post — priced the way a brand actually prices it.',
+                'description' => 'Builds a rate for a Reel, feed post or Story from reach, niche CPM and '
+                    .'engagement rate, and returns three numbers rather than one: the ask, the fair rate, '
+                    .'and the floor to walk away below.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['instagram'],
+                'featured' => true,
+                'focus_keyword' => 'instagram money calculator',
+                'seo_title' => 'Instagram Money Calculator — What to Charge Per Post (Free)',
+                'seo_description' => 'Work out a sponsored post rate from your reach, niche and engagement '
+                    .'rate. Gives an opening ask, a fair rate and a floor. Reels, feed and Stories.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter your followers, your engagement rate and your niche, then pick '
+                        .'the format. If you have your real average reach from Insights, add it — it '
+                        .'replaces the estimate, and it is the number to quote in a media kit.'),
+                    Blocks::heading('Instagram pays nothing for the post', 2),
+                    Blocks::paragraph('There is no ad-revenue share on Instagram: no RPM, no payout per '
+                        .'view. Any calculator quoting one is describing a bonus programme that has been '
+                        .'opened and closed in several countries. The money is brand deals, so the honest '
+                        .'calculator is a rate card.'),
+                    Blocks::heading('Why engagement moves the rate more than followers do', 2),
+                    Blocks::paragraph('A 25,000-follower account at 6% is worth more per post than a '
+                        .'100,000-follower account at 0.8%, and any brand with a media buyer knows it. The '
+                        .'engagement band is applied against the niche CPM rather than bolted on '
+                        .'afterwards, which is why the two accounts do not come out proportional to their '
+                        .'follower counts.'),
+                    Blocks::callout('tip', 'Usage rights are the clause creators give away for free. '
+                        .'“We may boost this as an ad for six months” is a media buy, and it is worth more '
+                        .'than the post.'),
+                ]),
+                'example' => [
+                    'input' => ['followers' => 24000, 'engagement_rate' => 4.2, 'niche' => 'fitness',
+                        'format' => 'reel', 'average_reach' => 0],
+                    'note' => 'A strong mid-size fitness account, priced for a Reel.',
+                ],
+                'faq' => [
+                    ['question' => 'How much should I charge per 1,000 followers?',
+                        'answer' => 'That figure is the one people compare and the one that hides '
+                            .'everything that matters. It is shown at the bottom of the result, under the '
+                            .'numbers that actually built it — reach, niche and engagement.'],
+                    ['question' => 'Where do these rates come from?',
+                        'answer' => 'They are the bands sponsorship marketplaces and agency rate cards '
+                            .'cluster around, not a measurement of any one deal. They exist to put a '
+                            .'negotiation in the right order of magnitude.'],
+                    ['question' => 'Why three numbers instead of one?',
+                        'answer' => 'Because quoting a single figure invites it to become the ceiling. Open '
+                            .'at the ask, expect to land near the fair rate, and stop at the floor.'],
+                    ['question' => 'Do Stories really price that low?',
+                        'answer' => 'On their own, yes — they reach a fraction of your followers and are '
+                            .'gone in a day. Sell them in sets, or add them to a Reel deal rather than '
+                            .'pricing them alone.'],
+                ],
+            ],
+
+            [
+                'key' => 'twitch.money-calculator',
+                'slug' => 'twitch-money-calculator',
+                'category' => 'analytics',
+                'name' => 'Twitch Money Calculator',
+                'tagline' => 'Subs, bits, ads and tips — with the split applied, because the split is the part people forget.',
+                'description' => 'Adds up a month of Twitch income from published figures — $4.99 tier one, '
+                    .'the 50/50 or 70/30 split, one cent a Bit — and shows the comparison that matters: '
+                    .'subscriptions against a full month of ad breaks.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['twitch'],
+                'focus_keyword' => 'twitch money calculator',
+                'seo_title' => 'Twitch Money Calculator — Subs, Bits and Ad Revenue (Free)',
+                'seo_description' => 'Estimate monthly Twitch earnings from subscribers, bits, ads and '
+                    .'tips, with the 50/50 or 70/30 split applied. Published figures, no signup.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Enter your subscriber count and split, then your average viewers, '
+                        .'hours streamed and ad settings. Bits and off-platform tips are optional.'),
+                    Blocks::heading('Most of this arithmetic is published', 2),
+                    Blocks::list([
+                        'A Tier 1 subscription is <strong>$4.99</strong>, and Prime subs pay the same.',
+                        'The standard Affiliate and Partner split is <strong>50/50</strong>; some Partners '
+                        .'on older premium terms take 70.',
+                        'A Bit is worth exactly <strong>one cent</strong> to the channel it is cheered in.',
+                        'Off-platform tips are not split at all, which is why so many channels route them '
+                        .'that way.',
+                    ]),
+                    Blocks::heading('The two numbers that are genuinely estimates', 2),
+                    Blocks::paragraph('Ad CPM and ad minutes per hour. Both are inputs here rather than '
+                        .'assumptions, because a calculator that buries them is inventing your income. '
+                        .'Replace the default CPM with the one on your own payout dashboard as soon as you '
+                        .'have it.'),
+                    Blocks::callout('info', 'The comparison at the end is the point: ads look like the easy '
+                        .'revenue and are almost never the larger half.'),
+                ]),
+                'example' => [
+                    'input' => ['subscribers' => 180, 'split' => 50, 'tier_mix' => 'typical',
+                        'average_viewers' => 220, 'hours_per_month' => 80, 'ad_minutes_per_hour' => 3,
+                        'ad_cpm' => 3.5, 'bits_per_month' => 40000, 'donations_per_month' => 150],
+                    'note' => 'A steady Affiliate-scale channel.',
+                ],
+                'faq' => [
+                    ['question' => 'How much does a Twitch sub pay the streamer?',
+                        'answer' => 'Half of $4.99 on the standard split — about $2.50 — before tax. '
+                            .'Partners on older premium terms keep 70%, which is the second option in the '
+                            .'split field.'],
+                    ['question' => 'How much is a Bit worth?',
+                        'answer' => 'One cent to the channel. A hundred Bits is a dollar, and Twitch takes '
+                            .'its cut on the viewer’s side when they buy them.'],
+                    ['question' => 'Why is my ad revenue so unpredictable?',
+                        'answer' => 'Ad CPM is not published and moves with audience country and time of '
+                            .'year. It is the one figure in this calculator that is genuinely an estimate.'],
+                    ['question' => 'Do Prime subs count?',
+                        'answer' => 'Yes, at the Tier 1 rate. They are more volatile than paid subs, '
+                            .'though: a viewer has to re-subscribe each month for one to renew.'],
+                ],
+            ],
+
+            [
+                'key' => 'youtube.advertiser-friendly-checker',
+                'slug' => 'youtube-advertiser-friendly-checker',
+                'category' => 'content',
+                'name' => 'YouTube Advertiser-Friendly Script Checker',
+                'tagline' => 'Read your script against YouTube’s published categories before you record it.',
+                'description' => 'Checks a script, transcript or description for the vocabulary behind each '
+                    .'of YouTube’s advertiser-friendly content categories, weighting the title and the '
+                    .'opening thirty seconds hardest — and saying plainly what a text check cannot see.',
+                'tier' => ToolTier::Free,
+                'platforms' => ['youtube'],
+                'focus_keyword' => 'advertiser friendly checker',
+                'seo_title' => 'YouTube Advertiser-Friendly Checker — Test a Script Before You Record',
+                'seo_description' => 'Check a script against YouTube’s advertiser-friendly content '
+                    .'categories. Flags terms by category and position, weighting the opening hardest.',
+                'instructions' => Blocks::make([
+                    Blocks::paragraph('Paste what will be said — a script, or a transcript of a video you '
+                        .'have already published — and add the title if you have one. Each of YouTube’s '
+                        .'published categories is scored separately.'),
+                    Blocks::heading('What this is, exactly', 2),
+                    Blocks::paragraph('YouTube’s classifier watches the video: the audio, the frames, the '
+                        .'thumbnail, the title and the context around every word. <strong>This reads text, '
+                        .'and text alone.</strong> It cannot tell an anti-drug documentary from a drug '
+                        .'advertisement, and neither can any other checker claiming to. What text can do is '
+                        .'find the terms that put a video into a category in the first place, and say '
+                        .'which category and where.'),
+                    Blocks::heading('Why position is weighted', 2),
+                    Blocks::paragraph('The guidelines single out the opening of a video, and the opening is '
+                        .'the cheapest part of a script to rewrite. A word at 0:04 and the same word at '
+                        .'14:20 are not the same risk. Terms in the title are weighted hardest of all, '
+                        .'because the title is read on every surface the video appears on.'),
+                    Blocks::heading('Two categories are deliberately not word-matched', 2),
+                    Blocks::paragraph('Hateful content and controversial issues are decided by meaning '
+                        .'rather than vocabulary. A trigger-word list for either would flag every news '
+                        .'channel on the platform while missing the videos that actually demonetize, so '
+                        .'they appear as prompts to review by hand instead.'),
+                    Blocks::callout('warning', 'Where a flagged term is load-bearing for your subject, keep '
+                        .'it and expect the review. Self-certifying honestly is what keeps a channel out of '
+                        .'trouble.'),
+                ]),
+                'example' => [
+                    'input' => [
+                        'script' => 'In this video we break down what actually happened, why the whole '
+                            ."thing was such a disaster, and what it means for anyone starting out.\n\n"
+                            .'The short version: the numbers were never real, and everybody in the room '
+                            .'knew it.',
+                        'title' => 'What Really Happened — The Full Breakdown',
+                    ],
+                    'note' => 'A clean script, so you can see what a pass looks like.',
+                ],
+                'faq' => [
+                    ['question' => 'Will a clean score guarantee green monetization?',
+                        'answer' => 'No. This reads text; YouTube watches the video. A clean score means '
+                            .'nothing in your wording matches the vocabulary behind the published '
+                            .'categories, which is a useful thing to know and not a promise.'],
+                    ['question' => 'It flagged a word I need. What now?',
+                        'answer' => 'Keep it. Context is the whole game, and a documentary and a '
+                            .'glorification use the same words. If the term is central to your subject, '
+                            .'leave it in, self-certify honestly, and expect the review.'],
+                    ['question' => 'Does swearing really cost money?',
+                        'answer' => 'Strong profanity in the first several seconds, or repeated '
+                            .'throughout, is one of the most common causes of limited ads — which is '
+                            .'exactly why the opening is weighted double here.'],
+                    ['question' => 'Where do the categories come from?',
+                        'answer' => 'They are YouTube’s own, from its advertiser-friendly content '
+                            .'guidelines. The vocabulary under each is ours, and it is not exhaustive.'],
+                ],
+            ],
         ];
     }
 }

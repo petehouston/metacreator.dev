@@ -67,7 +67,17 @@ a status badge, and the margins an app's chrome covers.
 A `channel` frame is the exception to the placeholder rule: it carries `artwork` (real banner and
 avatar URLs from the platform's own CDN) and a `cta` button out to the channel. A verdict about a
 channel is only trustworthy once you can see, above it, that the tool looked at the channel you
-meant.
+meant. A `safe-zone` frame may carry the same `artwork.banner`, and a `media` slot may carry a
+`url`: once a real picture exists, shading a crop over a grey box withholds the evidence. Where the
+subject is a draft that does not exist yet, `App\Support\Social\PreviewImage` supplies a
+deterministic inline SVG rather than a flat rectangle, because nothing moves under a flat rectangle.
+
+Two kinds truncate on **width** rather than on a character count — `serp` (a Google result) and
+`inbox` (a mail client's row) — so they are split by `App\Support\Text\TextWidth` and handed to
+`headline()` / `bodyParts()` pre-cut. Both also carry `device`, the real pixel width of the surface:
+the renderer lays the frame out at that width and scales the whole thing down to fit its column,
+because reflowing it would move the fold the tool exists to show. A `variant` names a layout within
+a kind, which is how one `inbox` renderer draws both a stacked phone row and an inline desktop one.
 
 Frames are built with `App\Support\Social\PreviewFrame`, so every platform fact — where the fold
 falls, which card shape a `twitter:card` value produces, how wide TikTok's right rail is — is

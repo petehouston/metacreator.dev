@@ -122,6 +122,24 @@ guide.
 
 [[tool:link-preview-debugger]]
 
+## Cleaning a link, and making it open in the app
+
+Two jobs sit either side of the shortener, and both have their own page.
+
+**Cleaning.** The parameters a share sheet attaches are not all campaign tags: `igshid`
+identifies the account that shared, `mc_eid` identifies the newsletter subscriber, and
+both travel with a forwarded link. Equally, a cleaner that strips YouTube's `t` has
+broken the link it was asked to fix.
+[Removing tracking parameters](/blog/remove-tracking-parameters-from-url) covers what
+each one is and which four to keep.
+
+**Opening in the app.** A universal link — the ordinary `https://` URL — opens the app
+when it is installed and the website when it is not. A scheme URI like
+`instagram://user?username=` opens the app or does nothing at all, silently, which makes
+it the wrong choice for anything a stranger might tap.
+[Social media deep links](/blog/social-media-deep-links) has both forms and the schemes
+worth relying on.
+
 ## Four decisions to make about every social media link
 
 1. **Post the canonical URL**, not the one your browser happened to be on. A watch page

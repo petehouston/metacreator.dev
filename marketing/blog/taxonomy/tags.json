@@ -270,6 +270,24 @@
    "slug": "downloads",
    "name": "Downloads",
    "description": "Getting a picture off a platform at the size it was uploaded — what each CDN publishes, and where a signed link stops working."
+  },
+  {
+   "group": "platform",
+   "slug": "twitch",
+   "name": "Twitch",
+   "description": "Subscriptions, bits, ad revenue and channel assets for Twitch streamers."
+  },
+  {
+   "group": "topic",
+   "slug": "email",
+   "name": "Email",
+   "description": "Subject lines, preheaders and the inbox row your newsletter lands in."
+  },
+  {
+   "group": "topic",
+   "slug": "audio",
+   "name": "Audio & podcasts",
+   "description": "Cover art, directories and the platforms that publish audio."
   }
  ]
 }

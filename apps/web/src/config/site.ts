@@ -24,6 +24,9 @@ export const platforms = [
   { key: "threads", label: "Threads" },
   { key: "pinterest", label: "Pinterest" },
   { key: "bluesky", label: "Bluesky" },
+  { key: "twitch", label: "Twitch" },
+  { key: "spotify", label: "Spotify" },
+  { key: "apple-podcasts", label: "Apple Podcasts" },
 ] as const;
 
 /**

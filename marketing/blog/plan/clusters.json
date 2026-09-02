@@ -1,5 +1,5 @@
 {
- "_comment": "Twelve clusters. A cluster = one pillar page + its spokes, and it exists only if it has a money page to point at. `money_pages` are the /tools/* URLs the cluster is built to feed; `pillar` is the slug of the post every spoke links up to.",
+ "_comment": "Seventeen clusters. A cluster = one pillar page + its spokes, and it exists only if it has a money page to point at. `money_pages` are the /tools/* URLs the cluster is built to feed; `pillar` is the slug of the post every spoke links up to.",
  "clusters": [
   {
    "id": "yt-seo",
@@ -237,6 +237,35 @@
     "youtube-image-downloader"
    ],
    "wave": 8
+  },
+  {
+   "id": "snippets",
+   "name": "Search snippets & subject lines",
+   "pillar": "google-search-snippet",
+   "category": "seo",
+   "platform": null,
+   "why": "The two surfaces every creator publishes to that are not social feeds, and the two whose folds are pure pixel arithmetic. One cluster covers a search-volume family we have never competed in, and both money pages are previews - our strongest format.",
+   "money_pages": [
+    "google-serp-preview",
+    "email-subject-line-preview",
+    "link-preview-debugger",
+    "social-media-character-counter"
+   ],
+   "wave": 9
+  },
+  {
+   "id": "twitch",
+   "name": "Twitch payouts & assets",
+   "pillar": "twitch-monetization",
+   "category": "monetization",
+   "platform": "twitch",
+   "why": "The one large streaming platform the catalog had nothing for, and the one whose payout arithmetic is almost entirely published - which is exactly the shape of question we answer better than a listicle.",
+   "money_pages": [
+    "twitch-money-calculator",
+    "twitch-image-downloader",
+    "username-availability-checker"
+   ],
+   "wave": 9
   }
  ]
 }

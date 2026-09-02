@@ -17,19 +17,40 @@ import type { ToolResult } from "@/lib/types";
  * and adding a preview tool still needs no frontend work.
  */
 
+interface Fold {
+  visible: string;
+  hidden: string;
+  full: string;
+  more_label: string;
+  characters: number;
+}
+
 interface Frame {
   platform: string;
   surface: string;
-  kind: "post" | "profile" | "channel" | "link-card" | "pin" | "safe-zone";
+  kind:
+    | "post"
+    | "profile"
+    | "channel"
+    | "link-card"
+    | "pin"
+    | "safe-zone"
+    | "serp"
+    | "inbox";
+  /** A layout within a kind — an inbox row is stacked on a phone, inline on a desktop. */
+  variant?: string;
+  /**
+   * The real width, in CSS pixels, of the surface being drawn. A fold is a width, so
+   * a frame that models one is only honest at the width it was measured at.
+   */
+  device?: { width: number; label?: string };
   author?: { name: string; handle?: string; meta?: string; initials?: string };
-  body?: {
-    visible: string;
-    hidden: string;
-    full: string;
-    more_label: string;
-    characters: number;
-  };
-  media?: { aspect?: string; label?: string };
+  body?: Fold;
+  /** The frame's own headline: a search result's blue link, a subject line. */
+  heading?: Fold;
+  /** The identity line above a search result. */
+  search?: { site: string; url: string; favicon?: string };
+  media?: { aspect?: string; label?: string; url?: string };
   artwork?: { banner?: string; avatar?: string };
   cta?: { label: string; url: string };
   link?: {
@@ -63,6 +84,11 @@ const ACCENTS: Record<string, string> = {
   pinterest: "#E60023",
   tiktok: "#00C4CC",
   youtube: "#FF0033",
+  twitch: "#9146FF",
+  spotify: "#1DB954",
+  "apple-podcasts": "#9933CC",
+  google: "#4285F4",
+  email: "#0F766E",
   generic: "var(--color-foreground-muted)",
 };
 
@@ -123,7 +149,7 @@ function FrameCard({ frame }: { frame: Frame }) {
         {frame.status && <StatusBadge status={frame.status} />}
       </figcaption>
 
-      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-solid)] shadow-[var(--shadow-raised)]">
+      <DeviceFrame width={frame.device?.width}>
         {frame.kind === "safe-zone" ? (
           <SafeZone frame={frame} accent={accent} />
         ) : frame.kind === "channel" ? (
@@ -132,10 +158,14 @@ function FrameCard({ frame }: { frame: Frame }) {
           <LinkCard frame={frame} />
         ) : frame.kind === "pin" ? (
           <Pin frame={frame} />
+        ) : frame.kind === "serp" ? (
+          <SearchResult frame={frame} />
+        ) : frame.kind === "inbox" ? (
+          <InboxRow frame={frame} accent={accent} />
         ) : (
           <Post frame={frame} accent={accent} />
         )}
-      </div>
+      </DeviceFrame>
 
       {/* A channel frame draws its own counts inline, next to the name. */}
       {frame.kind !== "channel" && frame.details && frame.details.length > 0 && (
@@ -157,6 +187,194 @@ function FrameCard({ frame }: { frame: Frame }) {
         </p>
       )}
     </figure>
+  );
+}
+
+/* ── device sizing ────────────────────────────────────────────────────────── */
+
+/**
+ * The frame at the real width of the surface it models, scaled to fit its column.
+ *
+ * A fold is a width. A search result that is cut at 600 pixels is not cut at 900,
+ * so drawing the mock-up at whatever width the grid happens to give it throws away
+ * the fact the tool exists to show. The frame is therefore laid out at its true
+ * pixel width and the whole thing is scaled down — proportions intact, text
+ * shrinking with everything else — rather than reflowed, which would move the fold.
+ *
+ * A frame with no declared width is drawn fluid, exactly as every frame was before
+ * this existed.
+ */
+function DeviceFrame({ width, children }: { width?: number; children: React.ReactNode }) {
+  const outer = React.useRef<HTMLDivElement>(null);
+  const inner = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = React.useState(1);
+  const [height, setHeight] = React.useState<number | undefined>(undefined);
+
+  React.useLayoutEffect(() => {
+    if (!width || !outer.current || !inner.current) return;
+
+    const measure = () => {
+      const available = outer.current?.clientWidth ?? width;
+      // Never scale up: a 375px phone row blown up to 700 is a different lie.
+      const next = Math.min(1, available / width);
+      setScale(next);
+      setHeight((inner.current?.offsetHeight ?? 0) * next);
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(outer.current);
+    observer.observe(inner.current);
+
+    return () => observer.disconnect();
+  }, [width]);
+
+  const shell =
+    "overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-solid)] shadow-[var(--shadow-raised)]";
+
+  if (!width) return <div className={shell}>{children}</div>;
+
+  return (
+    <div ref={outer} className={shell} style={{ height }}>
+      <div
+        ref={inner}
+        style={{ width, transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ── search results ───────────────────────────────────────────────────────── */
+
+/**
+ * A Google result, drawn at the type sizes Google draws it at.
+ *
+ * The sizes are in raw pixels rather than in the design system's scale on purpose:
+ * the fold was measured at 20px for a title and 14px for a snippet, and rendering
+ * the picture at any other size would put the greyed-out remainder somewhere the
+ * measurement did not predict.
+ */
+function SearchResult({ frame }: { frame: Frame }) {
+  return (
+    <div className="flex flex-col gap-1.5 p-4">
+      <div className="flex items-center gap-2.5">
+        <span
+          aria-hidden="true"
+          className="flex size-7 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[0.6875rem] font-semibold text-[var(--color-foreground-muted)]"
+        >
+          {(frame.search?.site ?? "·").slice(0, 1).toUpperCase()}
+        </span>
+
+        <span className="flex min-w-0 flex-col leading-tight">
+          <span className="truncate text-[14px] text-[var(--color-foreground)]">
+            {frame.search?.site ?? "Your site"}
+          </span>
+          <span className="truncate text-[12px] text-[var(--color-foreground-subtle)]">
+            {frame.search?.url ?? "example.com"}
+          </span>
+        </span>
+      </div>
+
+      {frame.heading && (
+        <p className="text-[20px] leading-[1.3]" style={{ color: "#1a0dab" }}>
+          <span className="dark:text-[#99c3ff]">{frame.heading.visible}</span>
+          {frame.heading.hidden && (
+            <span className="opacity-40" title="Cut off in the result">
+              {frame.heading.more_label}
+              {frame.heading.hidden}
+            </span>
+          )}
+        </p>
+      )}
+
+      {frame.body?.full && (
+        <p className="text-[14px] leading-[1.58] text-[var(--color-foreground-muted)]">
+          {frame.body.visible}
+          {frame.body.hidden && (
+            <span className="opacity-40" title="Cut off in the result">
+              {frame.body.more_label}
+              {frame.body.hidden}
+            </span>
+          )}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── inbox rows ───────────────────────────────────────────────────────────── */
+
+/**
+ * One row of an inbox: sender, subject, preheader.
+ *
+ * `inline` is the desktop-list shape, where the preheader runs on after the subject
+ * on the same line and the two compete for one width. `stacked` is the phone shape,
+ * three lines each clamped to the device width. Which one a client uses is a fact
+ * about the client, so it arrives in the frame rather than being guessed from the
+ * pixel count.
+ */
+function InboxRow({ frame, accent }: { frame: Frame; accent: string }) {
+  const inline = frame.variant === "inline";
+
+  return (
+    <div className="flex items-start gap-3 p-4">
+      <Avatar initials={frame.author?.initials ?? "·"} accent={accent} size="md" />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        {inline ? (
+          <div className="flex min-w-0 items-baseline gap-3">
+            <span className="w-[150px] shrink-0 truncate text-[14px] font-semibold text-[var(--color-foreground)]">
+              {frame.author?.name ?? "You"}
+            </span>
+            <p className="min-w-0 flex-1 truncate text-[14px] text-[var(--color-foreground)]">
+              <span className="font-semibold">{frame.heading?.visible}</span>
+              <Cut fold={frame.heading} />
+              {frame.body?.full && (
+                <span className="text-[var(--color-foreground-subtle)]">
+                  {" "}
+                  &mdash; {frame.body.visible}
+                  <Cut fold={frame.body} silent />
+                </span>
+              )}
+            </p>
+            <span className="shrink-0 text-[12px] text-[var(--color-foreground-subtle)]">
+              {frame.author?.meta}
+            </span>
+          </div>
+        ) : (
+          <>
+            <span className="truncate text-[15px] font-semibold text-[var(--color-foreground)]">
+              {frame.author?.name ?? "You"}
+            </span>
+            <p className="text-[15px] leading-snug text-[var(--color-foreground)]">
+              {frame.heading?.visible}
+              <Cut fold={frame.heading} />
+            </p>
+            {frame.body?.full && (
+              <p className="text-[14px] leading-snug text-[var(--color-foreground-subtle)]">
+                {frame.body.visible}
+                <Cut fold={frame.body} silent />
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** The part of a fold the surface hides, greyed in place rather than dropped. */
+function Cut({ fold, silent = false }: { fold?: Fold; silent?: boolean }) {
+  if (!fold?.hidden) return null;
+
+  return (
+    <span className="opacity-40" title="Hidden in this client">
+      {silent ? "" : fold.more_label}
+      {fold.hidden}
+    </span>
   );
 }
 
@@ -259,11 +477,39 @@ function Body({
   );
 }
 
+/**
+ * The image slot: the real picture when the frame carries one, and a labelled box
+ * at the right aspect ratio when it does not.
+ *
+ * A preview of a draft that does not exist yet can only honestly show a rectangle.
+ * A preview of something already published — a thumbnail, a piece of artwork — has
+ * the picture available, and drawing a grey box beside a verdict about it would be
+ * withholding the evidence. The image is loaded with no referrer and allowed to
+ * fail back to the box.
+ */
 function MediaPlaceholder({ media }: { media: NonNullable<Frame["media"]> }) {
+  const [failed, setFailed] = React.useState(false);
+  const ratio = ASPECTS[media.aspect ?? "1:1"] ?? "1 / 1";
+
+  if (media.url && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- an arbitrary URL on an unknown host, deliberately unoptimised
+      <img
+        src={media.url}
+        alt=""
+        referrerPolicy="no-referrer"
+        loading="lazy"
+        onError={() => setFailed(true)}
+        className="w-full border-y border-[var(--color-border-subtle)] object-cover"
+        style={{ aspectRatio: ratio }}
+      />
+    );
+  }
+
   return (
     <div
       className="flex items-center justify-center border-y border-[var(--color-border-subtle)] bg-[var(--color-surface-sunken)]"
-      style={{ aspectRatio: ASPECTS[media.aspect ?? "1:1"] ?? "1 / 1" }}
+      style={{ aspectRatio: ratio }}
     >
       <span className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
         {media.label ?? media.aspect}
@@ -548,6 +794,7 @@ function Pin({ frame }: { frame: Frame }) {
  */
 function SafeZone({ frame, accent }: { frame: Frame; accent: string }) {
   const canvas = frame.canvas;
+  const artwork = frame.artwork?.banner;
 
   if (!canvas) return null;
 
@@ -560,6 +807,14 @@ function SafeZone({ frame, accent }: { frame: Frame; accent: string }) {
       role="img"
       aria-label={`${frame.surface}: safe area inset by ${canvas.top} pixels top, ${canvas.bottom} bottom, ${canvas.left} left and ${canvas.right} right on a ${canvas.width} by ${canvas.height} canvas.`}
     >
+      {/* The artwork under the crop. Without something on the canvas, a shaded
+          margin is geometry rather than an answer: what a crop takes away is only
+          visible when there is a picture for it to take. */}
+      <CanvasArtwork banner={frame.artwork?.banner} />
+
+      {/* The clear area. Over artwork it stays transparent — the picture inside the
+          rectangle is the answer — and over an empty canvas it is filled, so the
+          shape reads at all. */}
       <div
         className="absolute rounded-[2px] border-2 border-dashed"
         style={{
@@ -568,7 +823,7 @@ function SafeZone({ frame, accent }: { frame: Frame; accent: string }) {
           left: percent(canvas.left, canvas.width),
           right: percent(canvas.right, canvas.width),
           borderColor: accent,
-          backgroundColor: "var(--color-surface-solid)",
+          backgroundColor: artwork ? "transparent" : "var(--color-surface-solid)",
         }}
       />
 
@@ -577,9 +832,10 @@ function SafeZone({ frame, accent }: { frame: Frame; accent: string }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
+          backgroundColor: artwork ? "rgba(6, 10, 18, 0.72)" : undefined,
           backgroundImage:
             "repeating-linear-gradient(45deg, var(--color-foreground-subtle) 0 1px, transparent 1px 7px)",
-          opacity: 0.35,
+          opacity: artwork ? 0.92 : 0.35,
           maskImage: `linear-gradient(#000 0 0)`,
           clipPath: `polygon(0% 0%, 0% 100%, ${percent(canvas.left, canvas.width)} 100%, ${percent(canvas.left, canvas.width)} ${percent(canvas.top, canvas.height)}, ${percent(canvas.width - canvas.right, canvas.width)} ${percent(canvas.top, canvas.height)}, ${percent(canvas.width - canvas.right, canvas.width)} ${percent(canvas.height - canvas.bottom, canvas.height)}, ${percent(canvas.left, canvas.width)} ${percent(canvas.height - canvas.bottom, canvas.height)}, ${percent(canvas.left, canvas.width)} 100%, 100% 100%, 100% 0%)`,
         }}
@@ -589,6 +845,25 @@ function SafeZone({ frame, accent }: { frame: Frame; accent: string }) {
         Safe area
       </span>
     </div>
+  );
+}
+
+/** The image a safe-zone canvas is drawn over, when the frame supplies one. */
+function CanvasArtwork({ banner }: { banner?: string }) {
+  const [failed, setFailed] = React.useState(false);
+
+  if (!banner || failed) return null;
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- an arbitrary URL on an unknown host, deliberately unoptimised
+    <img
+      src={banner}
+      alt=""
+      referrerPolicy="no-referrer"
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className="absolute inset-0 size-full object-cover"
+    />
   );
 }
 

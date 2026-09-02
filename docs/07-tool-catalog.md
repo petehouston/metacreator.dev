@@ -75,6 +75,10 @@ because it is how people search. The heading is a **platform**, not a category.
 | End Screen / Playlist Planner | 🔵 | P3 | Suggests next-video links to maximise session time |
 | Channel Audit Report | 🟣 | P2 | Full PDF audit: branding, SEO, cadence, retention signals |
 | Link Shortener | 🟢 | P2 | Any YouTube link → youtu.be, with the timestamp converted rather than copied |
+| Ad Break Planner | 🟢 | P1 | Mid-roll timestamps snapped to your chapters, with the eight-minute rule applied |
+| Banner Safe Area Preview | 🟢 | P1 | One 2560×1440 banner, four device crops, drawn over your own artwork |
+| Advertiser-Friendly Script Checker | 🟢 | P1 | A script read against YouTube's published categories, weighting the opening |
+| CPM ↔ RPM Converter | 🟢 | P1 | The identity behind the two numbers, run in both directions |
 | Subtitle Downloader | 🟢 | — | SRT, WebVTT and plain text from a public video — **built, not published** (see below) |
 
 ## 2. Instagram
@@ -97,6 +101,7 @@ because it is how people search. The heading is a **platform**, not a category.
 | Competitor Content Analyzer | 🟣 | P2 | Format mix, cadence, top posts, hook patterns |
 | Fake Post Generator | 🟢 | P2 | An Instagram post card drawn on a canvas, with the caption fold shown |
 | Image Downloader | 🟢 | P1 | A post's photo at the size Instagram publishes, with the link's expiry |
+| Money Calculator | 🟢 | P1 | A rate card from reach, niche CPM and engagement — ask, fair rate and floor |
 | Profile Picture Downloader | 🟢 | — | **Built, not published** — Instagram now publishes a 100px avatar only (see below) |
 
 ## 3. TikTok
@@ -177,6 +182,38 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Reply Prompt Generator | 🔵 | P3 | Openers that earn replies, which is the signal Threads ranks on |
 | Image Downloader | 🟢 | P1 | The picture on a public post, with the signed link's remaining life |
 
+## 8b. Twitch
+
+The one large streaming platform with no tools on it, and the one whose CDN names its
+own dimensions in the path.
+
+| Tool | Tier | P | What it does |
+| --- | --- | --- | --- |
+| Image Downloader | 🟢 | P1 | Avatar, clip still or VOD thumbnail at every size Twitch serves — each verified |
+| Money Calculator | 🟢 | P1 | Subs, bits, ads and tips with the 50/50 or 70/30 split applied |
+
+## 8c. Audio: Spotify & Apple Podcasts
+
+Two directories, two opposite answers to the same question. Apple keeps the 3000×3000
+upload; Spotify's ceiling is 640 and no amount of asking produces a larger file. A
+downloader that says so is worth more than one that upscales.
+
+| Tool | Tier | P | What it does |
+| --- | --- | --- | --- |
+| Apple Podcasts Artwork Downloader | 🟢 | P1 | Show or episode art at 3000×3000, from Apple's public lookup API |
+| Spotify Cover Art Downloader | 🟢 | P1 | Album, artist, playlist and show art at every rendition Spotify publishes |
+
+## 8d. Search and email
+
+Neither is a social network, and both are surfaces a creator publishes to. They belong
+in `previews` for the same reason every other fold preview does: the answer is a
+picture, and the fold is a width rather than a character count.
+
+| Tool | Tier | P | What it does |
+| --- | --- | --- | --- |
+| Google SERP Snippet Preview | 🟢 | P1 | Title and description as a desktop and a phone result, measured in pixels |
+| Email Subject Line Preview | 🟢 | P1 | Subject and preheader as four inbox rows, each at that client's real width |
+
 ## 9. Content (`content`)
 
 | Tool | Tier | P | What it does |
@@ -244,6 +281,8 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 | Hashtag Extractor | 🟢 | P1 | Every hashtag on a public post, from its URL or from pasted text |
 | Embed Code Generator | 🟢 | P1 | Official embed code for twelve platforms, script and iframe forms |
 | Social Image Downloader | 🟢 | P1 | The full-size image behind any public post, carousels included |
+| URL Cleaner | 🟢 | P1 | Tracking stripped, each parameter named, and the ones that carry meaning kept |
+| App Deep Link Builder | 🟢 | P2 | The universal link and, where one is established, the scheme URI |
 
 ---
 
@@ -251,7 +290,7 @@ Pinterest is a search engine that happens to look like a feed, so its tools are 
 
 ## What is built
 
-Eighty-one tools ship in `ToolCatalogSeeder`; **seventy-nine are published and visible**, and the
+Ninety-four tools ship in `ToolCatalogSeeder`; **ninety-two are published and visible**, and the
 two marked ⛔ are seeded as drafts. **Every 🟢 tool in the tables above is implemented.** The
 category column is the functional category the tool is filed under; the platforms it serves are
 listed separately on the tool itself.
@@ -343,6 +382,19 @@ serving what it needs — see [Built, not published](#built-not-published).
 | Utility | `link-expander` | `LinkExpanderRunner` |
 | Utility | `hashtag-extractor` | `HashtagExtractorRunner` |
 | Utility | `social-media-embed-code-generator` | `SocialEmbedCodeGeneratorRunner` |
+| Previews | `google-serp-preview` | `SerpPreviewRunner` |
+| Previews | `email-subject-line-preview` | `EmailSubjectPreviewRunner` |
+| Previews | `youtube-banner-safe-area` | `YouTubeBannerSafeAreaRunner` |
+| Content | `youtube-advertiser-friendly-checker` | `YouTubeAdvertiserFriendlyCheckerRunner` |
+| Media | `apple-podcasts-artwork-downloader` | `ApplePodcastArtworkDownloaderRunner` |
+| Media | `spotify-cover-art-downloader` | `SpotifyCoverArtDownloaderRunner` |
+| Media | `twitch-image-downloader` | `TwitchImageDownloaderRunner` |
+| Analytics | `cpm-to-rpm-calculator` | `CpmRpmConverterRunner` |
+| Analytics | `instagram-money-calculator` | `InstagramMoneyCalculatorRunner` |
+| Analytics | `twitch-money-calculator` | `TwitchMoneyCalculatorRunner` |
+| Utility | `social-media-url-cleaner` | `UrlCleanerRunner` |
+| Utility | `app-deep-link-builder` | `DeepLinkBuilderRunner` |
+| Utility | `youtube-ad-break-planner` | `YouTubeAdBreakPlannerRunner` |
 | Media | `youtube-subtitle-downloader` ⛔ | `YouTubeSubtitleDownloaderRunner` |
 | Media | `instagram-profile-picture-downloader` ⛔ | `InstagramAvatarDownloaderRunner` |
 
@@ -362,6 +414,23 @@ The rule this follows is the one in [08](08-tool-engine.md): a tool that would n
 platform's terms is not built. A tool that *is* honest but that the platform has walled off is built
 and left unpublished — the distinction matters, because the second one is temporary and the first
 never is.
+
+### A fold is a width, not a character count
+
+Three of the previews above model a surface that truncates on **pixel width in a fixed column** — a
+Google result, an inbox row, a channel banner — and none of them can be expressed as a character
+limit. "Will it fit?" has different answers for `WWWWWWWW` and `iiiiiiii` at the same length, so
+`App\Support\Text\TextWidth` measures the string in Arial advance widths and the frame carries the
+split it produced. The frame also carries the **device width** it was measured at, and the renderer
+lays the mock-up out at exactly that width and scales the whole thing down to fit its column:
+reflowing it to the available space would move the fold, which is the one thing the picture exists
+to show.
+
+The same three are the reason a frame may now carry a real image. A preview of a draft that does not
+exist can only honestly draw a rectangle; a preview of a banner you already have is a verdict about
+*that picture*, and shading a crop over a grey box withholds the evidence. Where no image is
+supplied, `App\Support\Social\PreviewImage` emits a deterministic inline SVG — abstract, seeded
+from the frame, no request and no third-party host — so the crop still visibly takes something away.
 
 ### Previews are drawn, not described
 
@@ -393,8 +462,11 @@ platform, rather than as near-duplicate catalog entries:
   every image on a post with its alt text and the blob as uploaded, where a link card names one.
   Instagram, Facebook and Threads share Meta's signed URLs, so all three read the expiry out of the
   link and say how long is left — and Facebook adds a second route entirely, its public Page-picture
-  endpoint, which answers with measured dimensions rather than inferred ones. The general tool stays
-  where it is for every other platform and for any page at all.
+  endpoint, which answers with measured dimensions rather than inferred ones. Twitch names its
+  dimensions in the path and stops at 600 for an avatar; Apple keeps a 3000×3000 upload one
+  substitution away from the 600 its API hands out; Spotify's prefix *is* the size and its ceiling
+  is 640 — a fact worth a page of its own precisely because every competitor claims otherwise. The
+  general tool stays where it is for every other platform and for any page at all.
 - Instagram's **font / aesthetic text generator** → `fancy-text-generator`.
 - Threads' and Pinterest's **character counters** → `social-media-character-counter`, which counts
   the Threads post limit and both Pinterest fields alongside every other surface.

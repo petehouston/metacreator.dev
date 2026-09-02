@@ -8,7 +8,8 @@
   "5": "Month 5",
   "6": "Month 6",
   "7": "Month 7",
-  "8": "Month 8"
+  "8": "Month 8",
+  "9": "Month 9"
  },
  "posts": [
   {
@@ -3367,6 +3368,520 @@
    "status": "planned",
    "published_url": null,
    "notes": "Where each platform puts the field, what a good description does, and why carrying the alt across when you reuse someone's image is the part everybody drops."
+  },
+  {
+   "id": "SN-01",
+   "cluster": "snippets",
+   "wave": 9,
+   "archetype": "pillar",
+   "slug": "google-search-snippet",
+   "title": "How Google Builds a Search Snippet",
+   "primary_keyword": "google search snippet",
+   "secondary_keywords": [
+    "search snippet",
+    "how google writes titles",
+    "serp snippet"
+   ],
+   "funnel": "TOFU",
+   "category": "seo",
+   "tags": [
+    "titles",
+    "metadata",
+    "guide"
+   ],
+   "tools": [
+    "google-serp-preview",
+    "link-preview-debugger",
+    "social-media-character-counter"
+   ],
+   "target_words": 1600,
+   "url": "/blog/google-search-snippet",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The pillar: where the title comes from, where the description comes from, when Google rewrites both, and why the fold is a width. Links down to the four spokes."
+  },
+  {
+   "id": "SN-02",
+   "cluster": "snippets",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "title-tag-length",
+   "title": "Title Tag Length: How Long Should a Title Be in Pixels?",
+   "primary_keyword": "title tag length",
+   "secondary_keywords": [
+    "title tag character limit",
+    "seo title length",
+    "how long should a title be"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "titles",
+    "metadata",
+    "explainer"
+   ],
+   "tools": [
+    "google-serp-preview",
+    "headline-analyzer"
+   ],
+   "target_words": 1300,
+   "url": "/blog/title-tag-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The 60-character rule is a rounding of a 600-pixel column. Show two titles of equal length and unequal width, then hand them the preview."
+  },
+  {
+   "id": "SN-03",
+   "cluster": "snippets",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "meta-description-length",
+   "title": "Meta Description Length: What Google Actually Shows",
+   "primary_keyword": "meta description length",
+   "secondary_keywords": [
+    "meta description character limit",
+    "meta description size",
+    "snippet length"
+   ],
+   "funnel": "MOFU",
+   "category": "seo",
+   "tags": [
+    "metadata",
+    "titles",
+    "explainer"
+   ],
+   "tools": [
+    "google-serp-preview",
+    "link-preview-debugger"
+   ],
+   "target_words": 1200,
+   "url": "/blog/meta-description-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Two lines on desktop, three on a phone, and Google replacing the whole thing whenever a passage answers the query better. What the field is actually for."
+  },
+  {
+   "id": "SN-04",
+   "cluster": "snippets",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "email-subject-line-length",
+   "title": "Email Subject Line Length: Where Each Inbox Cuts It",
+   "primary_keyword": "email subject line length",
+   "secondary_keywords": [
+    "subject line character limit",
+    "gmail subject line length",
+    "how long subject line"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "email",
+    "titles",
+    "explainer"
+   ],
+   "tools": [
+    "email-subject-line-preview",
+    "social-media-character-counter"
+   ],
+   "target_words": 1300,
+   "url": "/blog/email-subject-line-length",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Gmail desktop is the tightest surface and Apple Mail the most generous. A width, not a count, and the front-loading rule that follows from it."
+  },
+  {
+   "id": "SN-05",
+   "cluster": "snippets",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "email-preheader-text",
+   "title": "Preheader Text: The Half of Your Email Preview Nobody Writes",
+   "primary_keyword": "preheader text",
+   "secondary_keywords": [
+    "email preview text",
+    "preheader length",
+    "what is preheader text"
+   ],
+   "funnel": "MOFU",
+   "category": "content",
+   "tags": [
+    "email",
+    "titles",
+    "how-to"
+   ],
+   "tools": [
+    "email-subject-line-preview"
+   ],
+   "target_words": 1100,
+   "url": "/blog/email-preheader-text",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Left empty, every client fills the space with the first line of your HTML. Where the field lives in the major senders and what to put in it."
+  },
+  {
+   "id": "TW-01",
+   "cluster": "twitch",
+   "wave": 9,
+   "archetype": "pillar",
+   "slug": "twitch-monetization",
+   "title": "Twitch Monetization: How Streamers Actually Get Paid",
+   "primary_keyword": "twitch monetization",
+   "secondary_keywords": [
+    "twitch affiliate vs partner",
+    "twitch revenue",
+    "how twitch pays"
+   ],
+   "funnel": "TOFU",
+   "category": "monetization",
+   "tags": [
+    "twitch",
+    "monetization",
+    "guide"
+   ],
+   "tools": [
+    "twitch-money-calculator",
+    "engagement-rate-calculator"
+   ],
+   "target_words": 1700,
+   "url": "/blog/twitch-monetization",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Subs, bits, ads and tips, with the split applied to each. Pillar for the cluster; links down to the earnings spoke and the assets one."
+  },
+  {
+   "id": "TW-02",
+   "cluster": "twitch",
+   "wave": 9,
+   "archetype": "benchmarks",
+   "slug": "how-much-do-twitch-streamers-make",
+   "title": "How Much Do Twitch Streamers Make?",
+   "primary_keyword": "how much do twitch streamers make",
+   "secondary_keywords": [
+    "twitch streamer income",
+    "twitch sub payout",
+    "twitch earnings"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "twitch",
+    "monetization",
+    "benchmarks"
+   ],
+   "tools": [
+    "twitch-money-calculator",
+    "cpm-to-rpm-calculator"
+   ],
+   "target_words": 1500,
+   "url": "/blog/how-much-do-twitch-streamers-make",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Worked from published figures only: $4.99 tier one, the 50/50 split, a cent a bit. The ad CPM is the one estimate and it is labelled as one."
+  },
+  {
+   "id": "TW-03",
+   "cluster": "twitch",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "twitch-profile-picture-size",
+   "title": "Twitch Profile Picture Size (and How to Get the Full-Size One)",
+   "primary_keyword": "twitch profile picture size",
+   "secondary_keywords": [
+    "twitch pfp size",
+    "twitch avatar download",
+    "twitch profile picture downloader"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "twitch",
+    "brand-assets",
+    "downloads"
+   ],
+   "tools": [
+    "twitch-image-downloader",
+    "social-image-resizer"
+   ],
+   "target_words": 1100,
+   "url": "/blog/twitch-profile-picture-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": "600x600 is what Twitch stores and 300x300 is what the page publishes. The size lives in the path, which is the whole trick."
+  },
+  {
+   "id": "DL-09",
+   "cluster": "downloads",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "download-podcast-cover-art",
+   "title": "How to Download Podcast Cover Art at Full Size",
+   "primary_keyword": "podcast cover art download",
+   "secondary_keywords": [
+    "apple podcasts artwork",
+    "podcast artwork 3000x3000",
+    "download podcast cover"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "audio",
+    "downloads",
+    "how-to"
+   ],
+   "tools": [
+    "apple-podcasts-artwork-downloader",
+    "social-media-image-downloader"
+   ],
+   "target_words": 1100,
+   "url": "/blog/download-podcast-cover-art",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Apple's public lookup API hands out a 600; the 3000 is one substitution away, and Apple requires publishers to submit it."
+  },
+  {
+   "id": "DL-10",
+   "cluster": "downloads",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "spotify-cover-art-size",
+   "title": "Spotify Cover Art Size: Why 640px Is the Ceiling",
+   "primary_keyword": "spotify cover art size",
+   "secondary_keywords": [
+    "spotify album art download",
+    "spotify cover art hd",
+    "spotify image size"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "audio",
+    "downloads",
+    "explainer"
+   ],
+   "tools": [
+    "spotify-cover-art-downloader",
+    "image-format-converter"
+   ],
+   "target_words": 1100,
+   "url": "/blog/spotify-cover-art-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The honest post in the cluster: there is no original behind the 640, and every 'HD Spotify cover art' result is upscaling the same file."
+  },
+  {
+   "id": "YM-05",
+   "cluster": "yt-money",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "cpm-vs-rpm",
+   "title": "CPM vs RPM on YouTube, and What the Gap Costs You",
+   "primary_keyword": "cpm vs rpm",
+   "secondary_keywords": [
+    "what is rpm youtube",
+    "youtube cpm meaning",
+    "cpm to rpm"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "cpm-to-rpm-calculator",
+    "youtube-money-calculator"
+   ],
+   "target_words": 1400,
+   "url": "/blog/cpm-vs-rpm",
+   "status": "planned",
+   "published_url": null,
+   "notes": "One identity: RPM = CPM x monetized playback rate x revenue share. The unmonetized-views half of the gap is bigger than YouTube's cut and is the half you can move."
+  },
+  {
+   "id": "YM-06",
+   "cluster": "yt-money",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "youtube-ad-breaks",
+   "title": "Where to Put Ad Breaks in a YouTube Video",
+   "primary_keyword": "youtube ad breaks",
+   "secondary_keywords": [
+    "mid roll placement",
+    "youtube 8 minute rule",
+    "how many ad breaks"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "how-to"
+   ],
+   "tools": [
+    "youtube-ad-break-planner",
+    "youtube-timestamp-link-builder"
+   ],
+   "target_words": 1300,
+   "url": "/blog/youtube-ad-breaks",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Eight minutes is the published threshold; everything after it is editorial. Snap breaks to chapters, keep clear of the opening and the end screen."
+  },
+  {
+   "id": "YM-07",
+   "cluster": "yt-money",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "advertiser-friendly-guidelines",
+   "title": "Advertiser-Friendly Guidelines: What Actually Limits Ads",
+   "primary_keyword": "advertiser friendly guidelines",
+   "secondary_keywords": [
+    "youtube limited ads",
+    "yellow icon youtube",
+    "demonetized words"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "youtube",
+    "monetization",
+    "explainer"
+   ],
+   "tools": [
+    "youtube-advertiser-friendly-checker",
+    "headline-analyzer"
+   ],
+   "target_words": 1500,
+   "url": "/blog/advertiser-friendly-guidelines",
+   "status": "planned",
+   "published_url": null,
+   "notes": "The published categories, why the opening is weighted, and the honest limit of any text checker: context is the whole game and a word list cannot see it."
+  },
+  {
+   "id": "SZ-09",
+   "cluster": "sizes",
+   "wave": 9,
+   "archetype": "explainer",
+   "slug": "youtube-banner-size",
+   "title": "YouTube Banner Size: The 1546x423 That Decides Everything",
+   "primary_keyword": "youtube banner size",
+   "secondary_keywords": [
+    "youtube channel art size",
+    "youtube banner safe area",
+    "2560x1440 banner"
+   ],
+   "funnel": "MOFU",
+   "category": "design",
+   "tags": [
+    "youtube",
+    "image-sizes",
+    "safe-zones"
+   ],
+   "tools": [
+    "youtube-banner-safe-area",
+    "social-image-resizer",
+    "safe-zone-guide"
+   ],
+   "target_words": 1300,
+   "url": "/blog/youtube-banner-size",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Upload 2560x1440, design for the 1546x423 a phone shows. Four crops from one file, and the 6 MB limit that pushes a photographic banner to JPEG."
+  },
+  {
+   "id": "LK-06",
+   "cluster": "links",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "remove-tracking-parameters-from-url",
+   "title": "How to Remove Tracking Parameters From a Link",
+   "primary_keyword": "remove tracking parameters from url",
+   "secondary_keywords": [
+    "what is igshid",
+    "clean url",
+    "fbclid meaning"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "short-links",
+    "utm-tracking",
+    "how-to"
+   ],
+   "tools": [
+    "social-media-url-cleaner",
+    "link-expander",
+    "utm-link-builder"
+   ],
+   "target_words": 1400,
+   "url": "/blog/remove-tracking-parameters-from-url",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Several of these identify a person, not a campaign. Also the ones a cleaner must keep: YouTube's t and list break the link when they go."
+  },
+  {
+   "id": "LK-07",
+   "cluster": "links",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "social-media-deep-links",
+   "title": "Social Media Deep Links: Open a Link in the App, Not the Browser",
+   "primary_keyword": "social media deep link",
+   "secondary_keywords": [
+    "instagram deep link",
+    "app scheme url",
+    "universal link"
+   ],
+   "funnel": "MOFU",
+   "category": "growth",
+   "tags": [
+    "short-links",
+    "link-previews",
+    "how-to"
+   ],
+   "tools": [
+    "app-deep-link-builder",
+    "social-media-url-cleaner",
+    "qr-code-generator"
+   ],
+   "target_words": 1300,
+   "url": "/blog/social-media-deep-links",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Universal links versus scheme URIs, and the silent failure that makes a scheme the wrong choice for anything a stranger taps."
+  },
+  {
+   "id": "IG-09",
+   "cluster": "instagram",
+   "wave": 9,
+   "archetype": "howto",
+   "slug": "how-much-to-charge-instagram-post",
+   "title": "How Much to Charge for a Sponsored Instagram Post",
+   "primary_keyword": "how much to charge for instagram post",
+   "secondary_keywords": [
+    "instagram sponsored post rate",
+    "instagram influencer pricing",
+    "instagram rate card"
+   ],
+   "funnel": "MOFU",
+   "category": "monetization",
+   "tags": [
+    "instagram",
+    "monetization",
+    "how-to"
+   ],
+   "tools": [
+    "instagram-money-calculator",
+    "engagement-rate-calculator",
+    "social-media-character-counter"
+   ],
+   "target_words": 1500,
+   "url": "/blog/how-much-to-charge-instagram-post",
+   "status": "planned",
+   "published_url": null,
+   "notes": "Priced on reach x niche CPM x engagement band, never on followers alone. Three numbers - ask, fair rate, floor - and the usage-rights clause creators give away."
   }
  ]
 }

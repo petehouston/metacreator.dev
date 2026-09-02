@@ -1,5 +1,10 @@
 {
  "http://localhost:8080": {
+  "advertiser-friendly-guidelines": {
+   "id": "med_01M1HKPSEAMW4RDTQCQF987SK2",
+   "numeric_id": 233,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPSE24QSCA0QZ8XTYDKW8.png"
+  },
   "aspect-ratios-explained": {
    "id": "med_01M1FRG9J355G7P2P31QKZFFBE",
    "numeric_id": 105,
@@ -45,6 +50,11 @@
    "numeric_id": 113,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGAHT28BKN55QAGP1YZK2.png"
   },
+  "cpm-vs-rpm": {
+   "id": "med_01M1HKPS3NFDY6F65ZCP6QW3KT",
+   "numeric_id": 231,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPS3ASDXNMGS8HJ1FCGJ4.png"
+  },
   "creator-glossary": {
    "id": "med_01M1FRGAP8EQPVSXD0DJNYM2HP",
    "numeric_id": 114,
@@ -70,6 +80,11 @@
    "numeric_id": 211,
    "url": "http://localhost:3000/media/media/2026/09/01M1G9TEQREQMQ3C0TWABZ4PPJ.png"
   },
+  "download-podcast-cover-art": {
+   "id": "med_01M1HKPRT5CPXFJGRE9NEGRX39",
+   "numeric_id": 229,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPRST2HABRB5EQFH4W3N0.png"
+  },
   "download-social-media-images": {
    "id": "med_01M1H3X5XYBZT7076DB0M9E6FY",
    "numeric_id": 213,
@@ -89,6 +104,16 @@
    "id": "med_01M1FRGAT7RPC0D57AFN01BE7R",
    "numeric_id": 115,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGASYP3XBQBY77HSHEP5N.png"
+  },
+  "email-preheader-text": {
+   "id": "med_01M1HKPR5MXMSZ7GG4K8QT5TDF",
+   "numeric_id": 225,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPR5AK2P3E2QKM23PYK5M.png"
+  },
+  "email-subject-line-length": {
+   "id": "med_01M1HKPR0FEQE0BMG4B404TT2S",
+   "numeric_id": 224,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPR06WKZBT1T58GVWAKXE.png"
   },
   "embed-a-social-media-post": {
    "id": "med_01M1G9TDPXX87CX4GS90TER5G5",
@@ -190,6 +215,16 @@
    "numeric_id": 128,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGCED7KPQCHB8JYPAMXFV.png"
   },
+  "google-search-snippet": {
+   "id": "med_01M1HKPQFPES0MWHR90SS7RQ48",
+   "numeric_id": 221,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPQF0ESWEKYZGAH98Y2DR.png"
+  },
+  "how-much-do-twitch-streamers-make": {
+   "id": "med_01M1HKPRFT0GG0JH3VKC839WTD",
+   "numeric_id": 227,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPRFHBX6G03NQ98YFTGJM.png"
+  },
   "how-much-do-youtubers-make": {
    "id": "med_01M1FRGCK2G5HT432SEJRJ179A",
    "numeric_id": 129,
@@ -199,6 +234,11 @@
    "id": "med_01M1FRGCQN90DD3NV5XKXDZWS7",
    "numeric_id": 130,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGCQAXG4EX5SSF3ZJ6TWP.png"
+  },
+  "how-much-to-charge-instagram-post": {
+   "id": "med_01M1HKPT3K4CP55HJQ10XZ0J0S",
+   "numeric_id": 237,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPT3ADQ7P5WTS4J1TJNAG.png"
   },
   "how-to-post-on-x": {
    "id": "med_01M1FRGCVZJ0TZVP3JJT9M6WN3",
@@ -330,6 +370,11 @@
    "numeric_id": 153,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGFMAP9RT1ZW2NS94W1HN.png"
   },
+  "meta-description-length": {
+   "id": "med_01M1HKPQV8RKVMYS8XSY28EEMV",
+   "numeric_id": 223,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPQTZ2VYZJ31S5CEXYYGZ.png"
+  },
   "open-graph-tags": {
    "id": "med_01M1FRGFREP5TF9MAKZX93PD22",
    "numeric_id": 154,
@@ -364,6 +409,11 @@
    "id": "med_01M1FRGGFQXRP8SANGD9W1HNVH",
    "numeric_id": 160,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGGFEGRHFYWH9ZBAGYW89.png"
+  },
+  "remove-tracking-parameters-from-url": {
+   "id": "med_01M1HKPSS3ZPY0XJA9BJ7CVYQ5",
+   "numeric_id": 235,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPSRTZWFK846ZGWNPE4CC.png"
   },
   "rich-pins-not-working": {
    "id": "med_01M1FRGGKBPN8QB7SJRKTDMATJ",
@@ -400,6 +450,11 @@
    "numeric_id": 165,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGH1V20071D4E99KSP05Q.png"
   },
+  "social-media-deep-links": {
+   "id": "med_01M1HKPSY4FADHKYFF5MXEVDH2",
+   "numeric_id": 236,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPSXWGYD1VTDPFJWW5PCN.png"
+  },
   "social-media-image-sizes": {
    "id": "med_01M1FRGH6SZB0YAE2H326TE0D1",
    "numeric_id": 166,
@@ -419,6 +474,11 @@
    "id": "med_01M1G9TDD472CE8GS016RFWQHQ",
    "numeric_id": 202,
    "url": "http://localhost:3000/media/media/2026/09/01M1G9TDCTJMKP16TKJSDMZ0KB.png"
+  },
+  "spotify-cover-art-size": {
+   "id": "med_01M1HKPRYTAWPR7GQCEBJHC2SW",
+   "numeric_id": 230,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPRYHDNAC5AH17ZQ4N2KN.png"
   },
   "threads-bio-ideas": {
    "id": "med_01M1FRGHF8YJV1XEC7GM3BEBBK",
@@ -460,6 +520,21 @@
    "numeric_id": 175,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGJAEF74SA95F2ERG2T6H.png"
   },
+  "title-tag-length": {
+   "id": "med_01M1HKPQN9490QSX38VGDRW983",
+   "numeric_id": 222,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPQMZZ9NEHCWH642ABGQV.png"
+  },
+  "twitch-monetization": {
+   "id": "med_01M1HKPRB1Z2ZZNSYSYV24HHP3",
+   "numeric_id": 226,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPRASZS0RRQNGN5JE5Y9K.png"
+  },
+  "twitch-profile-picture-size": {
+   "id": "med_01M1HKPRN08ZTZX2HHSRMQDD5H",
+   "numeric_id": 228,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPRMQMKDK6FEJ6EP46AWH.png"
+  },
   "twitter-character-limit": {
    "id": "med_01M1FRGJEEMTRNMVW2AYRVQ7W1",
    "numeric_id": 176,
@@ -494,6 +569,16 @@
    "id": "med_01M1FRGK569K62ECWDDXYA842T",
    "numeric_id": 182,
    "url": "http://localhost:9000/metacreator-media/media/2026/09/01M1FRGK4XDWTEK9WY3HN06NN7.png"
+  },
+  "youtube-ad-breaks": {
+   "id": "med_01M1HKPS96800SATC868CRMVQA",
+   "numeric_id": 232,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPS8X3QWWVM5K79E08802.png"
+  },
+  "youtube-banner-size": {
+   "id": "med_01M1HKPSKCBAVXA3RX9Y2TK97X",
+   "numeric_id": 234,
+   "url": "http://localhost:3000/media/media/2026/09/01M1HKPSK3KFWSD9KBSAC8NN6D.png"
   },
   "youtube-channel-description": {
    "id": "med_01M1FRGK8T91XWVRNSPVYSPN3F",

@@ -161,6 +161,20 @@ the kind of thing you want more of, and expect the growth curve to bend later.
 
 [[tool:giveaway-winner-picker]]
 
+## Charging for it
+
+At some point the account is worth money to somebody, and the pricing question arrives
+before anyone has thought about it.
+
+Instagram pays nothing for a post — there is no revenue share and no per-view payout — so
+the income is brand deals, and a brand prices on reach times a niche rate times how
+engaged your audience is. Which means a 25,000-follower account at 6% engagement is worth
+more per post than a 100,000-follower account at 0.8%, and the per-follower rule
+everybody quotes gets both of them wrong.
+[How much to charge for an Instagram post](/blog/how-much-to-charge-instagram-post) has
+the formula, the three numbers to quote instead of one, and the usage-rights clause that
+is worth more than the post.
+
 ## Where to start this week
 
 1. Fix the bio so a stranger knows what they get. Ten minutes.

@@ -64,7 +64,7 @@ The [social media image downloader](/tools/social-media-image-downloader) reads 
 tags for any public post on any platform — and for any web page at all, since Open
 Graph is not a social-network invention.
 
-## Four platforms keep a larger copy still
+## Seven platforms keep a larger copy still
 
 On most platforms the published copy is the end of the road. On four of them it is not,
 because their image CDNs have a naming convention that can be read.
@@ -75,8 +75,11 @@ because their image CDNs have a naming convention that can be read.
 | X | `name=orig` in place of `name=medium` | The file as uploaded |
 | YouTube | `=s0` on a channel asset URL | The asset at full size |
 | Bluesky | A public read API, not a convention at all | Every image, alt text, and the blob |
+| Twitch | The size is a path segment, `-300x300` to `-600x600` | The largest avatar Twitch stores |
+| Apple Podcasts | `600x600bb` becomes `3000x3000bb` | The artwork as the publisher submitted it |
+| Spotify | The image prefix *is* the size | The 640, which is the ceiling |
 
-Those four have their own pages here for exactly that reason. A general tool that
+Those seven have their own pages here for exactly that reason. A general tool that
 guessed at CDN conventions would hand back a list of URLs that 404; a per-platform tool
 that knows one can hand back the upload.
 
@@ -105,6 +108,22 @@ unauthenticated read API open so that other clients can work, which means a post
 asked for rather than inferred from a card. You get every image rather than the first,
 the alt text the author wrote, and the blob — the file itself, from the server that
 holds it. See [download images from Bluesky](/blog/download-bluesky-images).
+
+### Twitch
+
+Twitch names the dimensions in the path, and the link card always publishes the 300 while
+Twitch stores a 600. The ladder is verifiable rather than assumed — 900 and 1200 answer
+404 — which is why the tool fetches each candidate before offering it. See
+[Twitch profile picture size](/blog/twitch-profile-picture-size).
+
+### Apple Podcasts and Spotify
+
+The two audio directories give opposite answers to the same question, and both are worth
+knowing. Apple's public lookup API hands out a 600 and keeps the 3000×3000 master the
+publisher was required to submit: [download podcast cover art](/blog/download-podcast-cover-art).
+Spotify's prefix *is* the size, and its ceiling is 640 with no original behind it —
+[Spotify cover art size](/blog/spotify-cover-art-size) is the honest version of a query
+where almost every other result promises HD.
 
 ## Meta's three platforms sign their links
 

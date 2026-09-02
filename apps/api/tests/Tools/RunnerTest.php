@@ -1593,3 +1593,321 @@ it('says plainly when a Bluesky link points at a profile rather than a post', fu
         'url' => 'https://bsky.app/profile/someone.bsky.social',
     ]))->toThrow(ToolExecutionException::class, 'not to a single post');
 });
+
+/* ── wave 9: search and inbox previews, new platforms, monetization ─────────── */
+
+it('measures a SERP snippet in pixels rather than characters', function () {
+    // Two titles of the same character count and very different widths: the whole
+    // reason the tool exists.
+    $narrow = runRunner(app(Runners\SerpPreviewRunner::class), [
+        'title' => str_repeat('i', 40),
+        'description' => 'A short description.',
+    ]);
+
+    $wide = runRunner(app(Runners\SerpPreviewRunner::class), [
+        'title' => str_repeat('W', 40),
+        'description' => 'A short description.',
+    ]);
+
+    expect($narrow->meta['title_px_desktop'])->toBeLessThan($wide->meta['title_px_desktop'])
+        // 40 W's do not fit a 600-pixel column; 40 i's do.
+        ->and($wide->data['frames'][0]['heading']['hidden'])->not->toBe('')
+        ->and($narrow->data['frames'][0]['heading']['hidden'])->toBe('');
+});
+
+it('draws a SERP result for a desktop and a phone at their real widths', function () {
+    $result = runRunner(app(Runners\SerpPreviewRunner::class), [
+        'title' => 'YouTube Thumbnail Downloader — Every Size in One Click',
+        'description' => 'Download any YouTube thumbnail in maxres, HQ, MQ and SD.',
+        'url' => 'https://metacreator.dev/tools/youtube-thumbnail-downloader',
+    ]);
+
+    $widths = array_column(array_column($result->data['frames'], 'device'), 'width');
+
+    expect($result->view)->toBe(ResultView::SocialPreview)
+        ->and($widths)->toBe([600, 372])
+        // Google draws a crumb trail, never the raw URL.
+        ->and($result->data['frames'][0]['search']['url'])->toBe('metacreator.dev › tools › youtube-thumbnail-downloader')
+        ->and($result->data['frames'][0]['search']['site'])->toBe('Metacreator');
+});
+
+it('cuts a subject line where each client cuts it, and says which', function () {
+    $result = runRunner(app(Runners\EmailSubjectPreviewRunner::class), [
+        'subject' => 'The three metrics I actually watch, and the four I have stopped looking at entirely',
+        'preheader' => 'Plus the spreadsheet I use every Sunday.',
+        'sender' => 'MetaCreator',
+    ]);
+
+    $cut = array_filter($result->data['frames'], fn (array $frame) => $frame['heading']['hidden'] !== '');
+
+    expect($result->data['frames'])->toHaveCount(4)
+        // A subject this long survives nowhere.
+        ->and($cut)->toHaveCount(4)
+        ->and($result->summary)->toContain('Cut in 4 of 4');
+});
+
+it('warns when an email has no preheader, because the client fills the gap itself', function () {
+    $result = runRunner(app(Runners\EmailSubjectPreviewRunner::class), ['subject' => 'Short one']);
+
+    expect($result->meta['preheader_set'])->toBeFalse()
+        ->and(implode(' ', $result->warnings))->toContain('View this email in your browser');
+});
+
+it('shades every YouTube banner crop against the same 2560×1440 canvas', function () {
+    $result = runRunner(app(Runners\YouTubeBannerSafeAreaRunner::class), []);
+
+    $mobile = collect($result->data['frames'])->firstWhere('surface', 'Mobile');
+
+    expect($result->data['frames'])->toHaveCount(4)
+        ->and($mobile['canvas']['width'])->toBe(2560)
+        ->and($mobile['canvas']['height'])->toBe(1440)
+        // 1546 × 423 centred: (2560 - 1546) / 2 and (1440 - 423) / 2.
+        ->and($mobile['canvas']['left'])->toBe(507)
+        ->and($mobile['canvas']['top'])->toBe(508)
+        // With no image of their own, the frames still get one to crop.
+        ->and($mobile['artwork']['banner'])->toStartWith('data:image/svg+xml');
+});
+
+it('climbs to Apple’s 3000-pixel artwork by rewriting the size segment', function () {
+    Http::fake(['itunes.apple.com/*' => Http::response(['results' => [[
+        'collectionName' => 'A Show', 'artistName' => 'Someone',
+        'artworkUrl600' => 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts/x.jpg/600x600bb.jpg',
+        'feedUrl' => 'https://example.com/feed.xml',
+    ]]])]);
+
+    $result = runRunner(app(Runners\ApplePodcastArtworkDownloaderRunner::class), [
+        'url' => 'https://podcasts.apple.com/us/podcast/a-show/id1200361736',
+    ]);
+
+    expect($result->meta['apple_id'])->toBe('1200361736')
+        ->and($result->meta['kind'])->toBe('show')
+        ->and($result->meta['original_url'])->toEndWith('/3000x3000bb.jpg');
+});
+
+it('asks Apple about the episode when the link names one', function () {
+    Http::fake(['itunes.apple.com/*' => Http::response(['results' => [[
+        'trackName' => 'One episode',
+        'artworkUrl600' => 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts/y.jpg/600x600bb.jpg',
+    ]]])]);
+
+    $result = runRunner(app(Runners\ApplePodcastArtworkDownloaderRunner::class), [
+        'url' => 'https://podcasts.apple.com/us/podcast/a-show/id1200361736?i=1000600000000',
+    ]);
+
+    expect($result->meta['apple_id'])->toBe('1000600000000')
+        ->and($result->meta['kind'])->toBe('episode');
+});
+
+it('moves between Spotify renditions by swapping the size prefix', function () {
+    Http::fake(['open.spotify.com/oembed*' => Http::response([
+        'title' => 'Global Warming',
+        'thumbnail_url' => 'https://i.scdn.co/image/ab67616d00001e022c5b24ecfa39523a75c993c4',
+    ])]);
+
+    $result = runRunner(app(Runners\SpotifyCoverArtDownloaderRunner::class), [
+        'url' => 'https://open.spotify.com/album/4aawyAB9vmqN3uQ7FjRGTy?si=abc123',
+    ]);
+
+    expect($result->data['rows'][0]['url'])
+        ->toBe('https://i.scdn.co/image/ab67616d0000b2732c5b24ecfa39523a75c993c4')
+        ->and($result->data['rows'][0]['pixels'])->toBe('640 × 640')
+        // The share id never reaches Spotify.
+        ->and($result->meta['spotify_url'])->toBe('https://open.spotify.com/album/4aawyAB9vmqN3uQ7FjRGTy')
+        ->and(implode(' ', $result->warnings))->toContain('640 × 640 is Spotify’s ceiling');
+});
+
+it('offers only the Twitch sizes that came back as an image', function () {
+    Http::fake([
+        'www.twitch.tv/*' => Http::response(
+            '<meta property="og:image" content="https://static-cdn.jtvnw.net/jtv_user_pictures/'
+            .'abc-profile_image-300x300.png">',
+        ),
+        // A 1×1 GIF stands in for each rendition Twitch does serve.
+        '*-600x600.png' => Http::response(base64_decode('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')),
+        '*-300x300.png' => Http::response(base64_decode('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')),
+        // Everything else 404s, the way 900 and 1200 really do.
+        '*' => Http::response('', 404),
+    ]);
+
+    $result = runRunner(app(Runners\TwitchImageDownloaderRunner::class), ['url' => 'shroud']);
+
+    expect($result->meta['kind'])->toBe('profile')
+        ->and($result->data['rows'])->toHaveCount(2)
+        ->and($result->data['rows'][0]['url'])->toEndWith('-600x600.png')
+        ->and($result->data['rows'][0]['size'])->toBe('Largest available');
+});
+
+it('refuses the Twitch logo Twitch serves in place of a missing thumbnail', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:image" content="https://static-cdn.jtvnw.net/ttv-static-metadata/'
+        .'twitch_logo3.jpg">',
+    )]);
+
+    expect(fn () => runRunner(app(Runners\TwitchImageDownloaderRunner::class), [
+        'url' => 'https://www.twitch.tv/videos/2000000000',
+    ]))->toThrow(ToolExecutionException::class, 'deleted VOD');
+});
+
+it('strips a share id from a link but keeps the timestamp that makes it work', function () {
+    $result = runRunner(app(Runners\UrlCleanerRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s&si=aBcDeFgH&utm_source=newsletter',
+        'keep_timestamps' => true,
+    ]);
+
+    expect($result->meta['clean_url'])->toContain('t=42s')
+        ->and($result->meta['clean_url'])->not->toContain('si=')
+        ->and($result->meta['clean_url'])->not->toContain('utm_source')
+        ->and($result->meta['removed_parameters'])->toEqualCanonicalizing(['si', 'utm_source']);
+});
+
+it('drops a YouTube timestamp only when told to, and says what that cost', function () {
+    $result = runRunner(app(Runners\UrlCleanerRunner::class), [
+        'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s',
+        'keep_timestamps' => false,
+    ]);
+
+    expect($result->meta['clean_url'])->not->toContain('t=42s')
+        ->and(implode(' ', $result->warnings))->toContain('starts the video at the beginning');
+});
+
+it('builds a scheme URI only where the platform has one', function () {
+    $instagram = runRunner(app(Runners\DeepLinkBuilderRunner::class), [
+        'url' => 'https://www.instagram.com/nasa/?igshid=abc123',
+    ]);
+
+    $tiktok = runRunner(app(Runners\DeepLinkBuilderRunner::class), [
+        'url' => 'https://www.tiktok.com/@nasa',
+    ]);
+
+    expect($instagram->meta['scheme_uri'])->toBe('instagram://user?username=nasa')
+        // The share id never survives into a link somebody will publish.
+        ->and($instagram->meta['universal_link'])->toBe('https://www.instagram.com/nasa/')
+        ->and($tiktok->meta)->not->toHaveKey('scheme_uri')
+        ->and(implode(' ', $tiktok->warnings))->toContain('no long-established scheme');
+});
+
+it('refuses to plan mid-rolls for a video under eight minutes', function () {
+    $result = runRunner(app(Runners\YouTubeAdBreakPlannerRunner::class), ['duration' => '6:30']);
+
+    expect($result->meta['eligible_for_midrolls'])->toBeFalse()
+        ->and($result->meta['midrolls'])->toBe(0)
+        ->and($result->summary)->toContain('short of the eight minutes')
+        // Pre-roll and post-roll do not depend on length, so they are still offered.
+        ->and(array_column($result->data['rows'], 'kind'))->toBe(['Pre-roll', 'Post-roll']);
+});
+
+it('snaps an ad break to the chapter beside it', function () {
+    $result = runRunner(app(Runners\YouTubeAdBreakPlannerRunner::class), [
+        'duration' => '22:40',
+        'chapters' => "0:00 The setup\n2:15 What everyone gets wrong\n7:40 The method\n"
+            ."13:05 A worked example\n18:30 What to do first",
+        'spacing_minutes' => 6,
+        'include_pre_roll' => false,
+    ]);
+
+    $positions = array_column($result->data['rows'], 'position');
+
+    // 90s + 6:00 = 7:30, and the 7:40 chapter is within the snap window.
+    expect($positions)->toContain('7:40')
+        ->and($result->data['rows'][0]['why'])->toContain('The method');
+});
+
+it('converts a CPM to an RPM through the monetized rate and the split', function () {
+    $result = runRunner(app(Runners\CpmRpmConverterRunner::class), [
+        'direction' => 'cpm_to_rpm',
+        'amount' => 10,
+        'monetized_rate' => 40,
+        'revenue_share' => 55,
+    ]);
+
+    // $10 × 0.40 × 0.55 = $2.20
+    expect($result->meta['rpm'])->toBe(2.2)
+        ->and($result->meta['factor'])->toBe(0.22);
+});
+
+it('converts back the other way to the same pair of numbers', function () {
+    $result = runRunner(app(Runners\CpmRpmConverterRunner::class), [
+        'direction' => 'rpm_to_cpm',
+        'amount' => 2.2,
+        'monetized_rate' => 40,
+        'revenue_share' => 55,
+    ]);
+
+    expect(round($result->meta['cpm']))->toBe(10.0);
+});
+
+it('prices an Instagram post on reach and engagement, not on followers alone', function () {
+    $engaged = runRunner(app(Runners\InstagramMoneyCalculatorRunner::class), [
+        'followers' => 25000, 'engagement_rate' => 6.5, 'niche' => 'fitness', 'format' => 'reel',
+    ]);
+
+    $large = runRunner(app(Runners\InstagramMoneyCalculatorRunner::class), [
+        'followers' => 100000, 'engagement_rate' => 0.7, 'niche' => 'fitness', 'format' => 'reel',
+    ]);
+
+    // Four times the followers, and less than four times the rate — which is the
+    // claim the tool's copy makes.
+    expect($large->meta['rate'])->toBeLessThan($engaged->meta['rate'] * 4)
+        ->and($engaged->meta['engagement_multiplier'])->toBeGreaterThan($large->meta['engagement_multiplier']);
+});
+
+it('uses a stated Instagram reach in place of the estimate', function () {
+    $result = runRunner(app(Runners\InstagramMoneyCalculatorRunner::class), [
+        'followers' => 25000, 'engagement_rate' => 3.0, 'niche' => 'tech',
+        'format' => 'feed', 'average_reach' => 41000,
+    ]);
+
+    expect($result->meta['reach'])->toBe(41000);
+});
+
+it('applies the Twitch split to subscriptions and a cent to each Bit', function () {
+    $result = runRunner(app(Runners\TwitchMoneyCalculatorRunner::class), [
+        'subscribers' => 100, 'split' => 50, 'tier_mix' => 'mostly_prime',
+        'average_viewers' => 0, 'hours_per_month' => 0, 'ad_minutes_per_hour' => 0,
+        'ad_cpm' => 0, 'bits_per_month' => 10000, 'donations_per_month' => 0,
+    ]);
+
+    // 100 × $4.99 × 50% = $249.50, and 10,000 Bits = $100.
+    expect($result->meta['subscriptions'])->toBe(249.5)
+        ->and($result->meta['bits'])->toBe(100.0)
+        ->and($result->meta['total'])->toBe(349.5);
+});
+
+it('counts a Twitch ad impression per viewer per ad minute', function () {
+    $result = runRunner(app(Runners\TwitchMoneyCalculatorRunner::class), [
+        'subscribers' => 0, 'average_viewers' => 200, 'hours_per_month' => 100,
+        'ad_minutes_per_hour' => 3, 'ad_cpm' => 3.5,
+    ]);
+
+    // 200 × 100 × 3 = 60,000 impressions at $3.50 per thousand = $210.
+    expect($result->meta['impressions'])->toBe(60000)
+        ->and($result->meta['ads'])->toBe(210.0);
+});
+
+it('weights an advertiser-unfriendly term harder in the title than in the body', function () {
+    $body = runRunner(app(Runners\YouTubeAdvertiserFriendlyCheckerRunner::class), [
+        'script' => str_repeat('This is an ordinary sentence about editing. ', 20)
+            .'And then somebody said shit.',
+    ]);
+
+    $title = runRunner(app(Runners\YouTubeAdvertiserFriendlyCheckerRunner::class), [
+        'script' => str_repeat('This is an ordinary sentence about editing. ', 20)
+            .'And then somebody said shit.',
+        'title' => 'The shit nobody tells you',
+    ]);
+
+    expect($title->data['overall'])->toBeLessThan($body->data['overall'])
+        ->and($body->meta['flagged_terms'])->toContain('shit');
+});
+
+it('passes a clean script and still asks for the two judgement calls', function () {
+    $result = runRunner(app(Runners\YouTubeAdvertiserFriendlyCheckerRunner::class), [
+        'script' => 'In this video we break down what happened, and what it means for anyone '
+            .'starting out. The short version: the numbers were never real.',
+    ]);
+
+    expect($result->data['overall'])->toBe(100)
+        ->and($result->meta['flagged_terms'])->toBe([])
+        ->and(array_column($result->data['fixes'], 'title'))
+        ->toContain('Hateful & derogatory content: review this by hand');
+});
