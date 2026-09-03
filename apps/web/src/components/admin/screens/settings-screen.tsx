@@ -160,6 +160,23 @@ const SECTIONS: SettingsSection[] = [
     ],
   },
   {
+    id: "search",
+    label: "Search",
+    icon: Search,
+    description:
+      "Global search over everything the site publishes — tools, posts, rankings and the static pages. Like the blog and the changelog it is one whole surface behind one switch, so it gets its own section rather than a line in a list of flags.",
+    keys: ["features.search_enabled"],
+    panels: [
+      {
+        id: "availability",
+        label: "Availability",
+        description:
+          "Off, /search 404s and the header search box and its suggestions disappear. This is the only feature switch that ships off: search reads across every table the site publishes, and a catalog with little in it answers most queries with nothing — which is a worse first impression than no search box. Nothing is deleted or indexed either way; turning it on takes effect within five minutes.",
+        keys: ["features.search_enabled"],
+      },
+    ],
+  },
+  {
     id: "accounts",
     label: "Accounts & sign-in",
     icon: UserPlus,
@@ -437,6 +454,57 @@ const SECTIONS: SettingsSection[] = [
 /** Keys some section claims by name — excluded from whichever group holds them. */
 const CLAIMED = new Set(SECTIONS.flatMap((section) => section.keys ?? []));
 
+/** Every `group` some section sweeps up wholesale. */
+const CLAIMED_GROUPS = new Set(SECTIONS.flatMap((section) => section.groups ?? []));
+
+/**
+ * Whether the curated sections above account for a given setting.
+ *
+ * Sections are a hand-written list, not a projection of the `group` column — the
+ * right call for a human-facing layout, and the reason a setting no section claims
+ * is not merely misplaced but **invisible**. Nothing throws and nothing logs; the
+ * only symptom is an admin who cannot find the switch.
+ *
+ * `features.*` is where that bites, because no section sweeps the group on purpose
+ * — each flag is placed beside the thing it governs. So every new flag has to be
+ * claimed by name here, and the first one that was not shipped to production
+ * switched off with no way to switch it on. {@see unclaimedSections} is the net.
+ */
+function settingIsReachable(key: string, group: string): boolean {
+  return CLAIMED.has(key) || CLAIMED_GROUPS.has(group);
+}
+
+/**
+ * A catch-all section for anything the curated list does not account for.
+ *
+ * Normally empty, and it renders only when it is not — so the curated layout is
+ * unchanged in the ordinary case. It exists because the alternative to "an
+ * unfamiliar setting appears under Other" is "an admin cannot reach it at all",
+ * and of those two the second is the one that needs a deploy to fix.
+ *
+ * Deriving it from the payload rather than asserting a list in a test is
+ * deliberate: the seeder lives in the other app, and each container mounts only
+ * its own, so no test on either side can see both halves. A guarantee that holds
+ * at runtime beats a check that cannot be written.
+ */
+export function unclaimedSections(settings: SettingItem[]): SettingsSection[] {
+  const orphans = settings.filter((setting) => !settingIsReachable(setting.key, setting.group));
+
+  if (orphans.length === 0) return [];
+
+  return [
+    {
+      id: "other",
+      label: "Other",
+      icon: Plug,
+      description:
+        "Settings this screen has no section for yet. They are editable here so that nothing the API knows about can become unreachable, but a setting showing up in this list means the layout above is missing a home for it.",
+      keys: orphans.map((setting) => setting.key),
+      panels: [{ id: "unclaimed", label: "Unsorted" }],
+    },
+  ];
+}
+
 /** Options for the few settings whose value is one of a fixed set. */
 const CHOICES: Record<string, { value: string; label: string }[]> = {
   "payments.provider": [
@@ -556,11 +624,16 @@ export function SettingsScreen() {
 
   // Sections with nothing in them are dropped rather than rendered empty: a
   // deployment without a payments group should not offer a Payments tab.
-  const sections = SECTIONS.map((section) => ({
-    section,
-    settings: settingsFor(section, data),
-    canUpdate: canUpdateSection(section, data),
-  })).filter((entry) => entry.settings.length > 0);
+  const sections = [
+    ...SECTIONS,
+    ...unclaimedSections(data.groups.flatMap((group) => group.settings)),
+  ]
+    .map((section) => ({
+      section,
+      settings: settingsFor(section, data),
+      canUpdate: canUpdateSection(section, data),
+    }))
+    .filter((entry) => entry.settings.length > 0);
 
   const current = sections.find((entry) => entry.section.id === active) ?? sections[0];
 

@@ -82,7 +82,7 @@ export interface SiteFeatures {
    */
   changelogEnabled: boolean;
   /**
-   * `features.search_enabled` (Settings → Features). Off, the API 404s `/search`
+   * `features.search_enabled` (Settings → Search). Off, the API 404s `/search`
    * and every affordance that leads there — the header search box, its dropdown,
    * the results page — is absent rather than disabled.
    */

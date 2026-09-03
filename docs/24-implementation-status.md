@@ -121,7 +121,7 @@ Wikipedia-sourced leaderboards at `/top-ranking/{slug}`, refreshed weekly by a s
 ## Global search
 
 One search box over everything the site publishes — tools, blog posts, ranking pages and the
-hand-written pages. **Off by default** (`features.search_enabled`, Settings → Features): the API
+hand-written pages. **Off by default** (`features.search_enabled`, Settings → Search): the API
 404s `/api/v1/search`, the header field and the `/search` page disappear with it.
 
 | Area | Status | Notes |
@@ -132,6 +132,7 @@ hand-written pages. **Off by default** (`features.search_enabled`, Settings → 
 | Candidate retrieval | ✅ | Three passes, because none is sufficient alone: `MATCH … AGAINST` for reach into body text, the whole phrase as `LIKE` (fulltext ignores stopwords and short tokens, and InnoDB does not index a row until its transaction commits), and each word against the title so "calculator youtube" reaches "YouTube Money Calculator". Deliberately over-fetches; the scorer drops anything that scores zero |
 | Caching | ✅ | The ranked answer per (term, type) for five minutes, so a debounced type-ahead costs one Redis read. Cached as **plain rows**, not objects: `cache.serializable_classes` is `false` here, so nothing may be unserialized from cache as a PHP object. A test asserts the payload survives `allowed_classes: false` — the array cache store the suite runs on never serializes, so nothing else could catch it |
 | Feature switch | ✅ | `features.search_enabled`, default **off**. `EnsureSearchEnabled` 404s the route; `siteFeatures()` carries it to the frontend, where the default is also off — the one flag whose safe fallback is absence, because its failure mode is offering a box that 404s |
+| Admin section | ✅ | Its own **Search** section on the settings screen, beside Blog and Changelog, on the same rule: a whole public surface behind one switch gets a section, not a line in a list of flags. Adding the seeded row was *not* enough — the screen's sections are a curated list and nothing sweeps the `features` group, so the flag first shipped invisible and could not be switched on. `unclaimedSections()` is now the net: any setting no section claims renders under **Other** instead of silently vanishing |
 | Header dropdown | ✅ | Top five, icon on a tinted disc at the left and a wrapping title at the right, then a button to the full results. Debounced 200ms, previous request aborted, answers cached per mount. `/` focuses it; arrows move the highlight, Enter opens the highlighted result or runs the full search. Below `md` it renders as a full-width field **inside the mobile menu** — the phone header has no room for another 36px control, and a menu is where a phone user already goes to navigate |
 | Results page | ✅ | `/search`, a list at ten a page: type badge, image (Open Graph or featured, with the type's own icon as the placeholder), title, summary. Type filter chips, windowed pagination (`lib/pagination.ts` — a search can fill sixty pages, and sixty chips is a wall, not navigation), back to top. **`noindex`**, always: a page generated from arbitrary query text is an unbounded set of thin URLs |
 | Throttle | ✅ | `throttle:search`, 300/minute per actor. A type-ahead is a request per keystroke by design, so the ordinary 120/minute API ceiling would wall a real person inside half a minute |
