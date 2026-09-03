@@ -1,0 +1,668 @@
+<title>Tool Card Foundry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --paper:#f6f7fb; --surface:#ffffff; --surface-2:#eef1f8; --line:#dde2ee;
+  --fg:#131722; --fg-2:#4d566d; --fg-3:#79839c;
+  --accent:#2f56e8; --accent-soft:#e6ebff; --signal:#0f9d76; --ember:#e8573a;
+  --shadow:0 1px 2px rgba(19,23,34,.05),0 12px 32px -18px rgba(19,23,34,.35);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1219; --surface:#161a24; --surface-2:#1d222e; --line:#2a3040;
+    --fg:#eef1f8; --fg-2:#a7b0c6; --fg-3:#79839c;
+    --accent:#7d9bff; --accent-soft:#1b2340; --signal:#3ed7a8; --ember:#ff8467;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1219; --surface:#161a24; --surface-2:#1d222e; --line:#2a3040;
+  --fg:#eef1f8; --fg-2:#a7b0c6; --fg-3:#79839c;
+  --accent:#7d9bff; --accent-soft:#1b2340; --signal:#3ed7a8; --ember:#ff8467;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px -20px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--fg);font-family:"DM Sans",system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1220px;margin:0 auto;padding:0 28px 96px}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ---------- masthead ---------- */
+header.top{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 18px}
+h1.title{font-size:clamp(38px,5.4vw,62px);line-height:1.03;letter-spacing:-.035em;font-weight:700;margin:0 0 20px;max-width:16ch;text-wrap:balance}
+.lede{font-size:19px;line-height:1.6;color:var(--fg-2);max-width:66ch;margin:0}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.tag{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:var(--fg-2);background:var(--surface)}
+
+/* ---------- rules panel ---------- */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:44px 0 8px}
+.rule{background:var(--surface);padding:22px}
+.rule h3{margin:0 0 8px;font-size:14px;letter-spacing:-.01em}
+.rule p{margin:0;font-size:13.5px;line-height:1.55;color:var(--fg-2)}
+.rule .num{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--signal);display:block;margin-bottom:10px;font-variant-numeric:tabular-nums}
+
+/* ---------- controls ---------- */
+.controls{position:sticky;top:0;z-index:30;background:color-mix(in oklab,var(--paper) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin:40px -28px 0;padding:12px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.controls input[type=search]{flex:1 1 200px;min-width:160px;font:inherit;font-size:14px;padding:9px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.controls input[type=search]:focus-visible,.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:13px;padding:9px 14px;border:0;background:transparent;color:var(--fg-2);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.count{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+
+/* ---------- families ---------- */
+.family{padding-top:56px;scroll-margin-top:70px}
+.family-head{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:24px;border-left:3px solid var(--accent);padding-left:16px}
+.family-head h2{margin:0;font-size:26px;letter-spacing:-.025em}
+.family-head .idx{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--fg-3);letter-spacing:.08em}
+.family-head p{margin:0;font-size:15px;line-height:1.6;color:var(--fg-2);max-width:72ch}
+.best{display:inline-block;justify-self:start;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--signal);border:1px solid color-mix(in oklab,var(--signal) 40%,transparent);border-radius:999px;padding:4px 9px;margin-top:2px}
+
+.grid{display:grid;gap:26px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.focus{grid-template-columns:minmax(0,1fr)}
+.grid.export{grid-template-columns:minmax(0,1fr);overflow-x:auto;padding-bottom:8px}
+.grid.export .frame{width:1200px;max-width:none;border-radius:0;border:0;box-shadow:none}
+.grid.export figure.spec{width:1200px}
+@media (max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+figure.spec{margin:0;display:flex;flex-direction:column;gap:10px}
+.frame{position:relative;width:100%;aspect-ratio:1200/630;overflow:hidden;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--surface-2)}
+figcaption{display:flex;gap:10px;align-items:baseline}
+figcaption .id{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums;padding-top:1px}
+figcaption b{font-size:14.5px;font-weight:500;letter-spacing:-.01em}
+figcaption span.note{font-size:13px;color:var(--fg-3);line-height:1.5}
+.cap-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+
+/* ---------- the cards ---------- */
+.card{position:absolute;top:0;left:0;width:1200px;height:630px;transform-origin:0 0;transform:scale(var(--s,.32));
+  background:var(--bg);color:var(--fg-c);font-family:"DM Sans",sans-serif;overflow:hidden;display:flex;flex-direction:column}
+.card *{box-sizing:border-box}
+.pad{padding:64px 72px;flex:1;display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:2}
+.row{display:flex;flex-direction:row;align-items:center;gap:18px}
+.pad.row{flex-direction:row}
+.between{justify-content:space-between}
+.col{display:flex;flex-direction:column}
+.h1{font-size:70px;line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:0;max-width:17ch}
+.h1.sm{font-size:56px}
+.h1.xl{font-size:92px;letter-spacing:-.045em}
+.sub{font-size:29px;line-height:1.34;color:var(--mut);margin:0;max-width:26ch;font-weight:400}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:20px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc)}
+.brandline{font-size:27px;font-weight:700;letter-spacing:-.02em}
+.url{font-family:"JetBrains Mono",monospace;font-size:21px;letter-spacing:.02em;color:var(--mut)}
+.chips{display:flex;gap:12px}
+.chip{font-family:"JetBrains Mono",monospace;font-size:18px;letter-spacing:.1em;text-transform:uppercase;padding:11px 18px;border-radius:999px;border:2px solid var(--edge);color:var(--fg-c)}
+.chip.fill{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.thumb{border-radius:12px;background:var(--thumb);position:relative;overflow:hidden;flex:none}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 60%)}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:52px;border-radius:14px;background:#ff0033;display:flex;align-items:center;justify-content:center}
+.play i{width:0;height:0;border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;display:block;margin-left:5px}
+.mark{flex:none}
+.stat{font-size:150px;font-weight:700;letter-spacing:-.05em;line-height:.86}
+.grid-bg{position:absolute;inset:0;z-index:1}
+
+.foot{margin-top:64px;border-top:1px solid var(--line);padding-top:28px;color:var(--fg-3);font-size:13.5px;line-height:1.7;max-width:78ch}
+code.k{font-family:"JetBrains Mono",monospace;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;color:var(--fg)}
+pre.snippet{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.7;color:var(--fg-2)}
+@media (prefers-reduced-motion:no-preference){figure.spec .frame{transition:box-shadow .2s ease,border-color .2s ease}}
+figure.spec:hover .frame{border-color:color-mix(in oklab,var(--accent) 50%,var(--line))}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <p class="kicker">Social &amp; search cards · metacreator.dev</p>
+  <h1 class="title">112 ways to draw a tool page</h1>
+  <p class="lede">Every one of these is a 1200&nbsp;×&nbsp;630 open-graph card, rendered live at full size and scaled down — so what you see is exactly what a timeline sees. Families 01–20 draw one tool, the <b>YouTube Thumbnail Downloader</b>, twenty ways in five colourways each. Family 21 is the house style: the centred browser frame on the site's own dark ground, shown once for each of the twelve platforms registered in <code class="k">config/site.ts</code>, each with a real tool and a sticker in that network's own primary colour.</p>
+  <div class="meta-row">
+    <span class="tag">1200 × 630 · 1.91:1</span>
+    <span class="tag">summary_large_image</span>
+    <span class="tag">Headline ≥ 56px</span>
+    <span class="tag">&lt; 300 KB PNG</span>
+    <span class="tag">Generated per tool</span>
+    <span class="tag">21 families · 12 platforms</span>
+  </div>
+
+  <div class="rules">
+    <div class="rule"><span class="num">SIZE</span><h3>1200 × 630, nothing else</h3><p>Facebook, LinkedIn, Slack and X all crop to 1.91:1. Anything else gets cropped by someone. Keep 60px of margin clear on every edge — X trims the sides, Slack trims the top.</p></div>
+    <div class="rule"><span class="num">TYPE</span><h3>One idea, ≥ 56px</h3><p>A card is read at 360px wide in a feed. That 70px headline becomes 21px. Two short lines beat one long one; never more than nine words.</p></div>
+    <div class="rule"><span class="num">TRUST</span><h3>Brand mark + domain</h3><p>The domain in the card is what people remember when they don't click. Same mark position on every card so the set reads as one publisher across a hundred shares.</p></div>
+    <div class="rule"><span class="num">HOOK</span><h3>Say the free part</h3><p>"Free · no sign-up" in a chip lifts click-through on utility pages more than any illustration. It answers the only objection a searcher has.</p></div>
+    <div class="rule"><span class="num">ALT</span><h3>Text lives outside the pixels</h3><p>Google reads <code class="k">og:image:alt</code> and the surrounding markup, not the image. Describe the tool there; treat the card as pure click-bait for humans.</p></div>
+    <div class="rule"><span class="num">SCALE</span><h3>One template, every tool</h3><p>These are drawn in HTML — the same layout Satori renders in <code class="k">opengraph-image.tsx</code>. Name, tagline, platform and accent come from the tool record.</p></div>
+  </div>
+</header>
+
+<div class="controls">
+  <input type="search" id="q" placeholder="Filter — try &quot;terminal&quot;, &quot;ink&quot;, &quot;twitch&quot;, &quot;centred&quot;" aria-label="Filter styles">
+  <div class="seg" role="group" aria-label="Card size">
+    <button id="b-gallery" aria-pressed="true">Gallery</button>
+    <button id="b-focus" aria-pressed="false">Large</button>
+    <button id="b-export" aria-pressed="false">Export 1:1</button>
+  </div>
+  <span class="count" id="count"></span>
+</div>
+
+<main id="out"></main>
+
+<div class="foot">
+  <p><b>How to ship it.</b> Add <code class="k">apps/web/src/app/(site)/tools/[slug]/opengraph-image.tsx</code> next to the page, export <code class="k">size = &#123; width: 1200, height: 630 &#125;</code>, fetch the tool by slug and draw the family you picked. Satori supports flexbox, absolute positioning and linear-gradients — every card here stays inside that subset except the blur in <i>Glass</i> (bake it as a gradient instead) and CSS grid (use flex wrap).</p>
+  <pre class="snippet">export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+
+export default async function Image({ params }: { params: { slug: string } }) {
+  const tool = await getTool(params.slug);          // name, tagline, platform, tier
+  return new ImageResponse(&lt;ToolCard tool={tool} /&gt;, size);   // one family, 60+ cards
+}</pre>
+  <p>Then point the metadata at it — <code class="k">openGraph.images</code> and <code class="k">twitter.card = "summary_large_image"</code> — and always send <code class="k">og:image:alt</code> with the tool's real description. Re-scrape once with the Facebook Sharing Debugger and X's Card Validator; both cache a bad first fetch for days.</p>
+</div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ data */
+const TOOL = {
+  name: "YouTube Thumbnail Downloader",
+  short: "Thumbnail Downloader",
+  head: "Download any YouTube thumbnail in HD",
+  head2: "Every thumbnail size.<br>One paste.",
+  sub: "Paste a link, get all five sizes — JPG and WebP.",
+  brand: "MetaCreator.dev",
+  url: "metacreator.dev/tools/youtube-thumbnail-downloader",
+  urlShort: "metacreator.dev",
+  sizes: ["1280×720","640×480","480×360","320×180","120×90"],
+};
+
+const THEMES = {
+  ink:{label:"Ink",note:"Deep navy holds its own against white and dark feeds alike — the safest default of the set.",
+    bg:"linear-gradient(135deg,#0d1017 0%,#151a26 55%,#1d2440 100%)",fg:"#f4f6fb",mut:"#98a2b8",acc:"#7d9bff",onAcc:"#0d1017",edge:"rgba(244,246,251,.28)",thumb:"linear-gradient(135deg,#26304a,#3b4a72)"},
+  cobalt:{label:"Cobalt",note:"Full-bleed brand blue. Loudest in a feed of white cards; owns the colour before a competitor does.",
+    bg:"linear-gradient(140deg,#1a35c9 0%,#2f56e8 60%,#5b7bff 100%)",fg:"#ffffff",mut:"rgba(255,255,255,.78)",acc:"#ffd166",onAcc:"#1a2350",edge:"rgba(255,255,255,.42)",thumb:"linear-gradient(135deg,#0f1f7a,#3f63f0)"},
+  paper:{label:"Paper",note:"Light card for light timelines — reads as documentation, which suits high-intent search traffic.",
+    bg:"linear-gradient(180deg,#ffffff 0%,#eef1f8 100%)",fg:"#101420",mut:"#5b6478",acc:"#2f56e8",onAcc:"#ffffff",edge:"#cdd4e6",thumb:"linear-gradient(135deg,#dbe2f5,#b9c6ea)"},
+  signal:{label:"Signal",note:"Emerald on near-black says 'live and working'. Best on calculators and anything that returns a result.",
+    bg:"radial-gradient(1000px 600px at 85% 0%,#123c31 0%,#0b0f14 60%)",fg:"#eefcf6",mut:"#8fb3a8",acc:"#3ed7a8",onAcc:"#06120e",edge:"rgba(62,215,168,.42)",thumb:"linear-gradient(135deg,#12352c,#1d6b55)"},
+  ember:{label:"Ember",note:"Warm coral is the one card in the row that isn't blue — use it for the tools you most want clicked.",
+    bg:"linear-gradient(135deg,#1b1013 0%,#2a1418 55%,#3b1a1c 100%)",fg:"#fff2ee",mut:"#c2a09a",acc:"#ff8467",onAcc:"#241012",edge:"rgba(255,132,103,.45)",thumb:"linear-gradient(135deg,#3d1f1f,#7a3327)"},
+  tube:{label:"Tube",note:"YouTube's own black and red. Instant category recognition on YouTube-specific tools — never use it site-wide.",
+    bg:"#0b0b0c",fg:"#f7f7f8",mut:"#9b9ba3",acc:"#ff0033",onAcc:"#ffffff",edge:"rgba(255,255,255,.24)",thumb:"linear-gradient(135deg,#2a1116,#5c1520)"},
+  swiss:{label:"Swiss",note:"White ground, one red rule, ruthless margins. Screenshots beautifully into decks and newsletters.",
+    bg:"#ffffff",fg:"#0a0a0a",mut:"#6b6b6b",acc:"#e8352a",onAcc:"#ffffff",edge:"#111111",thumb:"linear-gradient(135deg,#e9e9e9,#c9c9c9)"},
+  brutal:{label:"Brutal",note:"Acid yellow with hard black edges. Highest stop-rate on X and Reddit; deliberately not for enterprise pages.",
+    bg:"#ffe600",fg:"#111111",mut:"#3d3a12",acc:"#111111",onAcc:"#ffe600",edge:"#111111",thumb:"linear-gradient(135deg,#111,#3a3a2a)"},
+  aurora:{label:"Aurora",note:"Violet-to-teal gradient. Reads modern and product-led; keep type white and heavy or it dissolves.",
+    bg:"linear-gradient(120deg,#3b1e8f 0%,#2f56e8 45%,#12a594 100%)",fg:"#ffffff",mut:"rgba(255,255,255,.8)",acc:"#c9f5e9",onAcc:"#16304a",edge:"rgba(255,255,255,.4)",thumb:"linear-gradient(135deg,#26146b,#1d7ea0)"},
+  blueprint:{label:"Blueprint",note:"Technical drawing on deep teal. Signals precision — good for converters, counters and anything with specs.",
+    bg:"#07253a",fg:"#dff3ff",mut:"#84b3cc",acc:"#48d6ff",onAcc:"#04212f",edge:"rgba(72,214,255,.45)",thumb:"linear-gradient(135deg,#0b3b58,#12608a)"},
+  noir:{label:"Noir",note:"Neutral near-black, no accent at all. Quiet authority; lets the mark and the words do everything.",
+    bg:"#0e0e10",fg:"#f2f2f4",mut:"#8b8b93",acc:"#f2f2f4",onAcc:"#0e0e10",edge:"rgba(242,242,244,.3)",thumb:"linear-gradient(135deg,#212126,#3a3a42)"},
+  mist:{label:"Mist",note:"Cool light grey with a soft glow — the gentlest of the light cards, safest for long headlines.",
+    bg:"radial-gradient(900px 500px at 15% 10%,#ffffff 0%,#e6ebf6 55%,#d7deee 100%)",fg:"#141a28",mut:"#5a6379",acc:"#2f56e8",onAcc:"#ffffff",edge:"#c3ccdf",thumb:"linear-gradient(135deg,#cfd8ee,#a9b7dd)"},
+};
+
+const MARK_PATHS = {
+  rod:"M5.38 29.23L17.54 14.59Q17.67 13.68 16.76 13.81L2.12 25.97Q1.57 29.78 5.38 29.23Z",
+  sparks:["M20.05 4.1Q21.04 10.11 27.05 11.1Q21.04 12.09 20.05 18.1Q19.06 12.09 13.05 11.1Q19.06 10.11 20.05 4.1Z",
+    "M26.05 14.8Q26.59 18.06 29.85 18.6Q26.59 19.14 26.05 22.4Q25.51 19.14 22.25 18.6Q25.51 18.06 26.05 14.8Z",
+    "M24.05 2.8Q24.45 5.2 26.85 5.6Q24.45 6 24.05 8.4Q23.65 6 21.25 5.6Q23.65 5.2 24.05 2.8Z",
+    "M13.35 4.7Q13.69 6.76 15.75 7.1Q13.69 7.44 13.35 9.5Q13.01 7.44 10.95 7.1Q13.01 6.76 13.35 4.7Z"]
+};
+/* The real MetaCreator mark — the tapered wand and its four sparks, the exact
+   geometry generated by apps/web/scripts/brand-mark.mjs, with the shipped palette. */
+const MARK = (s)=>`<svg class="mark" width="${s}" height="${s}" viewBox="0 0 32 32" role="img" aria-label="MetaCreator.Dev">
+<defs>
+ <linearGradient id="mcrod" x1="3.75" y1="27.6" x2="17.15" y2="14.2" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3d80f7"/><stop offset="1" stop-color="#50e2a8"/></linearGradient>
+ <linearGradient id="mcspk" x1="13" y1="4" x2="30" y2="22" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8df3c6"/><stop offset="1" stop-color="#13c990"/></linearGradient>
+</defs>
+<path d="${MARK_PATHS.rod}" fill="url(#mcrod)"/>
+${MARK_PATHS.sparks.map(d=>`<path d="${d}" fill="url(#mcspk)"/>`).join("")}</svg>`;
+
+const brandRow = (t,size=46)=>`<div class="row">${MARK(size)}<div class="brandline">${TOOL.brand}</div></div>`;
+const chip = (t,txt,fill)=>`<span class="chip${fill?" fill":""}">${txt}</span>`;
+const chipset = (t,fillFirst=true)=>`<div class="chips">${chip(t,"Free",fillFirst)}${chip(t,"No sign-up")}${chip(t,"5 sizes")}</div>`;
+const thumbBox = (t,w,h,play=true,r=12)=>`<div class="thumb" style="width:${w}px;height:${h}px;background:${t.thumb};border-radius:${r}px">${play?'<div class="play"><i></i></div>':""}</div>`;
+
+/* ------------------------------------------------------- 20 card layouts */
+const L = {};
+
+L.statement = (t)=>`<div class="pad">
+  ${brandRow(t)}
+  <div class="col" style="gap:26px">
+    <div class="eyebrow">Free tool · YouTube</div>
+    <h1 class="h1">${TOOL.head}</h1>
+    <p class="sub">${TOOL.sub}</p>
+  </div>
+  <div class="row between">${chipset(t)}<div class="url">${TOOL.urlShort}</div></div>
+</div>`;
+
+L.split = (t)=>`<div class="pad row between" style="align-items:stretch;gap:56px">
+  <div class="col between" style="flex:1;min-width:0">
+    ${brandRow(t,42)}
+    <div class="col" style="gap:20px"><div class="eyebrow">YouTube</div><h1 class="h1 sm">${TOOL.name}</h1><p class="sub" style="font-size:26px">${TOOL.sub}</p></div>
+    <div class="url">${TOOL.urlShort}</div>
+  </div>
+  <div class="col" style="gap:16px;justify-content:center;flex:none">
+    ${thumbBox(t,440,248)}
+    <div class="row" style="gap:14px">${thumbBox(t,140,79,false)}${thumbBox(t,140,79,false)}${thumbBox(t,140,79,false)}</div>
+  </div>
+</div>`;
+
+L.poster = (t)=>`<div class="pad" style="align-items:center;justify-content:center;text-align:center;gap:34px">
+  <div class="eyebrow">${TOOL.urlShort}</div>
+  <div style="width:140px;height:5px;flex:none;background:${t.acc}"></div>
+  <h1 class="h1 xl" style="max-width:20ch">${TOOL.head2}</h1>
+  <div style="width:140px;height:5px;flex:none;background:${t.acc}"></div>
+  <p class="sub" style="max-width:34ch;text-align:center">${TOOL.name} — free, no account</p>
+</div>`;
+
+L.browser = (t)=>`<div class="pad" style="padding:56px 72px">
+  <div class="row between">${brandRow(t,40)}<div class="url">Free · no sign-up</div></div>
+  <div style="flex:1;margin-top:28px;border-radius:16px 16px 0 0;border:2px solid ${t.edge};border-bottom:0;overflow:hidden;display:flex;flex-direction:column">
+    <div class="row" style="gap:10px;padding:16px 20px;border-bottom:2px solid ${t.edge}">
+      <span style="width:14px;height:14px;border-radius:50%;background:${t.mut}"></span><span style="width:14px;height:14px;border-radius:50%;background:${t.mut}"></span><span style="width:14px;height:14px;border-radius:50%;background:${t.mut}"></span>
+      <div class="url" style="margin-left:16px;font-size:18px">${TOOL.url}</div>
+    </div>
+    <div class="col" style="padding:38px 40px;gap:18px">
+      <h1 class="h1 sm" style="font-size:52px">${TOOL.name}</h1>
+      <p class="sub" style="font-size:25px">${TOOL.sub}</p>
+      <div class="row" style="gap:14px;margin-top:6px">${thumbBox(t,220,124)}${thumbBox(t,160,90,false)}${thumbBox(t,110,62,false)}</div>
+    </div>
+  </div>
+</div>`;
+
+L.terminal = (t)=>`<div class="pad" style="font-family:'JetBrains Mono',monospace">
+  <div class="row between">${brandRow(t,40)}<div class="url" style="font-size:19px">${TOOL.urlShort}</div></div>
+  <div class="col" style="gap:18px;font-family:'JetBrains Mono',monospace">
+    <div style="font-size:24px;color:${t.mut}">$ paste youtu.be/dQw4w9WgXcQ</div>
+    <h1 class="h1 sm" style="font-family:'JetBrains Mono',monospace;font-size:46px;letter-spacing:-.02em">${TOOL.name}</h1>
+    <div class="col" style="gap:10px;font-size:23px;color:${t.acc}">
+      <div>✓ maxres 1280×720 &nbsp;·&nbsp; jpg + webp</div>
+      <div>✓ hq 480×360 &nbsp;·&nbsp; mq 320×180 &nbsp;·&nbsp; sd 640×480</div>
+    </div>
+  </div>
+  <div class="row between"><div class="url" style="font-size:20px">// free · no account · no watermark</div><div class="url" style="font-size:20px;color:${t.acc}">▍</div></div>
+</div>`;
+
+L.input = (t)=>`<div class="pad" style="gap:30px">
+  <div class="row between">${brandRow(t,42)}<div class="url">Free tool</div></div>
+  <h1 class="h1 sm" style="font-size:50px">${TOOL.head}</h1>
+  <div class="row" style="gap:18px">
+    <div class="row" style="flex:1;border:2px solid ${t.edge};border-radius:16px;padding:24px 26px;gap:14px;min-width:0">
+      <span class="url" style="font-size:24px;color:${t.mut};white-space:nowrap;overflow:hidden">https://youtube.com/watch?v=dQw4w9WgXcQ</span>
+    </div>
+    <div style="background:${t.acc};color:${t.onAcc};border-radius:16px;padding:26px 34px;font-size:26px;font-weight:700;white-space:nowrap">Get thumbnails</div>
+  </div>
+  <div class="row between">${chipset(t,false)}<div class="url">${TOOL.urlShort}</div></div>
+</div>`;
+
+L.flow = (t)=>`<div class="pad" style="gap:34px">
+  ${brandRow(t,42)}
+  <div class="row" style="gap:32px;align-items:center">
+    <div class="col" style="gap:12px;flex:none">
+      <div class="eyebrow" style="font-size:16px">Paste</div>
+      <div style="border:2px dashed ${t.edge};border-radius:14px;padding:22px 24px" class="url">youtu.be/dQw4w…</div>
+    </div>
+    <div style="font-size:58px;color:${t.acc};font-weight:700">→</div>
+    <div class="col" style="gap:12px">
+      <div class="eyebrow" style="font-size:16px">Get all five</div>
+      <div class="row" style="gap:12px">${thumbBox(t,200,113)}${thumbBox(t,140,79,false)}${thumbBox(t,110,62,false)}${thumbBox(t,80,45,false)}</div>
+    </div>
+  </div>
+  <div class="row between"><h1 class="h1" style="font-size:42px;max-width:none">${TOOL.name}</h1><div class="url">${TOOL.urlShort}</div></div>
+</div>`;
+
+L.specs = (t)=>`<div class="pad" style="gap:28px">
+  <div class="row between">${brandRow(t,42)}<div class="url">${TOOL.urlShort}</div></div>
+  <h1 class="h1 sm" style="font-size:52px">${TOOL.name}</h1>
+  <div class="row" style="gap:14px;flex-wrap:wrap">
+    ${TOOL.sizes.map((s,i)=>`<div style="border:2px solid ${i===0?t.acc:t.edge};color:${i===0?t.acc:"inherit"};border-radius:12px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:26px">${s}</div>`).join("")}
+  </div>
+  <p class="sub" style="font-size:26px;max-width:38ch">Five resolutions, two formats, one paste. Free and no sign-up.</p>
+</div>`;
+
+L.bignum = (t)=>`<div class="pad row between" style="align-items:center;gap:48px">
+  <div class="col" style="gap:14px;flex:none">
+    <div class="stat" style="color:${t.acc}">5</div>
+    <div class="eyebrow" style="letter-spacing:.14em">sizes · 2 formats</div>
+  </div>
+  <div class="col between" style="flex:1;align-self:stretch;padding:8px 0">
+    ${brandRow(t,40)}
+    <h1 class="h1 sm" style="font-size:52px">${TOOL.head}</h1>
+    <div class="url">${TOOL.url}</div>
+  </div>
+</div>`;
+
+L.steps = (t)=>`<div class="pad" style="gap:34px">
+  <div class="row between"><h1 class="h1 sm" style="font-size:46px;max-width:none">${TOOL.name}</h1>${MARK(46)}</div>
+  <div class="row" style="gap:22px;align-items:stretch">
+    ${["Paste the video link","We read every size","Download JPG or WebP"].map((s,i)=>`
+      <div class="col" style="flex:1;gap:16px;border-top:4px solid ${i===0?t.acc:t.edge};padding-top:22px">
+        <div class="eyebrow" style="font-size:22px;color:${t.acc}">0${i+1}</div>
+        <div style="font-size:28px;line-height:1.25;font-weight:500">${s}</div>
+      </div>`).join("")}
+  </div>
+  <div class="row between">${chipset(t)}<div class="url">${TOOL.urlShort}</div></div>
+</div>`;
+
+L.device = (t)=>`<div class="pad row between" style="gap:48px;align-items:center">
+  <div class="col between" style="flex:1;align-self:stretch">
+    ${brandRow(t,42)}
+    <div class="col" style="gap:18px"><h1 class="h1 sm" style="font-size:50px">${TOOL.head2}</h1><p class="sub" style="font-size:25px">${TOOL.sub}</p></div>
+    <div class="url">${TOOL.urlShort}</div>
+  </div>
+  <div style="flex:none;width:300px;height:520px;border:8px solid ${t.edge};border-radius:44px;padding:18px;display:flex;flex-direction:column;gap:14px;overflow:hidden">
+    <div style="height:8px;width:90px;border-radius:99px;background:${t.mut};align-self:center;flex:none"></div>
+    <div style="border:2px solid ${t.edge};border-radius:12px;padding:14px;font-size:16px" class="url">youtu.be/dQw4…</div>
+    ${thumbBox(t,250,140)}
+    ${thumbBox(t,250,90,false)}
+    <div style="background:${t.acc};color:${t.onAcc};border-radius:12px;padding:16px;text-align:center;font-size:20px;font-weight:700">Download all</div>
+  </div>
+</div>`;
+
+L.editorial = (t)=>`<div class="pad" style="gap:26px">
+  <div class="row between" style="border-bottom:2px solid ${t.edge};padding-bottom:20px">
+    <div class="brandline">${TOOL.brand}</div><div class="url">Tools / YouTube / Media</div>
+  </div>
+  <div class="row" style="gap:48px;align-items:flex-start;flex:1">
+    <div class="col" style="flex:1.35;gap:22px">
+      <div class="eyebrow">The utility</div>
+      <h1 class="h1" style="font-size:60px">${TOOL.head}</h1>
+      <p class="sub" style="font-size:25px;max-width:30ch">${TOOL.sub}</p>
+    </div>
+    <div class="col" style="flex:1;gap:16px;border-left:2px solid ${t.edge};padding-left:32px">
+      ${TOOL.sizes.slice(0,4).map(s=>`<div class="row between" style="font-family:'JetBrains Mono',monospace;font-size:22px;color:${t.mut}"><span>${s}</span><span style="color:${t.acc}">✓</span></div>`).join("")}
+    </div>
+  </div>
+  <div class="url">${TOOL.url}</div>
+</div>`;
+
+L.checklist = (t)=>`<div class="pad" style="gap:30px">
+  <div class="row between">${brandRow(t,42)}<div class="chip fill" style="align-self:flex-start">Free</div></div>
+  <h1 class="h1 sm" style="font-size:54px">${TOOL.name}</h1>
+  <div class="col" style="gap:18px">
+    ${["All 5 resolutions, up to 1280×720","JPG and WebP, no watermark","Works with Shorts, embeds and share links"].map(s=>`
+      <div class="row" style="gap:16px"><span style="width:36px;height:36px;border-radius:50%;background:${t.acc};color:${t.onAcc};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex:none">✓</span><span style="font-size:27px">${s}</span></div>`).join("")}
+  </div>
+  <div class="url">${TOOL.url}</div>
+</div>`;
+
+L.platforms = (t)=>`<div class="pad" style="gap:28px">
+  ${brandRow(t,44)}
+  <h1 class="h1" style="font-size:62px">${TOOL.head}</h1>
+  <div class="row" style="gap:18px;flex-wrap:wrap">
+    ${["YouTube","Shorts","Embeds","Share links","Video IDs"].map((p,i)=>`<div style="border-radius:999px;padding:14px 24px;font-size:23px;border:2px solid ${t.edge};${i===0?`background:${t.acc};color:${t.onAcc};border-color:${t.acc};font-weight:700`:""}">${p}</div>`).join("")}
+  </div>
+  <div class="row between"><p class="sub" style="font-size:24px;max-width:30ch">${TOOL.sub}</p><div class="url">${TOOL.urlShort}</div></div>
+</div>`;
+
+L.sticker = (t)=>`<div class="pad" style="gap:24px;position:relative">
+  <div class="row between">${brandRow(t,44)}<div class="url">${TOOL.urlShort}</div></div>
+  <h1 class="h1" style="font-size:66px;max-width:15ch">${TOOL.head2}</h1>
+  <div class="row" style="gap:16px;align-items:flex-end">
+    <div style="transform:rotate(-4deg);background:${t.acc};color:${t.onAcc};font-weight:700;font-size:26px;padding:16px 26px;border-radius:12px">100% free</div>
+    <div style="transform:rotate(3deg);border:3px solid ${t.edge};font-size:26px;padding:16px 26px;border-radius:12px">no sign-up</div>
+    <div style="transform:rotate(-2deg);border:3px solid ${t.edge};font-size:26px;padding:16px 26px;border-radius:12px">1280×720</div>
+  </div>
+  <div class="row between"><div class="sub" style="font-size:24px">${TOOL.name}</div></div>
+</div>`;
+
+L.blueprintCard = (t)=>`<div class="grid-bg" style="background-image:linear-gradient(${t.edge} 1px,transparent 1px),linear-gradient(90deg,${t.edge} 1px,transparent 1px);background-size:60px 60px;opacity:.35"></div>
+<div class="pad" style="gap:26px">
+  <div class="row between">${brandRow(t,42)}<div class="url">fig. 01 · media</div></div>
+  <div class="row" style="gap:40px;align-items:center;flex:1">
+    <div class="col" style="gap:16px;flex:1">
+      <h1 class="h1 sm" style="font-size:48px">${TOOL.name}</h1>
+      <p class="sub" style="font-size:24px;max-width:24ch">${TOOL.sub}</p>
+    </div>
+    <div class="col" style="gap:10px;flex:none;align-items:center">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:${t.acc}">1280 px</div>
+      <div class="row" style="gap:12px;align-items:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:${t.acc};writing-mode:vertical-rl">720</div>
+        <div style="width:360px;height:203px;border:2px dashed ${t.acc};border-radius:6px;display:flex;align-items:center;justify-content:center">${thumbBox(t,330,178)}</div>
+      </div>
+    </div>
+  </div>
+  <div class="url">${TOOL.url}</div>
+</div>`;
+
+L.glass = (t)=>`<div class="grid-bg" style="background:radial-gradient(420px 420px at 12% 20%,${t.acc}66,transparent 70%),radial-gradient(520px 520px at 88% 85%,${t.acc}33,transparent 70%)"></div>
+<div class="pad" style="padding:74px">
+  <div style="flex:1;border:2px solid ${t.edge};border-radius:26px;padding:48px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.04))">
+    ${brandRow(t,44)}
+    <div class="col" style="gap:18px"><h1 class="h1 sm" style="font-size:54px">${TOOL.head}</h1><p class="sub" style="font-size:26px">${TOOL.sub}</p></div>
+    <div class="row between">${chipset(t)}<div class="url">${TOOL.urlShort}</div></div>
+  </div>
+</div>`;
+
+L.proof = (t)=>`<div class="pad" style="gap:30px">
+  <div class="row between">${brandRow(t,42)}<div class="url">${TOOL.urlShort}</div></div>
+  <div class="row" style="gap:14px;align-items:center">
+    <div style="font-size:34px;color:${t.acc};letter-spacing:4px">★★★★★</div>
+    <div class="url" style="font-size:23px">used 240,000+ times this year</div>
+  </div>
+  <h1 class="h1" style="font-size:60px">${TOOL.head}</h1>
+  <div class="row between"><p class="sub" style="font-size:25px;max-width:28ch">${TOOL.sub}</p><div class="chip fill" style="font-size:22px">Free forever</div></div>
+</div>`;
+
+L.duotone = (t)=>`<div class="grid-bg" style="background:${t.thumb}"></div>
+<div class="grid-bg" style="background:linear-gradient(0deg,rgba(0,0,0,.86) 0%,rgba(0,0,0,.45) 45%,rgba(0,0,0,.15) 100%)"></div>
+<div class="pad" style="justify-content:flex-end;gap:22px;color:#fff">
+  <div class="row between" style="position:absolute;top:56px;left:72px;right:72px">${MARK(44)}<div class="url" style="color:rgba(255,255,255,.85)">${TOOL.urlShort}</div></div>
+  <div class="eyebrow" style="color:${t.acc}">Free tool</div>
+  <h1 class="h1" style="font-size:64px;color:#fff">${TOOL.head}</h1>
+  <p class="sub" style="font-size:25px;color:rgba(255,255,255,.82)">${TOOL.sub}</p>
+</div>`;
+
+L.markFirst = (t)=>`<div class="pad" style="align-items:center;justify-content:center;text-align:center;gap:30px">
+  ${MARK(120)}
+  <h1 class="h1" style="font-size:60px;max-width:20ch;text-align:center">${TOOL.name}</h1>
+  <div style="width:80px;height:2px;flex:none;background:${t.edge}"></div>
+  <div class="url" style="font-size:24px">${TOOL.url}</div>
+</div>`;
+
+
+/* ------------------------------------- the site's own dark theme, verbatim */
+THEMES.site = {label:"Site dark",note:"The signed-in app's own ground — ink 1000→900 with the cobalt/emerald mark. The house style.",
+  bg:"linear-gradient(135deg,#0f131c 0%,#161b27 55%,#1b2130 100%)",fg:"#f4f6fb",mut:"#98a2b8",acc:"#3d80f7",onAcc:"#0f131c",
+  edge:"rgba(244,246,251,.16)",thumb:"linear-gradient(135deg,#1e2740,#2c3a5e)"};
+
+/* Twelve platforms, in the order config/site.ts registers them. `c` is the
+   network's own primary colour — the only place a foreign brand colour is
+   allowed on our cards, and only ever on the sticker. */
+const PLATFORMS = [
+  {key:"youtube",label:"YouTube",c:"#ff0033",on:"#ffffff",slug:"youtube-thumbnail-downloader",
+   name:"YouTube Thumbnail Downloader",tag:"Every thumbnail size from any video — in one paste.",shot:"video"},
+  {key:"instagram",label:"Instagram",c:"#e1306c",on:"#ffffff",slug:"instagram-bio-preview",
+   name:"Instagram Bio Preview",tag:"What your bio really looks like in the app — including what gets clipped.",shot:"profile"},
+  {key:"tiktok",label:"TikTok",c:"#fe2c55",on:"#ffffff",slug:"tiktok-money-calculator",
+   name:"TikTok Money Calculator",tag:"What Creator Rewards really pays — and what a brand deal is worth instead.",shot:"figures"},
+  {key:"x",label:"X",c:"#e7e9ea",on:"#0f1419",light:true,slug:"x-thread-splitter",
+   name:"X Thread Splitter",tag:"Turn long writing into a thread that breaks in the right places.",shot:"thread"},
+  {key:"facebook",label:"Facebook",c:"#1877f2",on:"#ffffff",slug:"facebook-post-preview",
+   name:"Facebook Post Preview",tag:"Where the feed cuts your post — and it is earlier with a photo attached.",shot:"post"},
+  {key:"linkedin",label:"LinkedIn",c:"#0a66c2",on:"#ffffff",slug:"linkedin-post-preview",
+   name:"LinkedIn Post Preview",tag:"See exactly where “…see more” cuts your post.",shot:"post"},
+  {key:"threads",label:"Threads",c:"#f5f5f5",on:"#101010",light:true,slug:"threads-post-preview",
+   name:"Threads Post Preview",tag:"Your Threads post as the feed draws it, collapse and all.",shot:"thread"},
+  {key:"pinterest",label:"Pinterest",c:"#e60023",on:"#ffffff",slug:"pinterest-pin-preview",
+   name:"Pinterest Pin Preview",tag:"Your Pin in the feed tile and the closeup — they show different things.",shot:"pin"},
+  {key:"bluesky",label:"Bluesky",c:"#0085ff",on:"#ffffff",slug:"bluesky-image-downloader",
+   name:"Bluesky Image Downloader",tag:"All four images, the alt text, and the file exactly as uploaded.",shot:"gallery"},
+  {key:"twitch",label:"Twitch",c:"#9146ff",on:"#ffffff",slug:"twitch-image-downloader",
+   name:"Twitch Image Downloader",tag:"Profile pictures, clip stills and VOD thumbnails — every size checked.",shot:"video"},
+  {key:"spotify",label:"Spotify",c:"#1db954",on:"#08210f",slug:"spotify-cover-art-downloader",
+   name:"Spotify Cover Art Downloader",tag:"Album, artist and playlist art at 640 — and why there is no bigger one.",shot:"square"},
+  {key:"apple-podcasts",label:"Apple Podcasts",c:"#9933cc",on:"#ffffff",slug:"apple-podcasts-artwork-downloader",
+   name:"Apple Podcasts Artwork Downloader",tag:"Cover art at 3000×3000 — the size it was submitted, not the 600 on the page.",shot:"square"},
+];
+
+/* The mock result inside the frame. Each platform gets the shape its own
+   result actually has, tinted with that network's colour — so the card is a
+   picture of the answer, not a generic rectangle. */
+const SHOT = (p)=>{
+  const g = `linear-gradient(135deg,${p.c}2e,${p.c}12)`;
+  const box = (w,h,r=10)=>`<div style="width:${w}px;height:${h}px;border-radius:${r}px;background:${g};border:1px solid ${p.c}55;flex:none"></div>`;
+  const bar = (w)=>`<div style="width:${w}px;height:12px;border-radius:99px;background:${p.c}44;flex:none"></div>`;
+  switch(p.shot){
+    case "video":   return `<div class="row" style="gap:14px;justify-content:center">${box(200,113)}${box(120,68)}${box(80,45)}</div>`;
+    case "square":  return `<div class="row" style="gap:14px;justify-content:center">${box(120,120,14)}${box(96,96,12)}${box(72,72,10)}</div>`;
+    case "profile": return `<div class="row" style="gap:16px;justify-content:center"><div style="width:96px;height:96px;border-radius:50%;background:${g};border:1px solid ${p.c}55;flex:none"></div><div class="col" style="gap:10px">${bar(280)}${bar(220)}${bar(160)}</div></div>`;
+    case "thread":  return `<div class="row" style="gap:14px;justify-content:center">${box(150,96)}${box(150,96)}${box(150,96)}</div>`;
+    case "post":    return `<div class="col" style="gap:10px;align-items:center">${bar(420)}${bar(360)}<div style="width:300px;height:12px;border-radius:99px;background:${p.c};flex:none"></div></div>`;
+    case "pin":     return `<div class="row" style="gap:14px;justify-content:center">${box(100,150,14)}${box(100,120,14)}${box(100,96,14)}</div>`;
+    case "figures": return `<div class="row" style="gap:26px;justify-content:center;font-family:'JetBrains Mono',monospace">
+      <div class="col" style="gap:6px;align-items:center"><span style="font-size:44px;font-weight:700;color:${p.c}">$412</span><span style="font-size:16px;color:var(--mut);letter-spacing:.12em">REWARDS</span></div>
+      <div class="col" style="gap:6px;align-items:center"><span style="font-size:44px;font-weight:700">$3,100</span><span style="font-size:16px;color:var(--mut);letter-spacing:.12em">BRAND DEAL</span></div></div>`;
+    default:        return `<div class="row" style="gap:14px;justify-content:center">${box(140,90)}${box(140,90)}${box(140,90)}</div>`;
+  }
+};
+
+/* Family 21 — the centred browser frame with platform stickers underneath. */
+L.centerBrowser = (t,p)=>`<div class="grid-bg" style="background:radial-gradient(820px 460px at 50% 0%,${p.c}22,transparent 70%)"></div>
+<div class="pad" style="padding:0;gap:0;align-items:stretch">
+  <div class="row" style="gap:11px;padding:22px 34px;border-bottom:2px solid ${t.edge};flex:none;background:rgba(255,255,255,.04)">
+    <span style="width:14px;height:14px;border-radius:50%;background:${t.mut};opacity:.5;flex:none"></span>
+    <span style="width:14px;height:14px;border-radius:50%;background:${t.mut};opacity:.5;flex:none"></span>
+    <span style="width:14px;height:14px;border-radius:50%;background:${t.mut};opacity:.5;flex:none"></span>
+    <div style="flex:1;display:flex;justify-content:center"><div class="url" style="font-size:19px;background:rgba(255,255,255,.07);border-radius:99px;padding:9px 26px">metacreator.dev/tools/${p.slug}</div></div>
+    <span style="width:64px;flex:none"></span>
+  </div>
+  <div class="col" style="flex:1;align-items:center;justify-content:center;text-align:center;gap:18px;padding:36px 48px 132px">
+    <div class="row" style="gap:13px">${MARK(44)}<span class="brandline" style="font-size:24px">${TOOL.brand}</span></div>
+    <h1 class="h1" style="font-size:54px;max-width:none;white-space:nowrap;text-align:center">${p.name}</h1>
+    <p class="sub" style="font-size:25px;max-width:none;white-space:nowrap;text-align:center">${p.tag}</p>
+    <div style="margin-top:6px">${SHOT(p)}</div>
+  </div>
+  <div class="row" style="position:absolute;left:0;right:0;bottom:44px;gap:16px;justify-content:center;align-items:flex-end;z-index:3">
+    <div style="transform:rotate(-4deg);background:${p.c};color:${p.on};font-weight:700;font-size:26px;padding:16px 26px;border-radius:12px">free</div>
+    <div style="transform:rotate(-2deg);border:3px solid ${t.edge};background:${t.bg};font-size:26px;padding:16px 26px;border-radius:12px">no sign-up</div>
+    <div style="transform:rotate(5deg);border:3px solid ${t.edge};background:${t.bg};font-size:26px;padding:16px 26px;border-radius:12px">metacreator.dev</div>
+  </div>
+</div>`;
+
+/* ---------------------------------------------------- families & catalog */
+const FAMILIES = [
+  {key:"statement",name:"Statement",render:L.statement,best:"Best default",
+   why:"Mark top-left, one headline, chips and domain along the bottom. It survives every crop, reads at 300px wide, and the eye lands on the benefit before the brand — which is the right order for a stranger arriving from search.",
+   themes:["ink","cobalt","paper","tube","signal"]},
+  {key:"split",name:"Split preview",render:L.split,best:"Highest CTR",
+   why:"Copy on the left, a picture of the actual output on the right. Showing the result rather than describing it is the single biggest lift on utility pages — people share the card because it explains itself.",
+   themes:["ink","cobalt","mist","ember","tube"]},
+  {key:"poster",name:"Poster",render:L.poster,
+   why:"Centred type between two rules, no imagery. Cheap to generate for hundreds of tools and impossible to get wrong, but it competes on words alone — pair it with a very short headline.",
+   themes:["swiss","noir","cobalt","brutal","signal"]},
+  {key:"browser",name:"Browser frame",render:L.browser,
+   why:"The card shows the tool inside a browser chrome with the real URL in the bar. It doubles as free brand impression — the domain is legible even when the headline is skimmed.",
+   themes:["ink","paper","aurora","noir","mist"]},
+  {key:"terminal",name:"Terminal",render:L.terminal,
+   why:"Monospace, a prompt line, checkmarks. Aimed squarely at the developer and power-user segment that shares tools in Slack; it reads as 'no fluff, it just works'.",
+   themes:["noir","signal","ink","blueprint","tube"]},
+  {key:"input",name:"Paste bar",render:L.input,
+   why:"The hero is the input field itself with a real YouTube URL in it. The card teaches the interaction before the click, which lowers bounce — the landing page then matches the picture exactly.",
+   themes:["paper","ink","cobalt","mist","signal"]},
+  {key:"flow",name:"Input → output",render:L.flow,best:"Clearest promise",
+   why:"URL on the left, arrow, five thumbnails on the right. A one-glance explanation of the whole product. Works in any language and is the strongest performer for cold audiences on Facebook and LinkedIn.",
+   themes:["ink","paper","ember","aurora","brutal"]},
+  {key:"specs",name:"Spec chips",render:L.specs,
+   why:"Every output size as a monospace chip. Matches long-tail queries people actually type ('1280x720 youtube thumbnail'), so the card reinforces the exact phrase that won the click.",
+   themes:["blueprint","ink","paper","noir","signal"]},
+  {key:"bignum",name:"Big number",render:L.bignum,
+   why:"One number carries the whole value: five sizes. Numerals survive being scaled to a Slack unfurl thumbnail better than any sentence, and the shape is reusable across every tool with a countable output.",
+   themes:["cobalt","ember","noir","signal","brutal"]},
+  {key:"steps",name:"Three steps",render:L.steps,
+   why:"Numbered columns because the tool genuinely is a sequence. Sets the expectation that this takes ten seconds — the main objection on downloader pages is 'will this make me install something'.",
+   themes:["paper","ink","mist","aurora","swiss"]},
+  {key:"device",name:"Device",render:L.device,
+   why:"A phone frame showing the result. Most social traffic is mobile; a phone in the card is a shortcut for 'this works on your phone', which downloaders are routinely assumed not to.",
+   themes:["ink","cobalt","mist","ember","aurora"]},
+  {key:"editorial",name:"Editorial",render:L.editorial,
+   why:"Masthead rule, a two-column split, a checklist rail. Reads as reference material rather than promotion, which is the right register for the informational half of search intent.",
+   themes:["paper","swiss","ink","noir","mist"]},
+  {key:"checklist",name:"Checklist",render:L.checklist,
+   why:"Three ticked claims answering the three objections: completeness, quality, compatibility. Dense with the keywords a searcher scanned for, without looking keyword-stuffed.",
+   themes:["signal","paper","ink","cobalt","ember"]},
+  {key:"platforms",name:"Coverage pills",render:L.platforms,
+   why:"Pills for every link shape or platform supported. Directly answers 'does it work with Shorts?' — the highest-volume qualifier query on this tool — inside the card itself.",
+   themes:["ink","tube","paper","aurora","mist"]},
+  {key:"sticker",name:"Stickers",render:L.sticker,
+   why:"Rotated labels and a loud headline. Deliberately informal: it stops the scroll on X and Reddit, where a corporate card is invisible. Keep it for the top-of-funnel tools.",
+   themes:["brutal","ember","cobalt","tube","aurora"]},
+  {key:"blueprint",name:"Blueprint",render:L.blueprintCard,
+   why:"Dimension lines around the output, a technical grid behind. Signals precision and completeness, and gives converters, counters and calculators a family look distinct from the media tools.",
+   themes:["blueprint","ink","noir","paper","signal"]},
+  {key:"glass",name:"Glass panel",render:L.glass,
+   why:"A translucent card floating on a colour wash. The most 'product' of the set — good for the paid tiers and the homepage, where the impression matters more than the explanation.",
+   themes:["aurora","ink","cobalt","signal","ember"]},
+  {key:"proof",name:"Social proof",render:L.proof,best:"Best for retargeting",
+   why:"Stars and a usage count above the headline. Borrowed credibility is what converts a cold impression; only ship this variant with a number you can actually defend.",
+   themes:["ink","paper","signal","cobalt","noir"]},
+  {key:"duotone",name:"Duotone frame",render:L.duotone,
+   why:"A full-bleed image field with a bottom gradient and type over it. The closest thing here to a thumbnail-style card — it wins attention, but the copy must stay short to survive the crop.",
+   themes:["tube","ember","aurora","ink","blueprint"]},
+  {key:"markfirst",name:"Mark first",render:L.markFirst,
+   why:"Logo, name, domain, nothing else. Not a click magnet — it's the fallback and the OG card for pages that have no image of their own, and it builds recognition across a hundred quiet shares.",
+   themes:["noir","cobalt","swiss","ink","mist"]},
+  {key:"centerbrowser",name:"Centred browser",render:L.centerBrowser,best:"The house style",
+   why:"The tool centred inside a browser frame on the site's own dark ground, with the brand mark above the name and stickers underneath. One sticker carries the network's own primary colour, which is what makes a card recognisable as belonging to that platform's set before a single word is read — and the frame with the live URL in it means the domain travels with every share. Below: one card per registered platform, each showing a real tool and the shape of its actual result.",
+   platforms:PLATFORMS},
+];
+
+/* ------------------------------------------------------------- rendering */
+const out = document.getElementById("out");
+let n = 0;
+const html = FAMILIES.map((f,fi)=>{
+  const members = f.platforms
+    ? f.platforms.map(p=>({t:THEMES.site,label:p.label,note:`${p.name} — sticker in ${p.label}'s own primary, ${p.c}.`,render:tt=>f.render(tt,p),search:p.key+" "+p.name}))
+    : f.themes.map(tk=>({t:THEMES[tk],label:THEMES[tk].label,note:THEMES[tk].note,render:f.render,search:THEMES[tk].label}));
+  const cards = members.map(m=>{
+    const t = m.t; n++;
+    const id = String(n).padStart(3,"0");
+    const style = `--bg:${t.bg};--fg-c:${t.fg};--mut:${t.mut};--acc:${t.acc};--on-acc:${t.onAcc};--edge:${t.edge};--thumb:${t.thumb}`;
+    return `<figure class="spec" data-search="${(f.name+" "+f.key+" "+m.search+" "+id).toLowerCase()}">
+      <div class="frame"><div class="card" style="${style}">${m.render(t)}</div></div>
+      <figcaption><span class="id">${id}</span><span class="cap-body"><b>${m.label} ${f.name}</b><span class="note">${m.note}</span></span></figcaption>
+    </figure>`;
+  }).join("");
+  return `<section class="family" id="${f.key}">
+    <div class="family-head">
+      <span class="idx">FAMILY ${String(fi+1).padStart(2,"0")} / 21</span>
+      <h2>${f.name}</h2>
+      <p>${f.why}</p>
+      ${f.best?`<span class="best">${f.best}</span>`:""}
+    </div>
+    <div class="grid">${cards}</div>
+  </section>`;
+}).join("");
+out.innerHTML = html;
+
+/* scale every 1200×630 card to its frame */
+const ro = new ResizeObserver(es=>{
+  for (const e of es) e.target.firstElementChild.style.setProperty("--s", e.contentRect.width/1200);
+});
+document.querySelectorAll(".frame").forEach(f=>ro.observe(f));
+
+/* controls */
+const figs = [...document.querySelectorAll("figure.spec")];
+const count = document.getElementById("count");
+const setCount = k => count.textContent = `${k} / ${figs.length} cards`;
+setCount(figs.length);
+document.getElementById("q").addEventListener("input", e=>{
+  const q = e.target.value.trim().toLowerCase();
+  let shown = 0;
+  figs.forEach(f=>{ const hit = !q || f.dataset.search.includes(q); f.hidden = !hit; if(hit) shown++; });
+  document.querySelectorAll("section.family").forEach(s=>{
+    s.hidden = ![...s.querySelectorAll("figure.spec")].some(f=>!f.hidden);
+  });
+  setCount(shown);
+});
+const modes = {gallery:document.getElementById("b-gallery"), focus:document.getElementById("b-focus"), export:document.getElementById("b-export")};
+/* "Export 1:1" draws every card at its true 1200 × 630 so a screenshot of one
+   card is a usable PNG — the same pixels the Satori route will emit. */
+const setMode = mode => {
+  document.querySelectorAll(".grid").forEach(g=>{
+    g.classList.toggle("focus", mode==="focus");
+    g.classList.toggle("export", mode==="export");
+  });
+  for (const [k,btn] of Object.entries(modes)) btn.setAttribute("aria-pressed", String(k===mode));
+};
+for (const [k,btn] of Object.entries(modes)) btn.addEventListener("click",()=>setMode(k));
+</script>
