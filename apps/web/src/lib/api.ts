@@ -12,6 +12,7 @@ import type {
   ToolCategory,
   ToolDetail,
   ToolSummary,
+  TopRankingPage,
 } from "./types";
 
 /**
@@ -155,6 +156,32 @@ export const api = {
       request<{ data: ChangelogMeta }>("/changelog/meta", {
         tags: ["changelog"],
         revalidate: 3600,
+      }).then((r) => r.data),
+  },
+
+  topRanking: {
+    /**
+     * Every published ranking, without its rows.
+     *
+     * Cached for an hour and tagged, because this is what draws the header menu on
+     * every page of the site — a per-request fetch would put one API call in front
+     * of every navigation for a list that changes when an admin adds a page.
+     */
+    list: () =>
+      request<{ data: TopRankingPage[] }>("/top-ranking", {
+        tags: ["top-ranking"],
+        revalidate: 3600,
+      }).then((r) => r.data),
+
+    get: (slug: string) =>
+      request<{ data: TopRankingPage }>(`/top-ranking/${slug}`, {
+        // Tagged per page, so a single admin sync revalidates that one table
+        // rather than every ranking on the site.
+        tags: ["top-ranking", `ranking:${slug}`],
+        // Six hours. The underlying data is refreshed weekly by a scheduled job,
+        // so anything shorter is a cache that expires far more often than the
+        // thing it caches changes.
+        revalidate: 21_600,
       }).then((r) => r.data),
   },
 

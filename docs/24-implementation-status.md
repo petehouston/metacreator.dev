@@ -5,7 +5,7 @@ this handbook describes the intended design; this one is the only place that cla
 exists. Keep it honest — a specification that reads as a status report is how a team ends up
 surprised.
 
-Last updated: 2026-09-02.
+Last updated: 2026-09-03.
 
 ## Legend
 
@@ -96,6 +96,27 @@ Last updated: 2026-09-02.
 | Primary + secondary categories, inline tag search/create | ✅ | `posts.category_id` stays primary; `post_post_category` holds the rest |
 | Featured image, media-library modal, full permalink | ✅ | The modal is reachable from the image block and the featured image |
 | Autosave (7s) and preview-without-publishing | ✅ | Autosave flags `is_autosave`; preview renders the *unsaved* draft at `/c0ns0le/posts/preview` |
+
+
+## Top rankings
+
+Wikipedia-sourced leaderboards at `/top-ranking/{slug}`, refreshed weekly by a scheduled job.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Ranking pages & entries | ✅ | `top_ranking_pages` / `top_ranking_entries`. A page is a row, not a constant, because its *source* has to be editable too — a renamed Wikipedia article is a Tuesday, not a deploy |
+| Nine seeded rankings | ✅ | YouTube most-subscribed (100) and most-viewed (50); Instagram, TikTok, X, Facebook Pages, Twitch most-followed and most-subscribed, Bluesky (50 each). Every source article verified to parse before it was listed |
+| Wikipedia import | ✅ | `action=parse&prop=text`, then a **header-driven** table parser: nine differently-shaped articles share one implementation because it maps column *labels* to fields rather than indexing by position. No API key, no quota |
+| Sync reconciliation | ✅ | Matches on a normalised key and updates in place. A row added by hand is never removed; a pinned row is never moved. That is what makes an unattended weekly job safe on a curated page |
+| Avatars | 🟡 | Resolved from each platform's own public `og:image`, plus Bluesky's keyless XRPC API and TikTok's page state. **~93% of rows resolve** (464/500 at last run). The gap is structural, not a bug: 34 Facebook Pages publish no handle at all to build a profile URL from. Unresolved rows render a monogram in the platform's colour |
+| Expiring avatar links | ✅ | Meta and TikTok sign their CDN URLs. The expiry is read out of the URL, stored, and the API withholds a link past its date — so a reader sees a monogram, never a torn image |
+| Public pages | ✅ | Index at `/top-ranking`, one page per ranking: podium for the top three, adaptive table below (columns appear only where a page has data for them), `ItemList` JSON-LD, CC BY-SA attribution. Pre-rendered via `generateStaticParams` |
+| Header menu | ✅ | Hover *and* click/keyboard dropdown, built from the API so an admin adding a page adds a menu item. A two-column **grid**, not a scrolling list — nine items fit above the fold, and a reader cannot compare what they cannot see at once. Listed flat in the mobile menu |
+| SEO | ✅ | Full per-page control through the shared `seo_meta` row — meta title and description, focus keyword, canonical, robots, Open Graph title/description/image, card type — edited in a **SEO & sharing** tab that is literally the tool editor's panel (`components/admin/seo-panel.tsx`, extracted when the second caller appeared). Live search and social previews; a no-index page drops out of the sitemap |
+| Admin | ✅ | List with freshness and missing-picture counts. The editor is **tabbed** like the tool editor — Rows, Presentation, Source & sync, Metrics, SEO — because a sidebar is width a fifty-row table does not have to spare. One Save for the whole form; row actions (reorder, pin, remove, resolve a picture) write immediately, since a fifty-row table behind a Save button means one mistake discards forty-nine good edits. `top_rankings.sync` is its own permission — making the server crawl the web is not the same authority as fixing a name |
+| Commands | ✅ | `rankings:sync` and `rankings:avatars`, both `--all`-capable and incremental |
+| Weekly job | ✅ | `RefreshTopRankingPage` on the `maintenance` queue, one job per page, staggered. Scheduled Sundays 03:20 |
+| Front-end cache invalidation | ✅ | Observers on *both* the page and its entries — a sync rewrites hundreds of rows without touching the page row, so observing the page alone would leave a refreshed ranking behind its cache |
 
 ## Admin
 

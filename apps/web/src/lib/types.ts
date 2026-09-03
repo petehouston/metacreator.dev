@@ -483,3 +483,87 @@ export interface ChangelogMeta {
   /** Only the years that actually have published releases in them. */
   years: { year: number; total: number }[];
 }
+
+// ── Top rankings ─────────────────────────────────────────────────────────────
+
+export type RankingPlatformValue =
+  | "youtube"
+  | "instagram"
+  | "tiktok"
+  | "x"
+  | "facebook"
+  | "twitch"
+  | "bluesky";
+
+/**
+ * How to read the number on `metric`.
+ *
+ * The API stores what the source published rather than a normalised count — "515"
+ * under a header reading "(millions)" — so the unit travels with the page and the
+ * client does the arithmetic once, at render.
+ */
+export type MetricUnit = "exact" | "thousands" | "millions" | "billions";
+
+/** The resolved SEO block a public page renders its metadata from. */
+export interface PageSeo {
+  title: string | null;
+  description: string | null;
+  canonical_url: string | null;
+  robots: string | null;
+  focus_keyword: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+  twitter_card: string | null;
+  schema_type: string | null;
+}
+
+export interface TopRankingEntry {
+  rank: number;
+  name: string;
+  handle: string | null;
+  owner: string | null;
+  profile_url: string | null;
+  metric: number | null;
+  secondary_metric: number | null;
+  country: string | null;
+  category: string | null;
+  language: string | null;
+  description: string | null;
+  /**
+   * Null means "draw the monogram". The API has already ruled out links that are
+   * unresolved *or* past their signature expiry, so this is one branch here rather
+   * than a date comparison in the component.
+   */
+  avatar_url: string | null;
+  initials: string;
+}
+
+export interface TopRankingPage {
+  slug: string;
+  title: string;
+  platform: RankingPlatformValue;
+  platform_label: string;
+  /** An oklch triple (`L C H`) the page drops straight into `oklch(...)`. */
+  platform_accent: string;
+  /** "channel", "account", "page" — for headings that read naturally per network. */
+  noun: string;
+  metric_label: string;
+  metric_unit: MetricUnit;
+  secondary_metric_label: string | null;
+  secondary_metric_unit: MetricUnit | null;
+  intro: string | null;
+  /**
+   * Stored overrides with the page's own title and intro filled in behind them.
+   *
+   * Already resolved server-side, so `generateMetadata` reads one value per field
+   * rather than re-deriving a fallback chain the API also has an opinion about.
+   */
+  seo: PageSeo | null;
+  source_page: string;
+  source_url: string;
+  synced_at: string | null;
+  entries_count: number;
+  /** Only on the detail response; the index omits it. */
+  entries?: TopRankingEntry[];
+}

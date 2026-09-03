@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Domain\Access\Services\AuditLogger;
-use App\Domain\Seo\Models\SeoMeta;
+use App\Domain\Seo\Actions\SaveSeoMeta;
 use App\Domain\Tools\Actions\SyncToolPlatforms;
 use App\Domain\Tools\Enums\ToolStatus;
 use App\Domain\Tools\Models\Tool;
@@ -30,6 +30,7 @@ final class ToolController extends Controller
     public function __construct(
         private readonly AuditLogger $audit,
         private readonly SyncToolPlatforms $syncPlatforms,
+        private readonly SaveSeoMeta $saveSeo,
     ) {}
 
     /** @return ApiCollection<AdminToolResource> */
@@ -115,7 +116,7 @@ final class ToolController extends Controller
         }
 
         if (is_array($seo)) {
-            $this->saveSeo($tool, $seo);
+            $this->saveSeo->handle($tool, $seo);
         }
 
         $this->audit->record(
@@ -225,46 +226,6 @@ final class ToolController extends Controller
         }
 
         return $current;
-    }
-
-    /**
-     * Upsert the tool's SEO overrides.
-     *
-     * Only the keys the request actually carried are written, so a form that posts
-     * the social fields alone cannot blank the meta description it never showed.
-     *
-     * @param  array<string, mixed>  $seo
-     */
-    private function saveSeo(Tool $tool, array $seo): void
-    {
-        $fields = array_intersect_key($seo, array_flip([
-            'title', 'description', 'canonical_url', 'robots', 'focus_keyword',
-            'og_title', 'og_description', 'og_media_id', 'twitter_card', 'schema_type',
-        ]));
-
-        if ($fields === []) {
-            return;
-        }
-
-        // An empty string is how a cleared text input arrives; storing it would make
-        // `?? fallback` on the frontend stop firing and publish a blank meta title.
-        $fields = array_map(
-            fn ($value) => is_string($value) && trim($value) === '' ? null : $value,
-            $fields,
-        );
-
-        // `robots` and `twitter_card` are NOT NULL with a sensible default. A cleared
-        // input means "back to the default", not "write null and hit a constraint".
-        foreach (['robots' => 'index,follow', 'twitter_card' => 'summary_large_image'] as $column => $default) {
-            if (array_key_exists($column, $fields) && $fields[$column] === null) {
-                $fields[$column] = $default;
-            }
-        }
-
-        SeoMeta::query()->updateOrCreate(
-            ['seoable_type' => $tool->getMorphClass(), 'seoable_id' => $tool->id],
-            $fields,
-        );
     }
 
     /** @return ApiCollection<AdminTaxonomyResource> */

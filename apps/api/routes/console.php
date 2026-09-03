@@ -29,3 +29,18 @@ Schedule::command('analytics:rollup --days=2')
     ->dailyAt('00:10')
     ->withoutOverlapping()
     ->runInBackground();
+
+// The weekly refresh of the top-ranking pages.
+//
+// Sunday, early, because these articles are edited on weekdays and a Sunday read
+// catches a settled week rather than a half-finished edit. The command queues one
+// job per page and staggers them, so this schedule entry itself returns in
+// milliseconds and no single worker slot holds four hundred outbound requests.
+//
+// Weekly rather than daily on purpose: the underlying numbers are updated by hand
+// by Wikipedia editors every few weeks, so a daily pass would be seven times the
+// requests to learn the same thing — and it is somebody else's bandwidth.
+Schedule::command('rankings:sync --all --queue --with-avatars')
+    ->weeklyOn(0, '03:20')
+    ->withoutOverlapping()
+    ->runInBackground();

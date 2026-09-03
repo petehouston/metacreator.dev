@@ -2,8 +2,10 @@ import type * as React from "react";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { RankingNavProvider } from "@/components/site/ranking-nav-provider";
 import { TrackingScripts, TrackingScriptsBodyEnd } from "@/components/site/tracking-scripts";
 import { trackingScripts } from "@/lib/site-settings";
+import { rankingNav } from "@/lib/top-ranking-nav";
 
 /**
  * The public, indexable surface: header, content, footer, and the painted canvas
@@ -17,9 +19,14 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   // The tags configured under Settings → Tracking & scripts. Read here rather than
   // in the root layout because that root also wraps `/c0ns0le` and the customer
   // dashboard, and neither is ever allowed to carry a third-party tag (docs/15).
-  const scripts = await trackingScripts();
+  // Both are cached reads, and they are independent, so they overlap rather than
+  // queueing. The rankings list is fetched here rather than in the root layout
+  // because only this branch of the tree has a header that draws it — `/c0ns0le`
+  // and the customer dashboard would be paying for a menu they do not have.
+  const [scripts, rankings] = await Promise.all([trackingScripts(), rankingNav()]);
 
   return (
+    <RankingNavProvider items={rankings}>
     <div className="flex min-h-dvh flex-col">
       <TrackingScripts scripts={scripts} />
 
@@ -42,5 +49,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
       <TrackingScriptsBodyEnd scripts={scripts} />
     </div>
+    </RankingNavProvider>
   );
 }

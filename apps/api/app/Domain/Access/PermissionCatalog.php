@@ -31,6 +31,11 @@ final class PermissionCatalog
         'seo' => ['update'],
         // No `restore`: a release is hard-deleted, so there is nothing to restore to.
         'changelog' => ['view_any', 'view', 'create', 'update', 'delete', 'publish'],
+        // `sync` is separate from `update` because it is a different kind of power:
+        // updating a title changes a row, while syncing makes the server fetch from
+        // Wikipedia and seven social platforms on demand. An editor can be trusted
+        // with the first without being handed the second.
+        'top_rankings' => ['view_any', 'view', 'create', 'update', 'delete', 'sync'],
 
         // Tools
         'tools' => ['view_any', 'view', 'create', 'update', 'delete', 'publish', 'bypass_access', 'bypass_quota'],
@@ -91,6 +96,7 @@ final class PermissionCatalog
                 'posts.view_any', 'posts.view', 'posts.create', 'posts.update', 'posts.delete', 'posts.restore', 'posts.publish',
                 'post_categories.*', 'tags.*', 'media.*', 'seo.update',
                 'changelog.*',
+                'top_rankings.*',
                 'tools.view_any', 'analytics.view',
             ],
         ],
@@ -101,6 +107,7 @@ final class PermissionCatalog
                 'posts.view_any', 'posts.view', 'posts.create', 'posts.update',
                 'post_categories.view_any', 'tags.view_any', 'tags.create',
                 'changelog.view_any', 'changelog.view', 'changelog.create', 'changelog.update',
+                'top_rankings.view_any', 'top_rankings.view', 'top_rankings.update',
                 'media.view_any', 'media.create', 'media.update.own', 'seo.update',
             ],
         ],

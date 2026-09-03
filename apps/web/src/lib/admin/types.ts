@@ -785,3 +785,81 @@ export interface SitemapReport {
   issues: SitemapIssue[];
   entries: SitemapEntry[];
 }
+
+// ── Top rankings ─────────────────────────────────────────────────────────────
+
+/** How a row's picture stands right now. `expired` is derived server-side. */
+export type AvatarStatus = "pending" | "ok" | "unavailable" | "expired";
+
+export interface AdminTopRankingEntry {
+  /** A bare auto-increment — an entry is only ever addressed through its page. */
+  id: number;
+  rank: number;
+  name: string;
+  handle: string | null;
+  owner: string | null;
+  profile_url: string | null;
+  metric: number | null;
+  secondary_metric: number | null;
+  country: string | null;
+  category: string | null;
+  language: string | null;
+  description: string | null;
+
+  /** The stored link, shown even when expired — the editor's job is the broken ones. */
+  avatar_url: string | null;
+  avatar_status: AvatarStatus;
+  avatar_status_label: string;
+  avatar_source: string | null;
+  avatar_checked_at: string | null;
+  avatar_expires_at: string | null;
+  initials: string;
+
+  source: "wikipedia" | "manual";
+  source_label: string;
+  /** Sync must not move or remove this row. */
+  is_pinned: boolean;
+}
+
+export interface AdminTopRankingPage {
+  id: string;
+  slug: string;
+  title: string;
+  platform: string;
+  platform_label: string;
+  platform_accent: string;
+
+  metric_label: string;
+  metric_unit: "exact" | "thousands" | "millions" | "billions";
+  secondary_metric_label: string | null;
+  secondary_metric_unit: "exact" | "thousands" | "millions" | "billions" | null;
+  intro: string | null;
+  /** The stored overrides, exactly as stored — never resolved. See `SeoResource`. */
+  seo?: (SeoOverrides & { og_image_url?: string | null }) | null;
+
+  source_page: string;
+  source_table: number;
+  source_url: string;
+  row_limit: number;
+
+  is_published: boolean;
+  sort_order: number;
+
+  sync_status: "never" | "ok" | "partial" | "failed";
+  sync_status_label: string;
+  sync_message: string | null;
+  synced_at: string | null;
+  days_since_sync: number | null;
+  avatars_synced_at: string | null;
+
+  entries_count: number;
+  /** Only on the list response, where it is counted in the same query. */
+  missing_avatars?: number;
+  /** Only on the detail response. */
+  entries?: AdminTopRankingEntry[];
+}
+
+export interface RankingPlatformOption {
+  value: string;
+  label: string;
+}

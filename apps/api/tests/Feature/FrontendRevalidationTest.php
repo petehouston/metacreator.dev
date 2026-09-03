@@ -10,6 +10,8 @@ use App\Domain\Changelog\Models\ChangelogRelease;
 use App\Domain\Seo\Services\FrontendCache;
 use App\Domain\Settings\Setting;
 use App\Domain\Tools\Models\Tool;
+use App\Domain\TopRanking\Enums\RankingPlatform;
+use App\Domain\TopRanking\Models\TopRankingPage;
 use App\Domain\Users\Models\User;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -201,4 +203,32 @@ it('never lets a front-end failure break the write that triggered it', function 
     // misconfigured degrades to the old five-minute timer rather than 500ing a save.
     expect(fn () => flushRevalidation())->not->toThrow(Exception::class);
     expect(Post::query()->whereKey($post->id)->exists())->toBeTrue();
+});
+
+it('expires a ranking page and the index when a row changes', function (): void {
+    // The case this feature would have got wrong: a sync rewrites hundreds of rows
+    // and never touches the page row, so observing the page alone would leave a
+    // refreshed ranking behind a six-hour cache with nothing to expire it.
+    $page = TopRankingPage::query()->create([
+        'slug' => 'most-followed-somewhere',
+        'platform' => RankingPlatform::Instagram,
+        'title' => 'Top accounts',
+        'source_page' => 'List of most-followed accounts',
+    ]);
+
+    flushRevalidation();
+    Http::fake(['web.test/*' => Http::response(['data' => []])]);
+
+    $page->entries()->create([
+        'name' => 'someone',
+        'handle' => 'someone',
+        'sort_order' => 1,
+        'match_key' => 'someone',
+    ]);
+
+    flushRevalidation();
+
+    expect(sentTags())
+        ->toContain('top-ranking')
+        ->toContain('ranking:most-followed-somewhere');
 });

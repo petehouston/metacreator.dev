@@ -6,21 +6,23 @@ import {
   ExternalLink,
   Eye,
   Gauge,
-  ImageIcon,
   MonitorPlay,
   Save,
   Search,
   ShieldCheck,
   SlidersHorizontal,
   Type,
-  X,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { AdminPageHeader, AdminPanel, StatusPill } from "@/components/admin/admin-page";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  StatusPill,
+} from "@/components/admin/admin-page";
+import { SeoPanel } from "@/components/admin/seo-panel";
 import { useCan } from "@/components/admin/can";
 import { useToast } from "@/components/admin/feedback";
 import { LoadError } from "@/components/admin/load-error";
@@ -29,9 +31,20 @@ import { humanise, tone } from "@/components/admin/status-tone";
 import { useBillingEnabled } from "@/components/site/features-provider";
 import { ToolForm as ToolPageForm } from "@/components/tools/tool-form";
 import { Button } from "@/components/ui/button";
-import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
+import {
+  Checkbox,
+  Field,
+  Input,
+  Select,
+  Textarea,
+} from "@/components/ui/field";
 import { adminApi } from "@/lib/admin/api";
-import type { AdminMedia, AdminTool, SeoOverrides, ToolFieldOverride } from "@/lib/admin/types";
+import type {
+  AdminMedia,
+  AdminTool,
+  SeoOverrides,
+  ToolFieldOverride,
+} from "@/lib/admin/types";
 import { useAdminResource } from "@/lib/admin/use-admin-resource";
 import type { JsonSchema, JsonSchemaProperty } from "@/lib/types";
 import { cn, formatNumber } from "@/lib/utils";
@@ -49,7 +62,10 @@ import { cn, formatNumber } from "@/lib/utils";
  * next run, which is exactly the failure the architecture test exists to prevent.
  */
 export function ToolEditorScreen({ slug }: { slug: string }) {
-  const { data, error, reload } = useAdminResource(() => adminApi.tools.get(slug), [slug]);
+  const { data, error, reload } = useAdminResource(
+    () => adminApi.tools.get(slug),
+    [slug],
+  );
 
   const categories = useAdminResource(() => adminApi.tools.categories(), []);
 
@@ -191,11 +207,13 @@ function ToolForm({
   // Keyed by field name, and only the fields an admin has actually filled in — an
   // empty box here means "use whatever the runner's schema says", which is a
   // different instruction from "show nothing".
-  const [fieldOverrides, setFieldOverrides] = React.useState<Record<string, ToolFieldOverride>>(
-    () => ({ ...(tool.field_overrides ?? {}) }),
-  );
+  const [fieldOverrides, setFieldOverrides] = React.useState<
+    Record<string, ToolFieldOverride>
+  >(() => ({ ...(tool.field_overrides ?? {}) }));
 
-  const [ogImageUrl, setOgImageUrl] = React.useState<string | null>(tool.seo?.og_image_url ?? null);
+  const [ogImageUrl, setOgImageUrl] = React.useState<string | null>(
+    tool.seo?.og_image_url ?? null,
+  );
 
   const [section, setSection] = React.useState<SectionId>("copy");
 
@@ -211,7 +229,9 @@ function ToolForm({
   // options are actually known — defaulting to 0 before then would silently move
   // a categorised tool the moment somebody pressed save.
   const categoryId =
-    form.category_id !== 0 || categories.length === 0 ? form.category_id : categories[0].id;
+    form.category_id !== 0 || categories.length === 0
+      ? form.category_id
+      : categories[0].id;
 
   async function save() {
     setSaving(true);
@@ -225,7 +245,10 @@ function ToolForm({
       // a runner's own settings survive a save from this form.
       config: {
         limits: Object.fromEntries(
-          RUN_LIMIT_WINDOWS.map(({ id }) => [id, limits[id] === "" ? null : Number(limits[id])]),
+          RUN_LIMIT_WINDOWS.map(({ id }) => [
+            id,
+            limits[id] === "" ? null : Number(limits[id]),
+          ]),
         ),
         // Sent whole rather than as a patch: the panel below renders every field the
         // form has, so what is missing here is what was cleared.
@@ -234,7 +257,10 @@ function ToolForm({
       // Blank goes over the wire as null: the API treats null as "no override" and
       // falls back to the tool's own copy, where "" would publish an empty tag.
       seo: Object.fromEntries(
-        Object.entries(seo).map(([key, value]) => [key, value === "" ? null : value]),
+        Object.entries(seo).map(([key, value]) => [
+          key,
+          value === "" ? null : value,
+        ]),
       ),
     } as Partial<AdminTool>);
 
@@ -266,7 +292,11 @@ function ToolForm({
             </Button>
 
             <Button variant="secondary" size="sm" asChild>
-              <Link href={`/tools/${tool.slug}`} target="_blank" rel="noreferrer">
+              <Link
+                href={`/tools/${tool.slug}`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <ExternalLink className="size-4" aria-hidden="true" />
                 View on the site
               </Link>
@@ -293,7 +323,10 @@ function ToolForm({
             Status
           </dt>
           <dd className="mt-1">
-            <StatusPill label={humanise(form.status)} tone={tone.tool(form.status)} />
+            <StatusPill
+              label={humanise(form.status)}
+              tone={tone.tool(form.status)}
+            />
           </dd>
         </div>
         <div>
@@ -311,7 +344,10 @@ function ToolForm({
             Access tier
           </dt>
           <dd className="mt-1">
-            <StatusPill label={humanise(form.tier)} tone={tone.tier(form.tier)} />
+            <StatusPill
+              label={humanise(form.tier)}
+              tone={tone.tier(form.tier)}
+            />
           </dd>
         </div>
         <div>
@@ -335,7 +371,10 @@ function ToolForm({
           than the page it previews. Across the top, every section gets the full
           measure, and the preview is the real thing at the real width. */}
       <div className="flex flex-col gap-4">
-        <nav aria-label="Tool sections" className="border-b border-[var(--color-border-subtle)]">
+        <nav
+          aria-label="Tool sections"
+          className="border-b border-[var(--color-border-subtle)]"
+        >
           {/* Scrolls sideways rather than wrapping: a tab strip that reflows to a
               second row moves every tab under the cursor as the active one
               changes. */}
@@ -374,14 +413,22 @@ function ToolForm({
 
         <div className="flex min-w-0 flex-1 flex-col gap-5">
           {section === "copy" && (
-            <AdminPanel title="Catalog copy" description="What a visitor reads before running it">
-              <fieldset disabled={!editable} className="flex max-w-xl flex-col gap-4">
+            <AdminPanel
+              title="Catalog copy"
+              description="What a visitor reads before running it"
+            >
+              <fieldset
+                disabled={!editable}
+                className="flex max-w-xl flex-col gap-4"
+              >
                 <Field id="tool-name" label="Name" required>
                   {(props) => (
                     <Input
                       {...props}
                       value={form.name}
-                      onChange={(event) => setForm({ ...form, name: event.target.value })}
+                      onChange={(event) =>
+                        setForm({ ...form, name: event.target.value })
+                      }
                     />
                   )}
                 </Field>
@@ -397,7 +444,9 @@ function ToolForm({
                       {...props}
                       maxLength={220}
                       value={form.tagline}
-                      onChange={(event) => setForm({ ...form, tagline: event.target.value })}
+                      onChange={(event) =>
+                        setForm({ ...form, tagline: event.target.value })
+                      }
                     />
                   )}
                 </Field>
@@ -407,7 +456,9 @@ function ToolForm({
                     <Textarea
                       {...props}
                       value={form.description}
-                      onChange={(event) => setForm({ ...form, description: event.target.value })}
+                      onChange={(event) =>
+                        setForm({ ...form, description: event.target.value })
+                      }
                     />
                   )}
                 </Field>
@@ -420,7 +471,10 @@ function ToolForm({
               title="Access & placement"
               description="Who can run it, and where it appears"
             >
-              <fieldset disabled={!editable} className="grid gap-4 sm:grid-cols-2">
+              <fieldset
+                disabled={!editable}
+                className="grid gap-4 sm:grid-cols-2"
+              >
                 {/* The stored tier is what this field edits, and Premium stays
                     selectable with billing off — but it behaves as Account until
                     billing is switched back on, and an admin who is not told that
@@ -438,7 +492,9 @@ function ToolForm({
                     <Select
                       {...props}
                       value={form.tier}
-                      onChange={(event) => setForm({ ...form, tier: event.target.value })}
+                      onChange={(event) =>
+                        setForm({ ...form, tier: event.target.value })
+                      }
                     >
                       <option value="free">Free — anyone</option>
                       <option value="account">Account — signed in</option>
@@ -456,7 +512,9 @@ function ToolForm({
                     <Select
                       {...props}
                       value={form.status}
-                      onChange={(event) => setForm({ ...form, status: event.target.value })}
+                      onChange={(event) =>
+                        setForm({ ...form, status: event.target.value })
+                      }
                     >
                       <option value="draft">Draft</option>
                       <option value="published">Published</option>
@@ -515,14 +573,18 @@ function ToolForm({
                     label="Visible in the catalog"
                     hint="Turning this off removes it from listings and search without unpublishing it. Anyone with a direct link still gets the page."
                     checked={form.is_visible}
-                    onChange={(event) => setForm({ ...form, is_visible: event.target.checked })}
+                    onChange={(event) =>
+                      setForm({ ...form, is_visible: event.target.checked })
+                    }
                   />
 
                   <Checkbox
                     label="Feature on the catalog"
                     hint="Featured tools sort to the top of the listing."
                     checked={form.is_featured}
-                    onChange={(event) => setForm({ ...form, is_featured: event.target.checked })}
+                    onChange={(event) =>
+                      setForm({ ...form, is_featured: event.target.checked })
+                    }
                   />
                 </div>
               </fieldset>
@@ -543,11 +605,12 @@ function ToolForm({
                   >
                     Settings → Tools
                   </Link>
-                  , which is what almost every tool should do. A number here only ever{" "}
-                  <em>narrows</em> the visitor&rsquo;s allowance — it cannot raise it above their
-                  tier, so a cap set here is a ceiling for everyone including subscribers. That is
-                  the point: a tool that spends metered third-party credit should not be unlimited
-                  just because somebody&rsquo;s plan is.
+                  , which is what almost every tool should do. A number here
+                  only ever <em>narrows</em> the visitor&rsquo;s allowance — it
+                  cannot raise it above their tier, so a cap set here is a
+                  ceiling for everyone including subscribers. That is the point:
+                  a tool that spends metered third-party credit should not be
+                  unlimited just because somebody&rsquo;s plan is.
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -606,7 +669,10 @@ function ToolForm({
               seo={seo}
               patch={patchSeo}
               editable={editable}
-              slug={tool.slug}
+              idPrefix="tool"
+              noun="tool"
+              breadcrumb={`metacreator.dev › tools › ${tool.slug}`}
+              canonicalPlaceholder={`https://metacreator.dev/tools/${tool.slug}`}
               fallbackTitle={`${form.name} — Free Online Tool`}
               fallbackDescription={form.tagline}
               imageUrl={ogImageUrl}
@@ -619,10 +685,16 @@ function ToolForm({
           )}
 
           {section === "runtime" && (
-            <AdminPanel title="Runtime" description="Written by the runner, not by this form">
+            <AdminPanel
+              title="Runtime"
+              description="Written by the runner, not by this form"
+            >
               <div className="flex flex-col gap-4">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <StatusPill label={humanise(tool.status)} tone={tone.tool(tool.status)} />
+                  <StatusPill
+                    label={humanise(tool.status)}
+                    tone={tone.tool(tool.status)}
+                  />
                   <StatusPill label={tool.tier} tone={tone.tier(tool.tier)} />
                 </div>
 
@@ -679,10 +751,14 @@ function ToolForm({
                 </dl>
 
                 <p className="flex items-start gap-2 text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-                  <Eye className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-                  The slug, the key, the version and the input schema are fixed on purpose. Changing
-                  a slug breaks every link pointing at it, and the other three belong to the runner
-                  — they move with a deploy, not with a form.
+                  <Eye
+                    className="mt-0.5 size-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  The slug, the key, the version and the input schema are fixed
+                  on purpose. Changing a slug breaks every link pointing at it,
+                  and the other three belong to the runner — they move with a
+                  deploy, not with a form.
                 </p>
               </div>
             </AdminPanel>
@@ -737,9 +813,13 @@ function FormFieldsPanel({
 
   if (fields.length === 0) {
     return (
-      <AdminPanel title="Form fields" description="What the tool asks a visitor for">
+      <AdminPanel
+        title="Form fields"
+        description="What the tool asks a visitor for"
+      >
         <p className="text-sm text-[var(--color-foreground-muted)]">
-          This tool&rsquo;s runner declares no input fields, so there is nothing to fill in.
+          This tool&rsquo;s runner declares no input fields, so there is nothing
+          to fill in.
         </p>
       </AdminPanel>
     );
@@ -769,11 +849,14 @@ function FormFieldsPanel({
     >
       <fieldset disabled={!editable} className="flex flex-col gap-5">
         <p className="text-sm text-[var(--color-foreground-muted)]">
-          Which fields exist and what they accept belong to the runner and move with a deploy. What
-          you can change here is what each one <em>says</em>: leave a box blank to use the wording
-          the runner ships with.{" "}
-          <strong className="font-medium text-[var(--color-foreground)]">Form preview</strong>, in
-          the menu, draws the real form from whatever is typed here — before it is saved.
+          Which fields exist and what they accept belong to the runner and move
+          with a deploy. What you can change here is what each one <em>says</em>
+          : leave a box blank to use the wording the runner ships with.{" "}
+          <strong className="font-medium text-[var(--color-foreground)]">
+            Form preview
+          </strong>
+          , in the menu, draws the real form from whatever is typed here —
+          before it is saved.
         </p>
 
         {fields.map(([field, property]) => {
@@ -803,7 +886,9 @@ function FormFieldsPanel({
                 id={`tool-field-hint-${field}`}
                 label="Hint"
                 hint="The line of help under the box. Blank leaves the runner's own wording."
-                counter={override.hint ? `${override.hint.length}/300` : undefined}
+                counter={
+                  override.hint ? `${override.hint.length}/300` : undefined
+                }
               >
                 {(props) => (
                   <Textarea
@@ -812,7 +897,9 @@ function FormFieldsPanel({
                     rows={2}
                     value={override.hint ?? ""}
                     placeholder={property.description ?? "No hint shipped"}
-                    onChange={(event) => patch(field, "hint", event.target.value)}
+                    onChange={(event) =>
+                      patch(field, "hint", event.target.value)
+                    }
                     className="min-h-16 text-sm"
                   />
                 )}
@@ -830,7 +917,9 @@ function FormFieldsPanel({
                       maxLength={2000}
                       value={override.sample ?? ""}
                       placeholder={shippedSample || "No example shipped"}
-                      onChange={(event) => patch(field, "sample", event.target.value)}
+                      onChange={(event) =>
+                        patch(field, "sample", event.target.value)
+                      }
                       className="font-mono text-xs"
                     />
                   )}
@@ -846,8 +935,14 @@ function FormFieldsPanel({
                       {...props}
                       maxLength={2000}
                       value={override.default ?? ""}
-                      placeholder={property.default == null ? "Empty" : String(property.default)}
-                      onChange={(event) => patch(field, "default", event.target.value)}
+                      placeholder={
+                        property.default == null
+                          ? "Empty"
+                          : String(property.default)
+                      }
+                      onChange={(event) =>
+                        patch(field, "default", event.target.value)
+                      }
                       className="font-mono text-xs"
                     />
                   )}
@@ -926,16 +1021,22 @@ function FormPreviewPanel({
     [schema, example, overrides],
   );
 
-  if (presented === null || Object.keys(presented.properties ?? {}).length === 0) {
+  if (
+    presented === null ||
+    Object.keys(presented.properties ?? {}).length === 0
+  ) {
     return null;
   }
 
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h2 className="text-sm font-semibold text-[var(--color-foreground)]">Form preview</h2>
+        <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+          Form preview
+        </h2>
         <p className="mt-0.5 text-xs text-[var(--color-foreground-subtle)]">
-          The tool page&rsquo;s own component, chrome and measure — not a mock-up of it
+          The tool page&rsquo;s own component, chrome and measure — not a
+          mock-up of it
         </p>
       </div>
 
@@ -966,7 +1067,9 @@ function FormPreviewPanel({
 
       <p className="text-xs text-[var(--color-foreground-subtle)]">
         A preview — the buttons do nothing here. Unsaved edits made in{" "}
-        <strong className="font-medium text-[var(--color-foreground-muted)]">Form fields</strong>{" "}
+        <strong className="font-medium text-[var(--color-foreground-muted)]">
+          Form fields
+        </strong>{" "}
         show up immediately; the live page picks them up once you save.
       </p>
     </div>
@@ -1034,7 +1137,10 @@ function presentExample(
   for (const [field, override] of Object.entries(overrides)) {
     if (override.sample === undefined) continue;
 
-    const sample = castForField(schema.properties?.[field] ?? {}, override.sample);
+    const sample = castForField(
+      schema.properties?.[field] ?? {},
+      override.sample,
+    );
 
     if (sample === null) delete input[field];
     else input[field] = sample;
@@ -1077,270 +1183,4 @@ function castForField(property: JsonSchemaProperty, value: string): unknown {
     default:
       return value;
   }
-}
-
-/**
- * Per-tool SEO overrides.
- *
- * Every field is optional, and blank is the right answer for most of the catalog:
- * the public page already falls back to the tool's own name and tagline, then to
- * the site template. This panel exists for the handful of tools worth hand-tuning,
- * so it shows what will actually be published — the search snippet and the social
- * card — rather than a column of inputs whose effect you have to imagine.
- */
-function SeoPanel({
-  seo,
-  patch,
-  editable,
-  slug,
-  fallbackTitle,
-  fallbackDescription,
-  imageUrl,
-  onPickImage,
-  onClearImage,
-}: {
-  seo: SeoOverrides;
-  patch: (next: Partial<SeoOverrides>) => void;
-  editable: boolean;
-  slug: string;
-  fallbackTitle: string;
-  fallbackDescription: string;
-  imageUrl: string | null;
-  onPickImage: () => void;
-  onClearImage: () => void;
-}) {
-  const title = seo.title || fallbackTitle;
-  const description = seo.description || fallbackDescription;
-  const socialTitle = seo.og_title || title;
-  const socialDescription = seo.og_description || description;
-
-  return (
-    <AdminPanel
-      title="SEO & sharing"
-      description="How this tool appears in search results and when its link is shared"
-    >
-      <fieldset disabled={!editable} className="flex flex-col gap-4">
-        {/* Counters tell you a number. This tells you what actually gets
-            truncated, which is the thing being decided. */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-surface-sunken)] p-3">
-          <p className="mb-2 font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-            Search preview
-          </p>
-          <p className="truncate text-xs text-[var(--color-foreground-subtle)]">
-            metacreator.dev › tools › {slug}
-          </p>
-          <p className="mt-0.5 line-clamp-1 text-sm font-medium text-[var(--color-primary)]">
-            {title}
-          </p>
-          <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-[var(--color-foreground-muted)]">
-            {description ||
-              "No description — search engines will pick a snippet from the page themselves."}
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            id="tool-seo-title"
-            label="Meta title"
-            hint="Left blank, the tool name is used with the site template."
-            counter={`${(seo.title ?? "").length}/60`}
-          >
-            {(props) => (
-              <Input
-                {...props}
-                maxLength={255}
-                value={seo.title ?? ""}
-                placeholder={fallbackTitle}
-                onChange={(event) => patch({ title: event.target.value })}
-              />
-            )}
-          </Field>
-
-          <Field
-            id="tool-seo-keyword"
-            label="Focus keyword"
-            hint="What this tool is meant to rank for. Recorded, not enforced."
-          >
-            {(props) => (
-              <Input
-                {...props}
-                maxLength={120}
-                value={seo.focus_keyword ?? ""}
-                onChange={(event) => patch({ focus_keyword: event.target.value })}
-              />
-            )}
-          </Field>
-        </div>
-
-        <Field
-          id="tool-seo-description"
-          label="Meta description"
-          hint="Aim for 140–160 characters. Longer is truncated; shorter wastes the slot."
-          counter={`${(seo.description ?? "").length}/160`}
-        >
-          {(props) => (
-            <Textarea
-              {...props}
-              maxLength={500}
-              value={seo.description ?? ""}
-              placeholder={fallbackDescription}
-              onChange={(event) => patch({ description: event.target.value })}
-              className="min-h-20 text-sm"
-            />
-          )}
-        </Field>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            id="tool-seo-canonical"
-            label="Canonical URL"
-            hint="Only when this page duplicates one that lives elsewhere."
-          >
-            {(props) => (
-              <Input
-                {...props}
-                type="url"
-                value={seo.canonical_url ?? ""}
-                placeholder={`https://metacreator.dev/tools/${slug}`}
-                onChange={(event) => patch({ canonical_url: event.target.value })}
-                className="font-mono text-xs"
-              />
-            )}
-          </Field>
-
-          <Field
-            id="tool-seo-robots"
-            label="Robots"
-            hint="A tool set to no-index is still reachable — it just stops competing in search."
-          >
-            {(props) => (
-              <Select
-                {...props}
-                value={seo.robots ?? "index,follow"}
-                onChange={(event) => patch({ robots: event.target.value })}
-              >
-                <option value="index,follow">Index and follow</option>
-                <option value="noindex,follow">Do not index, follow links</option>
-                <option value="index,nofollow">Index, do not follow links</option>
-                <option value="noindex,nofollow">Do not index or follow</option>
-              </Select>
-            )}
-          </Field>
-        </div>
-
-        <hr className="border-[var(--color-border-subtle)]" />
-
-        {/* The same fields Open Graph and Twitter both read, because both cards
-            should say the same thing and nobody wants to type it twice. */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            id="tool-seo-og-title"
-            label="Social title"
-            hint="Shown when the link is shared. Falls back to the meta title."
-          >
-            {(props) => (
-              <Input
-                {...props}
-                maxLength={255}
-                value={seo.og_title ?? ""}
-                placeholder={title}
-                onChange={(event) => patch({ og_title: event.target.value })}
-              />
-            )}
-          </Field>
-
-          <Field id="tool-seo-card" label="Card type">
-            {(props) => (
-              <Select
-                {...props}
-                value={seo.twitter_card ?? "summary_large_image"}
-                onChange={(event) => patch({ twitter_card: event.target.value })}
-              >
-                <option value="summary_large_image">Large image</option>
-                <option value="summary">Summary</option>
-              </Select>
-            )}
-          </Field>
-        </div>
-
-        <Field
-          id="tool-seo-og-description"
-          label="Social description"
-          hint="Falls back to the meta description."
-        >
-          {(props) => (
-            <Textarea
-              {...props}
-              maxLength={500}
-              value={seo.og_description ?? ""}
-              placeholder={description}
-              onChange={(event) => patch({ og_description: event.target.value })}
-              className="min-h-16 text-sm"
-            />
-          )}
-        </Field>
-
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-[var(--color-foreground)]">Share image</span>
-
-          <div className="flex flex-wrap items-start gap-3">
-            <div className="relative h-[6.5rem] w-[12.4rem] shrink-0 overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-surface-sunken)]">
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt=""
-                  fill
-                  sizes="200px"
-                  className="object-cover"
-                  unoptimized
-                />
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-1 text-[var(--color-foreground-subtle)]">
-                  <ImageIcon className="size-5" aria-hidden="true" />
-                  <span className="text-[0.6875rem]">Site default</span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex min-w-[12rem] flex-1 flex-col gap-2">
-              <p className="text-xs leading-relaxed text-[var(--color-foreground-subtle)]">
-                1200×630 is the size every network crops to. With none set, the site-wide card is
-                used — never nothing, so a share is never a grey box.
-              </p>
-
-              <div className="flex gap-2">
-                <Button type="button" variant="secondary" size="sm" onClick={onPickImage}>
-                  <ImageIcon className="size-4" aria-hidden="true" />
-                  {imageUrl ? "Replace" : "Choose image"}
-                </Button>
-
-                {imageUrl && (
-                  <Button type="button" variant="ghost" size="sm" onClick={onClearImage}>
-                    <X className="size-4" aria-hidden="true" />
-                    Clear
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* What the card will actually look like, at the width the networks use. */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-surface-sunken)] p-3">
-          <p className="mb-2 font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-            Social preview
-          </p>
-          <p className="line-clamp-1 text-sm font-medium text-[var(--color-foreground)]">
-            {socialTitle}
-          </p>
-          <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-[var(--color-foreground-muted)]">
-            {socialDescription || "No description set."}
-          </p>
-          <p className="mt-1 font-mono text-[0.625rem] uppercase tracking-[0.12em] text-[var(--color-foreground-subtle)]">
-            metacreator.dev
-          </p>
-        </div>
-      </fieldset>
-    </AdminPanel>
-  );
 }

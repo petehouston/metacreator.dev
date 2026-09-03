@@ -10,8 +10,10 @@ import { useSession } from "@/components/auth/session-provider";
 import { UserMenu } from "@/components/account/user-menu";
 import { Logo } from "@/components/site/logo";
 import { useBillingEnabled } from "@/components/site/features-provider";
+import { NavDropdown } from "@/components/site/nav-dropdown";
+import { useRankingNav } from "@/components/site/ranking-nav-provider";
 import { ThemeToggle } from "@/components/site/theme-toggle";
-import { primaryNavFor } from "@/config/site";
+import { primaryNavFor, rankingNavHref } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -19,6 +21,7 @@ export function SiteHeader() {
   const { user } = useSession();
   const billingEnabled = useBillingEnabled();
   const nav = React.useMemo(() => primaryNavFor(billingEnabled), [billingEnabled]);
+  const rankings = useRankingNav();
   // The mobile menu is stored as "the path it was opened on" rather than a bare
   // boolean, so navigating away closes it by derivation instead of by an effect that
   // resets state after the new page has already rendered with the menu open.
@@ -62,6 +65,27 @@ export function SiteHeader() {
             <ul className="flex items-center gap-1">
               {nav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+                // The rankings entry carries a menu of pages the admin manages, so
+                // it renders as a dropdown — and falls back to a plain link when
+                // there are none, rather than a chevron that opens nothing.
+                if (item.href === rankingNavHref) {
+                  return (
+                    <li key={item.href}>
+                      <NavDropdown
+                        label={item.label}
+                        href={item.href}
+                        active={active}
+                        items={rankings.map((ranking) => ({
+                          href: ranking.href,
+                          label: ranking.label,
+                          hint: `${ranking.platformLabel} · ${ranking.count} ${ranking.count === 1 ? "entry" : "entries"}`,
+                          accent: ranking.accent,
+                        }))}
+                      />
+                    </li>
+                  );
+                }
 
                 return (
                   <li key={item.href}>
@@ -123,6 +147,30 @@ export function SiteHeader() {
                 >
                   {item.label}
                 </Link>
+
+                {/* Listed flat rather than behind a second tap. A hover menu has no
+                    equivalent on a phone, and burying nine pages under an accordion
+                    inside an already-open menu is one interaction too many for a
+                    list this short. */}
+                {item.href === rankingNavHref && rankings.length > 0 && (
+                  <ul className="mb-2 ml-1 flex flex-col gap-0.5 border-l border-[var(--color-border-subtle)] pl-3">
+                    {rankings.map((ranking) => (
+                      <li key={ranking.href}>
+                        <Link
+                          href={ranking.href}
+                          className="flex items-center gap-2 py-1.5 text-sm text-[var(--color-foreground-muted)]"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="size-1.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: `oklch(${ranking.accent})` }}
+                          />
+                          <span className="truncate">{ranking.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
             <li className="flex items-center justify-between border-t border-[var(--color-border-subtle)] py-3">

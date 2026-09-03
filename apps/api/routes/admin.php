@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\TicketController;
 use App\Http\Controllers\Api\V1\Admin\ToolAnalyticsController;
 use App\Http\Controllers\Api\V1\Admin\ToolController;
 use App\Http\Controllers\Api\V1\Admin\ToolGrantController;
+use App\Http\Controllers\Api\V1\Admin\TopRankingController;
 use App\Http\Controllers\Api\V1\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -137,6 +138,64 @@ Route::prefix('changelog')->group(function (): void {
     Route::delete('{release}', [ChangelogController::class, 'destroy'])
         ->middleware('permission:changelog.delete')
         ->name('admin.changelog.destroy');
+});
+
+Route::prefix('top-rankings')->group(function (): void {
+    Route::get('/', [TopRankingController::class, 'index'])
+        ->middleware('permission:top_rankings.view_any')
+        ->name('admin.top-rankings.index');
+
+    Route::post('/', [TopRankingController::class, 'store'])
+        ->middleware('permission:top_rankings.create')
+        ->name('admin.top-rankings.store');
+
+    Route::get('{page}', [TopRankingController::class, 'show'])
+        ->middleware('permission:top_rankings.view')
+        ->name('admin.top-rankings.show');
+
+    Route::patch('{page}', [TopRankingController::class, 'update'])
+        ->middleware('permission:top_rankings.update')
+        ->name('admin.top-rankings.update');
+
+    Route::delete('{page}', [TopRankingController::class, 'destroy'])
+        ->middleware('permission:top_rankings.delete')
+        ->name('admin.top-rankings.destroy');
+
+    // Reaching out to Wikipedia and to seven social platforms is not the same
+    // authority as editing a title, so it is its own permission — an editor may be
+    // trusted to fix a row without being able to make the server crawl the web.
+    Route::post('{page}/sync', [TopRankingController::class, 'sync'])
+        ->middleware('permission:top_rankings.sync')
+        ->name('admin.top-rankings.sync');
+
+    Route::post('{page}/avatars', [TopRankingController::class, 'syncAvatars'])
+        ->middleware('permission:top_rankings.sync')
+        ->name('admin.top-rankings.avatars');
+
+    // ── Rows ─────────────────────────────────────────────────────────────────
+    // Nested, and never addressable without their page: an entry id is a bare
+    // auto-increment, and a flat `/entries/{id}` would let one page's id be sent
+    // against another page's route. Every handler re-checks the parent anyway.
+    Route::post('{page}/entries', [TopRankingController::class, 'storeEntry'])
+        ->middleware('permission:top_rankings.update')
+        ->name('admin.top-rankings.entries.store');
+
+    // Before `{entry}`: a bare segment would otherwise swallow it.
+    Route::put('{page}/entries/order', [TopRankingController::class, 'reorderEntries'])
+        ->middleware('permission:top_rankings.update')
+        ->name('admin.top-rankings.entries.reorder');
+
+    Route::post('{page}/entries/{entry}/avatar', [TopRankingController::class, 'syncEntryAvatar'])
+        ->middleware('permission:top_rankings.sync')
+        ->name('admin.top-rankings.entries.avatar');
+
+    Route::patch('{page}/entries/{entry}', [TopRankingController::class, 'updateEntry'])
+        ->middleware('permission:top_rankings.update')
+        ->name('admin.top-rankings.entries.update');
+
+    Route::delete('{page}/entries/{entry}', [TopRankingController::class, 'destroyEntry'])
+        ->middleware('permission:top_rankings.update')
+        ->name('admin.top-rankings.entries.destroy');
 });
 
 // ── Tools ────────────────────────────────────────────────────────────────────

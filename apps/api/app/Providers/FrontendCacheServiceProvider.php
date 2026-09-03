@@ -11,6 +11,8 @@ use App\Domain\Changelog\Models\ChangelogItem;
 use App\Domain\Changelog\Models\ChangelogRelease;
 use App\Domain\Seo\Observers\PostObserver;
 use App\Domain\Seo\Observers\PostTaxonomyObserver;
+use App\Domain\Seo\Observers\RankingEntryObserver;
+use App\Domain\Seo\Observers\RankingPageObserver;
 use App\Domain\Seo\Observers\ReleaseItemObserver;
 use App\Domain\Seo\Observers\ReleaseObserver;
 use App\Domain\Seo\Observers\SettingObserver;
@@ -20,6 +22,8 @@ use App\Domain\Seo\Services\FrontendCache;
 use App\Domain\Settings\Setting;
 use App\Domain\Tools\Models\Tool;
 use App\Domain\Tools\Models\ToolCategory;
+use App\Domain\TopRanking\Models\TopRankingEntry;
+use App\Domain\TopRanking\Models\TopRankingPage;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -55,6 +59,12 @@ final class FrontendCacheServiceProvider extends ServiceProvider
 
         ChangelogRelease::observe(ReleaseObserver::class);
         ChangelogItem::observe(ReleaseItemObserver::class);
+
+        // Both halves, not just the page: a sync rewrites hundreds of rows while
+        // leaving the page row untouched, so observing the page alone would leave a
+        // refreshed ranking sitting behind its cache with nothing to expire it.
+        TopRankingPage::observe(RankingPageObserver::class);
+        TopRankingEntry::observe(RankingEntryObserver::class);
 
         Setting::observe(SettingObserver::class);
     }

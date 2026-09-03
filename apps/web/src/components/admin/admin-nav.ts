@@ -17,6 +17,7 @@ import {
   Sparkles,
   Tags,
   Ticket,
+  Trophy,
   Users,
   Wrench,
   type LucideIcon,
@@ -94,6 +95,13 @@ export const adminNavSections: AdminNavSection[] = [
         icon: Rocket,
         description: "What shipped, and when it went public",
         permissions: ["changelog.view_any"],
+      },
+      {
+        href: "/c0ns0le/top-rankings",
+        label: "Top rankings",
+        icon: Trophy,
+        description: "The Wikipedia-sourced leaderboards, and their sync",
+        permissions: ["top_rankings.view_any"],
       },
       {
         href: "/c0ns0le/media",

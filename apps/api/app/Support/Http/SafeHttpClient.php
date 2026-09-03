@@ -43,14 +43,28 @@ final class SafeHttpClient
      * failure kinds apart is what stops a tool reporting "available" because the
      * network was down.
      */
-    public static function attempt(string $url, float $timeout = 6.0): ?Response
+    public static function attempt(string $url, float $timeout = 6.0, ?string $userAgent = null): ?Response
     {
         try {
-            return self::request($url, $timeout);
+            return self::request($url, $timeout, $userAgent);
         } catch (ToolExecutionException) {
             return null;
         }
     }
+
+    /**
+     * The User-Agent for the handful of hosts that serve a bot nothing.
+     *
+     * Every request this class makes identifies itself as MetaCreatorBot, which is
+     * the honest default and the one a site can allow or block on its own terms.
+     * A few large sites answer an unrecognised agent with an empty shell — TikTok
+     * returns a 200 with no profile in it — and for those the choice is between
+     * sending a browser agent or not reading a public page at all. Passing this
+     * explicitly, per call, keeps that an argued exception rather than a default
+     * that quietly spreads.
+     */
+    public const BROWSER_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+        .'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
     /**
      * Several safe URLs fetched concurrently, keyed the way they were passed in.
@@ -140,7 +154,7 @@ final class SafeHttpClient
         }
     }
 
-    private static function request(string $url, float $timeout): Response
+    private static function request(string $url, float $timeout, ?string $userAgent = null): Response
     {
         if (! UrlGuard::isPublicHttpUrl($url)) {
             throw ToolExecutionException::invalidInput(
@@ -153,7 +167,7 @@ final class SafeHttpClient
             return Http::timeout($timeout)
                 ->connectTimeout(min($timeout, 3.0))
                 ->withHeaders([
-                    'User-Agent' => 'MetaCreatorBot/1.0 (+https://metacreator.dev/bot)',
+                    'User-Agent' => $userAgent ?? 'MetaCreatorBot/1.0 (+https://metacreator.dev/bot)',
                     'Accept' => 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
                 ])
                 ->withOptions([

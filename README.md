@@ -34,6 +34,7 @@ what actually exists today — read it before planning work.
 | --- | --- |
 | **Tool platform** | 90+ creator tools, a declarative tool registry, per-tool access tiers, rate limits, quotas, per-user grants, usage analytics, async execution via queues |
 | **Content** | WordPress-class blog: block editor (WYSIWYG that matches the front end 1:1), categories, tags, 6 statuses, scheduling, revisions, bulk edit, per-post SEO |
+| **Rankings** | Wikipedia-sourced leaderboards for 7 networks — top accounts by followers, subscribers and views — refreshed weekly, with account avatars resolved live from each platform |
 | **Media** | Central media library with variants, EXIF stripping, alt/caption/SEO metadata, S3-compatible storage (DO Spaces) |
 | **Accounts** | Email+password, magic-link email login, Google OAuth, password reset, profile management |
 | **Billing** | Stripe-backed 7-day / monthly / yearly plans, invoices, dunning, self-serve billing portal |

@@ -87,12 +87,15 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
   // far better than telling a crawler the site has no pages. Each call fails
   // independently for the same reason: when an admin switches the blog off the API
   // 404s, and that should cost the blog URLs, not the tool catalog with them.
-  const [tools, categories, posts, postCategories, releases] = await Promise.all([
+  const [tools, categories, posts, postCategories, releases, rankings] = await Promise.all([
     allPages((page) => api.tools.list({ per_page: 100, page })),
     api.tools.categories().catch(() => []),
     allPages((page) => api.blog.list({ per_page: 100, page })),
     api.blog.categories().catch(() => []),
     allPages((page) => api.changelog.list({ per_page: 100, page })),
+    // Not paginated by the API — the index is what draws the site's header menu, so
+    // it is always the whole list.
+    api.topRanking.list().catch(() => []),
   ]);
 
   const blogRoutes: MetadataRoute.Sitemap = posts.length > 0
@@ -121,10 +124,36 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
       ]
     : [];
 
+  // The rankings are among the most indexable pages on the site: stable URLs,
+  // substantial content, and a genuine weekly change. `lastModified` is the sync
+  // date rather than `now`, which is the only signal here a crawler can act on.
+  const rankingRoutes: MetadataRoute.Sitemap = rankings.length > 0
+    ? [
+        {
+          url: `${base}/top-ranking`,
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+          lastModified: now,
+        },
+        // A no-index ranking in the sitemap is a contradictory signal: it asks a
+        // crawler to spend budget on a URL the page then tells it not to index.
+        // The tool list is filtered on the same principle.
+        ...rankings
+          .filter((ranking) => !(ranking.seo?.robots ?? "").includes("noindex"))
+          .map((ranking) => ({
+            url: `${base}/top-ranking/${ranking.slug}`,
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+            lastModified: ranking.synced_at ? new Date(ranking.synced_at) : now,
+          })),
+      ]
+    : [];
+
   return [
     ...staticRoutes,
     ...blogRoutes,
     ...changelogRoutes,
+    ...rankingRoutes,
     ...categories.map((category) => ({
       url: `${base}/tools?category=${category.slug}`,
       changeFrequency: "weekly" as const,

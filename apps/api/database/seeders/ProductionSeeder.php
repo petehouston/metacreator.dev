@@ -24,6 +24,10 @@ final class ProductionSeeder extends Seeder
             // seeder above writes, so a tool and its changelog entry can ship in
             // the same deploy.
             ToolReleaseChangelogSeeder::class,
+            // The ranking pages themselves — configuration, not content. The rows
+            // inside them arrive from `rankings:sync`, which the weekly schedule
+            // runs; seeding cannot fetch them, and should not try on a deploy.
+            TopRankingSeeder::class,
         ]);
     }
 }

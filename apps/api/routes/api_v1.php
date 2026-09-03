@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\Changelog\ChangelogController;
 use App\Http\Controllers\Api\V1\Newsletter\NewsletterSubscriptionController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\Tools\RunToolController;
+use App\Http\Controllers\Api\V1\TopRanking\TopRankingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +64,16 @@ Route::prefix('changelog')->middleware('changelog.enabled')->group(function (): 
     Route::get('meta', [ChangelogController::class, 'meta'])->name('changelog.meta');
 
     Route::get('{slug}', [ChangelogController::class, 'show'])->name('changelog.show');
+});
+
+// The top-ranking pages. No feature switch and no pagination: an unpublished page
+// is already invisible (`is_published` per row), and the index is what draws the
+// header menu, so half of it would be a broken menu rather than a smaller payload.
+Route::prefix('top-ranking')->group(function (): void {
+    Route::get('/', [TopRankingController::class, 'index'])->name('top-ranking.index');
+
+    // Last: a bare segment would otherwise swallow any sibling added later.
+    Route::get('{slug}', [TopRankingController::class, 'show'])->name('top-ranking.show');
 });
 
 // The whole group 404s when an admin turns the blog off (docs/09).

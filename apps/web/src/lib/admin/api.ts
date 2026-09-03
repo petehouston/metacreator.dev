@@ -31,6 +31,8 @@ import type {
   AdminSubscription,
   AdminTicket,
   AdminTool,
+  AdminTopRankingEntry,
+  AdminTopRankingPage,
   AdminUser,
   BillingReport,
   ContactMessage,
@@ -44,6 +46,7 @@ import type {
   PermissionCatalog,
   SettingsPayload,
   SitemapReport,
+  RankingPlatformOption,
   Taxonomy,
   ToolAnalytics,
   ToolGrant,
@@ -142,6 +145,46 @@ export const adminApi = {
     /** Live now, whatever date the release was carrying. Its own permission. */
     publish: (id: string) => write<AdminChangelogRelease>("POST", `/changelog/${id}/publish`),
     remove: (id: string) => write<null>("DELETE", `/changelog/${id}`),
+  },
+
+  topRankings: {
+    list: (params: Params = {}) =>
+      list<AdminTopRankingPage, { platforms: RankingPlatformOption[] }>("/top-rankings", params),
+    get: (id: string) => one<AdminTopRankingPage>(`/top-rankings/${id}`),
+    create: (body: Record<string, unknown>) =>
+      write<AdminTopRankingPage>("POST", "/top-rankings", body),
+    update: (id: string, body: Record<string, unknown>) =>
+      write<AdminTopRankingPage>("PATCH", `/top-rankings/${id}`, body),
+    remove: (id: string) => write<null>("DELETE", `/top-rankings/${id}`),
+
+    /**
+     * Re-read the Wikipedia article now.
+     *
+     * Runs inline server-side rather than queueing, so the response *is* the
+     * answer: the returned page carries the new rows and the sync message. An
+     * editor pressing this is asking whether the source still parses, and a 202
+     * would leave them reloading the screen to find out.
+     */
+    sync: (id: string) => write<AdminTopRankingPage>("POST", `/top-rankings/${id}/sync`),
+
+    /** Resolve every missing picture on the page. `force` re-checks the good ones too. */
+    syncAvatars: (id: string, force = false) =>
+      write<AdminTopRankingPage>("POST", `/top-rankings/${id}/avatars${force ? "?force=1" : ""}`),
+
+    entries: {
+      create: (pageId: string, body: Record<string, unknown>) =>
+        write<AdminTopRankingEntry>("POST", `/top-rankings/${pageId}/entries`, body),
+      update: (pageId: string, entryId: number, body: Record<string, unknown>) =>
+        write<AdminTopRankingEntry>("PATCH", `/top-rankings/${pageId}/entries/${entryId}`, body),
+      remove: (pageId: string, entryId: number) =>
+        write<null>("DELETE", `/top-rankings/${pageId}/entries/${entryId}`),
+      /** The whole arrangement, not a move — see ReorderRankingEntries server-side. */
+      reorder: (pageId: string, ids: number[]) =>
+        write<{ data: AdminTopRankingEntry[] }>("PUT", `/top-rankings/${pageId}/entries/order`, { ids }),
+      /** One row's picture. The per-row retry. */
+      syncAvatar: (pageId: string, entryId: number) =>
+        write<AdminTopRankingEntry>("POST", `/top-rankings/${pageId}/entries/${entryId}/avatar`),
+    },
   },
 
   posts: {

@@ -47,10 +47,19 @@ export const changelogHrefs: readonly string[] = ["/changelog"];
 
 export const primaryNav = [
   { href: "/tools", label: "Tools" },
+  /**
+   * Rendered as a dropdown rather than a plain link, because its children are
+   * data: the ranking pages are rows an admin manages, so the menu is built from
+   * the API at render time and this entry only reserves the slot and the label.
+   */
+  { href: "/top-ranking", label: "Top Ranking" },
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
 ] as const;
+
+/** The nav entry whose children come from the API. */
+export const rankingNavHref = "/top-ranking";
 
 export const footerNav = [
   {
@@ -59,6 +68,7 @@ export const footerNav = [
       { href: "/tools", label: "All tools" },
       { href: "/pricing", label: "Pricing" },
       { href: "/tools?tier=free", label: "Free tools" },
+      { href: "/top-ranking", label: "Top rankings" },
       { href: "/changelog", label: "Changelog" },
     ],
   },
