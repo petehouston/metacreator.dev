@@ -1,6 +1,6 @@
 "use client";
 
-import type { ToolRun } from "./types";
+import type { Paginated, SearchResult, ToolRun } from "./types";
 
 /**
  * Browser-side API client.
@@ -132,4 +132,34 @@ export async function pollRun(
       return run;
     }
   }
+}
+
+/**
+ * Browser-side search, for the header's type-ahead.
+ *
+ * No credentials: search returns published content only, so sending the session
+ * cookie with a request per keystroke would buy nothing and cost the CORS
+ * preflight that `credentials: "include"` implies.
+ *
+ * Callers pass an `AbortSignal` and are expected to abort the previous request
+ * before starting the next — a type-ahead that lets them all resolve will
+ * eventually render the answer to a query the user has already finished editing.
+ */
+export async function searchSite(
+  query: string,
+  { signal, limit = 5 }: { signal?: AbortSignal; limit?: number } = {},
+): Promise<{ results: SearchResult[]; total: number }> {
+  const url = new URL(`${PUBLIC_URL}/api/v1/search`);
+  url.searchParams.set("q", query);
+  url.searchParams.set("per_page", String(limit));
+
+  const response = await fetch(url, { headers: { Accept: "application/json" }, signal });
+
+  // 404 is the feature switch, not an error: the header hides itself when search
+  // is off, and a race against that switch should end in an empty dropdown.
+  if (!response.ok) return { results: [], total: 0 };
+
+  const payload = (await response.json()) as Paginated<SearchResult>;
+
+  return { results: payload.data ?? [], total: payload.meta?.page?.total ?? 0 };
 }

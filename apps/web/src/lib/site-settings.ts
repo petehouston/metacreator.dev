@@ -81,6 +81,12 @@ export interface SiteFeatures {
    * routes 404 and the footer link that points at them goes with it.
    */
   changelogEnabled: boolean;
+  /**
+   * `features.search_enabled` (Settings → Features). Off, the API 404s `/search`
+   * and every affordance that leads there — the header search box, its dropdown,
+   * the results page — is absent rather than disabled.
+   */
+  searchEnabled: boolean;
 }
 
 /**
@@ -88,7 +94,14 @@ export interface SiteFeatures {
  * request that fails for ten seconds must not silently give the paid catalog away.
  * The API is the real gate — this only decides what gets drawn.
  */
-const FEATURE_DEFAULTS: SiteFeatures = { billingEnabled: true, changelogEnabled: true };
+const FEATURE_DEFAULTS: SiteFeatures = {
+  billingEnabled: true,
+  changelogEnabled: true,
+  // The one flag whose fallback is *off*, matching the API. On is the safe default
+  // for a feature whose failure mode is hiding something people paid for; search's
+  // failure mode is offering a box that 404s, so absence is the safe default here.
+  searchEnabled: false,
+};
 
 export async function siteFeatures(): Promise<SiteFeatures> {
   const settings = await api.settings().catch(() => null);
@@ -104,6 +117,7 @@ export async function siteFeatures(): Promise<SiteFeatures> {
   return {
     billingEnabled: flag("features.billing_enabled", FEATURE_DEFAULTS.billingEnabled),
     changelogEnabled: flag("features.changelog_enabled", FEATURE_DEFAULTS.changelogEnabled),
+    searchEnabled: flag("features.search_enabled", FEATURE_DEFAULTS.searchEnabled),
   };
 }
 

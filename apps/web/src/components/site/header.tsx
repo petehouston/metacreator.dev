@@ -8,6 +8,7 @@ import * as React from "react";
 import { NotificationBell } from "@/components/account/notification-bell";
 import { useSession } from "@/components/auth/session-provider";
 import { UserMenu } from "@/components/account/user-menu";
+import { SiteSearch } from "@/components/search/site-search";
 import { Logo } from "@/components/site/logo";
 import { useBillingEnabled } from "@/components/site/features-provider";
 import { NavDropdown } from "@/components/site/nav-dropdown";
@@ -112,6 +113,13 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Before the theme toggle and the bell: search is a task, those are
+              settings, and the eye reads the row left to right. Hides itself below
+              `md` — the phone header has no room, so the mobile menu carries a
+              full-width field instead — and renders nothing at all while the
+              feature is switched off. */}
+          <SiteSearch />
+
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
@@ -138,6 +146,12 @@ export function SiteHeader() {
           aria-label="Main"
           className="border-t border-[var(--color-border)] bg-[var(--color-background)]/95 backdrop-blur-xl md:hidden"
         >
+          <div className="mx-auto w-full max-w-[75rem] px-4 pt-3 sm:px-6">
+            {/* First in the menu, not last: on a phone this is the fastest route to
+                any of the ninety tools, and it beats scrolling a category list. */}
+            <SiteSearch variant="block" />
+          </div>
+
           <ul className="mx-auto flex w-full max-w-[75rem] flex-col px-4 py-2 sm:px-6">
             {nav.map((item) => (
               <li key={item.href}>

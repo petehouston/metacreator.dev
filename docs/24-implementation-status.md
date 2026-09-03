@@ -118,6 +118,24 @@ Wikipedia-sourced leaderboards at `/top-ranking/{slug}`, refreshed weekly by a s
 | Weekly job | ✅ | `RefreshTopRankingPage` on the `maintenance` queue, one job per page, staggered. Scheduled Sundays 03:20 |
 | Front-end cache invalidation | ✅ | Observers on *both* the page and its entries — a sync rewrites hundreds of rows without touching the page row, so observing the page alone would leave a refreshed ranking behind its cache |
 
+## Global search
+
+One search box over everything the site publishes — tools, blog posts, ranking pages and the
+hand-written pages. **Off by default** (`features.search_enabled`, Settings → Features): the API
+404s `/api/v1/search`, the header field and the `/search` page disappear with it.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Search endpoint | ✅ | `GET /api/v1/search?q=&page=&per_page=&filter[type]=`. One endpoint for both surfaces — the dropdown asks for five and reads `meta.page.total`, the results page asks for ten. A second "suggest" route would be the same query with a different cap and a second place for the ranking to drift |
+| Sources | ✅ | `App\Domain\Search`. Tools and posts through their fulltext indexes, ranking pages by scan (seven rows), and the static pages from `SitePageCatalog` — a code catalog, because those pages are React components with nothing to query. Each entry carries `keywords`, so "refund" finds the terms page |
+| Ranking | ✅ | Scored in PHP, not in the `ORDER BY`. MySQL fulltext scores by term *rarity*, which cannot express "prioritise exact matches" — a rare word buried in a long article outranks a page whose title **is** the query. Wide, well-separated bands: exact title (1000), prefix (800), whole word (700), substring (600), all words present (500), summary (400), body (300). A shorter title breaks a tie, so "Hashtag Generator" beats "The Complete Hashtag Generator Playbook" |
+| Candidate retrieval | ✅ | Three passes, because none is sufficient alone: `MATCH … AGAINST` for reach into body text, the whole phrase as `LIKE` (fulltext ignores stopwords and short tokens, and InnoDB does not index a row until its transaction commits), and each word against the title so "calculator youtube" reaches "YouTube Money Calculator". Deliberately over-fetches; the scorer drops anything that scores zero |
+| Caching | ✅ | The ranked answer per (term, type) for five minutes, so a debounced type-ahead costs one Redis read. Cached as **plain rows**, not objects: `cache.serializable_classes` is `false` here, so nothing may be unserialized from cache as a PHP object. A test asserts the payload survives `allowed_classes: false` — the array cache store the suite runs on never serializes, so nothing else could catch it |
+| Feature switch | ✅ | `features.search_enabled`, default **off**. `EnsureSearchEnabled` 404s the route; `siteFeatures()` carries it to the frontend, where the default is also off — the one flag whose safe fallback is absence, because its failure mode is offering a box that 404s |
+| Header dropdown | ✅ | Top five, icon on a tinted disc at the left and a wrapping title at the right, then a button to the full results. Debounced 200ms, previous request aborted, answers cached per mount. `/` focuses it; arrows move the highlight, Enter opens the highlighted result or runs the full search. Below `md` it renders as a full-width field **inside the mobile menu** — the phone header has no room for another 36px control, and a menu is where a phone user already goes to navigate |
+| Results page | ✅ | `/search`, a list at ten a page: type badge, image (Open Graph or featured, with the type's own icon as the placeholder), title, summary. Type filter chips, windowed pagination (`lib/pagination.ts` — a search can fill sixty pages, and sixty chips is a wall, not navigation), back to top. **`noindex`**, always: a page generated from arbitrary query text is an unbounded set of thin URLs |
+| Throttle | ✅ | `throttle:search`, 300/minute per actor. A type-ahead is a request per keystroke by design, so the ordinary 120/minute API ceiling would wall a real person inside half a minute |
+
 ## Admin
 
 Full detail in [25](25-admin.md).

@@ -82,6 +82,14 @@ final class AppServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by('ip:'.$request->ip()),
         ]);
 
+        // A type-ahead is a request per keystroke by design, so the ceiling has to
+        // sit well above what one person typing fast produces — roughly 5/second at
+        // a 200ms debounce, which a 120/minute cap would wall inside half a minute
+        // of ordinary use. Answers are cached per term, so the expensive path is
+        // only ever taken by genuinely new queries.
+        RateLimiter::for('search', fn (Request $request) => Limit::perMinute(300)
+            ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
     }

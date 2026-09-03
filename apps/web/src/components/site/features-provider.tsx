@@ -16,6 +16,7 @@ import type { SiteFeatures } from "@/lib/site-settings";
 const FeaturesContext = React.createContext<SiteFeatures>({
   billingEnabled: true,
   changelogEnabled: true,
+  searchEnabled: false,
 });
 
 export function FeaturesProvider({
@@ -31,8 +32,9 @@ export function FeaturesProvider({
     () => ({
       billingEnabled: features.billingEnabled,
       changelogEnabled: features.changelogEnabled,
+      searchEnabled: features.searchEnabled,
     }),
-    [features.billingEnabled, features.changelogEnabled],
+    [features.billingEnabled, features.changelogEnabled, features.searchEnabled],
   );
 
   return <FeaturesContext.Provider value={value}>{children}</FeaturesContext.Provider>;
@@ -50,4 +52,9 @@ export function useBillingEnabled(): boolean {
 /** Whether the public changelog is published at all. */
 export function useChangelogEnabled(): boolean {
   return useFeatures().changelogEnabled;
+}
+
+/** Whether global search is switched on. */
+export function useSearchEnabled(): boolean {
+  return useFeatures().searchEnabled;
 }

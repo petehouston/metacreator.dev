@@ -567,3 +567,29 @@ export interface TopRankingPage {
   /** Only on the detail response; the index omits it. */
   entries?: TopRankingEntry[];
 }
+
+// ── Global search ────────────────────────────────────────────────────────────
+
+/**
+ * The four kinds of thing search can return.
+ *
+ * A closed union, matching `SearchResultType` on the API: the dropdown maps each
+ * case to an icon and the results page to a badge, and a fifth case appearing
+ * without a matching branch should be a type error rather than a blank cell.
+ */
+export type SearchResultType = "page" | "tool" | "post" | "top_ranking";
+
+export interface SearchResult {
+  id: string;
+  type: SearchResultType;
+  /** "Page", "Tool", "Post", "Top Ranking" — the API owns the wording. */
+  type_label: string;
+  title: string;
+  /** Site-relative, so results navigate through the router rather than reloading. */
+  url: string;
+  summary: string | null;
+  /** Open Graph or featured image. Null is normal — most static pages have none. */
+  image: string | null;
+  /** A category, a platform — whatever context that kind of result carries. */
+  context: string | null;
+}

@@ -9,6 +9,8 @@ import type {
   PostDetail,
   PostSummary,
   PostTag,
+  SearchResult,
+  SearchResultType,
   ToolCategory,
   ToolDetail,
   ToolSummary,
@@ -227,6 +229,26 @@ export const api = {
         revalidate: 3600,
       }).then((r) => r.data),
   },
+
+  /**
+   * Global search.
+   *
+   * Not cached and not tagged, unlike every other read here. A search response is
+   * keyed by a free-text query, so Next's tag cache would fill with one entry per
+   * phrase anyone has ever typed and revalidating it would mean guessing those
+   * phrases back. The API caches the ranked answer per term instead, which is the
+   * layer that knows when the underlying content changed.
+   */
+  search: (params: { q: string; type?: SearchResultType; page?: number; per_page?: number }) =>
+    request<Paginated<SearchResult>>("/search", {
+      searchParams: {
+        q: params.q,
+        "filter[type]": params.type,
+        page: params.page,
+        per_page: params.per_page,
+      },
+      revalidate: 0,
+    }),
 
   account: {
     entitlements: (cookie: string) =>

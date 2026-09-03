@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\V1\Blog\BlogController;
 use App\Http\Controllers\Api\V1\Catalog\ToolCatalogController;
 use App\Http\Controllers\Api\V1\Changelog\ChangelogController;
 use App\Http\Controllers\Api\V1\Newsletter\NewsletterSubscriptionController;
+use App\Http\Controllers\Api\V1\Search\SearchController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\Tools\RunToolController;
 use App\Http\Controllers\Api\V1\TopRanking\TopRankingController;
@@ -100,6 +101,15 @@ Route::prefix('newsletter')->middleware('newsletter.enabled')->group(function ()
         ->middleware('throttle:20,1')
         ->name('newsletter.confirm');
 });
+
+// Global search across tools, posts, ranking pages and the static site pages.
+// Off by default (docs/09): the group 404s until an admin turns it on, which is
+// what makes the frontend hide the search box rather than offer a dead one.
+// Throttled because it is the one public endpoint that fans out across several
+// tables, and a type-ahead is a request per keystroke by design.
+Route::get('search', SearchController::class)
+    ->middleware(['search.enabled', 'throttle:search'])
+    ->name('search');
 
 Route::prefix('tools')->group(function (): void {
     // Two throttles: a per-minute burst guard here, and the daily quota inside the

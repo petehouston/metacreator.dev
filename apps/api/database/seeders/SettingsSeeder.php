@@ -38,6 +38,10 @@ final class SettingsSeeder extends Seeder
                 .'pricing and billing pages 404, upgrade prompts disappear, and every Pro tool is gated '
                 .'at Account Required instead. Nothing is written to the tools table.'],
         ['key' => 'features.newsletter_enabled', 'value' => true, 'type' => 'bool', 'group' => 'features', 'is_public' => true],
+        ['key' => 'features.search_enabled', 'value' => false, 'type' => 'bool', 'group' => 'features', 'is_public' => true,
+            'description' => 'Global search across tools, posts, rankings and the static pages. Off by '
+                .'default: /search 404s and the header search box disappears. Turn it on once the '
+                .'catalog is worth searching.'],
 
         // Blog — how an article presents itself. Public: the frontend reads these
         // when it renders a post, so they have to be readable without a session.
