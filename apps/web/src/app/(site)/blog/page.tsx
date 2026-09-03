@@ -1,9 +1,11 @@
+import { ArrowUp } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { PostCard, PostCardSkeleton } from "@/components/blog/post-card";
+import { NewsletterForm } from "@/components/site/newsletter-form";
 import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/config/site";
 import { api } from "@/lib/api";
@@ -64,7 +66,7 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
   const display = await blogDisplay();
 
   return (
-    <div className="mx-auto w-full max-w-[80rem] px-4 py-12 sm:px-6 lg:py-16">
+    <div id="top" className="mx-auto w-full max-w-[80rem] px-4 py-12 sm:px-6 lg:py-16">
       <header className="flex flex-col gap-3">
         <p className="eyebrow">Field notes</p>
         <h1 className="text-heading-1 text-balance sm:text-display-lg">Blog</h1>
@@ -99,6 +101,43 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
       <Suspense key={`${query}-${category}-${tag}-${page}`} fallback={<GridFallback />}>
         <PostGrid query={query} category={category} tag={tag} page={page} display={display} />
       </Suspense>
+
+      {/* A bare `<a>`, not a scroll handler and not `<Link>`: `html` already carries
+          `scroll-behavior: smooth`, which the reduced-motion block in globals.css
+          turns off for anyone who asked for that, and the router has no business
+          in a same-page hash. Being a real link also means it works before
+          hydration — the point of a control that sits under a full page of cards. */}
+      <div className="mt-12 flex justify-center">
+        <a
+          href="#top"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-foreground-muted)] underline-offset-4 transition-colors hover:text-[var(--color-foreground)] hover:underline"
+        >
+          <ArrowUp className="size-4" aria-hidden="true" />
+          Back to top
+        </a>
+      </div>
+
+      {/* Page level, not inside `PostGrid`: the sign-up belongs at the foot of
+          every page of the listing — page one, page nine, a filtered view with no
+          pagination at all — and it should not blink out while the grid streams. */}
+      <aside className="mt-12">
+        <div className="panel relative overflow-hidden p-6 sm:p-10">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-aurora" />
+          <div className="relative grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+            <div className="flex flex-col gap-2">
+              <p className="eyebrow">Stay sharp</p>
+              <h2 className="text-heading-2 text-balance">
+                Get the next one in your inbox.
+              </h2>
+              <p className="text-sm text-[var(--color-foreground-muted)]">
+                One email a month. No drip sequence, unsubscribe in one click.
+              </p>
+            </div>
+
+            <NewsletterForm source="blog-list" />
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }
