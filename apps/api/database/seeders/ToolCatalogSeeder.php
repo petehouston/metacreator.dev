@@ -3126,15 +3126,16 @@ final class ToolCatalogSeeder extends Seeder
                 'category' => 'media',
                 'name' => 'Instagram Image Downloader',
                 'tagline' => 'The photo behind a post, at the size Instagram publishes it.',
-                'description' => 'Pulls the image a public Instagram post publishes to link cards — larger '
-                    .'than the copy the feed renders — and reads the expiry out of the link, so you know '
-                    .'how long you have before saving it stops being possible.',
+                'description' => 'Pulls the image a public Instagram post publishes to link cards, reads '
+                    .'the expiry out of the link so you know how long you have to save it, and says '
+                    .'plainly when Instagram has cropped that image square rather than letting you find '
+                    .'out from the file.',
                 'tier' => ToolTier::Free,
                 'platforms' => ['instagram'],
                 'focus_keyword' => 'instagram image downloader',
                 'seo_title' => 'Instagram Image Downloader — Save Post Photos Free',
-                'seo_description' => 'Paste a public Instagram post or reel link and download the '
-                    .'full-size photo behind it. No account, no app, no sign-in.',
+                'seo_description' => 'Paste a public Instagram post or reel link and download the photo '
+                    .'behind it, with its size and expiry stated. No account, no app, no sign-in.',
                 'instructions' => Blocks::make([
                     Blocks::paragraph('Paste a public post or reel link — the <code>/p/…</code> or '
                         .'<code>/reel/…</code> address from the share sheet. Tracking parameters are '
@@ -3150,7 +3151,15 @@ final class ToolCatalogSeeder extends Seeder
                     Blocks::paragraph('The advice that circulates about editing the size segment of an '
                         .'Instagram image URL — swapping in <code>s1080x1080</code> — no longer works. The '
                         .'signature covers the whole path, so an edited link is an invalid link. What '
-                        .'comes back here is the largest copy Instagram publishes.'),
+                        .'comes back here is the only copy Instagram serves without a session.'),
+                    Blocks::heading('Square posts come back whole; the rest come back cropped', 2),
+                    Blocks::paragraph('The picture Instagram attaches to a link card is built for a card, '
+                        .'so a photo that is not already square is cut down to one — a landscape shot '
+                        .'loses its sides, a portrait one loses its top and bottom. The crop is written '
+                        .'into the same signed path as the size, which means it cannot be undone from '
+                        .'outside: the uncropped frame is served only to a signed-in viewer in the app. '
+                        .'The result marks every cropped image as such and gives you its exact pixel '
+                        .'size, so you can see what you are getting before you save it.'),
                     Blocks::callout('warning', 'These photos belong to whoever posted them. Research, '
                         .'moodboards, reference and commentary are ordinary use; reposting somebody’s '
                         .'photograph as your own is not, and a credit in the caption is not a licence.'),
@@ -3164,6 +3173,14 @@ final class ToolCatalogSeeder extends Seeder
                             .'that are public when you are logged in. Check the post opens in a private '
                             .'browser window — if it does not, nothing signed-out can reach it, and this '
                             .'tool never signs in on your behalf.'],
+                    ['question' => 'The download is cropped — bits of the photo are missing.',
+                        'answer' => 'That is Instagram, not the tool. The copy it publishes for link '
+                            .'cards is cropped square, so any post that was not square to begin with '
+                            .'arrives with its edges cut off, and the crop is sealed inside the link’s '
+                            .'signature. There is no signed-out address for the full frame, so the result '
+                            .'labels the image “Cropped for the link card” rather than handing it over '
+                            .'without comment. For the whole picture you need the post open in the app '
+                            .'while signed in.'],
                     ['question' => 'I got one image from a ten-slide carousel.',
                         'answer' => 'Instagram publishes only the first slide to a link card when it '
                             .'answers without a session. That is Instagram’s limit rather than a failed '

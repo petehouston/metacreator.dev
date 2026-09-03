@@ -456,17 +456,23 @@ remote_sudo "chgrp -R ${APP_GROUP} ${RELEASE_DIR}"
 # nginx, so freshly generated media 404s from the first deploy after it was made.
 remote_sudo "chgrp -R ${APP_GROUP} ${SHARED_DIR}/api/storage"
 
+# Directories keep the setgid bit provision.sh gave them (2770, not 770), so a
+# file written inside is group ${APP_GROUP} whoever creates it. Two things take
+# setgid away, and both have bitten this deploy:
+#
+#   * a symbolic `chmod g=rwX` simply does not carry it;
+#   * chmod(2) SILENTLY drops S_ISGID when the caller is not in the file's
+#     group, and ${APP_USER} is deliberately not a member of ${APP_GROUP} - so
+#     even `chmod 2770` run over SSH leaves 770 behind, with no error to notice.
+#
+# Hence root, and hence numeric modes.
+remote_sudo "find ${SHARED_DIR}/api/storage -user ${APP_USER} -type d -exec chmod 2770 {} +"
+
 remote "set -e
     chmod -R u=rwX,g=rX,o= ${RELEASE_DIR}
     # Only files this user owns. php-fpm's master runs as root and owns its own
     # php-fpm-error.log / php-fpm-slow.log inside this directory; a blanket
     # chmod -R would fail on them and abort the deploy after the build.
-    #
-    # Directories keep the setgid bit provision.sh gave them (2770, not 770).
-    # A symbolic \`chmod g=rwX\` clears setgid, and once it is gone a directory
-    # created later by a command run over SSH is group ${APP_USER} rather than
-    # ${APP_GROUP} - which is exactly how media ends up unreadable by nginx.
-    find ${SHARED_DIR}/api/storage -user ${APP_USER} -type d -exec chmod 2770 {} +
     find ${SHARED_DIR}/api/storage -user ${APP_USER} -type f -exec chmod 660 {} +"
 ok "ownership and modes set"
 

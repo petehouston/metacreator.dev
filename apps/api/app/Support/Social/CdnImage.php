@@ -97,6 +97,78 @@ final class CdnImage
             : 'about '.(int) round($hours / 24).' days';
     }
 
+    /**
+     * The pixel size Meta will actually serve for a URL, and whether it cut the frame to get there.
+     *
+     * Meta encodes its rendering instructions in the URL, in an `stp` segment that
+     * reads like `c656.0.1970.1969a_dst-jpg_e35_s640x640_tt6`. Two directives in
+     * there change what the visitor receives:
+     *
+     * - `s<w>x<h>` (or `p<w>x<h>` in the older path form) is the size the file is
+     *   scaled to, so it is the size of the file that lands in the downloads folder.
+     * - `c<x>.<y>.<w>.<h>` is a crop rectangle. Meta emits it when it needs a
+     *   different aspect ratio than the source has — which is exactly what happens
+     *   when a landscape or portrait post is squared off for a link card. The pixels
+     *   outside that rectangle are not in the file that gets served, and there is no
+     *   way to ask for them back: {@see self::isSigned()} covers the whole path, so
+     *   an edited `stp` answers 403.
+     *
+     * Saying so matters because the failure is silent otherwise. A cropped download
+     * is a complete-looking JPEG that happens to be missing the sides of the photo,
+     * and a visitor who does not know that has no reason to go looking.
+     *
+     * @return array{width: ?int, height: ?int, cropped: bool}
+     */
+    public static function rendition(string $url): array
+    {
+        $directives = self::directives($url);
+        $width = null;
+        $height = null;
+
+        if (preg_match('/(?:^|[\/_])[sp](\d{2,5})x(\d{2,5})(?:$|[\/_])/', $directives, $match) === 1) {
+            $width = (int) $match[1];
+            $height = (int) $match[2];
+        }
+
+        return [
+            'width' => $width,
+            'height' => $height,
+            'cropped' => preg_match('/(?:^|[\/_])c\d+\.\d+\.\d+\.\d+/', $directives) === 1,
+        ];
+    }
+
+    /**
+     * That size, in words, or null when the URL does not say.
+     *
+     * Not every published image carries a size directive — an unsigned or
+     * already-full-size file often carries none — and inventing a number for those
+     * would be worse than leaving the column blank.
+     */
+    public static function dimensions(string $url): ?string
+    {
+        $rendition = self::rendition($url);
+
+        return $rendition['width'] === null || $rendition['height'] === null
+            ? null
+            : $rendition['width'].' × '.$rendition['height'];
+    }
+
+    /**
+     * The parts of a URL that carry rendering directives: the path, and `stp`.
+     *
+     * Deliberately not the whole URL. The signature parameters are long base64
+     * strings, and scanning those for `s640x640`-shaped text is asking to read a
+     * size out of a hash.
+     */
+    private static function directives(string $url): string
+    {
+        $path = (string) (parse_url($url, PHP_URL_PATH) ?: '');
+        parse_str((string) (parse_url($url, PHP_URL_QUERY) ?: ''), $query);
+        $stp = isset($query['stp']) && is_string($query['stp']) ? $query['stp'] : '';
+
+        return $path.'_'.$stp;
+    }
+
     private static function isMetaHost(string $url): bool
     {
         $host = SocialUrl::host($url);

@@ -66,10 +66,18 @@ final class MetaImages
 
         foreach ($images as $index => $image) {
             $lifetime = CdnImage::lifetime($image);
+            $size = CdnImage::dimensions($image);
 
             $rows[] = [
                 'image' => count($images) === 1 ? 'Post image' : 'Image '.($index + 1),
-                'source' => CdnImage::isSigned($image) ? 'Signed CDN link' : 'As published',
+                // The crop leads, because it is the one thing here that changes what
+                // the visitor sees in the file rather than how long they have to fetch it.
+                'source' => match (true) {
+                    CdnImage::rendition($image)['cropped'] => 'Cropped for the link card',
+                    CdnImage::isSigned($image) => 'Signed CDN link',
+                    default => 'As published',
+                },
+                'size' => $size ?? 'Not stated',
                 'expires' => $lifetime === null ? 'Does not expire' : 'Expires in '.$lifetime,
                 'url' => $image,
             ];
@@ -91,6 +99,7 @@ final class MetaImages
         return [
             ['key' => 'image', 'label' => 'Image'],
             ['key' => 'source', 'label' => 'Version'],
+            ['key' => 'size', 'label' => 'Pixels'],
             ['key' => 'expires', 'label' => 'Link life'],
             ['key' => 'url', 'label' => 'Download', 'align' => 'right', 'type' => 'download'],
         ];
@@ -111,6 +120,18 @@ final class MetaImages
             'These images belong to whoever posted them. Downloading one is not a licence to republish '
             .'it — use them for research, reference, moodboards or commentary.',
         ];
+
+        foreach ($images as $image) {
+            if (CdnImage::rendition($image)['cropped']) {
+                $warnings[] = 'Meta crops the picture it publishes to a link card, so an image marked '
+                    .'“Cropped for the link card” above is missing whatever fell outside that crop — '
+                    .'usually the sides of a landscape photo or the top and bottom of a portrait one. '
+                    .'The crop is baked into the signature, so there is no uncropped version to ask for '
+                    .'here; the full frame is only served to a signed-in viewer in the app.';
+
+                break;
+            }
+        }
 
         foreach ($images as $image) {
             if (CdnImage::isSigned($image)) {

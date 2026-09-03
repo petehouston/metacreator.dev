@@ -1510,6 +1510,40 @@ it('reads the expiry Meta stamps into an image URL and says how long is left', f
         ->and(implode(' ', $result->warnings))->toContain('signed and expires');
 });
 
+it('says so when Instagram hands back a square crop rather than the posted frame', function () {
+    // The real shape of a landscape post's og:image: a crop rectangle and a 640px
+    // scale, both baked into the signed path.
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="A wide photo">'
+        .'<meta property="og:image" content="https://scontent.cdninstagram.com/v/t51/1.jpg'
+        .'?stp=c656.0.1970.1969a_dst-jpg_e35_s640x640_tt6&oh=00_AfAbc&oe='.dechex(time() + 7200).'">',
+    )]);
+
+    $result = runRunner(app(Runners\InstagramImageDownloaderRunner::class), [
+        'url' => 'https://www.instagram.com/mrbeast/p/DZkn1f0Flsc/',
+    ]);
+
+    expect($result->data['rows'][0]['source'])->toBe('Cropped for the link card')
+        ->and($result->data['rows'][0]['size'])->toBe('640 × 640')
+        ->and(implode(' ', $result->warnings))->toContain('missing whatever fell outside that crop');
+});
+
+it('does not cry crop over an image Instagram publishes whole', function () {
+    Http::fake(['*' => Http::response(
+        '<meta property="og:title" content="A square photo">'
+        .'<meta property="og:image" content="https://scontent.cdninstagram.com/v/t51/1.jpg'
+        .'?stp=dst-jpg_e35_s1080x1080&oh=00_AfAbc&oe='.dechex(time() + 7200).'">',
+    )]);
+
+    $result = runRunner(app(Runners\InstagramImageDownloaderRunner::class), [
+        'url' => 'https://www.instagram.com/p/Cxyz1234567/',
+    ]);
+
+    expect($result->data['rows'][0]['source'])->toBe('Signed CDN link')
+        ->and($result->data['rows'][0]['size'])->toBe('1080 × 1080')
+        ->and(implode(' ', $result->warnings))->not->toContain('fell outside that crop');
+});
+
 it('refuses an Instagram story rather than pretending it can read one', function () {
     expect(fn () => runRunner(app(Runners\InstagramImageDownloaderRunner::class), [
         'url' => 'https://www.instagram.com/stories/someone/3210987654321/',

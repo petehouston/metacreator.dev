@@ -18,12 +18,12 @@ use App\Support\Social\SocialUrl;
 /**
  * The photo behind a public Instagram post, at the size Instagram publishes it.
  *
- * Right-clicking a photo in the feed saves the copy the feed is rendering, which is
- * sized for the column it is sitting in. The copy Instagram publishes to link cards
- * is the larger one, and it is the one this hands back.
+ * What this can reach is the copy Instagram publishes to link cards, which is the
+ * only copy a signed-out request is given. That is worth being precise about,
+ * because it is not always the picture the post shows.
  *
- * Two things about Instagram specifically are worth a page of their own, and both
- * are things the general downloader has no business knowing:
+ * Three things about Instagram specifically are worth a page of their own, and all
+ * three are things the general downloader has no business knowing:
  *
  * - **The link expires.** Instagram signs every image URL, and the expiry is in the
  *   URL. So this reads it and says how long is left, because "save the file, do not
@@ -31,6 +31,12 @@ use App\Support\Social\SocialUrl;
  * - **The size cannot be rewritten.** The signature covers the path, so the
  *   `s1080x1080` trick that circulates for Instagram URLs answers 403 on every
  *   current link. Saying so is more useful than a row that 403s.
+ * - **The card image is cropped.** A post that is not already square comes back as
+ *   a square crop of itself — Instagram bakes a `c<x>.<y>.<w>.<h>` rectangle into
+ *   the signed path, and the pixels outside it are simply not in the file. Since
+ *   the same signature that forbids resizing forbids uncropping, the full frame is
+ *   not reachable from here at all, and the honest thing is to say which images
+ *   were cropped rather than hand back a squared-off photo without comment.
  *
  * Read from the tags Instagram publishes for other sites, with no session and no
  * private endpoint (docs/08) — which is also where it stops: Instagram answers a
@@ -160,9 +166,9 @@ final class InstagramImageDownloaderRunner implements Cacheable, ToolRunner, Use
                 .'images; it does not download video.';
         }
 
-        $notes[] = 'The size segment in an Instagram image URL cannot be rewritten. The signature covers '
-            .'the whole path, so an edited link answers 403 — the version above is the largest one '
-            .'Instagram publishes.';
+        $notes[] = 'The size and crop segments in an Instagram image URL cannot be rewritten. The '
+            .'signature covers the whole path, so an edited link answers 403 — what is above is the '
+            .'only version Instagram serves to a signed-out request, not necessarily the full frame.';
 
         return $notes;
     }
