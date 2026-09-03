@@ -123,9 +123,17 @@ fi
 
 if [[ "${DRY_RUN}" -eq 1 ]]; then
     step "Dry run — files that would be sent"
-    rsync -az --dry-run --itemize-changes --delete \
+    # Collected first, then trimmed. Piping rsync straight into `head` closes the
+    # pipe under it, which rsync reports as exit 20 — and `set -o pipefail` then
+    # failed the whole dry run every single time, on a command whose entire job is
+    # to change nothing and report.
+    dry_output="$(rsync -az --dry-run --itemize-changes --delete \
         --exclude-from="${REPO_ROOT}/deploy/rsync-exclude.txt" \
-        "${REPO_ROOT}/apps/api/" "${SSH_TARGET}:/tmp/.mc-dryrun-api/" | head -40
+        "${REPO_ROOT}/apps/api/" "${SSH_TARGET}:/tmp/.mc-dryrun-api/")"
+
+    printf '%s\n' "${dry_output}" | head -40
+    printf '%s     %s file(s) and director(ies) would be sent%s\n' \
+        "$c_dim" "$(printf '%s\n' "${dry_output}" | grep -c .)" "$c_reset"
     ok "dry run complete — nothing was changed"
     exit 0
 fi
