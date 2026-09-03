@@ -449,12 +449,25 @@ step "9. Permissions"
 # PHP and the Next proxy carried on working. That is a difficult symptom to read
 # backwards, so the chgrp is no longer allowed to fail quietly.
 remote_sudo "chgrp -R ${APP_GROUP} ${RELEASE_DIR}"
+
+# Shared storage is group-owned by ${APP_GROUP} too, and needs sudo for the same
+# reason. Without this, anything written by a bare `artisan` run over SSH stays
+# group ${APP_USER} - and the chmod below then takes every last bit away from
+# nginx, so freshly generated media 404s from the first deploy after it was made.
+remote_sudo "chgrp -R ${APP_GROUP} ${SHARED_DIR}/api/storage"
+
 remote "set -e
     chmod -R u=rwX,g=rX,o= ${RELEASE_DIR}
     # Only files this user owns. php-fpm's master runs as root and owns its own
     # php-fpm-error.log / php-fpm-slow.log inside this directory; a blanket
     # chmod -R would fail on them and abort the deploy after the build.
-    find ${SHARED_DIR}/api/storage -user ${APP_USER} -exec chmod u=rwX,g=rwX,o= {} +"
+    #
+    # Directories keep the setgid bit provision.sh gave them (2770, not 770).
+    # A symbolic \`chmod g=rwX\` clears setgid, and once it is gone a directory
+    # created later by a command run over SSH is group ${APP_USER} rather than
+    # ${APP_GROUP} - which is exactly how media ends up unreadable by nginx.
+    find ${SHARED_DIR}/api/storage -user ${APP_USER} -type d -exec chmod 2770 {} +
+    find ${SHARED_DIR}/api/storage -user ${APP_USER} -type f -exec chmod 660 {} +"
 ok "ownership and modes set"
 
 # ─────────────────────────────────────────────────────────────────────────────
