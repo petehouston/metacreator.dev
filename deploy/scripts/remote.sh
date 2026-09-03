@@ -33,7 +33,10 @@ ssh)
 sh|shell)
     # Run one arbitrary shell command in the live API directory.
     [[ $# -gt 0 ]] || die "usage: remote.sh sh '<command>'"
-    exec ssh_i "cd ${CURRENT_LINK}/api && $*" ;;
+    # Called, not `exec`ed: `ssh_i` is a shell function, and `exec` can only
+    # replace this process with an external program — so `exec ssh_i` failed with
+    # "ssh_i: not found" every time this branch was used.
+    ssh_i "cd ${CURRENT_LINK}/api && $*" ;;
 
 tinker)
     exec "$(dirname "${BASH_SOURCE[0]}")/artisan.sh" tinker ;;
