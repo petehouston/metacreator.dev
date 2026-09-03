@@ -46,7 +46,9 @@ final class ToolCatalogSeeder extends Seeder
         $categories = ToolCategory::query()->pluck('id', 'slug');
 
         foreach ($this->definitions() as $index => $definition) {
-            $tool = Tool::query()->updateOrCreate(
+            // `seedRow`, not `updateOrCreate`: a field an admin has saved in the
+            // console is theirs, and a deploy must not hand it back to this file.
+            $tool = Tool::seedRow(
                 ['key' => $definition['key']],
                 [
                     'slug' => $definition['slug'],
@@ -72,11 +74,19 @@ final class ToolCatalogSeeder extends Seeder
                     'faq' => $definition['faq'] ?? [],
                     'sort_order' => $index,
                     'featured_at' => ($definition['featured'] ?? false) ? now() : null,
-                    'published_at' => now(),
                 ],
+                // Stamped when the row is first written and never again: it is the
+                // date the catalog page cites, and re-stamping it every deploy would
+                // make every tool look like it shipped this morning.
+                ['published_at' => now()],
             );
 
-            $this->syncPlatforms($tool, $definition['platforms']);
+            // The pivot mirrors the `platforms` column, so it follows the same lock:
+            // a tool whose platforms were edited in the console keeps them.
+            if (! $tool->isFieldLocked('platforms')) {
+                $this->syncPlatforms($tool, $tool->platformList());
+            }
+
             $this->syncSeo($tool, $definition, $seo);
         }
 
@@ -131,7 +141,7 @@ final class ToolCatalogSeeder extends Seeder
     {
         $defaults = $seo->for($tool);
 
-        SeoMeta::query()->updateOrCreate(
+        SeoMeta::seedRow(
             ['seoable_type' => Tool::class, 'seoable_id' => $tool->id],
             [
                 'title' => $definition['seo_title'] ?? $defaults['title'],
@@ -355,7 +365,7 @@ final class ToolCatalogSeeder extends Seeder
                 'tagline' => 'Balanced hashtag sets — mostly niche, where a small account can actually rank.',
                 'description' => 'Builds niche, broad and platform-staple hashtag groups from your topic, plus a '
                     .'recommended set in roughly a 70/20/10 ratio and the right total for each platform.',
-                'tier' => ToolTier::Account,
+                'tier' => ToolTier::Free,
                 'platforms' => ['instagram', 'tiktok', 'youtube', 'x', 'linkedin'],
                 'focus_keyword' => 'hashtag generator',
                 'seo_title' => 'Hashtag Generator for Instagram, TikTok & YouTube — Balanced Sets',
@@ -3314,7 +3324,7 @@ final class ToolCatalogSeeder extends Seeder
                         .'the alt text. If you carry the picture across, carry the description with it.'),
                 ]),
                 'example' => [
-                    'input' => ['url' => 'https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l'],
+                    'input' => ['url' => 'https://bsky.app/profile/capecodfairytales.bsky.social/post/3mukkmshahc2n'],
                     'note' => 'The original-upload row is the file itself, from the author’s server.',
                 ],
                 'faq' => [

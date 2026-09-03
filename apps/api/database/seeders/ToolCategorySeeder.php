@@ -36,7 +36,10 @@ final class ToolCategorySeeder extends Seeder
     public function run(): void
     {
         foreach (self::CATEGORIES as $index => $category) {
-            ToolCategory::query()->updateOrCreate(
+            // `seedRow` rather than `updateOrCreate`: a name or accent colour
+            // changed in the admin console belongs to whoever changed it, and a
+            // deploy re-running this file must not undo it.
+            ToolCategory::seedRow(
                 ['slug' => $category['slug']],
                 [...$category, 'sort_order' => $index, 'is_visible' => true],
             );

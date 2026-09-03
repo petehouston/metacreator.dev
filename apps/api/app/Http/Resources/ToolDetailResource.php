@@ -76,12 +76,15 @@ final class ToolDetailResource extends JsonResource
             'platforms' => $this->platformList(),
             'category' => $this->whenLoaded('category', fn () => new ToolCategoryResource($this->category)),
 
-            // Drives the generated form; the same schema the server validates against.
-            'input_schema' => $this->input_schema,
+            // Drives the generated form: the schema the server validates against,
+            // with the per-field placeholders and starting values an admin has set
+            // in the console layered on top. Only the presentation differs — what is
+            // accepted is still exactly what the runner declared.
+            'input_schema' => $this->presentedInputSchema(),
 
             // Block JSON, rendered by the same renderer as blog posts (ADR 0003).
             'instructions' => $this->instructions,
-            'example' => $this->example,
+            'example' => $this->presentedExample(),
             'faq' => $this->faq,
 
             'access' => $this->when($access !== null, $access),

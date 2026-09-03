@@ -35,6 +35,18 @@ final class UpdateToolRequest extends FormRequest
             'config.limits.monthly' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:10000000'],
             'config.runs_per_day' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:100000'],
 
+            // How each generated form field presents itself. The schema is the
+            // runner's, and stays so — this only carries what an admin should be
+            // able to fix without a deploy: the line of help under the box, the
+            // greyed-out example inside it (which also feeds "Try with sample
+            // data") and the value it starts out holding. Blank clears the
+            // override and gives the field back to the runner's schema.
+            'config.field_overrides' => ['sometimes', 'nullable', 'array'],
+            'config.field_overrides.*' => ['array'],
+            'config.field_overrides.*.hint' => ['sometimes', 'nullable', 'string', 'max:300'],
+            'config.field_overrides.*.sample' => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'config.field_overrides.*.default' => ['sometimes', 'nullable', 'string', 'max:2000'],
+
             // Per-tool SEO overrides. Every field is optional and nullable: blank
             // means "fall back to the tool's own copy and the site template", which
             // is the right default for the long tail of tools nobody hand-tunes.

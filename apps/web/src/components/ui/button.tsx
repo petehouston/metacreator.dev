@@ -8,9 +8,12 @@ const buttonVariants = cva(
   // Base: everything every button shares. `disabled` styling lives here so no
   // variant can forget it.
   [
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium",
+    "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap font-medium",
     "transition-[background-color,border-color,color,box-shadow,transform] duration-150",
     "ease-[var(--ease-standard)] active:translate-y-px",
+    // Tailwind v4 stopped setting `cursor: pointer` on buttons, so a button that
+    // does not say so renders under an arrow and reads as inert. Spelled out here
+    // rather than per call site: every button in the app is a thing you click.
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0",
   ],

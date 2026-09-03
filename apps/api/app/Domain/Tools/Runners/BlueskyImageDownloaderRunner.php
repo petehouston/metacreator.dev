@@ -74,7 +74,7 @@ final class BlueskyImageDownloaderRunner implements Cacheable, ToolRunner, UsesP
                     'description' => 'A bsky.app post link — the address in the bar when you open a post.',
                     'minLength' => 8,
                     'maxLength' => 500,
-                    'examples' => ['https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l'],
+                    'examples' => ['https://bsky.app/profile/capecodfairytales.bsky.social/post/3mukkmshahc2n'],
                 ],
             ],
         ];

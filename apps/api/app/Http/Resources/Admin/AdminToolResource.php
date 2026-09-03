@@ -40,6 +40,15 @@ final class AdminToolResource extends JsonResource
                 'name' => $this->category->name,
             ]),
             'config' => $this->config,
+            // The runner's schema, so the editor can list the fields the generated
+            // form will show — read-only, and paired with the per-field wording an
+            // admin *can* change. Only on the editor's own route: a schema per row
+            // would multiply the size of a forty-tool listing that never reads it.
+            ...($request->routeIs('admin.tools.show', 'admin.tools.update') ? [
+                'input_schema' => $this->input_schema,
+                'example' => $this->example,
+                'field_overrides' => (object) $this->fieldOverrides(),
+            ] : []),
             // The caps this row sets for itself, already normalised out of the two
             // places they can be stored. The editor renders these rather than
             // re-deriving the legacy `runs_per_day` key in TypeScript.

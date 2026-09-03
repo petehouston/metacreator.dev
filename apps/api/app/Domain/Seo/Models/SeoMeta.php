@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Seo\Models;
 
 use App\Domain\Media\Models\Media;
+use App\Support\Concerns\PreservesAdminEdits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -14,16 +15,19 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * defaults and then to the site-wide template (see docs/16).
  *
  * @property string|null $robots
+ * @property list<string>|null $locked_fields
  */
 final class SeoMeta extends Model
 {
+    use PreservesAdminEdits;
+
     protected $table = 'seo_meta';
 
     protected $guarded = ['id'];
 
     protected function casts(): array
     {
-        return ['schema_overrides' => 'array'];
+        return ['schema_overrides' => 'array', 'locked_fields' => 'array'];
     }
 
     /** @return MorphTo<Model, $this> */

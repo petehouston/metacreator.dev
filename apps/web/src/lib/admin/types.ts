@@ -7,7 +7,7 @@
  * marketing page by autocomplete.
  */
 
-import type { BlockDocument, ChangelogItem } from "@/lib/types";
+import type { BlockDocument, ChangelogItem, JsonSchema } from "@/lib/types";
 
 export type Trend = "up" | "down" | "flat";
 export type MetricFormat = "number" | "currency" | "percent";
@@ -226,6 +226,24 @@ export interface PermissionCatalog {
 
 // ── Tools ────────────────────────────────────────────────────────────────────
 
+/**
+ * What an admin has said one generated form field should look like.
+ *
+ * `sample` does double duty on purpose: it is the greyed-out example in the empty
+ * box *and* the value "Try with sample data" runs with. They describe the same
+ * fact — a link that demonstrates the tool — and typing it twice is how the two
+ * end up disagreeing, which is how a sample button ends up demoing a dead URL.
+ *
+ * `hint` replaces the line of help printed under the box — the runner's
+ * `description`. It is copy, never a contract: what the field actually accepts
+ * stays the schema's business.
+ */
+export interface ToolFieldOverride {
+  hint?: string;
+  sample?: string;
+  default?: string;
+}
+
 export interface AdminTool {
   id: string;
   key: string;
@@ -247,6 +265,18 @@ export interface AdminTool {
    * an empty object means "the tier's allowance applies unchanged".
    */
   run_limits: Partial<Record<"daily" | "weekly" | "monthly", number>>;
+  /**
+   * The runner's own form schema, sent only on the editor's route. Read-only: it is
+   * what the server validates a run against, and it moves with a deploy.
+   */
+  input_schema?: JsonSchema | null;
+  example?: { input: Record<string, unknown>; note?: string } | null;
+  /**
+   * Per-field wording an admin *can* change, keyed by field name — the hint under
+   * a field, the placeholder an empty box shows, and the value it starts out
+   * holding.
+   */
+  field_overrides?: Record<string, ToolFieldOverride>;
   seo?: SeoOverrides | null;
   stats: {
     runs: number;

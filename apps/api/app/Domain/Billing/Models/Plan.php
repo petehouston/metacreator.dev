@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Billing\Models;
 
+use App\Support\Concerns\PreservesAdminEdits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,9 +18,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $billing_mode
  * @property string|null $interval
  * @property int $amount
+ * @property list<string>|null $locked_fields
  */
 final class Plan extends Model
 {
+    use PreservesAdminEdits;
+
     protected $guarded = ['id'];
 
     protected function casts(): array
@@ -31,6 +35,7 @@ final class Plan extends Model
             'is_active' => 'boolean',
             'is_highlighted' => 'boolean',
             'amount' => 'integer',
+            'locked_fields' => 'array',
         ];
     }
 

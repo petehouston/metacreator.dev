@@ -70,7 +70,10 @@ final class PlanSeeder extends Seeder
         ];
 
         foreach ($plans as $plan) {
-            Plan::query()->updateOrCreate(
+            // `seedRow` rather than `updateOrCreate`: a price or a feature list
+            // edited in the console is a business decision, and the next deploy is
+            // not allowed to reset it to what this file happened to say.
+            Plan::seedRow(
                 ['key' => $plan['key']],
                 [...$plan, 'currency' => 'USD', 'is_active' => true],
             );

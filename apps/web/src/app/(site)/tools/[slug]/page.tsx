@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { NewsletterForm } from "@/components/site/newsletter-form";
+import { EditToolButton } from "@/components/tools/edit-tool-button";
 import { FavoriteButton } from "@/components/tools/favorite-button";
 import { ToolCard, ToolCardSkeleton } from "@/components/tools/tool-card";
 import { ToolRunner } from "@/components/tools/tool-runner";
@@ -150,6 +151,9 @@ export default async function ToolPage({ params }: PageProps<"/tools/[slug]">) {
               {/* For a guest this is a link to sign in rather than nothing: it is
                   the clearest small reason on the page to have an account. */}
               <FavoriteButton slug={tool.slug} variant="labelled" />
+
+              {/* Staff only, and only for staff who can actually save. */}
+              <EditToolButton slug={tool.slug} />
             </div>
           </div>
         </div>

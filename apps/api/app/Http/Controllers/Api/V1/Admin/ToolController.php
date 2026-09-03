@@ -94,7 +94,13 @@ final class ToolController extends Controller
         // run caps it does, so a partial payload is merged rather than assigned —
         // saving the limits panel must not erase a runner's own configuration.
         if (array_key_exists('config', $data)) {
-            $data['config'] = $this->mergeConfig($tool->config ?? [], $data['config'] ?? []);
+            $config = $data['config'] ?? [];
+
+            if (array_key_exists('field_overrides', $config)) {
+                $config['field_overrides'] = $this->cleanFieldOverrides($tool, $config['field_overrides'] ?? []);
+            }
+
+            $data['config'] = $this->mergeConfig($tool->config ?? [], $config);
         }
 
         // Publishing for the first time stamps the date the catalog page cites.
@@ -124,6 +130,45 @@ final class ToolController extends Controller
     }
 
     /**
+     * Reduce a field-override payload to overrides that mean something.
+     *
+     * Two filters. Fields the schema does not have are dropped: a runner that
+     * renames an input would otherwise leave a sample for a box nobody can see,
+     * and it would sit in `config` forever because nothing ever looks at it again.
+     * Blank values are dropped for the same reason — an override that says "use the
+     * runner's" is the *absence* of an override, and storing it as an empty string
+     * is a second way to spell the same thing.
+     *
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, array<string, string>>
+     */
+    private function cleanFieldOverrides(Tool $tool, array $overrides): array
+    {
+        $properties = is_array($tool->input_schema['properties'] ?? null)
+            ? $tool->input_schema['properties']
+            : [];
+
+        $clean = [];
+
+        foreach (array_intersect_key($overrides, $properties) as $field => $override) {
+            if (! is_array($override)) {
+                continue;
+            }
+
+            $values = array_filter(
+                array_intersect_key($override, array_flip(['hint', 'sample', 'default'])),
+                fn ($value): bool => is_string($value) && trim($value) !== '',
+            );
+
+            if ($values !== []) {
+                $clean[$field] = array_map(trim(...), $values);
+            }
+        }
+
+        return $clean;
+    }
+
+    /**
      * Fold a partial `config` payload into the stored one.
      *
      * Nulls are removals, not values: the limits form sends `{daily: null}` for a
@@ -138,6 +183,19 @@ final class ToolController extends Controller
     private function mergeConfig(array $current, array $incoming): array
     {
         foreach ($incoming as $key => $value) {
+            // Assigned rather than merged: the editor always sends every field it
+            // rendered, so a key that is missing here is one the admin cleared.
+            // Merging would make a cleared sample impossible to clear.
+            if ($key === 'field_overrides') {
+                if (is_array($value) && $value !== []) {
+                    $current[$key] = $value;
+                } else {
+                    unset($current[$key]);
+                }
+
+                continue;
+            }
+
             if ($key === 'limits' && is_array($value)) {
                 $limits = array_filter(
                     array_merge($current['limits'] ?? [], $value),
